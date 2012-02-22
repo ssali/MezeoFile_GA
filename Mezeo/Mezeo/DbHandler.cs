@@ -25,6 +25,7 @@ namespace Mezeo
         public const string SHARED = "shared";
         public const string STATUS = "status";
         public const string PARENT_DIR = "parent_dir";
+        public const string TYPE = "type";
 
         private SQLiteConnection sqlConnection;
         private SQLiteCommand sqlCommand;
@@ -60,7 +61,7 @@ namespace Mezeo
                             KEY + " TEXT PRIMARY KEY, " + 
                             MODIFIED_DATE + " DATE, " +
                             CREATED_DATE + " DATE, " +
-                            FILE_SIZE + " INTEGER, " +
+                            FILE_SIZE + " LONG, " +
                             CONTENT_URL + " TEXT, " +
                             PARENT_URL + " TEXT, " +
                             E_TAG + " TEXT, " +
@@ -69,6 +70,7 @@ namespace Mezeo
                             PUBLIC + " BOOL, " +
                             SHARED + " BOOL, " +
                             STATUS + " TEXT, " +
+                            TYPE + " TEXT, " +
                             PARENT_DIR + " TEXT)";
 
             ExecuteNonQuery(query);
@@ -86,7 +88,74 @@ namespace Mezeo
         {
             try
             {
+                //query=query.Replace("\\","/");
+                //query = query.Replace("/", "//");
+                //query = query.Replace(":", "");
                 sqlCommand = new SQLiteCommand(query, sqlConnection);
+                sqlCommand.ExecuteNonQuery();
+                return true;
+            }
+            catch (Exception ex)
+            {
+                return false;
+            }
+        }
+
+        public bool ExecuteNonQuery(FileFolderInfo fileFolderInfo)
+        {
+            try
+            {
+                string query = @"INSERT INTO " + TABLE_NAME + " VALUES(" +
+                                "@Key ," +
+                                "@ModifiedDate , " +
+                                "@CreatedDate  ," +
+                                "@FileSize  ," +
+                                "@ContentUrl , " +
+                                "@ParentUrl , " +
+                                "@ETag , " +
+                                "@FileName , " +
+                                "@MimeType , " +
+                                "@IsPublic , " +
+                                "@IsShared , " +
+                                "@Status , " +
+                                "@Type , " +
+                                "@ParentDir )";
+
+                sqlCommand = new SQLiteCommand(query, sqlConnection);
+                           
+                sqlCommand.Parameters.Add(new SQLiteParameter("@Key",System.Data.DbType.String));
+                sqlCommand.Parameters.Add(new SQLiteParameter("@ModifiedDate",System.Data.DbType.DateTime));
+                sqlCommand.Parameters.Add(new SQLiteParameter("@CreatedDate", System.Data.DbType.DateTime));
+                sqlCommand.Parameters.Add(new SQLiteParameter("@FileSize", System.Data.DbType.Double));
+                sqlCommand.Parameters.Add(new SQLiteParameter("@ContentUrl", System.Data.DbType.String));
+                sqlCommand.Parameters.Add(new SQLiteParameter("@ParentUrl", System.Data.DbType.String));
+                sqlCommand.Parameters.Add(new SQLiteParameter("@FileName", System.Data.DbType.String));
+                sqlCommand.Parameters.Add(new SQLiteParameter("@MimeType", System.Data.DbType.String));
+                sqlCommand.Parameters.Add(new SQLiteParameter("@IsPublic", System.Data.DbType.Boolean));
+                sqlCommand.Parameters.Add(new SQLiteParameter("@IsShared", System.Data.DbType.Boolean));
+                sqlCommand.Parameters.Add(new SQLiteParameter("@Status",System.Data.DbType.String));
+                sqlCommand.Parameters.Add(new SQLiteParameter("@Type",System.Data.DbType.String));
+                sqlCommand.Parameters.Add(new SQLiteParameter("@ParentDir",System.Data.DbType.String));
+                sqlCommand.Parameters.Add(new SQLiteParameter("@ETag",System.Data.DbType.String));
+
+                sqlCommand.Parameters["@Key"].Value = fileFolderInfo.Key;
+                sqlCommand.Parameters["@ModifiedDate"].Value = fileFolderInfo.ModifiedDate;
+                sqlCommand.Parameters["@CreatedDate"].Value = fileFolderInfo.CreatedDate;
+                sqlCommand.Parameters["@FileSize"].Value = fileFolderInfo.FileSize;
+                sqlCommand.Parameters["@ContentUrl"].Value = fileFolderInfo.ContentUrl;
+                sqlCommand.Parameters["@ParentUrl"].Value = fileFolderInfo.ParentUrl;
+                sqlCommand.Parameters["@FileName"].Value = fileFolderInfo.FileName;
+                sqlCommand.Parameters["@MimeType"].Value = fileFolderInfo.MimeType;
+                sqlCommand.Parameters["@IsPublic"].Value = fileFolderInfo.IsPublic;
+                sqlCommand.Parameters["@IsShared"].Value = fileFolderInfo.IsShared;
+                sqlCommand.Parameters["@Status"].Value = fileFolderInfo.Status;
+                sqlCommand.Parameters["@Type"].Value = fileFolderInfo.Type;
+                sqlCommand.Parameters["@ParentDir"].Value = fileFolderInfo.ParentDir;
+                sqlCommand.Parameters["@ETag"].Value = fileFolderInfo.ETag;
+
+
+
+
                 sqlCommand.ExecuteNonQuery();
                 return true;
             }
@@ -255,6 +324,13 @@ namespace Mezeo
             sqlDataReader.Close();
 
             return result;
+        }
+
+        public void Write(FileFolderInfo fileFolderInfo)
+        {
+           
+
+            ExecuteNonQuery(fileFolderInfo);
         }
     }
 }

@@ -13,7 +13,7 @@ namespace Mezeo
         private static DateTime lastSync;
         private static bool autoSync=true;
         private static string syncDirPath="";
-        private static bool isInitailSync = false;
+        private static bool isInitailSync = true;
 
         private static RegistryHandler regHandler = new RegistryHandler();
 
@@ -102,6 +102,7 @@ namespace Mezeo
             set
             {
                 isInitailSync = value;
+                regHandler.Write("Basic7", isInitailSync, Microsoft.Win32.RegistryValueKind.Binary);
             }
         }
 
@@ -113,6 +114,7 @@ namespace Mezeo
             syncDirPath = regHandler.Read("Basic4", Microsoft.Win32.RegistryValueKind.String);
             lastSync = DateTime.Parse(regHandler.Read("Basic5", Microsoft.Win32.RegistryValueKind.Binary));
             autoSync = Convert.ToBoolean(regHandler.Read("Basic6", Microsoft.Win32.RegistryValueKind.Binary));
+            isInitailSync = Convert.ToBoolean(regHandler.Read("Basic7", Microsoft.Win32.RegistryValueKind.Binary));
         }
 
         private static void WriteRegValue()
@@ -123,6 +125,7 @@ namespace Mezeo
             regHandler.Write("Basic4", syncDirPath, Microsoft.Win32.RegistryValueKind.String);
             regHandler.Write("Basic5",lastSync, Microsoft.Win32.RegistryValueKind.Binary);
             regHandler.Write("Basic6",autoSync, Microsoft.Win32.RegistryValueKind.Binary);
+            regHandler.Write("Basic7", isInitailSync, Microsoft.Win32.RegistryValueKind.Binary);
         }
     }
 }

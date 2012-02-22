@@ -90,6 +90,8 @@
       <DependentUpon>en.resx</DependentUpon>
     </Compile>
     <Compile Include="FileDownloader.cs" />
+    <Compile Include="FileDownloaderEvents.cs" />
+    <Compile Include="FileFolderInfo.cs" />
     <Compile Include="frmConsole.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -116,6 +118,8 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="RegistryHandler.cs" />
     <Compile Include="StructureDownloader.cs" />
+    <Compile Include="StructureDownloaderEvent.cs" />
+    <Compile Include="ThreadLockObject.cs" />
     <EmbeddedResource Include="AboutBox.resx">
       <DependentUpon>AboutBox.cs</DependentUpon>
     </EmbeddedResource>

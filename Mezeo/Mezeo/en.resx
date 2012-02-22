@@ -132,6 +132,18 @@
   <data name="SyncManagerAboutLinkText" xml:space="preserve">
     <value>About</value>
   </data>
+  <data name="SyncManagerAnalyseMessage1" xml:space="preserve">
+    <value>Your account files are downloading now.  Still collecting data ...</value>
+  </data>
+  <data name="SyncManagerAnalyseMessage2" xml:space="preserve">
+    <value>Progress will be shown after all account data is collected</value>
+  </data>
+  <data name="SyncManagerAnalyseMessage3" xml:space="preserve">
+    <value>You can start working from your sync folder now.</value>
+  </data>
+  <data name="SyncManagerDownloading" xml:space="preserve">
+    <value>Updating</value>
+  </data>
   <data name="SyncManagerFileSyncLabel" xml:space="preserve">
     <value>File Sync:</value>
   </data>
@@ -144,6 +156,9 @@
   <data name="SyncManagerIssueFoundButtonText" xml:space="preserve">
     <value>Issues Found</value>
   </data>
+  <data name="SyncManagerLastSync" xml:space="preserve">
+    <value>Last sync</value>
+  </data>
   <data name="SyncManagerMoveFolderButtonText" xml:space="preserve">
     <value>Move Fiolder</value>
   </data>
@@ -152,6 +167,9 @@
   </data>
   <data name="SyncManagerOnButtonText" xml:space="preserve">
     <value>On</value>
+  </data>
+  <data name="SyncManagerResumeSync" xml:space="preserve">
+    <value>Turn sync 'On' to resume</value>
   </data>
   <data name="SyncManagerStatusAllFilesInSyncLabel" xml:space="preserve">
     <value>All files in sync</value>
@@ -165,8 +183,17 @@
   <data name="SyncManagerStatusNextSyncAtLabel" xml:space="preserve">
     <value>Next sync at</value>
   </data>
+  <data name="SyncManagerSyncDisabled" xml:space="preserve">
+    <value>Sync is disabled</value>
+  </data>
   <data name="SyncManagerSyncNowButtonText" xml:space="preserve">
     <value>Sync Now</value>
+  </data>
+  <data name="SyncManagerSyncStatus" xml:space="preserve">
+    <value>All files in sync</value>
+  </data>
+  <data name="SyncManagerSyncStopButtonText" xml:space="preserve">
+    <value>Stop Sync</value>
   </data>
   <data name="SyncManagerTitle" xml:space="preserve">
     <value>Sync Manager - Mezeo File Sync</value>
@@ -176,6 +203,33 @@
   </data>
   <data name="SyncManagerUsageOfLabel" xml:space="preserve">
     <value>of</value>
+  </data>
+  <data name="SyncManagerUsageUnlimited" xml:space="preserve">
+    <value>Unlimited</value>
+  </data>
+  <data name="SyncManagerUsageUsed" xml:space="preserve">
+    <value>Used</value>
+  </data>
+  <data name="TrayBalloonInitialSyncStartedText" xml:space="preserve">
+    <value>Your sync folder is being updated with files from your account.</value>
+  </data>
+  <data name="TrayBalloonInitialSyncStartedTitleText" xml:space="preserve">
+    <value>Intial Sync Started</value>
+  </data>
+  <data name="TrayBalloonInitialSyncText" xml:space="preserve">
+    <value>Initial Sync Completed.\n Your files are up-to-date.</value>
+  </data>
+  <data name="TrayBalloonSyncStatusText" xml:space="preserve">
+    <value>Sync Status</value>
+  </data>
+  <data name="TrayHoverInitialSyncUpToDateText" xml:space="preserve">
+    <value>Mezeo File Sync\n Sync is Up-to-date</value>
+  </data>
+  <data name="TrayHoverSyncProgressInitialText" xml:space="preserve">
+    <value>% complete</value>
+  </data>
+  <data name="TrayHoverSyncProgressText" xml:space="preserve">
+    <value>Mezeo File Sync\nSync in progress...</value>
   </data>
   <data name="UserIdCueText" xml:space="preserve">
     <value>User Id</value>

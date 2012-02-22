@@ -9,15 +9,32 @@ namespace Mezeo
 {
     class StructureDownloader
     {
+
+        public delegate void StructureDownloadEvent(object sender, StructureDownloaderEvent e);
+        public event StructureDownloadEvent downloadEvent;
+
+        public delegate void CancelDownLoadEvent();
+        public event CancelDownLoadEvent cancelDownloadEvent;
+
+        private int totalFileCount = 0;
+
+        public int TotalFileCount
+        {
+            get
+            {
+                return totalFileCount;
+            }
+        }
+
         Queue<LocalItemDetails> queue;
-        Object lockObject;
+        ThreadLockObject lockObject;
         string cRootContainerUrl;
         MezeoFileCloud cFileCloud;//=new MezeoFileCloud();
 
         bool isRootContainer = false;
 
         static int seq = 0;
-        public StructureDownloader(Queue<LocalItemDetails> queue, Object lockObject, string rootContainerUrl, MezeoFileCloud fileCloud)
+        public StructureDownloader(Queue<LocalItemDetails> queue, ThreadLockObject lockObject, string rootContainerUrl, MezeoFileCloud fileCloud)
         {
             this.queue = queue;
             this.lockObject = lockObject;
@@ -49,13 +66,25 @@ namespace Mezeo
             lItem.Path = "";
 
             PrepareStructure(lItem);
+            totalFileCount += contents[0].nTotalItem;
+
 
             for (int n = 0; n < contents[0].nTotalItem; n++)
             {
+                if (lockObject.StopThread)
+                {
+                    CancelAndNotify();
+                    break;
+                }
                 if (contents[n].szItemType == "DIRECTORY")
                 {
                     analyseItemDetails(contents[n],lItem.Path);
                 }
+            }
+
+            if (downloadEvent != null)
+            {
+                downloadEvent(this, new StructureDownloaderEvent(true));
             }
         }
 
@@ -67,15 +96,32 @@ namespace Mezeo
             lItem.ItemDetails = contents;
             strPath += itemDetail.strName;
             lItem.Path = strPath;
-
+           
+            totalFileCount += contents[0].nTotalItem;
+           
             PrepareStructure(lItem);
+
             if (contents[0].nTotalItem > 0)
             {
                 for (int n = 0; n < contents[0].nTotalItem; n++)
                 {
+                    if (lockObject.StopThread)
+                    {
+                        CancelAndNotify();
+                        break;
+                    }
+
                     if (contents[n].szItemType == "DIRECTORY")
                         analyseItemDetails(contents[n], strPath + "\\");
                 }
+            }
+        }
+
+        private void CancelAndNotify()
+        {
+            if(cancelDownloadEvent != null)
+            {
+                cancelDownloadEvent();
             }
         }
 

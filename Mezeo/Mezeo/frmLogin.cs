@@ -18,6 +18,7 @@ namespace Mezeo
         NotificationManager notificationManager;
         MezeoFileSupport.MezeoFileCloud mezeoFileCloud;
         MezeoFileSupport.LoginDetails loginDetails;
+        frmSyncManager syncManager;
         
         public bool isLoginSuccess = false;
         public bool showLogin = false;
@@ -72,6 +73,12 @@ namespace Mezeo
 
         private void exitToolStripMenuItem_Click(object sender, EventArgs e)
         {
+            if (syncManager.isSyncInProgress)
+            {
+                DialogResult dResult = MessageBox.Show("A sync is currently in progress.\n Cancel sync and close Mezeo File Sync now?", "Mezeo File Sync", MessageBoxButtons.OKCancel);
+                if (dResult == DialogResult.Cancel)
+                    return;
+            }
             niSystemTray.Visible = false;
             Application.Exit();
         }
@@ -183,6 +190,12 @@ namespace Mezeo
                 isLoginSuccess = true;
                 niSystemTray.ContextMenuStrip = cmSystemTraySyncMgr;
                 CheckAndCreateSyncDirectory();
+                syncManager = new frmSyncManager(mezeoFileCloud, loginDetails, notificationManager);
+                //syncManager.CreateControl();
+                //syncManager.Show();
+                syncManager.CreateControl();
+                
+                syncManager.InitializeSync();
 
                 if (showLogin)
                 {
@@ -198,7 +211,11 @@ namespace Mezeo
 
         public void showSyncManager()
         {
-            frmSyncManager syncManager = new frmSyncManager(mezeoFileCloud,loginDetails);
+            if (syncManager == null)
+            {
+               syncManager = new frmSyncManager(mezeoFileCloud, loginDetails,notificationManager);
+            }
+
             syncManager.Show();
         }
 

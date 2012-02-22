@@ -7,9 +7,9 @@ using System.Drawing;
 
 namespace Mezeo
 {
-    class NotificationManager
+    public class NotificationManager
     {
-        private const int BALLON_TIME_OUT = 1000; // time in milli seconds
+        private const int BALLON_TIME_OUT = 100; // time in milli seconds
 
         private NotifyIcon cNotifyIcon;
         private string hoverText = "";

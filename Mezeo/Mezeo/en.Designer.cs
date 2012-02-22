@@ -106,6 +106,42 @@ namespace Mezeo {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Your account files are downloading now.  Still collecting data ....
+        /// </summary>
+        internal static string SyncManagerAnalyseMessage1 {
+            get {
+                return ResourceManager.GetString("SyncManagerAnalyseMessage1", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Progress will be shown after all account data is collected.
+        /// </summary>
+        internal static string SyncManagerAnalyseMessage2 {
+            get {
+                return ResourceManager.GetString("SyncManagerAnalyseMessage2", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to You can start working from your sync folder now..
+        /// </summary>
+        internal static string SyncManagerAnalyseMessage3 {
+            get {
+                return ResourceManager.GetString("SyncManagerAnalyseMessage3", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Updating.
+        /// </summary>
+        internal static string SyncManagerDownloading {
+            get {
+                return ResourceManager.GetString("SyncManagerDownloading", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to File Sync:.
         /// </summary>
         internal static string SyncManagerFileSyncLabel {
@@ -142,6 +178,15 @@ namespace Mezeo {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Last sync.
+        /// </summary>
+        internal static string SyncManagerLastSync {
+            get {
+                return ResourceManager.GetString("SyncManagerLastSync", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Move Fiolder.
         /// </summary>
         internal static string SyncManagerMoveFolderButtonText {
@@ -165,6 +210,15 @@ namespace Mezeo {
         internal static string SyncManagerOnButtonText {
             get {
                 return ResourceManager.GetString("SyncManagerOnButtonText", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Turn sync &apos;On&apos; to resume.
+        /// </summary>
+        internal static string SyncManagerResumeSync {
+            get {
+                return ResourceManager.GetString("SyncManagerResumeSync", resourceCulture);
             }
         }
         
@@ -205,11 +259,38 @@ namespace Mezeo {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Sync is disabled.
+        /// </summary>
+        internal static string SyncManagerSyncDisabled {
+            get {
+                return ResourceManager.GetString("SyncManagerSyncDisabled", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Sync Now.
         /// </summary>
         internal static string SyncManagerSyncNowButtonText {
             get {
                 return ResourceManager.GetString("SyncManagerSyncNowButtonText", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to All files in sync.
+        /// </summary>
+        internal static string SyncManagerSyncStatus {
+            get {
+                return ResourceManager.GetString("SyncManagerSyncStatus", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Stop Sync.
+        /// </summary>
+        internal static string SyncManagerSyncStopButtonText {
+            get {
+                return ResourceManager.GetString("SyncManagerSyncStopButtonText", resourceCulture);
             }
         }
         
@@ -237,6 +318,87 @@ namespace Mezeo {
         internal static string SyncManagerUsageOfLabel {
             get {
                 return ResourceManager.GetString("SyncManagerUsageOfLabel", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Unlimited.
+        /// </summary>
+        internal static string SyncManagerUsageUnlimited {
+            get {
+                return ResourceManager.GetString("SyncManagerUsageUnlimited", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Used.
+        /// </summary>
+        internal static string SyncManagerUsageUsed {
+            get {
+                return ResourceManager.GetString("SyncManagerUsageUsed", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Your sync folder is being updated with files from your account..
+        /// </summary>
+        internal static string TrayBalloonInitialSyncStartedText {
+            get {
+                return ResourceManager.GetString("TrayBalloonInitialSyncStartedText", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Intial Sync Started.
+        /// </summary>
+        internal static string TrayBalloonInitialSyncStartedTitleText {
+            get {
+                return ResourceManager.GetString("TrayBalloonInitialSyncStartedTitleText", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Initial Sync Completed.\n Your files are up-to-date..
+        /// </summary>
+        internal static string TrayBalloonInitialSyncText {
+            get {
+                return ResourceManager.GetString("TrayBalloonInitialSyncText", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Sync Status.
+        /// </summary>
+        internal static string TrayBalloonSyncStatusText {
+            get {
+                return ResourceManager.GetString("TrayBalloonSyncStatusText", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Mezeo File Sync\n Sync is Up-to-date.
+        /// </summary>
+        internal static string TrayHoverInitialSyncUpToDateText {
+            get {
+                return ResourceManager.GetString("TrayHoverInitialSyncUpToDateText", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to % complete.
+        /// </summary>
+        internal static string TrayHoverSyncProgressInitialText {
+            get {
+                return ResourceManager.GetString("TrayHoverSyncProgressInitialText", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Mezeo File Sync\nSync in progress....
+        /// </summary>
+        internal static string TrayHoverSyncProgressText {
+            get {
+                return ResourceManager.GetString("TrayHoverSyncProgressText", resourceCulture);
             }
         }
         
