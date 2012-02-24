@@ -123,7 +123,7 @@
   </data>
   <assembly alias="System.Drawing" name="System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
   <data name="btnLogin.Location" type="System.Drawing.Point, System.Drawing">
-    <value>316, 247</value>
+    <value>316, 257</value>
   </data>
   <data name="btnLogin.Size" type="System.Drawing.Size, System.Drawing">
     <value>105, 23</value>
@@ -145,7 +145,7 @@
     <value>$this</value>
   </data>
   <data name="&gt;&gt;btnLogin.ZOrder" xml:space="preserve">
-    <value>5</value>
+    <value>6</value>
   </data>
   <metadata name="niSystemTray.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
     <value>17, 17</value>
@@ -802,6 +802,15 @@
   <metadata name="cmSystemTrayLogin.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
     <value>136, 17</value>
   </metadata>
+  <data name="cmSystemTrayLogin.Size" type="System.Drawing.Size, System.Drawing">
+    <value>111, 54</value>
+  </data>
+  <data name="&gt;&gt;cmSystemTrayLogin.Name" xml:space="preserve">
+    <value>cmSystemTrayLogin</value>
+  </data>
+  <data name="&gt;&gt;cmSystemTrayLogin.Type" xml:space="preserve">
+    <value>System.Windows.Forms.ContextMenuStrip, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
   <data name="loginToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
     <value>110, 22</value>
   </data>
@@ -817,21 +826,21 @@
   <data name="exitToolStripMenuItem.Text" xml:space="preserve">
     <value>Exit</value>
   </data>
-  <data name="cmSystemTrayLogin.Size" type="System.Drawing.Size, System.Drawing">
-    <value>111, 54</value>
-  </data>
-  <data name="&gt;&gt;cmSystemTrayLogin.Name" xml:space="preserve">
-    <value>cmSystemTrayLogin</value>
-  </data>
-  <data name="&gt;&gt;cmSystemTrayLogin.Type" xml:space="preserve">
-    <value>System.Windows.Forms.ContextMenuStrip, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
   <metadata name="bwLogin.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
     <value>287, 17</value>
   </metadata>
   <metadata name="cmSystemTraySyncMgr.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
     <value>380, 17</value>
   </metadata>
+  <data name="cmSystemTraySyncMgr.Size" type="System.Drawing.Size, System.Drawing">
+    <value>165, 132</value>
+  </data>
+  <data name="&gt;&gt;cmSystemTraySyncMgr.Name" xml:space="preserve">
+    <value>cmSystemTraySyncMgr</value>
+  </data>
+  <data name="&gt;&gt;cmSystemTraySyncMgr.Type" xml:space="preserve">
+    <value>System.Windows.Forms.ContextMenuStrip, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
   <data name="toolStripMenuItem2.BackgroundImageLayout" type="System.Windows.Forms.ImageLayout, System.Windows.Forms">
     <value>Zoom</value>
   </data>
@@ -883,15 +892,6 @@
   <data name="msSyncMgrExit.Text" xml:space="preserve">
     <value>Exit</value>
   </data>
-  <data name="cmSystemTraySyncMgr.Size" type="System.Drawing.Size, System.Drawing">
-    <value>165, 132</value>
-  </data>
-  <data name="&gt;&gt;cmSystemTraySyncMgr.Name" xml:space="preserve">
-    <value>cmSystemTraySyncMgr</value>
-  </data>
-  <data name="&gt;&gt;cmSystemTraySyncMgr.Type" xml:space="preserve">
-    <value>System.Windows.Forms.ContextMenuStrip, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
   <data name="pbLogo.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
     <value>NoControl</value>
   </data>
@@ -917,13 +917,43 @@
     <value>$this</value>
   </data>
   <data name="&gt;&gt;pbLogo.ZOrder" xml:space="preserve">
-    <value>6</value>
+    <value>7</value>
+  </data>
+  <data name="labelError.Font" type="System.Drawing.Font, System.Drawing">
+    <value>Microsoft Sans Serif, 9.75pt</value>
+  </data>
+  <data name="labelError.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
+    <value>NoControl</value>
+  </data>
+  <data name="labelError.Location" type="System.Drawing.Point, System.Drawing">
+    <value>58, 97</value>
+  </data>
+  <data name="labelError.Size" type="System.Drawing.Size, System.Drawing">
+    <value>363, 21</value>
+  </data>
+  <data name="labelError.TabIndex" type="System.Int32, mscorlib">
+    <value>8</value>
+  </data>
+  <data name="labelError.TextAlign" type="System.Drawing.ContentAlignment, System.Drawing">
+    <value>MiddleCenter</value>
+  </data>
+  <data name="&gt;&gt;labelError.Name" xml:space="preserve">
+    <value>labelError</value>
+  </data>
+  <data name="&gt;&gt;labelError.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Label, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;labelError.Parent" xml:space="preserve">
+    <value>$this</value>
+  </data>
+  <data name="&gt;&gt;labelError.ZOrder" xml:space="preserve">
+    <value>2</value>
   </data>
   <data name="txtServerUrl.Font" type="System.Drawing.Font, System.Drawing">
     <value>Microsoft Sans Serif, 12pt</value>
   </data>
   <data name="txtServerUrl.Location" type="System.Drawing.Point, System.Drawing">
-    <value>61, 202</value>
+    <value>61, 212</value>
   </data>
   <data name="txtServerUrl.Size" type="System.Drawing.Size, System.Drawing">
     <value>360, 26</value>
@@ -932,7 +962,7 @@
     <value>7</value>
   </data>
   <data name="txtServerUrl.Text" xml:space="preserve">
-    <value>https://41.mezeo.net/v2</value>
+    <value>https://demo.mezeo.net</value>
   </data>
   <data name="&gt;&gt;txtServerUrl.Name" xml:space="preserve">
     <value>txtServerUrl</value>
@@ -944,13 +974,13 @@
     <value>$this</value>
   </data>
   <data name="&gt;&gt;txtServerUrl.ZOrder" xml:space="preserve">
-    <value>2</value>
+    <value>3</value>
   </data>
   <data name="txtPasswrod.Font" type="System.Drawing.Font, System.Drawing">
     <value>Microsoft Sans Serif, 12pt</value>
   </data>
   <data name="txtPasswrod.Location" type="System.Drawing.Point, System.Drawing">
-    <value>61, 160</value>
+    <value>61, 170</value>
   </data>
   <data name="txtPasswrod.Size" type="System.Drawing.Size, System.Drawing">
     <value>360, 26</value>
@@ -968,13 +998,13 @@
     <value>$this</value>
   </data>
   <data name="&gt;&gt;txtPasswrod.ZOrder" xml:space="preserve">
-    <value>3</value>
+    <value>4</value>
   </data>
   <data name="txtUserName.Font" type="System.Drawing.Font, System.Drawing">
     <value>Microsoft Sans Serif, 12pt</value>
   </data>
   <data name="txtUserName.Location" type="System.Drawing.Point, System.Drawing">
-    <value>61, 118</value>
+    <value>61, 128</value>
   </data>
   <data name="txtUserName.Size" type="System.Drawing.Size, System.Drawing">
     <value>360, 26</value>
@@ -992,8 +1022,11 @@
     <value>$this</value>
   </data>
   <data name="&gt;&gt;txtUserName.ZOrder" xml:space="preserve">
-    <value>4</value>
+    <value>5</value>
   </data>
+  <metadata name="tmrConnectionCheck.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
+    <value>559, 17</value>
+  </metadata>
   <metadata name="$this.Localizable" type="System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
     <value>True</value>
   </metadata>
@@ -1039,6 +1072,12 @@
   <data name="&gt;&gt;bwLogin.Type" xml:space="preserve">
     <value>System.ComponentModel.BackgroundWorker, System, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
+  <data name="&gt;&gt;toolStripMenuItem2.Name" xml:space="preserve">
+    <value>toolStripMenuItem2</value>
+  </data>
+  <data name="&gt;&gt;toolStripMenuItem2.Type" xml:space="preserve">
+    <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
   <data name="&gt;&gt;toolStripSeparator1.Name" xml:space="preserve">
     <value>toolStripSeparator1</value>
   </data>
@@ -1081,11 +1120,11 @@
   <data name="&gt;&gt;msSyncMgrExit.Type" xml:space="preserve">
     <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
-  <data name="&gt;&gt;toolStripMenuItem2.Name" xml:space="preserve">
-    <value>toolStripMenuItem2</value>
+  <data name="&gt;&gt;tmrConnectionCheck.Name" xml:space="preserve">
+    <value>tmrConnectionCheck</value>
   </data>
-  <data name="&gt;&gt;toolStripMenuItem2.Type" xml:space="preserve">
-    <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  <data name="&gt;&gt;tmrConnectionCheck.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Timer, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="&gt;&gt;$this.Name" xml:space="preserve">
     <value>frmLogin</value>

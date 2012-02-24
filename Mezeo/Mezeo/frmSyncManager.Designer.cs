@@ -31,14 +31,14 @@
             this.components = new System.ComponentModel.Container();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(frmSyncManager));
             this.pnlStatus = new System.Windows.Forms.Panel();
-            this.label1 = new System.Windows.Forms.Label();
             this.lblPercentDone = new System.Windows.Forms.Label();
+            this.pbSyncProgress = new System.Windows.Forms.ProgressBar();
+            this.label1 = new System.Windows.Forms.Label();
             this.btnSyncNow = new System.Windows.Forms.Button();
             this.lblStatusL3 = new System.Windows.Forms.Label();
             this.lblStatusL1 = new System.Windows.Forms.Label();
             this.lblStatus = new System.Windows.Forms.Label();
             this.imgStatus = new System.Windows.Forms.PictureBox();
-            this.pbSyncProgress = new System.Windows.Forms.ProgressBar();
             this.pnlUsage = new System.Windows.Forms.Panel();
             this.lblUsageDetails = new System.Windows.Forms.Label();
             this.lblUsage = new System.Windows.Forms.Label();
@@ -54,7 +54,7 @@
             this.lnkAbout = new System.Windows.Forms.LinkLabel();
             this.panel1 = new System.Windows.Forms.Panel();
             this.lblFileSync = new System.Windows.Forms.Label();
-            this.panel2 = new System.Windows.Forms.Panel();
+            this.pnlFileSyncOnOff = new System.Windows.Forms.Panel();
             this.rbSyncOff = new System.Windows.Forms.RadioButton();
             this.rbSyncOn = new System.Windows.Forms.RadioButton();
             this.pictureBox1 = new System.Windows.Forms.PictureBox();
@@ -68,46 +68,52 @@
             this.pnlFolder.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.imgFolder)).BeginInit();
             this.panel1.SuspendLayout();
-            this.panel2.SuspendLayout();
+            this.pnlFileSyncOnOff.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.eventLog1)).BeginInit();
             this.SuspendLayout();
             // 
             // pnlStatus
             // 
-            this.pnlStatus.Controls.Add(this.label1);
             this.pnlStatus.Controls.Add(this.lblPercentDone);
+            this.pnlStatus.Controls.Add(this.pbSyncProgress);
+            this.pnlStatus.Controls.Add(this.label1);
             this.pnlStatus.Controls.Add(this.btnSyncNow);
             this.pnlStatus.Controls.Add(this.lblStatusL3);
             this.pnlStatus.Controls.Add(this.lblStatusL1);
             this.pnlStatus.Controls.Add(this.lblStatus);
             this.pnlStatus.Controls.Add(this.imgStatus);
-            this.pnlStatus.Controls.Add(this.pbSyncProgress);
             this.pnlStatus.Location = new System.Drawing.Point(18, 249);
             this.pnlStatus.Name = "pnlStatus";
             this.pnlStatus.Size = new System.Drawing.Size(614, 80);
             this.pnlStatus.TabIndex = 1;
             this.pnlStatus.Paint += new System.Windows.Forms.PaintEventHandler(this.panel_Paint);
             // 
+            // lblPercentDone
+            // 
+            this.lblPercentDone.AutoSize = true;
+            this.lblPercentDone.Location = new System.Drawing.Point(445, 13);
+            this.lblPercentDone.Name = "lblPercentDone";
+            this.lblPercentDone.Size = new System.Drawing.Size(36, 13);
+            this.lblPercentDone.TabIndex = 14;
+            this.lblPercentDone.Text = "XXX%";
+            this.lblPercentDone.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+            // 
+            // pbSyncProgress
+            // 
+            this.pbSyncProgress.Location = new System.Drawing.Point(150, 29);
+            this.pbSyncProgress.MarqueeAnimationSpeed = 50;
+            this.pbSyncProgress.Name = "pbSyncProgress";
+            this.pbSyncProgress.Size = new System.Drawing.Size(330, 23);
+            this.pbSyncProgress.TabIndex = 13;
+            // 
             // label1
             // 
             this.label1.AutoSize = true;
             this.label1.Location = new System.Drawing.Point(147, 34);
             this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(35, 13);
+            this.label1.Size = new System.Drawing.Size(0, 13);
             this.label1.TabIndex = 10;
-            this.label1.Text = "label1";
-            // 
-            // lblPercentDone
-            // 
-            this.lblPercentDone.AutoSize = true;
-            this.lblPercentDone.Location = new System.Drawing.Point(440, 14);
-            this.lblPercentDone.Name = "lblPercentDone";
-            this.lblPercentDone.Size = new System.Drawing.Size(36, 13);
-            this.lblPercentDone.TabIndex = 9;
-            this.lblPercentDone.Text = "XXX%";
-            this.lblPercentDone.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
-            this.lblPercentDone.Visible = false;
             // 
             // btnSyncNow
             // 
@@ -127,7 +133,6 @@
             this.lblStatusL3.Size = new System.Drawing.Size(333, 13);
             this.lblStatusL3.TabIndex = 7;
             this.lblStatusL3.Text = "label8";
-            this.lblStatusL3.Visible = false;
             // 
             // lblStatusL1
             // 
@@ -137,7 +142,6 @@
             this.lblStatusL1.Size = new System.Drawing.Size(287, 13);
             this.lblStatusL1.TabIndex = 5;
             this.lblStatusL1.Text = "label6";
-            this.lblStatusL1.Visible = false;
             // 
             // lblStatus
             // 
@@ -158,16 +162,6 @@
             this.imgStatus.SizeMode = System.Windows.Forms.PictureBoxSizeMode.CenterImage;
             this.imgStatus.TabIndex = 2;
             this.imgStatus.TabStop = false;
-            // 
-            // pbSyncProgress
-            // 
-            this.pbSyncProgress.Location = new System.Drawing.Point(150, 30);
-            this.pbSyncProgress.MarqueeAnimationSpeed = 50;
-            this.pbSyncProgress.Name = "pbSyncProgress";
-            this.pbSyncProgress.Size = new System.Drawing.Size(330, 23);
-            this.pbSyncProgress.Style = System.Windows.Forms.ProgressBarStyle.Marquee;
-            this.pbSyncProgress.TabIndex = 4;
-            this.pbSyncProgress.Visible = false;
             // 
             // pnlUsage
             // 
@@ -307,7 +301,7 @@
             // 
             this.panel1.BackgroundImage = global::Mezeo.Properties.Resources.patch_green;
             this.panel1.Controls.Add(this.lblFileSync);
-            this.panel1.Controls.Add(this.panel2);
+            this.panel1.Controls.Add(this.pnlFileSyncOnOff);
             this.panel1.Controls.Add(this.pictureBox1);
             this.panel1.Dock = System.Windows.Forms.DockStyle.Top;
             this.panel1.Location = new System.Drawing.Point(0, 0);
@@ -326,15 +320,15 @@
             this.lblFileSync.TabIndex = 2;
             this.lblFileSync.Text = "File Sync:";
             // 
-            // panel2
+            // pnlFileSyncOnOff
             // 
-            this.panel2.BackColor = System.Drawing.Color.Transparent;
-            this.panel2.Controls.Add(this.rbSyncOff);
-            this.panel2.Controls.Add(this.rbSyncOn);
-            this.panel2.Location = new System.Drawing.Point(528, 15);
-            this.panel2.Name = "panel2";
-            this.panel2.Size = new System.Drawing.Size(108, 33);
-            this.panel2.TabIndex = 1;
+            this.pnlFileSyncOnOff.BackColor = System.Drawing.Color.Transparent;
+            this.pnlFileSyncOnOff.Controls.Add(this.rbSyncOff);
+            this.pnlFileSyncOnOff.Controls.Add(this.rbSyncOn);
+            this.pnlFileSyncOnOff.Location = new System.Drawing.Point(528, 15);
+            this.pnlFileSyncOnOff.Name = "pnlFileSyncOnOff";
+            this.pnlFileSyncOnOff.Size = new System.Drawing.Size(108, 33);
+            this.pnlFileSyncOnOff.TabIndex = 1;
             // 
             // rbSyncOff
             // 
@@ -348,7 +342,7 @@
             this.rbSyncOff.Text = "Off";
             this.rbSyncOff.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             this.rbSyncOff.UseVisualStyleBackColor = true;
-            this.rbSyncOff.CheckedChanged += new System.EventHandler(this.rbSyncOff_CheckedChanged);
+            this.rbSyncOff.Click += new System.EventHandler(this.rbSyncOff_CheckedChanged);
             // 
             // rbSyncOn
             // 
@@ -386,7 +380,7 @@
             // 
             // tmrNextSync
             // 
-            this.tmrNextSync.Interval = 300000;
+            this.tmrNextSync.Interval = 10000;
             this.tmrNextSync.Tick += new System.EventHandler(this.tmrNextSync_Tick);
             // 
             // frmSyncManager
@@ -423,7 +417,7 @@
             ((System.ComponentModel.ISupportInitialize)(this.imgFolder)).EndInit();
             this.panel1.ResumeLayout(false);
             this.panel1.PerformLayout();
-            this.panel2.ResumeLayout(false);
+            this.pnlFileSyncOnOff.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.eventLog1)).EndInit();
             this.ResumeLayout(false);
@@ -435,7 +429,7 @@
 
         private System.Windows.Forms.Panel panel1;
         private System.Windows.Forms.PictureBox pictureBox1;
-        private System.Windows.Forms.Panel panel2;
+        private System.Windows.Forms.Panel pnlFileSyncOnOff;
         private System.Windows.Forms.RadioButton rbSyncOff;
         private System.Windows.Forms.RadioButton rbSyncOn;
         private System.Windows.Forms.Label lblFileSync;
@@ -451,7 +445,6 @@
         private System.Windows.Forms.Button btnSyncNow;
         private System.Windows.Forms.Label lblStatusL3;
         private System.Windows.Forms.Label lblStatusL1;
-        private System.Windows.Forms.ProgressBar pbSyncProgress;
         private System.Windows.Forms.Label lblUsageDetails;
         private System.Windows.Forms.Button btnMoveFolder;
         private System.Windows.Forms.LinkLabel lnkFolderPath;
@@ -459,10 +452,11 @@
         private System.Windows.Forms.LinkLabel lnkServerUrl;
         private System.Windows.Forms.LinkLabel lnkHelp;
         private System.Windows.Forms.LinkLabel lnkAbout;
-        private System.Windows.Forms.Label lblPercentDone;
         private System.Windows.Forms.Timer tmrSwapStatusMessage;
         private System.Diagnostics.EventLog eventLog1;
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.Timer tmrNextSync;
+        private System.Windows.Forms.Label lblPercentDone;
+        private System.Windows.Forms.ProgressBar pbSyncProgress;
     }
 }

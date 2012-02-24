@@ -8,5 +8,6 @@ namespace Mezeo
     class ThreadLockObject:Object
     {
         public bool StopThread { get; set; }
+        public bool ExitApplication { get; set; }
     }
 }

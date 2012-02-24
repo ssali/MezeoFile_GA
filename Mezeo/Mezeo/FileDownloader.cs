@@ -50,12 +50,14 @@ namespace Mezeo
                         break;
                     }
                     if (queue.Count == 0)
-                    {
-                        
+                    {                        
                         Monitor.Wait(lockObject);
                         continue; 
                     }
                     itemDetail = queue.Dequeue();
+                    if (itemDetail == null || itemDetail.ItemDetails == null)
+                        continue;
+
                     foreach (ItemDetails id in itemDetail.ItemDetails)
                     {
 
@@ -79,8 +81,8 @@ namespace Mezeo
                             {
                                 fileFolderInfo.Key = itemDetail.Path + "\\" + id.strName;
                             }
-                            
-                            fileFolderInfo.IsPublic = Convert.ToBoolean(id.strPublic);
+
+                            fileFolderInfo.IsPublic = id.strPublic.Trim().Length == 0 ? false : Convert.ToBoolean(id.strPublic);
                             fileFolderInfo.IsShared = Convert.ToBoolean(id.strShared);
                             fileFolderInfo.ContentUrl = id.szContentUrl;
                             fileFolderInfo.CreatedDate = DateTime.Parse(id.strCreated);

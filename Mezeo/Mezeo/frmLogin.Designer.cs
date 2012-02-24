@@ -38,6 +38,7 @@
             this.exitToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.bwLogin = new System.ComponentModel.BackgroundWorker();
             this.cmSystemTraySyncMgr = new System.Windows.Forms.ContextMenuStrip(this.components);
+            this.toolStripMenuItem2 = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
             this.msShowSyncMgr = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripMenuItem4 = new System.Windows.Forms.ToolStripMenuItem();
@@ -46,10 +47,12 @@
             this.toolStripSeparator3 = new System.Windows.Forms.ToolStripSeparator();
             this.msSyncMgrExit = new System.Windows.Forms.ToolStripMenuItem();
             this.pbLogo = new System.Windows.Forms.PictureBox();
-            this.toolStripMenuItem2 = new System.Windows.Forms.ToolStripMenuItem();
+            this.labelError = new System.Windows.Forms.Label();
+
             this.txtServerUrl = new Mezeo.CueTextBox();
             this.txtPasswrod = new Mezeo.CueTextBox();
             this.txtUserName = new Mezeo.CueTextBox();
+            this.tmrConnectionCheck = new System.Windows.Forms.Timer(this.components);
             this.cmSystemTrayLogin.SuspendLayout();
             this.cmSystemTraySyncMgr.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pbLogo)).BeginInit();
@@ -112,6 +115,14 @@
             this.cmSystemTraySyncMgr.Name = "cmSystemTrayLogin";
             resources.ApplyResources(this.cmSystemTraySyncMgr, "cmSystemTraySyncMgr");
             // 
+            // toolStripMenuItem2
+            // 
+            this.toolStripMenuItem2.BackColor = System.Drawing.SystemColors.Control;
+            this.toolStripMenuItem2.BackgroundImage = global::Mezeo.Properties.Resources.logo_horizontal_right_click;
+            resources.ApplyResources(this.toolStripMenuItem2, "toolStripMenuItem2");
+            this.toolStripMenuItem2.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.toolStripMenuItem2.Name = "toolStripMenuItem2";
+            // 
             // toolStripSeparator1
             // 
             this.toolStripSeparator1.Name = "toolStripSeparator1";
@@ -156,19 +167,21 @@
             this.pbLogo.Name = "pbLogo";
             this.pbLogo.TabStop = false;
             // 
-            // toolStripMenuItem2
+
+            // labelError
             // 
-            this.toolStripMenuItem2.BackColor = System.Drawing.SystemColors.Control;
-            this.toolStripMenuItem2.BackgroundImage = global::Mezeo.Properties.Resources.logo_horizontal_right_click;
-            resources.ApplyResources(this.toolStripMenuItem2, "toolStripMenuItem2");
-            this.toolStripMenuItem2.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.toolStripMenuItem2.Name = "toolStripMenuItem2";
+            resources.ApplyResources(this.labelError, "labelError");
+            this.labelError.ForeColor = System.Drawing.Color.Red;
+            this.labelError.Name = "labelError";
             // 
+
             // txtServerUrl
             // 
             this.txtServerUrl.CueText = "https://demo.mezeo.net";
             resources.ApplyResources(this.txtServerUrl, "txtServerUrl");
             this.txtServerUrl.Name = "txtServerUrl";
+            this.txtServerUrl.TextChanged += new System.EventHandler(this.txtServerUrl_TextChanged);
+            this.txtServerUrl.Leave += new System.EventHandler(this.txtServerUrl_Leave);
             // 
             // txtPasswrod
             // 
@@ -176,18 +189,26 @@
             resources.ApplyResources(this.txtPasswrod, "txtPasswrod");
             this.txtPasswrod.Name = "txtPasswrod";
             this.txtPasswrod.UseSystemPasswordChar = true;
+            this.txtPasswrod.TextChanged += new System.EventHandler(this.txtPasswrod_TextChanged);
             // 
             // txtUserName
             // 
             this.txtUserName.CueText = "User Name";
             resources.ApplyResources(this.txtUserName, "txtUserName");
             this.txtUserName.Name = "txtUserName";
+            this.txtUserName.TextChanged += new System.EventHandler(this.txtUserName_TextChanged);
+            // 
+            // tmrConnectionCheck
+            // 
+            this.tmrConnectionCheck.Interval = 5000;
+            this.tmrConnectionCheck.Tick += new System.EventHandler(this.tmrConnectionCheck_Tick);
             // 
             // frmLogin
             // 
             this.AcceptButton = this.btnLogin;
             resources.ApplyResources(this, "$this");
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            this.Controls.Add(this.labelError);
             this.Controls.Add(this.txtServerUrl);
             this.Controls.Add(this.txtPasswrod);
             this.Controls.Add(this.txtUserName);
@@ -230,6 +251,9 @@
         private System.Windows.Forms.ToolStripMenuItem toolStripMenuItem5;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator3;
         private System.Windows.Forms.ToolStripMenuItem msSyncMgrExit;
+        private System.Windows.Forms.Timer tmrConnectionCheck;
+        private System.Windows.Forms.Label labelError;
+
     }
 }
 

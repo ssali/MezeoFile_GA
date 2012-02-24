@@ -27,10 +27,10 @@ namespace Mezeo
 
         public void LogMessage(string tag, string message)
         {
-            lvLogList.Items.Add(DateTime.Now.ToString());
-            lvLogList.Items[lvLogList.Items.Count - 1].SubItems.Add(tag);
-            lvLogList.Items[lvLogList.Items.Count - 1].SubItems.Add(message);
-            lvLogList.Items[lvLogList.Items.Count - 1].EnsureVisible();
+            //lvLogList.Items.Add(DateTime.Now.ToString());
+            //lvLogList.Items[lvLogList.Items.Count - 1].SubItems.Add(tag);
+            //lvLogList.Items[lvLogList.Items.Count - 1].SubItems.Add(message);
+            //lvLogList.Items[lvLogList.Items.Count - 1].EnsureVisible();
         }
 
         private void lvLogList_MouseClick(object sender, MouseEventArgs e)

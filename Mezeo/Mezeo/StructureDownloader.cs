@@ -60,6 +60,11 @@ namespace Mezeo
         {
             int refCode=0;
             ItemDetails[] contents = cFileCloud.DownloadItemDetails(cRootContainerUrl, ref refCode);
+            if (contents == null)
+            {
+                return;
+            }
+
             isRootContainer = true;
             LocalItemDetails lItem = new LocalItemDetails();
             lItem.ItemDetails = contents;
@@ -92,6 +97,12 @@ namespace Mezeo
         {
             int refCode = 0;
             ItemDetails[] contents = cFileCloud.DownloadItemDetails(itemDetail.szContentUrl, ref refCode);
+
+            if (contents == null)
+            {
+                return;
+            }
+
             LocalItemDetails lItem = new LocalItemDetails();
             lItem.ItemDetails = contents;
             strPath += itemDetail.strName;

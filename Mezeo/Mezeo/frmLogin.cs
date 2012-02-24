@@ -19,7 +19,8 @@ namespace Mezeo
         MezeoFileSupport.MezeoFileCloud mezeoFileCloud;
         MezeoFileSupport.LoginDetails loginDetails;
         frmSyncManager syncManager;
-        
+        private bool internetConnection = false;
+
         public bool isLoginSuccess = false;
         public bool showLogin = false;
 
@@ -73,14 +74,20 @@ namespace Mezeo
 
         private void exitToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            if (syncManager.isSyncInProgress)
+            if (syncManager != null && syncManager.isSyncInProgress)
             {
                 DialogResult dResult = MessageBox.Show("A sync is currently in progress.\n Cancel sync and close Mezeo File Sync now?", "Mezeo File Sync", MessageBoxButtons.OKCancel);
                 if (dResult == DialogResult.Cancel)
                     return;
+
+                niSystemTray.Visible = false;
+                syncManager.ApplicationExit();
             }
-            niSystemTray.Visible = false;
-            Application.Exit();
+            else
+            {
+                niSystemTray.Visible = false;
+                Application.Exit();
+            }
         }
 
       
@@ -102,16 +109,20 @@ namespace Mezeo
 
         public void Login()
         {
-            CheckForIllegalCrossThreadCalls = false;
+            //if (BasicInfo.IsConnectedToInternet)
+            {
+                CheckForIllegalCrossThreadCalls = false;
 
-            this.UseWaitCursor = true;
+                this.UseWaitCursor = true;
 
-            this.txtUserName.Enabled = false;
-            this.txtPasswrod.Enabled = false;
-            this.txtServerUrl.Enabled = false;
-            this.btnLogin.Enabled = false;
+                this.txtUserName.Enabled = false;
+                this.txtPasswrod.Enabled = false;
+                this.txtServerUrl.Enabled = false;
+                this.btnLogin.Enabled = false;
 
-            bwLogin.RunWorkerAsync();
+                //if (BasicInfo.IsConnectedToInternet)
+                bwLogin.RunWorkerAsync();
+            }
         }
 
         private string validateServiceUrl(string url)
@@ -137,6 +148,7 @@ namespace Mezeo
             this.txtUserName.CueText = LanguageTranslator.GetValue("UserIdCueText");
             this.txtPasswrod.CueText=LanguageTranslator.GetValue("PasswordCueText");
             this.txtServerUrl.CueText = LanguageTranslator.GetValue("ServerUrlCueText");
+            this.labelError.Text = "";
 
             if (!BasicInfo.LoadRegistryValues())
             {
@@ -144,19 +156,30 @@ namespace Mezeo
             }
             else
             {
-                if (BasicInfo.UserName.Trim().Length == 0 || BasicInfo.Password.Trim().Length == 0 || BasicInfo.ServiceUrl.Trim().Length == 0)
+                //if (BasicInfo.UserName.Trim().Length == 0 || BasicInfo.Password.Trim().Length == 0 || BasicInfo.ServiceUrl.Trim().Length == 0)
+                if (!BasicInfo.IsCredentialsAvailable)
                 {
                     showLogin = true;
                 }
                 else
                 {
                     txtUserName.Text = BasicInfo.UserName;
+                    txtUserName.Enabled = false;
+   
                     txtPasswrod.Text = BasicInfo.Password;
+                    
                     txtServerUrl.Text = BasicInfo.ServiceUrl;
+                    txtServerUrl.Enabled = false;
+
                     showLogin = false;
                 }
             }
 
+            internetConnection = BasicInfo.IsConnectedToInternet;
+            //if (!(BasicInfo.IsCredentialsAvailable && BasicInfo.IsConnectedToInternet))
+            //{
+            //    showLogin = true;
+            //}
         }
 
         private void bwLogin_DoWork(object sender, DoWorkEventArgs e)
@@ -171,14 +194,8 @@ namespace Mezeo
             this.UseWaitCursor = false;
             if (loginDetails == null)
             {
-                MessageBox.Show("Login failure");
-                this.txtUserName.Enabled = true;
-                this.txtPasswrod.Enabled = true;
-                this.txtServerUrl.Enabled = true;
+                ShowLoginError();
                 
-                this.btnLogin.Enabled = true;
-
-                isLoginSuccess = false;
             }
             else
             {
@@ -188,20 +205,55 @@ namespace Mezeo
                 BasicInfo.ServiceUrl = txtServerUrl.Text;
                 
                 isLoginSuccess = true;
-                niSystemTray.ContextMenuStrip = cmSystemTraySyncMgr;
-                CheckAndCreateSyncDirectory();
-                syncManager = new frmSyncManager(mezeoFileCloud, loginDetails, notificationManager);
+                //niSystemTray.ContextMenuStrip = cmSystemTraySyncMgr;
+                //CheckAndCreateSyncDirectory();
+                //syncManager = new frmSyncManager(mezeoFileCloud, loginDetails, notificationManager);
+                ////syncManager.CreateControl();
+                ////syncManager.Show();
                 //syncManager.CreateControl();
-                //syncManager.Show();
-                syncManager.CreateControl();
                 
-                syncManager.InitializeSync();
+                //syncManager.InitializeSync();
 
-                if (showLogin)
-                {
-                    this.Close();
-                }
+                //if (showLogin)
+                //{
+                //    this.Close();
+                //}
             }
+             
+            if (showLogin)
+            {
+                this.Close();
+            }
+
+            niSystemTray.ContextMenuStrip = cmSystemTraySyncMgr;
+            CheckAndCreateSyncDirectory();
+            syncManager = new frmSyncManager(mezeoFileCloud, loginDetails, notificationManager);
+            syncManager.CreateControl();
+
+            if (isLoginSuccess)
+            {
+                syncManager.InitializeSync();
+            }
+            else if (!BasicInfo.IsConnectedToInternet)
+            {
+                notificationManager.NotifyIcon = Properties.Resources.app_offline;
+                syncManager.DisableSyncManager();
+            }
+
+            tmrConnectionCheck.Enabled = true;            
+
+        }
+
+        private void ShowLoginError()
+        {
+            this.labelError.Text = LanguageTranslator.GetValue("LoginErrorText");
+            this.txtUserName.Enabled = true;
+            this.txtPasswrod.Enabled = true;
+            this.txtServerUrl.Enabled = true;
+
+            this.btnLogin.Enabled = true;
+
+            isLoginSuccess = false;
         }
 
         private void frmLogin_Load(object sender, EventArgs e)
@@ -211,12 +263,8 @@ namespace Mezeo
 
         public void showSyncManager()
         {
-            if (syncManager == null)
-            {
-               syncManager = new frmSyncManager(mezeoFileCloud, loginDetails,notificationManager);
-            }
-
-            syncManager.Show();
+            if (syncManager != null)
+                syncManager.Show();
         }
 
         private void msShowSyncMgr_Click(object sender, EventArgs e)
@@ -252,9 +300,85 @@ namespace Mezeo
                 System.IO.Directory.CreateDirectory(dirName);
                 BasicInfo.IsInitialSync = true;
                 BasicInfo.SyncDirPath = dirName;
-            }
+            }            
+        }
 
-            
+        private void txtPasswrod_TextChanged(object sender, EventArgs e)
+        {
+
+        }
+
+
+        private void tmrConnectionCheck_Tick(object sender, EventArgs e)
+        {
+            if (BasicInfo.IsConnectedToInternet != internetConnection)
+            {
+                tmrConnectionCheck.Enabled = false;
+                internetConnection = BasicInfo.IsConnectedToInternet;
+
+                if (BasicInfo.IsConnectedToInternet)
+                {
+                    if (loginDetails == null)
+                    {
+                        int referenceCode = 0;
+                        loginDetails = mezeoFileCloud.Login(BasicInfo.UserName, BasicInfo.Password, validateServiceUrl(BasicInfo.ServiceUrl), ref referenceCode);
+                    }
+
+                    if (loginDetails == null)
+                    {
+                        this.labelError.Text = LanguageTranslator.GetValue("LoginErrorText");
+                        this.txtUserName.Enabled = false;
+                        this.txtPasswrod.Enabled = true;
+                        this.txtServerUrl.Enabled = false;
+
+                        this.btnLogin.Enabled = true;
+
+                        isLoginSuccess = false;
+                        this.Show();
+                    }
+                    else
+                    {
+                        notificationManager.NotificationHandler.ShowBalloonTip(5, LanguageTranslator.GetValue("TrayBalloonSyncStatusText"),
+                                                                                LanguageTranslator.GetValue("TrayAppOnlineText"), ToolTipIcon.None);
+                        
+                        notificationManager.HoverText = LanguageTranslator.GetValue("TrayAppOnlineText");
+                        notificationManager.NotifyIcon = Properties.Resources.MezeoVault;
+
+                        syncManager.LoginDetail = loginDetails;
+                        syncManager.EnableSyncManager();
+                        syncManager.InitializeSync();
+                    }
+                }
+                else
+                {
+                    notificationManager.NotificationHandler.ShowBalloonTip(5, LanguageTranslator.GetValue("TrayBalloonSyncStatusText"),
+                                                                                LanguageTranslator.GetValue("TrayAppOfflineText"), ToolTipIcon.None);
+
+                    notificationManager.HoverText = LanguageTranslator.GetValue("TrayAppOfflineText");
+                    notificationManager.NotifyIcon = Properties.Resources.app_offline;
+
+                    syncManager.DisableSyncManager();
+                }
+                tmrConnectionCheck.Enabled = true;
+            }
+        }
+
+        private void txtUserName_TextChanged(object sender, EventArgs e)
+        {
+
+        }
+
+        private void txtServerUrl_TextChanged(object sender, EventArgs e)
+        {
+
+        }
+
+        private void txtServerUrl_Leave(object sender, EventArgs e)
+        {
+            if (txtServerUrl.Text.Trim().Length == 0)
+            {
+                txtServerUrl.Text = "https://demo.mezeo.net";
+            }
         }
 
     }

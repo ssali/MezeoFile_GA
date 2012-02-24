@@ -2,11 +2,16 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Net.NetworkInformation;
+using System.Runtime.InteropServices;
 
 namespace Mezeo
 {
     public static class BasicInfo
     {
+        [DllImport("wininet.dll")]
+        private extern static bool InternetGetConnectedState(out int Description, int ReservedValue);
+
         private static string userName="";
         private static string password="";
         private static string serviceUrl="";
@@ -106,6 +111,30 @@ namespace Mezeo
             }
         }
 
+        public static string GetMacAddress
+        {
+            get
+            {
+                return GetNinMacAddress();
+            }
+        }
+
+        public static bool IsConnectedToInternet
+        {
+            get
+            {
+                return ConnectedToInternet();
+            }
+        }
+
+        public static bool IsCredentialsAvailable
+        {
+            get
+            {
+                return userName.Trim().Length != 0 && password.Trim().Length != 0 && serviceUrl.Trim().Length != 0;
+            }
+        }
+
         private static void ReadRegValue()
         {
             userName = regHandler.Read("Basic1", Microsoft.Win32.RegistryValueKind.Binary);
@@ -126,6 +155,27 @@ namespace Mezeo
             regHandler.Write("Basic5",lastSync, Microsoft.Win32.RegistryValueKind.Binary);
             regHandler.Write("Basic6",autoSync, Microsoft.Win32.RegistryValueKind.Binary);
             regHandler.Write("Basic7", isInitailSync, Microsoft.Win32.RegistryValueKind.Binary);
+        }
+
+        private static string GetNinMacAddress()
+        {
+            string macAddresses = "";
+
+            foreach (NetworkInterface nic in NetworkInterface.GetAllNetworkInterfaces())
+            {
+                if (nic.OperationalStatus == OperationalStatus.Up)
+                {
+                    macAddresses += nic.GetPhysicalAddress().ToString();
+                    break;
+                }
+            }
+            return macAddresses;
+        }
+
+        private static bool ConnectedToInternet()
+        {
+            int Desc = 0x1 | 0x2;
+            return InternetGetConnectedState(out Desc, 0);
         }
     }
 }
