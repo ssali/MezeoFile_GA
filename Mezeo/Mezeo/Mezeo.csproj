@@ -112,6 +112,7 @@
     </Compile>
     <Compile Include="Language.cs" />
     <Compile Include="LanguageTranslator.cs" />
+    <Compile Include="LocalEvents.cs" />
     <Compile Include="LocalItemDetails.cs" />
     <Compile Include="NotificationManager.cs" />
     <Compile Include="Program.cs" />
@@ -120,6 +121,7 @@
     <Compile Include="StructureDownloader.cs" />
     <Compile Include="StructureDownloaderEvent.cs" />
     <Compile Include="ThreadLockObject.cs" />
+    <Compile Include="Watcher.cs" />
     <EmbeddedResource Include="AboutBox.resx">
       <DependentUpon>AboutBox.cs</DependentUpon>
     </EmbeddedResource>

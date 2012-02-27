@@ -16,6 +16,9 @@ namespace Mezeo
         public delegate void CancelDownLoadEvent();
         public event CancelDownLoadEvent cancelDownloadEvent;
 
+        public delegate void StartDownLoaderEvent(bool bStart);
+        public event StartDownLoaderEvent startDownloaderEvent;
+
         private int totalFileCount = 0;
 
         public int TotalFileCount
@@ -47,7 +50,6 @@ namespace Mezeo
         {
                 lock (lockObject)
                 {
-
                     queue.Enqueue(lItemdDetails);
                     if (isRootContainer)
                     { 
@@ -62,7 +64,21 @@ namespace Mezeo
             ItemDetails[] contents = cFileCloud.DownloadItemDetails(cRootContainerUrl, ref refCode);
             if (contents == null)
             {
+                if (downloadEvent != null)
+                {
+                    downloadEvent(this, new StructureDownloaderEvent(true));
+                }
+                if (startDownloaderEvent != null)
+                {
+                    startDownloaderEvent(false);
+                }
+
                 return;
+            }
+
+            if (startDownloaderEvent != null)
+            {
+                startDownloaderEvent(true);
             }
 
             isRootContainer = true;

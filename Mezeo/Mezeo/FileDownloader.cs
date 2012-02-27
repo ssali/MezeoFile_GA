@@ -50,9 +50,10 @@ namespace Mezeo
                         break;
                     }
                     if (queue.Count == 0)
-                    {                        
+                    {                       
                         Monitor.Wait(lockObject);
-                        continue; 
+                        continue;
+                        
                     }
                     itemDetail = queue.Dequeue();
                     if (itemDetail == null || itemDetail.ItemDetails == null)
@@ -82,14 +83,14 @@ namespace Mezeo
                                 fileFolderInfo.Key = itemDetail.Path + "\\" + id.strName;
                             }
 
-                            fileFolderInfo.IsPublic = id.strPublic.Trim().Length == 0 ? false : Convert.ToBoolean(id.strPublic);
-                            fileFolderInfo.IsShared = Convert.ToBoolean(id.strShared);
+                            fileFolderInfo.IsPublic = id.bPublic;//id.strPublic.Trim().Length == 0 ? false : Convert.ToBoolean(id.strPublic);
+                            fileFolderInfo.IsShared = id.bShared;//Convert.ToBoolean(id.strShared);
                             fileFolderInfo.ContentUrl = id.szContentUrl;
-                            fileFolderInfo.CreatedDate = DateTime.Parse(id.strCreated);
+                            fileFolderInfo.CreatedDate = id.dtCreated;//DateTime.Parse(id.strCreated);
                             fileFolderInfo.FileName = id.strName;
                             fileFolderInfo.FileSize = id.dblSizeInBytes;
                             fileFolderInfo.MimeType = id.szMimeType;
-                            fileFolderInfo.ModifiedDate = DateTime.Parse(id.strModified);
+                            fileFolderInfo.ModifiedDate = id.dtModified;//DateTime.Parse(id.strModified);
                             fileFolderInfo.ParentUrl = id.szParentUrl;
                             fileFolderInfo.Status = "";
                             fileFolderInfo.Type = id.szItemType;
@@ -147,6 +148,14 @@ namespace Mezeo
                     }
 
                 }
+            }
+        }
+
+        public void ForceComplete()
+        {
+            if (fileDownloadCompletedEvent != null)
+            {
+                fileDownloadCompletedEvent();
             }
         }
 

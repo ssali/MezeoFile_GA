@@ -10,7 +10,7 @@ namespace Mezeo
     {
         //private string ConnectionString = "Data Source=DemoT.s3db;Version=3;New=false;Compress=True;";
         private const string DATABASE_NAME = "mezeoDb.s3db";
-        private const string TABLE_NAME = "FileStructInfo";
+        public const string TABLE_NAME = "FileStructInfo";
 
         public const string KEY = "key";
         public const string MODIFIED_DATE = "modified_date";
@@ -165,6 +165,34 @@ namespace Mezeo
             }
         }
 
+        public int Update(string tableName, string newValues, string whereCondition)
+        {
+            string query = "update " + tableName + " set " + newValues + " where " + whereCondition;
+            int result = -1;
+
+            sqlCommand = new SQLiteCommand(query, sqlConnection);
+            
+            //sqlCommand.Parameters.Add("@NewValues", newValues);
+            //sqlCommand.Parameters.Add("@WhereCondition", whereCondition);
+
+            result = sqlCommand.ExecuteNonQuery();
+            
+            return result;
+        }
+
+        public int Delete(string tableName, string whereCondition)
+        {
+            string query = "delete from" + tableName + " where " + whereCondition;
+            int result = -1;
+
+            sqlCommand = new SQLiteCommand(query, sqlConnection);
+            sqlCommand.Parameters.Add("@WhereCondition", whereCondition);
+
+            result = sqlCommand.ExecuteNonQuery();
+
+            return result;
+        }
+
         public string GetString(string tableName, string fieldName)
         {
             string query = "select " + fieldName + " from " + tableName;
@@ -178,6 +206,22 @@ namespace Mezeo
             
             sqlDataReader.Close();
             
+            return result;
+        }
+
+        public string GetString(string tableName, string fieldName, string WhereCondition)
+        {
+            string query = "select " + fieldName + " from " + tableName + " where " + WhereCondition;
+            string result = "";
+
+            sqlCommand = new SQLiteCommand(query, sqlConnection);
+            sqlDataReader = sqlCommand.ExecuteReader();
+            sqlDataReader.Read();
+
+            result = sqlDataReader.GetString(0);
+
+            sqlDataReader.Close();
+
             return result;
         }
 
@@ -213,9 +257,9 @@ namespace Mezeo
             return result;
         }
 
-        public bool GetBoolean(string tableName, string fieldName)
+        public bool GetBoolean(string tableName, string fieldName, string WhereCondition)
         {
-            string query = "select " + fieldName + " from " + tableName;
+            string query = "select " + fieldName + " from " + tableName + " where " + WhereCondition;
             bool result = false;
 
             sqlCommand = new SQLiteCommand(query, sqlConnection);
@@ -229,9 +273,9 @@ namespace Mezeo
             return result;
         }
 
-        public DateTime GetDateTime(string tableName, string fieldName)
+        public DateTime GetDateTime(string tableName, string fieldName, string WhereCondition)
         {
-            string query = "select " + fieldName + " from " + tableName;
+            string query = "select " + fieldName + " from " + tableName + " where " + WhereCondition;
             DateTime result;
 
             sqlCommand = new SQLiteCommand(query, sqlConnection);
@@ -328,8 +372,6 @@ namespace Mezeo
 
         public void Write(FileFolderInfo fileFolderInfo)
         {
-           
-
             ExecuteNonQuery(fileFolderInfo);
         }
     }
