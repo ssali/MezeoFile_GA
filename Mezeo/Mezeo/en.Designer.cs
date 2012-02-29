@@ -61,6 +61,24 @@ namespace Mezeo {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Error Detected.
+        /// </summary>
+        internal static string ConflictDetectedError {
+            get {
+                return ResourceManager.GetString("ConflictDetectedError", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Conflict Detected.
+        /// </summary>
+        internal static string ConflictDetectedModified {
+            get {
+                return ResourceManager.GetString("ConflictDetectedModified", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Login.
         /// </summary>
         internal static string LoginButtonText {

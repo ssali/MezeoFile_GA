@@ -92,15 +92,20 @@ namespace Mezeo
                             fileFolderInfo.MimeType = id.szMimeType;
                             fileFolderInfo.ModifiedDate = id.dtModified;//DateTime.Parse(id.strModified);
                             fileFolderInfo.ParentUrl = id.szParentUrl;
-                            fileFolderInfo.Status = "";
+                            fileFolderInfo.Status = "SUCCESS";
                             fileFolderInfo.Type = id.szItemType;
 
                             int lastSepIndex = itemDetail.Path.LastIndexOf("\\");
                             string parentDirPath = "";
 
-                            if (lastSepIndex > 0)
+                            if (lastSepIndex != -1)
+                            {                                
+                                parentDirPath = itemDetail.Path.Substring(0, itemDetail.Path.LastIndexOf("\\"));
+                                parentDirPath = parentDirPath.Substring(parentDirPath.LastIndexOf("\\") + 1);
+                            }
+                            else
                             {
-                                parentDirPath = itemDetail.Path.Substring(lastSepIndex + 1);
+                                parentDirPath = itemDetail.Path;
                             }
 
                             fileFolderInfo.ParentDir = parentDirPath;

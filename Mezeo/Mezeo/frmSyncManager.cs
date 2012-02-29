@@ -149,6 +149,10 @@ namespace Mezeo
 
                 lnkFolderPath.Text = BasicInfo.SyncDirPath;
 
+                watcher.StopMonitor();
+                watcher = new Watcher(LocalEventList, lockObject, BasicInfo.SyncDirPath);
+                watcher.StartMonitor();
+
             }
         }
 
@@ -161,7 +165,15 @@ namespace Mezeo
 
         private void btnSyncNow_Click(object sender, EventArgs e)
         {
-            InitializeSync();
+            if (!isLocalEventInProgress)
+            {
+                InitializeSync();
+            }
+            else
+            {
+                btnSyncNow.Enabled = false;
+                isLocalEventInProgress = false;
+            }
         }
 
         private void tmrNextSync_Tick(object sender, EventArgs e)
@@ -207,6 +219,8 @@ namespace Mezeo
         private void rbSyncOn_Click(object sender, EventArgs e)
         {
             BasicInfo.AutoSync = true;
+
+            tmrNextSync.Enabled = true;
             
             if (!isSyncInProgress)
             {
@@ -217,7 +231,9 @@ namespace Mezeo
         private void rbSyncOff_CheckedChanged(object sender, EventArgs e)
         {
             BasicInfo.AutoSync = false;
-            
+
+            tmrNextSync.Enabled = false;
+
             if (!isSyncInProgress)
             {
                 ShowSyncMessage();
@@ -366,6 +382,15 @@ namespace Mezeo
             statusMessages[0] = LanguageTranslator.GetValue("SyncManagerAnalyseMessage1");
             statusMessages[1]= LanguageTranslator.GetValue("SyncManagerAnalyseMessage2");
             statusMessages[2] = LanguageTranslator.GetValue("SyncManagerAnalyseMessage3");
+
+            if (BasicInfo.AutoSync)
+            {
+                rbSyncOn.Checked = true;
+            }
+            else
+            {
+                rbSyncOff.Checked = true;
+            }
           
         }
 
@@ -423,13 +448,27 @@ namespace Mezeo
             }
         }
 
+        private void StopLocalSync()
+        {
+            lblPercentDone.Text = "";
+            pbSyncProgress.Visible = false;
+            label1.Visible = true;
+            btnSyncNow.Enabled = true;
+           
+            cnotificationManager.NotificationHandler.Icon = Properties.Resources.MezeoVault;
+            cnotificationManager.NotificationHandler.ShowBalloonTip(5, LanguageTranslator.GetValue("TrayBalloonSyncStatusText"),
+                                                                     LanguageTranslator.GetValue("TrayBalloonSyncStopText"),
+                                                                    ToolTipIcon.None);
+            cnotificationManager.HoverText = LanguageTranslator.GetValue("TrayBalloonSyncStopText");
+        }
+
         public void SyncNow()
         {
 
             //if (!BasicInfo.IsInitialSync)
             {
                 cnotificationManager.NotificationHandler.Icon = Properties.Resources.mezeosyncstatus_syncing;
-                cnotificationManager.HoverText = AboutBox.AssemblyTitle + "\n" + LanguageTranslator.GetValue("TrayHoverSyncProgressText") + (int)0 + LanguageTranslator.GetValue("TrayHoverSyncProgressInitialText"); ;
+                cnotificationManager.HoverText = AboutBox.AssemblyTitle + "\n" + LanguageTranslator.GetValue("TrayHoverSyncProgressText") + (int)0 + LanguageTranslator.GetValue("TrayHoverSyncProgressInitialText");
                 cnotificationManager.NotificationHandler.ShowBalloonTip(5, LanguageTranslator.GetValue("TrayBalloonInitialSyncStartedTitleText"),
                                                                         LanguageTranslator.GetValue("TrayBalloonInitialSyncStartedText"),
                                                                         ToolTipIcon.None);
@@ -706,15 +745,15 @@ namespace Mezeo
         {
             lblPercentDone.Visible = false;
             lblPercentDone.Text = "";
-            //pbSyncProgress.Visible = false;
-            //lblStatusL2.Visible = true;
+            pbSyncProgress.Visible = false;
+            label1.Visible = true;
         }
 
         private void EnableProgress()
         {
             lblPercentDone.Visible = true;
             pbSyncProgress.Visible = true;
-            //lblStatusL2.Visible = false;
+            label1.Visible = false;
         }
 
         private void OpenFolder()
@@ -769,14 +808,19 @@ namespace Mezeo
             if (strPath.IndexOf("\\") == -1)
                 return cLoginDetails.szContainerContentsUri;
 
-            strPath = strPath.Substring(0, (strPath.IndexOf("\\") - 1));
+            strPath = strPath.Substring(0, (strPath.LastIndexOf("\\")));
 
-            return dbHandler.GetString(DbHandler.TABLE_NAME, DbHandler.PARENT_URL, DbHandler.KEY + " = '" + strPath + "'");
+            return GetContentURI(strPath);//dbHandler.GetString(DbHandler.TABLE_NAME, DbHandler.PARENT_URL, DbHandler.KEY + " = '" + strPath + "'");
         }
 
         public string GetContentURI(string strPath)
         {
             return dbHandler.GetString(DbHandler.TABLE_NAME, DbHandler.CONTENT_URL, DbHandler.KEY + " = '" + strPath + "'");
+        }
+
+        public string GetETag(string strPath)
+        {
+            return dbHandler.GetString(DbHandler.TABLE_NAME, DbHandler.E_TAG, DbHandler.KEY + " = '" + strPath + "'");
         }
 
         public int CheckForModifyEvent(string fileName)
@@ -824,7 +868,8 @@ namespace Mezeo
             else
             {
                 fInfo.FileName = lEvent.FileName.Substring(lEvent.FileName.LastIndexOf("\\") + 1);
-                fInfo.ParentDir = fInfo.FileName.Substring(fInfo.FileName.LastIndexOf("\\") + 1);
+                fInfo.ParentDir = lEvent.FileName.Substring(0, lEvent.FileName.LastIndexOf("\\"));
+                fInfo.ParentDir = fInfo.ParentDir.Substring(fInfo.ParentDir.LastIndexOf("\\") +1);
             }
 
             if ((fileInfo.Attributes & FileAttributes.Directory) == FileAttributes.Directory)
@@ -875,7 +920,57 @@ namespace Mezeo
             FileAttributes attr = File.GetAttributes(lEvent.FullPath);
             if((attr & FileAttributes.Directory) == FileAttributes.Directory)
             {
+                DirectoryInfo rootDir = new DirectoryInfo(lEvent.FullPath);
+                WalkDirectoryTree(rootDir,lEvent.OldFullPath);
+            }
+        }
 
+        private void WalkDirectoryTree(System.IO.DirectoryInfo root,string lEventOldPath)
+        {
+            System.IO.FileInfo[] files = null;
+            System.IO.DirectoryInfo[] subDirs = null;
+
+            // First, process all the files directly under this folder
+            try
+            {
+                files = root.GetFiles("*.*");
+            }
+            // This is thrown if even one of the files requires permissions greater
+            // than the application provides.
+            catch (UnauthorizedAccessException e)
+            {
+            }
+
+            catch (System.IO.DirectoryNotFoundException e)
+            {
+            }
+
+            if (files != null)
+            {
+                foreach (System.IO.FileInfo fi in files)
+                {
+                   string newKey = fi.FullName.Substring(BasicInfo.SyncDirPath.Length + 1);
+                   string oldKey = lEventOldPath.Substring(BasicInfo.SyncDirPath.Length + 1);
+                   oldKey += "\\" + fi.Name;
+                    
+                   dbHandler.Update(DbHandler.TABLE_NAME,DbHandler.KEY + "='" + newKey + "'",DbHandler.KEY + "='" + oldKey + "'");
+
+                }
+
+                // Now find all the subdirectories under this directory.
+                subDirs = root.GetDirectories();
+
+                foreach (System.IO.DirectoryInfo dirInfo in subDirs)
+                {
+                    // Resursive call for each subdirectory.
+                    WalkDirectoryTree(dirInfo, lEventOldPath + "\\" + dirInfo.Name);
+
+                    string newKey = dirInfo.FullName.Substring(BasicInfo.SyncDirPath.Length + 1);
+                    string oldKey = lEventOldPath.Substring(BasicInfo.SyncDirPath.Length + 1);
+                    oldKey += "\\" + dirInfo.Name;
+
+                    dbHandler.Update(DbHandler.TABLE_NAME, DbHandler.KEY + "='" + newKey + "'", DbHandler.KEY + "='" + oldKey + "'");
+                }
             }
         }
 
@@ -901,7 +996,15 @@ namespace Mezeo
             foreach (LocalEvents lEvent in events)
             {
                 bool bRet = true;
-                FileAttributes attr = File.GetAttributes(lEvent.FullPath);
+               
+                FileAttributes attr = FileAttributes.Normal ;
+
+                bool isDirectory = false;
+                bool isFile = File.Exists(lEvent.FullPath);
+                if (!isFile)
+                    isDirectory = Directory.Exists(lEvent.FullPath);
+                if (isFile || isDirectory)
+                    attr = File.GetAttributes(lEvent.FullPath);
 
                 if (lEvent.EventType == LocalEvents.EventsType.FILE_ACTION_MODIFIED)
                 {
@@ -921,7 +1024,7 @@ namespace Mezeo
                                 bRet = false;
                             else
                             {
-                                string str = lEvent.FileName.Substring(nIndex + 1);
+                                string str = lEvent.FileName.Substring(0, nIndex);
                                 foreach (LocalEvents id in events)
                                 {
                                     if (id.FileName == str)
@@ -957,8 +1060,11 @@ namespace Mezeo
                         bRet = true;
                 }
 
-                if ((attr & FileAttributes.Hidden) == FileAttributes.Hidden || (attr & FileAttributes.Temporary) == FileAttributes.Temporary)
-                    bRet = false;
+                if (lEvent.EventType != LocalEvents.EventsType.FILE_ACTION_REMOVED)
+                {
+                    if ((attr & FileAttributes.Hidden) == FileAttributes.Hidden || (attr & FileAttributes.Temporary) == FileAttributes.Temporary)
+                        bRet = false;
+                }
 
                 if (bRet)
                 {
@@ -998,9 +1104,13 @@ namespace Mezeo
                 return;
             }
 
+            btnSyncNow.Text = LanguageTranslator.GetValue("SyncManagerSyncStopButtonText");
+            
             ProcessLocalEvents();
             isLocalEventInProgress = false;
             ShowSyncMessage();
+            
+            btnSyncNow.Text = LanguageTranslator.GetValue("SyncManagerSyncNowButtonText");
         }
 
         private void ProcessLocalEvents()
@@ -1010,13 +1120,32 @@ namespace Mezeo
             pbSyncProgress.Value = 0;
             pbSyncProgress.Maximum = events.Count;
             fileDownloadCount = 0;
-            
+
+            cnotificationManager.NotificationHandler.Icon = Properties.Resources.mezeosyncstatus_syncing;
+            cnotificationManager.HoverText = AboutBox.AssemblyTitle + "\n" + LanguageTranslator.GetValue("TrayHoverSyncProgressText") + 
+                                            (int)0 + LanguageTranslator.GetValue("TrayHoverSyncProgressInitialText");
+
             foreach (LocalEvents lEvent in events)
             {
+                if (!isLocalEventInProgress)
+                {
+                    StopLocalSync();
+                    return;
+                }
+
                 fileDownloadCount += 1;
                 showProgress();
+                lblStatusL3.Text = lEvent.FullPath;// lEvent.FileName;
 
-                FileAttributes attr = File.GetAttributes(lEvent.FullPath);
+                FileAttributes attr = FileAttributes.Normal;
+
+                bool isDirectory = false;
+                bool isFile = File.Exists(lEvent.FullPath);
+                if(!isFile)
+                    isDirectory = Directory.Exists(lEvent.FullPath);
+                if(isFile || isDirectory)
+                    attr = File.GetAttributes(lEvent.FullPath);
+
                 int nStatusCode = 0;
                 bool bRet = true;
                 switch (lEvent.EventType)
@@ -1064,7 +1193,7 @@ namespace Mezeo
                             if(strContentURi.Substring(strContentURi.Length - 9).Equals("/contents") ||
                                 strContentURi.Substring(strContentURi.Length -8).Equals("/content")) 
                             {
-                                strContentURi = strContentURi.Substring(0, strContentURi.LastIndexOf("/") +1);
+                                strContentURi = strContentURi.Substring(0, strContentURi.LastIndexOf("/"));
                             }
 
                             bRet = cMezeoFileCloud.Delete(strContentURi, ref nStatusCode);
@@ -1080,7 +1209,7 @@ namespace Mezeo
                             if (strContentURi.Substring(strContentURi.Length - 9).Equals("/contents") ||
                                strContentURi.Substring(strContentURi.Length - 8).Equals("/content"))
                             {
-                                strContentURi = strContentURi.Substring(0, strContentURi.LastIndexOf("/") + 1);
+                                strContentURi = strContentURi.Substring(0, strContentURi.LastIndexOf("/"));
                             }
 
                             if ((attr & FileAttributes.Directory) == FileAttributes.Directory)
@@ -1104,12 +1233,199 @@ namespace Mezeo
             }
 
             isLocalEventInProgress = false;
+
+            cnotificationManager.NotificationHandler.Icon = Properties.Resources.MezeoVault;
+            cnotificationManager.NotificationHandler.ShowBalloonTip(5, LanguageTranslator.GetValue("TrayBalloonSyncStatusText"),
+                                                                         LanguageTranslator.GetValue("TrayBalloonSyncFolderUpToDate"),
+                                                                        ToolTipIcon.None);
+
             events.Clear();
 
             if (LocalEventList.Count != 0)
                 watcher_WatchCompletedEvent();
         }
 
+        private void ReportConflict(LocalEvents lEvent , IssueFound.ConflictType cType)
+        {
+            FileInfo fInfo = new FileInfo(lEvent.FullPath);
+
+            IssueFound iFound = new IssueFound();
+
+            iFound.LocalFilePath = lEvent.FullPath;
+            iFound.LocalIssueDT = fInfo.LastWriteTime;
+            iFound.LocalSize = FormatSizeString(fInfo.Length);
+            iFound.ConflictTimeStamp = DateTime.Now;
+            iFound.cType = cType;
+            switch (cType)
+            {
+                case IssueFound.ConflictType.CONFLICT_MODIFIED:
+                    {
+                        iFound.IssueTitle = LanguageTranslator.GetValue("ConflictDetectedModified");
+                    }
+                    break;
+                case IssueFound.ConflictType.CONFLICT_UPLOAD:
+                    {
+                        iFound.IssueTitle = LanguageTranslator.GetValue("ConflictDetectedError");
+                    }
+                    break;
+            }
+
+            int nStatusCode = 0;
+            string strContentURi = GetContentURI(lEvent.FileName);
+             if (strContentURi.Substring(strContentURi.Length - 9).Equals("/contents") ||
+                strContentURi.Substring(strContentURi.Length - 8).Equals("/content"))
+            {
+                strContentURi = strContentURi.Substring(0, strContentURi.LastIndexOf("/"));
+            }
+
+             ItemDetails iDetails = cMezeoFileCloud.GetContinerResult(strContentURi, ref nStatusCode);
+
+             iFound.ServerSize = FormatSizeString(iDetails.dblSizeInBytes);
+             iFound.ServerIssueDT = iDetails.dtModified;
+             iFound.ServerFileInfo = lEvent.FileName;
+
+        }
+
+        private bool CheckForConflicts(LocalEvents lEvent, string strContentUrl)
+        {
+            int nStatusCode = 0;
+            bool bRet = false;
+            string strEtag;
+            switch (lEvent.EventType)
+            {
+                case LocalEvents.EventsType.FILE_ACTION_MODIFIED:
+                    {
+                        strEtag = cMezeoFileCloud.GetETag(strContentUrl, ref nStatusCode);
+                        string strDBETag = GetETag(lEvent.FileName);
+                        if (strEtag.Trim().Length != 0)
+                        {
+                            if (strEtag != strDBETag)
+                            {
+                                //Report conflict
+                                return true;
+                            }
+                            else
+                            {
+                                string URL = "";
+                                if (strContentUrl.Substring(strContentUrl.Length - 9).Equals("/contents") ||
+                                    strContentUrl.Substring(strContentUrl.Length - 8).Equals("/content"))
+                                {
+                                    URL = strContentUrl.Substring(0, strContentUrl.LastIndexOf("/"));
+                                }
+
+                                ItemDetails IDetails = cMezeoFileCloud.GetContinerResult(URL, ref nStatusCode);
+                                string FileName = lEvent.FileName.Substring((lEvent.FileName.LastIndexOf("\\") + 1));
+                                if (FileName != IDetails.strName)
+                                {
+                                    string FileReName = lEvent.FullPath.Substring(lEvent.FullPath.LastIndexOf("\\"));
+                                    FileReName += IDetails.strName;
+
+                                    File.Move(lEvent.FullPath, FileReName);
+
+                                    bRet = cMezeoFileCloud.OverWriteFile(FileReName, strContentUrl, ref nStatusCode);
+                                    if (bRet)
+                                    {
+                                        //Update In DB for overwrite
+                                    }
+
+                                    //Update DB for rename
+                                    return false;
+                                }
+                                else
+                                    return true;
+                            }
+                        }
+                        else
+                        {
+                            string strParentURL = GetParentURI(lEvent.FileName);
+                            string strURL = cMezeoFileCloud.UploadingFile(lEvent.FullPath, strParentURL, ref nStatusCode);
+
+                            //Update DB for event.
+                            return false;
+                        }
+                    }
+                    break;
+                case LocalEvents.EventsType.FILE_ACTION_REMOVED:
+                    {
+                        strEtag = cMezeoFileCloud.GetETag(strContentUrl, ref nStatusCode);
+                        string strDBETag = GetETag(lEvent.FileName);
+                        string FileName = lEvent.FileName.Substring((lEvent.FileName.LastIndexOf("\\") + 1));
+
+                        string URL = "";
+                        if (strContentUrl.Substring(strContentUrl.Length - 9).Equals("/contents") ||
+                            strContentUrl.Substring(strContentUrl.Length - 8).Equals("/content"))
+                        {
+                            URL = strContentUrl.Substring(0, strContentUrl.LastIndexOf("/"));
+                        }
+
+                        ItemDetails IDetails = cMezeoFileCloud.GetContinerResult(URL, ref nStatusCode);
+
+                        if (strEtag.Trim().Length != 0)
+                        {
+                            if ((strEtag != strDBETag) || (FileName != IDetails.strName))
+                            {
+                                bRet = cMezeoFileCloud.DownloadFile(strContentUrl + "/" + IDetails.strName, lEvent.FullPath, ref nStatusCode);
+
+                                if (bRet)
+                                {
+                                    //Update DB for events
+                                    return false;
+                                }
+                                return true;
+                            }
+                            return true;
+                        }
+                        else
+                        {
+                            return false;
+                            //Update DB for Delete Event
+                        }
+                    }
+                    break;
+                case LocalEvents.EventsType.FILE_ACTION_RENAMED:
+                    {
+                        strEtag = cMezeoFileCloud.GetETag(strContentUrl, ref nStatusCode);
+                        string strDBETag = GetETag(lEvent.FileName);
+                        string FileName = lEvent.FileName.Substring((lEvent.FileName.LastIndexOf("\\") + 1));
+
+                        string URL = "";
+                        if (strContentUrl.Substring(strContentUrl.Length - 9).Equals("/contents") ||
+                            strContentUrl.Substring(strContentUrl.Length - 8).Equals("/content"))
+                        {
+                            URL = strContentUrl.Substring(0, strContentUrl.LastIndexOf("/"));
+                        }
+
+                        ItemDetails IDetails = cMezeoFileCloud.GetContinerResult(URL, ref nStatusCode);
+
+                        if (strEtag.Trim().Length != 0)
+                        {
+                            if(strEtag != strDBETag)
+                            {
+                                bRet = cMezeoFileCloud.DownloadFile(strContentUrl + "/" + lEvent.FileName, lEvent.FullPath, ref nStatusCode);
+                                if (bRet)
+                                {
+                                    //Update DB for events
+                                }
+                            }
+                            return true;
+                        }
+                        else
+                        {
+                            string strParentUri = GetParentURI(lEvent.FileName);
+                            string strUri = cMezeoFileCloud.UploadingFile(lEvent.FullPath, strParentUri, ref nStatusCode);
+                            if (strUri.Trim().Length != 0)
+                            {
+                                return false;
+                            }
+                            return true;
+                        }
+
+                    }
+                    break;
+            }
+
+            return true;
+        }
 
         void watcher_WatchCompletedEvent()
         {

@@ -57,6 +57,11 @@ namespace Mezeo
             fileWatcher.EnableRaisingEvents = true;
         }
 
+        public void StopMonitor()
+        {
+            fileWatcher.EnableRaisingEvents = false;
+        }
+
         private void StampTime()
         {
             eventTime = DateTime.Now;

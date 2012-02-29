@@ -182,11 +182,11 @@ namespace Mezeo
 
         public int Delete(string tableName, string whereCondition)
         {
-            string query = "delete from" + tableName + " where " + whereCondition;
+            string query = "delete from " + tableName + " where " + whereCondition;
             int result = -1;
 
             sqlCommand = new SQLiteCommand(query, sqlConnection);
-            sqlCommand.Parameters.Add("@WhereCondition", whereCondition);
+            //sqlCommand.Parameters.Add("@WhereCondition", whereCondition);
 
             result = sqlCommand.ExecuteNonQuery();
 

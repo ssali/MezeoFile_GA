@@ -9,7 +9,7 @@
     <OutputType>WinExe</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>Mezeo</RootNamespace>
-    <AssemblyName>Mezeo File Sync</AssemblyName>
+    <AssemblyName>MezeoFileSync</AssemblyName>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <TargetFrameworkProfile>Client</TargetFrameworkProfile>
     <FileAlignment>512</FileAlignment>
@@ -110,6 +110,7 @@
     <Compile Include="frmSyncManager.Designer.cs">
       <DependentUpon>frmSyncManager.cs</DependentUpon>
     </Compile>
+    <Compile Include="IssueFound.cs" />
     <Compile Include="Language.cs" />
     <Compile Include="LanguageTranslator.cs" />
     <Compile Include="LocalEvents.cs" />

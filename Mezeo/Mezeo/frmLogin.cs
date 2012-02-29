@@ -277,18 +277,22 @@ namespace Mezeo
             DbHandler dbHandler = new DbHandler();
             bool isDbCreateNew = dbHandler.OpenConnection();
 
-            if (BasicInfo.SyncDirPath.Trim().Length == 0 || isDbCreateNew)
+            bool isDirectoryExists = false;
+            if (BasicInfo.SyncDirPath.Trim().Length != 0)
+                isDirectoryExists = System.IO.Directory.Exists(BasicInfo.SyncDirPath);
+
+            if (!isDirectoryExists || isDbCreateNew)
             {
-                string userName = BasicInfo.UserName;
+                //string userName = BasicInfo.UserName;
 
-                int atIndex = userName.IndexOf('@');
+                //int atIndex = userName.IndexOf('@');
 
-                if (atIndex>0)
-                {
-                    userName = userName.Substring(0, atIndex-1);
-                }
+                //if (atIndex>0)
+                //{
+                //    userName = userName.Substring(0, atIndex-1);
+                //}
 
-                string dirName = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile) + "\\" + AboutBox.AssemblyTitle + " (" +  userName + ")";
+                string dirName = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile) + "\\" + AboutBox.AssemblyTitle ;
                 
                 if( System.IO.Directory.Exists(dirName))
                 {
@@ -300,6 +304,8 @@ namespace Mezeo
                 System.IO.Directory.CreateDirectory(dirName);
                 BasicInfo.IsInitialSync = true;
                 BasicInfo.SyncDirPath = dirName;
+
+                mezeoFileCloud.GetOverlayRegisteration();
             }            
         }
 
