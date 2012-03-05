@@ -332,7 +332,7 @@ namespace Mezeo
                 BasicInfo.IsInitialSync = true;
                 BasicInfo.SyncDirPath = dirName;
 
-                mezeoFileCloud.GetOverlayRegisteration();
+                //mezeoFileCloud.GetOverlayRegisteration();
             }            
         }
 

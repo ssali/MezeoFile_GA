@@ -61,6 +61,7 @@
             this.tmrSwapStatusMessage = new System.Windows.Forms.Timer(this.components);
             this.eventLog1 = new System.Diagnostics.EventLog();
             this.tmrNextSync = new System.Windows.Forms.Timer(this.components);
+            this.bwNQUpdate = new System.ComponentModel.BackgroundWorker();
             this.pnlStatus.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.imgStatus)).BeginInit();
             this.pnlUsage.SuspendLayout();
@@ -380,8 +381,16 @@
             // 
             // tmrNextSync
             // 
-            this.tmrNextSync.Interval = 10000;
+            this.tmrNextSync.Interval = 300000;
             this.tmrNextSync.Tick += new System.EventHandler(this.tmrNextSync_Tick);
+            // 
+            // bwNQUpdate
+            // 
+            this.bwNQUpdate.WorkerReportsProgress = true;
+            this.bwNQUpdate.WorkerSupportsCancellation = true;
+            this.bwNQUpdate.DoWork += new System.ComponentModel.DoWorkEventHandler(this.bwNQUpdate_DoWork);
+            this.bwNQUpdate.ProgressChanged += new System.ComponentModel.ProgressChangedEventHandler(this.bwNQUpdate_ProgressChanged);
+            this.bwNQUpdate.RunWorkerCompleted += new System.ComponentModel.RunWorkerCompletedEventHandler(this.bwNQUpdate_RunWorkerCompleted);
             // 
             // frmSyncManager
             // 
@@ -396,7 +405,6 @@
             this.Controls.Add(this.pnlUsage);
             this.Controls.Add(this.pnlStatus);
             this.Controls.Add(this.panel1);
-            this.DoubleBuffered = true;
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.MaximizeBox = false;
@@ -458,5 +466,6 @@
         private System.Windows.Forms.Timer tmrNextSync;
         private System.Windows.Forms.Label lblPercentDone;
         private System.Windows.Forms.ProgressBar pbSyncProgress;
+        private System.ComponentModel.BackgroundWorker bwNQUpdate;
     }
 }

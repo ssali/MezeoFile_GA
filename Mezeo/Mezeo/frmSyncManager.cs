@@ -36,7 +36,7 @@ namespace Mezeo
         private FileDownloader fileDownloder;
         private bool isDownloadingFile = false;
         private StructureDownloader stDownloader;
-        private int fileDownloadCount = 0;
+        private int fileDownloadCount = 1;
         private DateTime lastSync;
         Queue<LocalItemDetails> queue;
 
@@ -178,7 +178,7 @@ namespace Mezeo
 
         private void tmrNextSync_Tick(object sender, EventArgs e)
         {           
-            //InitializeSync();
+            InitializeSync();
         }
                
         private void lnkFolderPath_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
@@ -220,7 +220,7 @@ namespace Mezeo
         {
             BasicInfo.AutoSync = true;
 
-            //tmrNextSync.Enabled = true;
+            tmrNextSync.Enabled = true;
             
             if (!isSyncInProgress)
             {
@@ -232,7 +232,7 @@ namespace Mezeo
         {
             BasicInfo.AutoSync = false;
 
-            //tmrNextSync.Enabled = false;
+            tmrNextSync.Enabled = false;
 
             if (!isSyncInProgress)
             {
@@ -284,7 +284,7 @@ namespace Mezeo
                     showProgress();
 
                 }
-                fileDownloadCount += 1;
+                fileDownloadCount++ ;
             //});
         }
 
@@ -414,12 +414,14 @@ namespace Mezeo
             pbSyncProgress.Value = 0;
             if (!isSyncInProgress)
             {
+                btnSyncNow.Text = this.btnSyncNow.Text = LanguageTranslator.GetValue("SyncManagerSyncStopButtonText");
+                btnSyncNow.Refresh();
                 isAnalysingStructure = true;
                 isDownloadingFile = true;
                 isSyncInProgress = true;
                 label1.Visible = false;
                 isAnalysisCompleted = false;
-                //tmrNextSync.Enabled = false;
+                tmrNextSync.Enabled = false;
                 pbSyncProgress.Visible = true;
                 SyncNow();
             }
@@ -433,11 +435,13 @@ namespace Mezeo
         {
             if (isSyncInProgress)
             {
+                bwNQUpdate.CancelAsync();
                 lblPercentDone.Text = "";
                 pbSyncProgress.Visible = false;
                 label1.Visible = true;
                 btnSyncNow.Enabled = false;
-                lockObject.StopThread = true;
+                if (lockObject != null)
+                    lockObject.StopThread = true;
                 
                 cnotificationManager.NotificationHandler.Icon = Properties.Resources.MezeoVault;
                 cnotificationManager.NotificationHandler.ShowBalloonTip(5, LanguageTranslator.GetValue("TrayBalloonSyncStatusText"),
@@ -465,16 +469,14 @@ namespace Mezeo
 
         public void SyncNow()
         {
+            cnotificationManager.NotificationHandler.Icon = Properties.Resources.mezeosyncstatus_syncing;
+            cnotificationManager.HoverText = AboutBox.AssemblyTitle + "\n" + LanguageTranslator.GetValue("TrayHoverSyncProgressText") + (int)0 + LanguageTranslator.GetValue("TrayHoverSyncProgressInitialText");
 
             if (BasicInfo.IsInitialSync)
-            {
-                cnotificationManager.NotificationHandler.Icon = Properties.Resources.mezeosyncstatus_syncing;
-                cnotificationManager.HoverText = AboutBox.AssemblyTitle + "\n" + LanguageTranslator.GetValue("TrayHoverSyncProgressText") + (int)0 + LanguageTranslator.GetValue("TrayHoverSyncProgressInitialText");
+            {                
                 cnotificationManager.NotificationHandler.ShowBalloonTip(5, LanguageTranslator.GetValue("TrayBalloonInitialSyncStartedTitleText"),
                                                                         LanguageTranslator.GetValue("TrayBalloonInitialSyncStartedText"),
                                                                         ToolTipIcon.None);
-
-                //cnotificationManager.NotificationHandler.ContextMenuStrip.
 
                 queue = new Queue<LocalItemDetails>();
                 lockObject = new ThreadLockObject();
@@ -499,80 +501,32 @@ namespace Mezeo
             }
             else
             {
-                Queue<NQDetails> updatequeue = new Queue<NQDetails>();
+                lblStatusL1.Text = "Collecting updates...";
+                lblStatusL3.Text = "";
                 int nStatusCode = 0;
-                //string NQParentURI = cMezeoFileCloud.NQParentUri(cLoginDetails.szManagementUri, ref nStatusCode);
-
-                NQDetails[] pNQDetails = null;
                 string queueName = BasicInfo.GetMacAddress + "-" + BasicInfo.UserName;
-
                 int nNQLength = cMezeoFileCloud.NQGetLength(BasicInfo.ServiceUrl + cLoginDetails.szNQParentUri, queueName, ref nStatusCode);
                 if (nNQLength > 0)
-                    pNQDetails = cMezeoFileCloud.NQGetData(BasicInfo.ServiceUrl + cLoginDetails.szNQParentUri, queueName, nNQLength, ref nStatusCode);
-              
-                //bool bRecursive = false;
-
-                if (pNQDetails != null)
                 {
-                    for (int n = 0; n < pNQDetails[0].nTotalNQ; n++)
-                    {
-                        updatequeue.Enqueue(pNQDetails[n]);
-
-
-            //        if(pNQDetails[0].nTotalNQ == 100)
-            //        {
-            //            bRecursive = true;
-            //            while(bRecursive)
-            //            {
-            //                 pNQDetails = cMezeoFileCloud.NQGetData(BasicInfo.ServiceUrl + "/cdmi" + NQParentURI, queueName, 100, ref nStatusCode);
-            //                 if(pNQDetails != null && pNQDetails[0].nTotalNQ == 100)
-            //                     bRecursive = truel;
-            //                 else
-            //                     bRecursive = false;
-
-                        cMezeoFileCloud.NQDeleteValue(BasicInfo.ServiceUrl + cLoginDetails.szNQParentUri, queueName, 1, ref nStatusCode);
-                    }
+                    pbSyncProgress.Maximum = nNQLength;
+                    fileDownloadCount = 1;
+                    showProgress();
+                    bwNQUpdate.RunWorkerAsync();
                 }
                 else
-                    return;
-
-
-                if (updatequeue.Count != 0)
-                    UpdateFromNQ(updatequeue);
-
-                //if (pNQDetails != null && pNQDetails[0].nTotalNQ == 100)
-                //{
-                //    bRecursive = true;
-                //    while (bRecursive)
-                //    {
-                //        pNQDetails = cMezeoFileCloud.NQGetData(BasicInfo.ServiceUrl + cLoginDetails.szNQParentUri, queueName, 100, ref nStatusCode);
-                //        if (pNQDetails != null && pNQDetails[0].nTotalNQ == 100)
-                //            bRecursive = true;
-                //        else
-                //            bRecursive = false;
-
-                //        if (pNQDetails != null)
-                //        {
-                //            for (int n = 0; n < pNQDetails[0].nTotalNQ; n++)
-                //            {
-                //                updatequeue.Enqueue(pNQDetails[n]);
-
-                //                cMezeoFileCloud.NQDeleteValue(BasicInfo.ServiceUrl + cLoginDetails.szNQParentUri, queueName, 1, ref nStatusCode);
-                //            }
-                //        }
-                //    }
-                //}
-
-             
+                {
+                    isSyncInProgress = false;
+                    ShowSyncMessage();
+                }
             }
         }
 
-        private void UpdateFromNQ(Queue<NQDetails> UpdateQ)
+        private void UpdateFromNQ(NQDetails UpdateQ)
         {
-            int nCount = UpdateQ.Count();
-            for (int n = 0; n < nCount; n++)
+           // int nCount = UpdateQ.Count();
+            //for (int n = 0; n < nCount; n++)
             {
-                NQDetails nqDetail = UpdateQ.Dequeue();
+                NQDetails nqDetail = UpdateQ;
 
                 int nStatusCode = 0;
                 NSResult nsResult = null;
@@ -580,13 +534,13 @@ namespace Mezeo
                                                                nqDetail.StrMezeoExportedPath,
                                                                nqDetail.StrObjectType, ref nStatusCode);
                 if (nsResult == null)
-                    continue;
+                    return;
 
                 string strPath = nqDetail.StrParentUri.Substring(cLoginDetails.szNQParentUri.Length +1);
                 string strKey = strPath.Replace("/" , "\\");
                 strKey += nqDetail.StrObjectName;
                 strPath = BasicInfo.SyncDirPath + "\\" + strKey;
-                
+                lblStatusL3.Text = strPath;
 
                 if (nqDetail.StrEvent == "cdmi_create_complete")
                 {
@@ -641,7 +595,7 @@ namespace Mezeo
                             ItemDetails[] iDetails = cMezeoFileCloud.DownloadItemDetails(nsResult.StrContentsUri, ref nStatusCode);
                             if (iDetails != null)
                             {
-                                for (int num = 0; num <= iDetails[0].nTotalItem; num++)
+                                for (int num = 0; num < iDetails[0].nTotalItem; num++)
                                 {
                                     DownloadFolderStructureForNQ(iDetails[num], strKey);
                                 }
@@ -770,7 +724,7 @@ namespace Mezeo
                 ItemDetails[] iDetails = cMezeoFileCloud.DownloadItemDetails(iDetail.szContentUrl, ref nStatusCode);
                 if (iDetails != null)
                 {
-                    for (int num = 0; num <= iDetails[0].nTotalItem; num++)
+                    for (int num = 0; num < iDetails[0].nTotalItem; num++)
                     {
                         DownloadFolderStructureForNQ(iDetails[num], fileFolderInfo.Key);
                     }
@@ -812,7 +766,7 @@ namespace Mezeo
 
         private void setUpControls()
         {
-            btnSyncNow.Text = this.btnSyncNow.Text = LanguageTranslator.GetValue("SyncManagerSyncStopButtonText");
+            
             
             lblStatusL1.Text = statusMessages[0];
             lblStatusL1.Visible = true;
@@ -897,16 +851,21 @@ namespace Mezeo
 
             if (BasicInfo.AutoSync)
             {
-               // tmrNextSync.Tick += new EventHandler(tmrNextSync_Tick);
-                
-                //tmrNextSync.Enabled = true;
+                //tmrNextSync.Tick += new EventHandler(tmrNextSync_Tick);
+
+                //if (InvokeRequired)
+                //{
+
+                //}
+
+                tmrNextSync.Enabled = true;
                 //tmrNextSync.Start();
                 //tmrNextSync.Interval = 300000;
             }
 
             DisableProgress();
             this.btnSyncNow.Text = LanguageTranslator.GetValue("SyncManagerSyncNowButtonText");
-
+            this.btnSyncNow.Enabled = true;
             if (BasicInfo.AutoSync)
             {
                 ShowAutoSyncMessage();
@@ -1361,7 +1320,7 @@ namespace Mezeo
 
             pbSyncProgress.Value = 0;
             pbSyncProgress.Maximum = events.Count;
-            fileDownloadCount = 0;
+            fileDownloadCount = 1;
 
             cnotificationManager.NotificationHandler.Icon = Properties.Resources.mezeosyncstatus_syncing;
             cnotificationManager.HoverText = AboutBox.AssemblyTitle + "\n" + LanguageTranslator.GetValue("TrayHoverSyncProgressText") + 
@@ -1375,7 +1334,7 @@ namespace Mezeo
                     return;
                 }
 
-                fileDownloadCount += 1;
+                fileDownloadCount++ ;
                 showProgress();
                 lblStatusL3.Text = lEvent.FullPath;// lEvent.FileName;
 
@@ -1690,6 +1649,62 @@ namespace Mezeo
                 }
                 HandleEvents();
             }
+        }
+
+        private void bwNQUpdate_DoWork(object sender, DoWorkEventArgs e)
+        {
+            int nStatusCode = 0;
+
+            NQDetails[] pNQDetails = null;
+            string queueName = BasicInfo.GetMacAddress + "-" + BasicInfo.UserName;
+
+            int nNQLength = cMezeoFileCloud.NQGetLength(BasicInfo.ServiceUrl + cLoginDetails.szNQParentUri, queueName, ref nStatusCode);
+            if (nNQLength > 0)
+                pNQDetails = cMezeoFileCloud.NQGetData(BasicInfo.ServiceUrl + cLoginDetails.szNQParentUri, queueName, nNQLength, ref nStatusCode);
+
+            if (pNQDetails != null)
+            {        
+
+                for (int n = 0; n < pNQDetails[0].nTotalNQ; n++)
+                {
+                    if (bwNQUpdate.CancellationPending)
+                    {
+                        e.Cancel = true;
+                        break;
+                    }
+
+                    UpdateFromNQ(pNQDetails[n]);
+                    cMezeoFileCloud.NQDeleteValue(BasicInfo.ServiceUrl + cLoginDetails.szNQParentUri, queueName, 1, ref nStatusCode);
+                    bwNQUpdate.ReportProgress(0);
+                }
+
+                
+                isSyncInProgress = false;
+            }
+            
+        }
+
+        private void bwNQUpdate_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
+        {
+
+            bwNQUpdate.CancelAsync();
+            ShowSyncMessage();
+            isSyncInProgress = false;
+
+            cnotificationManager.NotificationHandler.Icon = Properties.Resources.MezeoVault;
+            cnotificationManager.NotificationHandler.ShowBalloonTip(5, LanguageTranslator.GetValue("TrayBalloonSyncStatusText"),
+                                                                         LanguageTranslator.GetValue("TrayBalloonSyncFolderUpToDate"),
+                                                                        ToolTipIcon.None);
+
+            cnotificationManager.HoverText = LanguageTranslator.GetValue("TrayBalloonSyncStopText");
+        }
+
+        private void bwNQUpdate_ProgressChanged(object sender, ProgressChangedEventArgs e)
+        {
+            
+            showProgress();
+            fileDownloadCount++;
+            
         }
        
     }

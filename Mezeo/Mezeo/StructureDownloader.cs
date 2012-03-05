@@ -21,6 +21,8 @@ namespace Mezeo
 
         private int totalFileCount = 0;
 
+        DbHandler dbhandler = new DbHandler();
+
         public int TotalFileCount
         {
             get
@@ -43,6 +45,7 @@ namespace Mezeo
             this.lockObject = lockObject;
             cRootContainerUrl = rootContainerUrl;
             cFileCloud = fileCloud;
+            dbhandler.OpenConnection();
            // Debugger.ShowLogger();
         }
 
@@ -82,15 +85,21 @@ namespace Mezeo
             }
 
             isRootContainer = true;
-            LocalItemDetails lItem = new LocalItemDetails();
-            lItem.ItemDetails = contents;
-            lItem.Path = "";
+            foreach (ItemDetails iDetail in contents)
+            {
+                string strCheck = dbhandler.GetString(DbHandler.TABLE_NAME, DbHandler.KEY, DbHandler.KEY + " = '" + iDetail.szContentUrl + "'");
+                if (strCheck.Trim().Length == 0)
+                {
+                    LocalItemDetails lItem = new LocalItemDetails();
+                    lItem.ItemDetails = iDetail;
+                    lItem.Path = iDetail.strName;
+                    totalFileCount++;
 
-            PrepareStructure(lItem);
-            totalFileCount += contents[0].nTotalItem + 1;
+                    PrepareStructure(lItem);
+                }
+            }
 
-
-            for (int n = 0; n <= contents[0].nTotalItem; n++)
+            for (int n = 0; n < contents[0].nTotalItem; n++)
             {
                 if (lockObject.StopThread)
                 {
@@ -99,7 +108,7 @@ namespace Mezeo
                 }
                 if (contents[n].szItemType == "DIRECTORY")
                 {
-                    analyseItemDetails(contents[n],lItem.Path);
+                    analyseItemDetails(contents[n], contents[n].strName);
                 }
             }
 
@@ -119,18 +128,24 @@ namespace Mezeo
                 return;
             }
 
-            LocalItemDetails lItem = new LocalItemDetails();
-            lItem.ItemDetails = contents;
-            strPath += itemDetail.strName;
-            lItem.Path = strPath;
-           
-            totalFileCount += contents[0].nTotalItem + 1;
-           
-            PrepareStructure(lItem);
+            foreach (ItemDetails iDetail in contents)
+            {
+                string strCheck = dbhandler.GetString(DbHandler.TABLE_NAME, DbHandler.KEY, DbHandler.KEY + " = '" + iDetail.szContentUrl + "'");
+                if (strCheck.Trim().Length == 0)
+                {
+                    LocalItemDetails lItem = new LocalItemDetails();
+                    lItem.ItemDetails = iDetail;
+                    lItem.Path += strPath;
+                    lItem.Path += "\\" + iDetail.strName;
+                    totalFileCount++;
+
+                    PrepareStructure(lItem);
+                }
+            }
 
             if (contents[0].nTotalItem > 0)
             {
-                for (int n = 0; n <= contents[0].nTotalItem; n++)
+                for (int n = 0; n < contents[0].nTotalItem; n++)
                 {
                     if (lockObject.StopThread)
                     {
@@ -139,7 +154,7 @@ namespace Mezeo
                     }
 
                     if (contents[n].szItemType == "DIRECTORY")
-                        analyseItemDetails(contents[n], strPath + "\\");
+                        analyseItemDetails(contents[n], strPath + "\\" + contents[n].strName);
                 }
             }
         }

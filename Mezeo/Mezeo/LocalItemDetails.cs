@@ -8,10 +8,10 @@ namespace Mezeo
 {
     class LocalItemDetails
     {
-        ItemDetails[] contents;
+        ItemDetails contents;
         string strPath;
 
-        public ItemDetails[] ItemDetails
+        public ItemDetails ItemDetails
         {
             get
             {
