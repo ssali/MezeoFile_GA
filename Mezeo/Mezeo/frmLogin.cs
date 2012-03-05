@@ -10,6 +10,7 @@ using System.Reflection;
 using System.Threading;
 using System.Globalization;
 using System.Resources;
+using MezeoFileSupport;
 
 namespace Mezeo
 {
@@ -227,6 +228,7 @@ namespace Mezeo
 
             niSystemTray.ContextMenuStrip = cmSystemTraySyncMgr;
             CheckAndCreateSyncDirectory();
+            CheckAndCreateNotificationQueue();
             syncManager = new frmSyncManager(mezeoFileCloud, loginDetails, notificationManager);
             syncManager.CreateControl();
 
@@ -258,7 +260,7 @@ namespace Mezeo
 
         private void frmLogin_Load(object sender, EventArgs e)
         {
-           
+            
         }
 
         public void showSyncManager()
@@ -270,6 +272,31 @@ namespace Mezeo
         private void msShowSyncMgr_Click(object sender, EventArgs e)
         {
             showSyncManager();
+        }
+
+        private void CheckAndCreateNotificationQueue()
+        {
+            int nStatusCode = 0;
+            string NQParentURI = mezeoFileCloud.NQParentUri(loginDetails.szManagementUri, ref nStatusCode);
+
+            if (NQParentURI.Trim().Length != 0)
+            {
+                loginDetails.szNQParentUri = NQParentURI;
+                NQDetails[] pNQDetails = null;
+                string queueName = BasicInfo.GetMacAddress + "-" + BasicInfo.UserName;
+
+                int nNQLength = mezeoFileCloud.NQGetLength(BasicInfo.ServiceUrl + loginDetails.szNQParentUri, queueName, ref nStatusCode);
+                if (nNQLength > 0)
+                    pNQDetails = mezeoFileCloud.NQGetData(BasicInfo.ServiceUrl + NQParentURI, queueName, nNQLength, ref nStatusCode);
+
+                if (BasicInfo.IsInitialSync && pNQDetails!= null)
+                    mezeoFileCloud.NQDeleteValue(BasicInfo.ServiceUrl + loginDetails.szNQParentUri, queueName, nNQLength, ref nStatusCode);
+
+                if (nStatusCode == 404 && pNQDetails == null)
+                {
+                    bool bRet = mezeoFileCloud.NQCreate(BasicInfo.ServiceUrl + NQParentURI, queueName, NQParentURI, ref nStatusCode);
+                }
+            }
         }
 
         private void CheckAndCreateSyncDirectory()

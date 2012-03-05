@@ -119,8 +119,12 @@ namespace Mezeo
                             }
                             else
                             {
+                                string downloadFileName = BasicInfo.SyncDirPath + "\\" ;
+                                if(itemDetail.Path.Trim().Length != 0)
+                                    downloadFileName += itemDetail.Path + "\\" + id.strName;
+                                else
+                                    downloadFileName += id.strName;
 
-                                string downloadFileName = BasicInfo.SyncDirPath + "\\" + itemDetail.Path + "\\" + id.strName;
                                 if (downloadEvent != null)
                                 {
                                     downloadEvent(this, new FileDownloaderEvents(downloadFileName, 0));

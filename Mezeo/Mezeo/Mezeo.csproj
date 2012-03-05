@@ -98,6 +98,12 @@
     <Compile Include="frmConsole.Designer.cs">
       <DependentUpon>frmConsole.cs</DependentUpon>
     </Compile>
+    <Compile Include="frmIssues.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="frmIssues.Designer.cs">
+      <DependentUpon>frmIssues.cs</DependentUpon>
+    </Compile>
     <Compile Include="frmLogin.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -128,6 +134,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="frmConsole.resx">
       <DependentUpon>frmConsole.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="frmIssues.resx">
+      <DependentUpon>frmIssues.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="frmLogin.resx">
       <DependentUpon>frmLogin.cs</DependentUpon>
@@ -220,6 +229,15 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\app_offline.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\patch_yellow1.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\horizontal_seperator.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\horizontal_seperator1.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

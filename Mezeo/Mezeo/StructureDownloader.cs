@@ -87,10 +87,10 @@ namespace Mezeo
             lItem.Path = "";
 
             PrepareStructure(lItem);
-            totalFileCount += contents[0].nTotalItem;
+            totalFileCount += contents[0].nTotalItem + 1;
 
 
-            for (int n = 0; n < contents[0].nTotalItem; n++)
+            for (int n = 0; n <= contents[0].nTotalItem; n++)
             {
                 if (lockObject.StopThread)
                 {
@@ -124,13 +124,13 @@ namespace Mezeo
             strPath += itemDetail.strName;
             lItem.Path = strPath;
            
-            totalFileCount += contents[0].nTotalItem;
+            totalFileCount += contents[0].nTotalItem + 1;
            
             PrepareStructure(lItem);
 
             if (contents[0].nTotalItem > 0)
             {
-                for (int n = 0; n < contents[0].nTotalItem; n++)
+                for (int n = 0; n <= contents[0].nTotalItem; n++)
                 {
                     if (lockObject.StopThread)
                     {

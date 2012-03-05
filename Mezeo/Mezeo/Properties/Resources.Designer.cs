@@ -74,6 +74,20 @@ namespace Mezeo.Properties {
             }
         }
         
+        internal static System.Drawing.Bitmap horizontal_seperator {
+            get {
+                object obj = ResourceManager.GetObject("horizontal_seperator", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        internal static System.Drawing.Bitmap horizontal_seperator1 {
+            get {
+                object obj = ResourceManager.GetObject("horizontal_seperator1", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
         internal static System.Drawing.Bitmap ic_clock {
             get {
                 object obj = ResourceManager.GetObject("ic_clock", resourceCulture);
@@ -147,6 +161,13 @@ namespace Mezeo.Properties {
         internal static System.Drawing.Bitmap patch_yellow {
             get {
                 object obj = ResourceManager.GetObject("patch_yellow", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        internal static System.Drawing.Bitmap patch_yellow1 {
+            get {
+                object obj = ResourceManager.GetObject("patch_yellow1", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
