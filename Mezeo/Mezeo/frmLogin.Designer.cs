@@ -31,7 +31,6 @@
             this.components = new System.ComponentModel.Container();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(frmLogin));
             this.btnLogin = new System.Windows.Forms.Button();
-            this.niSystemTray = new System.Windows.Forms.NotifyIcon(this.components);
             this.cmSystemTrayLogin = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.loginToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripMenuItem1 = new System.Windows.Forms.ToolStripSeparator();
@@ -48,11 +47,21 @@
             this.msSyncMgrExit = new System.Windows.Forms.ToolStripMenuItem();
             this.pbLogo = new System.Windows.Forms.PictureBox();
             this.labelError = new System.Windows.Forms.Label();
-
             this.txtServerUrl = new Mezeo.CueTextBox();
             this.txtPasswrod = new Mezeo.CueTextBox();
             this.txtUserName = new Mezeo.CueTextBox();
             this.tmrConnectionCheck = new System.Windows.Forms.Timer(this.components);
+            this.cmLogin = new System.Windows.Forms.ContextMenu();
+            this.menuItem1 = new System.Windows.Forms.MenuItem();
+            this.menuItem2 = new System.Windows.Forms.MenuItem();
+            this.menuItem3 = new System.Windows.Forms.MenuItem();
+            this.cmSyncManager = new System.Windows.Forms.ContextMenu();
+            this.menuItem4 = new System.Windows.Forms.MenuItem();
+            this.menuItem7 = new System.Windows.Forms.MenuItem();
+            this.menuItem5 = new System.Windows.Forms.MenuItem();
+            this.menuItem6 = new System.Windows.Forms.MenuItem();
+            this.menuItem8 = new System.Windows.Forms.MenuItem();
+            this.menuItem9 = new System.Windows.Forms.MenuItem();
             this.cmSystemTrayLogin.SuspendLayout();
             this.cmSystemTraySyncMgr.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pbLogo)).BeginInit();
@@ -64,12 +73,6 @@
             this.btnLogin.Name = "btnLogin";
             this.btnLogin.UseVisualStyleBackColor = true;
             this.btnLogin.Click += new System.EventHandler(this.btnLogin_Click);
-            // 
-            // niSystemTray
-            // 
-            resources.ApplyResources(this.niSystemTray, "niSystemTray");
-            this.niSystemTray.DoubleClick += new System.EventHandler(this.niSystemTray_DoubleClick);
-            this.niSystemTray.MouseClick += new System.Windows.Forms.MouseEventHandler(this.niSystemTray_MouseClick);
             // 
             // cmSystemTrayLogin
             // 
@@ -167,14 +170,12 @@
             this.pbLogo.Name = "pbLogo";
             this.pbLogo.TabStop = false;
             // 
-
             // labelError
             // 
             resources.ApplyResources(this.labelError, "labelError");
             this.labelError.ForeColor = System.Drawing.Color.Red;
             this.labelError.Name = "labelError";
             // 
-
             // txtServerUrl
             // 
             this.txtServerUrl.CueText = "https://demo.mezeo.net";
@@ -202,6 +203,72 @@
             // 
             this.tmrConnectionCheck.Interval = 5000;
             this.tmrConnectionCheck.Tick += new System.EventHandler(this.tmrConnectionCheck_Tick);
+            // 
+            // cmLogin
+            // 
+            this.cmLogin.MenuItems.AddRange(new System.Windows.Forms.MenuItem[] {
+            this.menuItem1,
+            this.menuItem2,
+            this.menuItem3});
+            // 
+            // menuItem1
+            // 
+            this.menuItem1.Index = 0;
+            resources.ApplyResources(this.menuItem1, "menuItem1");
+            // 
+            // menuItem2
+            // 
+            this.menuItem2.Index = 1;
+            resources.ApplyResources(this.menuItem2, "menuItem2");
+            // 
+            // menuItem3
+            // 
+            this.menuItem3.Index = 2;
+            resources.ApplyResources(this.menuItem3, "menuItem3");
+            this.menuItem3.Click += new System.EventHandler(this.exitToolStripMenuItem_Click);
+            // 
+            // cmSyncManager
+            // 
+            this.cmSyncManager.MenuItems.AddRange(new System.Windows.Forms.MenuItem[] {
+            this.menuItem4,
+            this.menuItem7,
+            this.menuItem5,
+            this.menuItem8,
+            this.menuItem9,
+            this.menuItem6});
+            // 
+            // menuItem4
+            // 
+            this.menuItem4.Index = 0;
+            resources.ApplyResources(this.menuItem4, "menuItem4");
+            this.menuItem4.Click += new System.EventHandler(this.msShowSyncMgr_Click);
+            // 
+            // menuItem7
+            // 
+            resources.ApplyResources(this.menuItem7, "menuItem7");
+            this.menuItem7.Index = 1;
+            this.menuItem7.Click += new System.EventHandler(this.menuItem7_Click);
+            // 
+            // menuItem5
+            // 
+            this.menuItem5.Index = 2;
+            resources.ApplyResources(this.menuItem5, "menuItem5");
+            // 
+            // menuItem6
+            // 
+            this.menuItem6.Index = 5;
+            resources.ApplyResources(this.menuItem6, "menuItem6");
+            this.menuItem6.Click += new System.EventHandler(this.exitToolStripMenuItem_Click);
+            // 
+            // menuItem8
+            // 
+            this.menuItem8.Index = 3;
+            resources.ApplyResources(this.menuItem8, "menuItem8");
+            // 
+            // menuItem9
+            // 
+            this.menuItem9.Index = 4;
+            resources.ApplyResources(this.menuItem9, "menuItem9");
             // 
             // frmLogin
             // 
@@ -236,7 +303,6 @@
         private CueTextBox txtUserName;
         private CueTextBox txtPasswrod;
         private CueTextBox txtServerUrl;
-        private System.Windows.Forms.NotifyIcon niSystemTray;
         private System.Windows.Forms.ContextMenuStrip cmSystemTrayLogin;
         private System.Windows.Forms.ToolStripMenuItem loginToolStripMenuItem;
         private System.Windows.Forms.ToolStripSeparator toolStripMenuItem1;
@@ -253,6 +319,17 @@
         private System.Windows.Forms.ToolStripMenuItem msSyncMgrExit;
         private System.Windows.Forms.Timer tmrConnectionCheck;
         private System.Windows.Forms.Label labelError;
+        private System.Windows.Forms.ContextMenu cmLogin;
+        private System.Windows.Forms.MenuItem menuItem1;
+        private System.Windows.Forms.MenuItem menuItem2;
+        private System.Windows.Forms.MenuItem menuItem3;
+        private System.Windows.Forms.ContextMenu cmSyncManager;
+        private System.Windows.Forms.MenuItem menuItem4;
+        private System.Windows.Forms.MenuItem menuItem7;
+        private System.Windows.Forms.MenuItem menuItem5;
+        private System.Windows.Forms.MenuItem menuItem6;
+        private System.Windows.Forms.MenuItem menuItem8;
+        private System.Windows.Forms.MenuItem menuItem9;
 
     }
 }

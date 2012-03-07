@@ -14,9 +14,9 @@ using MezeoFileSupport;
 
 namespace Mezeo
 {
-    public partial class frmLogin : Form
+    public partial class frmLogin : BaseForm
     {
-        NotificationManager notificationManager;
+       
         MezeoFileSupport.MezeoFileCloud mezeoFileCloud;
         MezeoFileSupport.LoginDetails loginDetails;
         frmSyncManager syncManager;
@@ -25,21 +25,21 @@ namespace Mezeo
         public bool isLoginSuccess = false;
         public bool showLogin = false;
 
+       // static uint s_uTaskbarRestart;
+
         public frmLogin()
         {
             InitializeComponent();
 
             this.Icon = Properties.Resources.MezeoVault;
             
-            notificationManager = new NotificationManager();
-            notificationManager.NotificationHandler = this.niSystemTray;
-
-            niSystemTray.ContextMenuStrip = cmSystemTrayLogin;
+            
             //Debugger.ShowLogger();
             
             mezeoFileCloud = new MezeoFileSupport.MezeoFileCloud();
 
             LoadResources();
+            
         }
 
         private void frmLogin_FormClosing(object sender, FormClosingEventArgs e)
@@ -51,21 +51,22 @@ namespace Mezeo
             }
             else
             {
-                niSystemTray.Visible = false;
+                ShellNotifyIcon.RemoveNotifyIcon();
+                //niSystemTray.Visible = false;
             }
         }
 
-        private void niSystemTray_DoubleClick(object sender, EventArgs e)
-        {
-            this.WindowState = FormWindowState.Normal;
-            this.Focus();
-        }
+        //private void niSystemTray_DoubleClick(object sender, EventArgs e)
+        //{
+        //    this.WindowState = FormWindowState.Normal;
+        //    this.Focus();
+        //}
 
         private void frmLogin_Resize(object sender, EventArgs e)
         {
             if (this.WindowState == FormWindowState.Minimized)
             {
-                this.ShowInTaskbar = false;
+                this.Hide();
             }
             else
             {
@@ -81,26 +82,28 @@ namespace Mezeo
                 if (dResult == DialogResult.Cancel)
                     return;
 
-                niSystemTray.Visible = false;
+                //niSystemTray.Visible = false;
                 syncManager.ApplicationExit();
+                ShellNotifyIcon.RemoveNotifyIcon();
             }
             else
             {
-                niSystemTray.Visible = false;
+                //niSystemTray.Visible = false;
+                ShellNotifyIcon.RemoveNotifyIcon();
                 Application.Exit();
             }
         }
 
       
-        private void niSystemTray_MouseClick(object sender, MouseEventArgs e)
-        {
-            if (e.Button == System.Windows.Forms.MouseButtons.Left)
-            {
+        //private void niSystemTray_MouseClick(object sender, MouseEventArgs e)
+        //{
+        //    if (e.Button == System.Windows.Forms.MouseButtons.Left)
+        //    {
                 
-               MethodInfo mi = typeof(NotifyIcon).GetMethod("ShowContextMenu", BindingFlags.Instance | BindingFlags.NonPublic);
-                mi.Invoke(niSystemTray, null);
-              }
-        }
+        //       MethodInfo mi = typeof(NotifyIcon).GetMethod("ShowContextMenu", BindingFlags.Instance | BindingFlags.NonPublic);
+        //        mi.Invoke(niSystemTray, null);
+        //      }
+        //}
 
         private void btnLogin_Click(object sender, EventArgs e)
         {
@@ -177,6 +180,11 @@ namespace Mezeo
             }
 
             internetConnection = BasicInfo.IsConnectedToInternet;
+           
+            ShellNotifyIcon.SetNotifyIconHandle(Properties.Resources.MezeoVault.Handle);
+            ShellNotifyIcon.AddNotifyIcon();
+            ShellNotifyIcon.ConnectMyMenu(cmLogin.Handle);
+            //ShellNotifyIcon.ShowNotifyIcon(Properties.Resources.MezeoVault.Handle, "", "", "");
             //if (!(BasicInfo.IsCredentialsAvailable && BasicInfo.IsConnectedToInternet))
             //{
             //    showLogin = true;
@@ -206,6 +214,7 @@ namespace Mezeo
                 BasicInfo.ServiceUrl = txtServerUrl.Text;
                 
                 isLoginSuccess = true;
+                ShellNotifyIcon.ConnectMyMenu(cmSyncManager.Handle);
                 //niSystemTray.ContextMenuStrip = cmSystemTraySyncMgr;
                 //CheckAndCreateSyncDirectory();
                 //syncManager = new frmSyncManager(mezeoFileCloud, loginDetails, notificationManager);
@@ -226,19 +235,20 @@ namespace Mezeo
                 this.Close();
             }
 
-            niSystemTray.ContextMenuStrip = cmSystemTraySyncMgr;
+            //niSystemTray.ContextMenuStrip = cmSystemTraySyncMgr;
             CheckAndCreateSyncDirectory();
             CheckAndCreateNotificationQueue();
-            syncManager = new frmSyncManager(mezeoFileCloud, loginDetails, notificationManager);
+            syncManager = new frmSyncManager(mezeoFileCloud, loginDetails);
             syncManager.CreateControl();
-
+            syncManager.ParentForm = this;
             if (isLoginSuccess)
             {
                 syncManager.InitializeSync();
             }
             else if (!BasicInfo.IsConnectedToInternet)
             {
-                notificationManager.NotifyIcon = Properties.Resources.app_offline;
+                ShellNotifyIcon.SetNotifyIconHandle(Properties.Resources.app_offline.Handle);
+                //notificationManager.NotifyIcon = Properties.Resources.app_offline;
                 syncManager.DisableSyncManager();
             }
 
@@ -332,7 +342,7 @@ namespace Mezeo
                 BasicInfo.IsInitialSync = true;
                 BasicInfo.SyncDirPath = dirName;
 
-                mezeoFileCloud.GetOverlayRegisteration();
+                //mezeoFileCloud.GetOverlayRegisteration();
             }            
         }
 
@@ -371,11 +381,16 @@ namespace Mezeo
                     }
                     else
                     {
-                        notificationManager.NotificationHandler.ShowBalloonTip(5, LanguageTranslator.GetValue("TrayBalloonSyncStatusText"),
-                                                                                LanguageTranslator.GetValue("TrayAppOnlineText"), ToolTipIcon.None);
+                       
+                        //notificationManager.NotificationHandler.ShowBalloonTip(5, LanguageTranslator.GetValue("TrayBalloonSyncStatusText"),
+                        //                                                        LanguageTranslator.GetValue("TrayAppOnlineText"), ToolTipIcon.None);
                         
-                        notificationManager.HoverText = LanguageTranslator.GetValue("TrayAppOnlineText");
-                        notificationManager.NotifyIcon = Properties.Resources.MezeoVault;
+                        //notificationManager.HoverText = LanguageTranslator.GetValue("TrayAppOnlineText");
+                        //notificationManager.NotifyIcon = Properties.Resources.MezeoVault;
+
+                        ShellNotifyIcon.SetNotifyIconHandle(Properties.Resources.MezeoVault.Handle);
+                        ShellNotifyIcon.StopNotifyIconBalloonText(LanguageTranslator.GetValue("TrayAppOnlineText"), LanguageTranslator.GetValue("TrayBalloonSyncStatusText"));
+                        ShellNotifyIcon.SetNotifyIconToolTip(LanguageTranslator.GetValue("TrayAppOnlineText"));
 
                         syncManager.LoginDetail = loginDetails;
                         syncManager.EnableSyncManager();
@@ -384,11 +399,15 @@ namespace Mezeo
                 }
                 else
                 {
-                    notificationManager.NotificationHandler.ShowBalloonTip(5, LanguageTranslator.GetValue("TrayBalloonSyncStatusText"),
-                                                                                LanguageTranslator.GetValue("TrayAppOfflineText"), ToolTipIcon.None);
+                    //notificationManager.NotificationHandler.ShowBalloonTip(5, LanguageTranslator.GetValue("TrayBalloonSyncStatusText"),
+                    //                                                            LanguageTranslator.GetValue("TrayAppOfflineText"), ToolTipIcon.None);
 
-                    notificationManager.HoverText = LanguageTranslator.GetValue("TrayAppOfflineText");
-                    notificationManager.NotifyIcon = Properties.Resources.app_offline;
+                    //notificationManager.HoverText = LanguageTranslator.GetValue("TrayAppOfflineText");
+                    //notificationManager.NotifyIcon = Properties.Resources.app_offline;
+
+                    ShellNotifyIcon.SetNotifyIconHandle(Properties.Resources.app_offline.Handle);
+                    ShellNotifyIcon.StopNotifyIconBalloonText(LanguageTranslator.GetValue("TrayAppOfflineText"), LanguageTranslator.GetValue("TrayBalloonSyncStatusText"));
+                    ShellNotifyIcon.SetNotifyIconToolTip(LanguageTranslator.GetValue("TrayAppOfflineText"));
 
                     syncManager.DisableSyncManager();
                 }
@@ -413,6 +432,25 @@ namespace Mezeo
                 txtServerUrl.Text = "https://demo.mezeo.net";
             }
         }
+
+        private void menuItem7_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        //protected override void WndProc(ref Message msg)
+        //{
+        //    switch (msg.Msg)
+        //    {
+        //        case 0x0001:
+        //            s_uTaskbarRestart = Win32Api.RegisterWindowMessage("TaskbarCreated");
+        //            break;
+        //        default:
+        //            if (msg.Msg == s_uTaskbarRestart)
+        //                ShellNotifyIcon.AddNotifyIcon();
+        //            break;
+        //    }
+        //}
 
     }
 }
