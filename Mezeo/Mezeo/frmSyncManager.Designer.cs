@@ -62,6 +62,7 @@
             this.eventLog1 = new System.Diagnostics.EventLog();
             this.tmrNextSync = new System.Windows.Forms.Timer(this.components);
             this.bwNQUpdate = new System.ComponentModel.BackgroundWorker();
+            this.btnIssuesFound = new System.Windows.Forms.Button();
             this.pnlStatus.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.imgStatus)).BeginInit();
             this.pnlUsage.SuspendLayout();
@@ -76,13 +77,14 @@
             // 
             // pnlStatus
             // 
+            this.pnlStatus.Controls.Add(this.btnIssuesFound);
+            this.pnlStatus.Controls.Add(this.lblStatus);
             this.pnlStatus.Controls.Add(this.lblPercentDone);
             this.pnlStatus.Controls.Add(this.pbSyncProgress);
             this.pnlStatus.Controls.Add(this.label1);
             this.pnlStatus.Controls.Add(this.btnSyncNow);
             this.pnlStatus.Controls.Add(this.lblStatusL3);
             this.pnlStatus.Controls.Add(this.lblStatusL1);
-            this.pnlStatus.Controls.Add(this.lblStatus);
             this.pnlStatus.Controls.Add(this.imgStatus);
             this.pnlStatus.Location = new System.Drawing.Point(18, 249);
             this.pnlStatus.Name = "pnlStatus";
@@ -148,7 +150,7 @@
             // 
             this.lblStatus.AutoSize = true;
             this.lblStatus.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lblStatus.Location = new System.Drawing.Point(80, 34);
+            this.lblStatus.Location = new System.Drawing.Point(80, 18);
             this.lblStatus.Name = "lblStatus";
             this.lblStatus.Size = new System.Drawing.Size(43, 13);
             this.lblStatus.TabIndex = 3;
@@ -157,7 +159,7 @@
             // imgStatus
             // 
             this.imgStatus.Image = global::Mezeo.Properties.Resources.ic_clock;
-            this.imgStatus.Location = new System.Drawing.Point(19, 18);
+            this.imgStatus.Location = new System.Drawing.Point(19, 9);
             this.imgStatus.Name = "imgStatus";
             this.imgStatus.Size = new System.Drawing.Size(41, 44);
             this.imgStatus.SizeMode = System.Windows.Forms.PictureBoxSizeMode.CenterImage;
@@ -392,6 +394,16 @@
             this.bwNQUpdate.ProgressChanged += new System.ComponentModel.ProgressChangedEventHandler(this.bwNQUpdate_ProgressChanged);
             this.bwNQUpdate.RunWorkerCompleted += new System.ComponentModel.RunWorkerCompletedEventHandler(this.bwNQUpdate_RunWorkerCompleted);
             // 
+            // btnIssuesFound
+            // 
+            this.btnIssuesFound.Location = new System.Drawing.Point(27, 57);
+            this.btnIssuesFound.Name = "btnIssuesFound";
+            this.btnIssuesFound.Size = new System.Drawing.Size(96, 23);
+            this.btnIssuesFound.TabIndex = 15;
+            this.btnIssuesFound.Text = "Issues Found";
+            this.btnIssuesFound.UseVisualStyleBackColor = true;
+            this.btnIssuesFound.Click += new System.EventHandler(this.btnIssuesFound_Click);
+            // 
             // frmSyncManager
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -467,5 +479,6 @@
         private System.Windows.Forms.Label lblPercentDone;
         private System.Windows.Forms.ProgressBar pbSyncProgress;
         private System.ComponentModel.BackgroundWorker bwNQUpdate;
+        private System.Windows.Forms.Button btnIssuesFound;
     }
 }

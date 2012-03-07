@@ -374,5 +374,20 @@ namespace Mezeo
         {
             ExecuteNonQuery(fileFolderInfo);
         }
+
+        public int UpdateModifiedDate(DateTime newDate, string key)
+        {
+            string query = "update " + TABLE_NAME + " set " + MODIFIED_DATE + "= @modifiedDate where " + KEY + "='" + key + "'";
+            int result = -1;
+
+            sqlCommand = new SQLiteCommand(query, sqlConnection);
+
+            sqlCommand.Parameters.Add("@modifiedDate",System.Data.DbType.DateTime);
+            sqlCommand.Parameters["@modifiedDate"].Value = newDate;
+
+            result = sqlCommand.ExecuteNonQuery();
+
+            return result;
+        }
     }
 }

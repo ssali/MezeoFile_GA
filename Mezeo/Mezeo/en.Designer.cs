@@ -178,6 +178,15 @@ namespace Mezeo {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Checking server for updates....
+        /// </summary>
+        internal static string SyncManagerCheckingServer {
+            get {
+                return ResourceManager.GetString("SyncManagerCheckingServer", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Updating.
         /// </summary>
         internal static string SyncManagerDownloading {
@@ -511,7 +520,7 @@ namespace Mezeo {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to User Id.
+        ///   Looks up a localized string similar to Username.
         /// </summary>
         internal static string UserIdCueText {
             get {

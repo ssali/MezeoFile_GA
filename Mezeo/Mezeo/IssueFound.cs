@@ -5,10 +5,10 @@ using System.Text;
 
 namespace Mezeo
 {
-    class IssueFound
+    public class IssueFound
     {
         public string LocalFilePath { get; set; }
-
+            
         public string IssueTitle { get; set; }
 
         public ConflictType cType { get; set; }

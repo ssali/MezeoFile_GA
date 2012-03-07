@@ -29,15 +29,15 @@
         private void InitializeComponent()
         {
             this.panel1 = new System.Windows.Forms.Panel();
-            this.button1 = new System.Windows.Forms.Button();
+            this.btnEventViewer = new System.Windows.Forms.Button();
             this.label1 = new System.Windows.Forms.Label();
-            this.listView1 = new System.Windows.Forms.ListView();
+            this.lvIssues = new System.Windows.Forms.ListView();
             this.columnHeader1 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.columnHeader2 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.columnHeader3 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-            this.label2 = new System.Windows.Forms.Label();
-            this.button2 = new System.Windows.Forms.Button();
-            this.label3 = new System.Windows.Forms.Label();
+            this.lblUpdateStatus = new System.Windows.Forms.Label();
+            this.btnIgnoreConflict = new System.Windows.Forms.Button();
+            this.lblDescription = new System.Windows.Forms.Label();
             this.panel2 = new System.Windows.Forms.Panel();
             this.label4 = new System.Windows.Forms.Label();
             this.label5 = new System.Windows.Forms.Label();
@@ -46,14 +46,14 @@
             this.label8 = new System.Windows.Forms.Label();
             this.label9 = new System.Windows.Forms.Label();
             this.panel3 = new System.Windows.Forms.Panel();
-            this.linkLabel1 = new System.Windows.Forms.LinkLabel();
-            this.linkLabel2 = new System.Windows.Forms.LinkLabel();
-            this.linkLabel3 = new System.Windows.Forms.LinkLabel();
-            this.linkLabel4 = new System.Windows.Forms.LinkLabel();
-            this.label10 = new System.Windows.Forms.Label();
-            this.label11 = new System.Windows.Forms.Label();
-            this.label12 = new System.Windows.Forms.Label();
-            this.label13 = new System.Windows.Forms.Label();
+            this.lnkHelp = new System.Windows.Forms.LinkLabel();
+            this.lnkAbout = new System.Windows.Forms.LinkLabel();
+            this.lnkLocalFile = new System.Windows.Forms.LinkLabel();
+            this.lnkFileInfo = new System.Windows.Forms.LinkLabel();
+            this.lblLocalModifiedDate = new System.Windows.Forms.Label();
+            this.lblLocalFileSize = new System.Windows.Forms.Label();
+            this.lblFileSize = new System.Windows.Forms.Label();
+            this.lblModified = new System.Windows.Forms.Label();
             this.panel1.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -61,7 +61,7 @@
             // 
             this.panel1.BackgroundImage = global::Mezeo.Properties.Resources.patch_yellow1;
             this.panel1.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Center;
-            this.panel1.Controls.Add(this.button1);
+            this.panel1.Controls.Add(this.btnEventViewer);
             this.panel1.Controls.Add(this.label1);
             this.panel1.Dock = System.Windows.Forms.DockStyle.Top;
             this.panel1.Location = new System.Drawing.Point(0, 0);
@@ -69,14 +69,14 @@
             this.panel1.Size = new System.Drawing.Size(504, 66);
             this.panel1.TabIndex = 0;
             // 
-            // button1
+            // btnEventViewer
             // 
-            this.button1.Location = new System.Drawing.Point(411, 22);
-            this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(86, 23);
-            this.button1.TabIndex = 1;
-            this.button1.Text = "Event Viewer";
-            this.button1.UseVisualStyleBackColor = true;
+            this.btnEventViewer.Location = new System.Drawing.Point(411, 22);
+            this.btnEventViewer.Name = "btnEventViewer";
+            this.btnEventViewer.Size = new System.Drawing.Size(86, 23);
+            this.btnEventViewer.TabIndex = 1;
+            this.btnEventViewer.Text = "Event Viewer";
+            this.btnEventViewer.UseVisualStyleBackColor = true;
             // 
             // label1
             // 
@@ -89,19 +89,21 @@
             this.label1.TabIndex = 0;
             this.label1.Text = "File Sync Issues";
             // 
-            // listView1
+            // lvIssues
             // 
-            this.listView1.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
+            this.lvIssues.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
             this.columnHeader1,
             this.columnHeader2,
             this.columnHeader3});
-            this.listView1.FullRowSelect = true;
-            this.listView1.Location = new System.Drawing.Point(7, 72);
-            this.listView1.Name = "listView1";
-            this.listView1.Size = new System.Drawing.Size(490, 178);
-            this.listView1.TabIndex = 1;
-            this.listView1.UseCompatibleStateImageBehavior = false;
-            this.listView1.View = System.Windows.Forms.View.Details;
+            this.lvIssues.FullRowSelect = true;
+            this.lvIssues.Location = new System.Drawing.Point(7, 72);
+            this.lvIssues.MultiSelect = false;
+            this.lvIssues.Name = "lvIssues";
+            this.lvIssues.Size = new System.Drawing.Size(490, 178);
+            this.lvIssues.TabIndex = 1;
+            this.lvIssues.UseCompatibleStateImageBehavior = false;
+            this.lvIssues.View = System.Windows.Forms.View.Details;
+            this.lvIssues.SelectedIndexChanged += new System.EventHandler(this.lvIssues_SelectedIndexChanged);
             // 
             // columnHeader1
             // 
@@ -118,32 +120,33 @@
             this.columnHeader3.Text = "Date and Time";
             this.columnHeader3.Width = 95;
             // 
-            // label2
+            // lblUpdateStatus
             // 
-            this.label2.AutoSize = true;
-            this.label2.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label2.Location = new System.Drawing.Point(4, 262);
-            this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(82, 13);
-            this.label2.TabIndex = 2;
-            this.label2.Text = "UpdateFailed";
+            this.lblUpdateStatus.AutoSize = true;
+            this.lblUpdateStatus.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lblUpdateStatus.Location = new System.Drawing.Point(4, 262);
+            this.lblUpdateStatus.Name = "lblUpdateStatus";
+            this.lblUpdateStatus.Size = new System.Drawing.Size(86, 13);
+            this.lblUpdateStatus.TabIndex = 2;
+            this.lblUpdateStatus.Text = "Update Failed";
             // 
-            // button2
+            // btnIgnoreConflict
             // 
-            this.button2.Location = new System.Drawing.Point(411, 257);
-            this.button2.Name = "button2";
-            this.button2.Size = new System.Drawing.Size(86, 23);
-            this.button2.TabIndex = 3;
-            this.button2.Text = "Ignore Conflict";
-            this.button2.UseVisualStyleBackColor = true;
+            this.btnIgnoreConflict.Location = new System.Drawing.Point(411, 257);
+            this.btnIgnoreConflict.Name = "btnIgnoreConflict";
+            this.btnIgnoreConflict.Size = new System.Drawing.Size(86, 23);
+            this.btnIgnoreConflict.TabIndex = 3;
+            this.btnIgnoreConflict.Text = "Ignore Conflict";
+            this.btnIgnoreConflict.UseVisualStyleBackColor = true;
+            this.btnIgnoreConflict.Click += new System.EventHandler(this.btnIgnoreConflict_Click);
             // 
-            // label3
+            // lblDescription
             // 
-            this.label3.Location = new System.Drawing.Point(7, 283);
-            this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(490, 70);
-            this.label3.TabIndex = 4;
-            this.label3.Text = "This is a descriptive text of the event";
+            this.lblDescription.Location = new System.Drawing.Point(7, 283);
+            this.lblDescription.Name = "lblDescription";
+            this.lblDescription.Size = new System.Drawing.Size(490, 70);
+            this.lblDescription.TabIndex = 4;
+            this.lblDescription.Text = "This is a descriptive text of the event";
             // 
             // panel2
             // 
@@ -219,103 +222,103 @@
             this.panel3.Size = new System.Drawing.Size(490, 2);
             this.panel3.TabIndex = 12;
             // 
-            // linkLabel1
+            // lnkHelp
             // 
-            this.linkLabel1.AutoSize = true;
-            this.linkLabel1.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.linkLabel1.LinkBehavior = System.Windows.Forms.LinkBehavior.NeverUnderline;
-            this.linkLabel1.Location = new System.Drawing.Point(7, 532);
-            this.linkLabel1.Name = "linkLabel1";
-            this.linkLabel1.Size = new System.Drawing.Size(29, 13);
-            this.linkLabel1.TabIndex = 13;
-            this.linkLabel1.TabStop = true;
-            this.linkLabel1.Text = "Help";
+            this.lnkHelp.AutoSize = true;
+            this.lnkHelp.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lnkHelp.LinkBehavior = System.Windows.Forms.LinkBehavior.NeverUnderline;
+            this.lnkHelp.Location = new System.Drawing.Point(7, 532);
+            this.lnkHelp.Name = "lnkHelp";
+            this.lnkHelp.Size = new System.Drawing.Size(29, 13);
+            this.lnkHelp.TabIndex = 13;
+            this.lnkHelp.TabStop = true;
+            this.lnkHelp.Text = "Help";
             // 
-            // linkLabel2
+            // lnkAbout
             // 
-            this.linkLabel2.AutoSize = true;
-            this.linkLabel2.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.linkLabel2.LinkBehavior = System.Windows.Forms.LinkBehavior.NeverUnderline;
-            this.linkLabel2.Location = new System.Drawing.Point(462, 532);
-            this.linkLabel2.Name = "linkLabel2";
-            this.linkLabel2.Size = new System.Drawing.Size(35, 13);
-            this.linkLabel2.TabIndex = 14;
-            this.linkLabel2.TabStop = true;
-            this.linkLabel2.Text = "About";
+            this.lnkAbout.AutoSize = true;
+            this.lnkAbout.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lnkAbout.LinkBehavior = System.Windows.Forms.LinkBehavior.NeverUnderline;
+            this.lnkAbout.Location = new System.Drawing.Point(462, 532);
+            this.lnkAbout.Name = "lnkAbout";
+            this.lnkAbout.Size = new System.Drawing.Size(35, 13);
+            this.lnkAbout.TabIndex = 14;
+            this.lnkAbout.TabStop = true;
+            this.lnkAbout.Text = "About";
             // 
-            // linkLabel3
+            // lnkLocalFile
             // 
-            this.linkLabel3.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.linkLabel3.LinkBehavior = System.Windows.Forms.LinkBehavior.NeverUnderline;
-            this.linkLabel3.Location = new System.Drawing.Point(128, 365);
-            this.linkLabel3.Name = "linkLabel3";
-            this.linkLabel3.Size = new System.Drawing.Size(369, 13);
-            this.linkLabel3.TabIndex = 15;
-            this.linkLabel3.TabStop = true;
-            this.linkLabel3.Text = "C:\\users\\mezeo file sync\\abc.txt";
-            this.linkLabel3.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+            this.lnkLocalFile.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lnkLocalFile.LinkBehavior = System.Windows.Forms.LinkBehavior.NeverUnderline;
+            this.lnkLocalFile.Location = new System.Drawing.Point(128, 365);
+            this.lnkLocalFile.Name = "lnkLocalFile";
+            this.lnkLocalFile.Size = new System.Drawing.Size(369, 13);
+            this.lnkLocalFile.TabIndex = 15;
+            this.lnkLocalFile.TabStop = true;
+            this.lnkLocalFile.Text = "C:\\users\\mezeo file sync\\abc.txt";
+            this.lnkLocalFile.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
             // 
-            // linkLabel4
+            // lnkFileInfo
             // 
-            this.linkLabel4.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.linkLabel4.LinkBehavior = System.Windows.Forms.LinkBehavior.NeverUnderline;
-            this.linkLabel4.Location = new System.Drawing.Point(128, 429);
-            this.linkLabel4.Name = "linkLabel4";
-            this.linkLabel4.Size = new System.Drawing.Size(369, 13);
-            this.linkLabel4.TabIndex = 16;
-            this.linkLabel4.TabStop = true;
-            this.linkLabel4.Text = "/sales/presentation/abc.txt";
-            this.linkLabel4.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+            this.lnkFileInfo.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lnkFileInfo.LinkBehavior = System.Windows.Forms.LinkBehavior.NeverUnderline;
+            this.lnkFileInfo.Location = new System.Drawing.Point(128, 429);
+            this.lnkFileInfo.Name = "lnkFileInfo";
+            this.lnkFileInfo.Size = new System.Drawing.Size(369, 13);
+            this.lnkFileInfo.TabIndex = 16;
+            this.lnkFileInfo.TabStop = true;
+            this.lnkFileInfo.Text = "/sales/presentation/abc.txt";
+            this.lnkFileInfo.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
             // 
-            // label10
+            // lblLocalModifiedDate
             // 
-            this.label10.Location = new System.Drawing.Point(131, 381);
-            this.label10.Name = "label10";
-            this.label10.Size = new System.Drawing.Size(366, 12);
-            this.label10.TabIndex = 17;
-            this.label10.Text = "01/11/7 4:00:02 PM";
-            this.label10.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+            this.lblLocalModifiedDate.Location = new System.Drawing.Point(131, 381);
+            this.lblLocalModifiedDate.Name = "lblLocalModifiedDate";
+            this.lblLocalModifiedDate.Size = new System.Drawing.Size(366, 12);
+            this.lblLocalModifiedDate.TabIndex = 17;
+            this.lblLocalModifiedDate.Text = "01/11/7 4:00:02 PM";
+            this.lblLocalModifiedDate.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
             // 
-            // label11
+            // lblLocalFileSize
             // 
-            this.label11.Location = new System.Drawing.Point(131, 397);
-            this.label11.Name = "label11";
-            this.label11.Size = new System.Drawing.Size(366, 12);
-            this.label11.TabIndex = 18;
-            this.label11.Text = "365 KB";
-            this.label11.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+            this.lblLocalFileSize.Location = new System.Drawing.Point(131, 397);
+            this.lblLocalFileSize.Name = "lblLocalFileSize";
+            this.lblLocalFileSize.Size = new System.Drawing.Size(366, 12);
+            this.lblLocalFileSize.TabIndex = 18;
+            this.lblLocalFileSize.Text = "365 KB";
+            this.lblLocalFileSize.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
             // 
-            // label12
+            // lblFileSize
             // 
-            this.label12.Location = new System.Drawing.Point(131, 461);
-            this.label12.Name = "label12";
-            this.label12.Size = new System.Drawing.Size(366, 12);
-            this.label12.TabIndex = 20;
-            this.label12.Text = "365 KB";
-            this.label12.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+            this.lblFileSize.Location = new System.Drawing.Point(131, 461);
+            this.lblFileSize.Name = "lblFileSize";
+            this.lblFileSize.Size = new System.Drawing.Size(366, 12);
+            this.lblFileSize.TabIndex = 20;
+            this.lblFileSize.Text = "365 KB";
+            this.lblFileSize.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
             // 
-            // label13
+            // lblModified
             // 
-            this.label13.Location = new System.Drawing.Point(131, 445);
-            this.label13.Name = "label13";
-            this.label13.Size = new System.Drawing.Size(366, 12);
-            this.label13.TabIndex = 19;
-            this.label13.Text = "01/11/7 4:00:02 PM";
-            this.label13.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+            this.lblModified.Location = new System.Drawing.Point(131, 445);
+            this.lblModified.Name = "lblModified";
+            this.lblModified.Size = new System.Drawing.Size(366, 12);
+            this.lblModified.TabIndex = 19;
+            this.lblModified.Text = "01/11/7 4:00:02 PM";
+            this.lblModified.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
             // 
             // frmIssues
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(504, 557);
-            this.Controls.Add(this.label12);
-            this.Controls.Add(this.label13);
-            this.Controls.Add(this.label11);
-            this.Controls.Add(this.label10);
-            this.Controls.Add(this.linkLabel4);
-            this.Controls.Add(this.linkLabel3);
-            this.Controls.Add(this.linkLabel2);
-            this.Controls.Add(this.linkLabel1);
+            this.Controls.Add(this.lblFileSize);
+            this.Controls.Add(this.lblModified);
+            this.Controls.Add(this.lblLocalFileSize);
+            this.Controls.Add(this.lblLocalModifiedDate);
+            this.Controls.Add(this.lnkFileInfo);
+            this.Controls.Add(this.lnkLocalFile);
+            this.Controls.Add(this.lnkAbout);
+            this.Controls.Add(this.lnkHelp);
             this.Controls.Add(this.panel3);
             this.Controls.Add(this.label7);
             this.Controls.Add(this.label8);
@@ -324,16 +327,18 @@
             this.Controls.Add(this.label5);
             this.Controls.Add(this.label4);
             this.Controls.Add(this.panel2);
-            this.Controls.Add(this.label3);
-            this.Controls.Add(this.button2);
-            this.Controls.Add(this.label2);
-            this.Controls.Add(this.listView1);
+            this.Controls.Add(this.lblDescription);
+            this.Controls.Add(this.btnIgnoreConflict);
+            this.Controls.Add(this.lblUpdateStatus);
+            this.Controls.Add(this.lvIssues);
             this.Controls.Add(this.panel1);
             this.MaximizeBox = false;
             this.Name = "frmIssues";
             this.ShowIcon = false;
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "MezeoVault Sync Issues";
+            this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.frmIssues_FormClosing);
+            this.Shown += new System.EventHandler(this.frmIssues_Shown);
             this.panel1.ResumeLayout(false);
             this.panel1.PerformLayout();
             this.ResumeLayout(false);
@@ -345,14 +350,14 @@
 
         private System.Windows.Forms.Panel panel1;
         private System.Windows.Forms.Label label1;
-        private System.Windows.Forms.Button button1;
-        private System.Windows.Forms.ListView listView1;
+        private System.Windows.Forms.Button btnEventViewer;
+        private System.Windows.Forms.ListView lvIssues;
         private System.Windows.Forms.ColumnHeader columnHeader1;
         private System.Windows.Forms.ColumnHeader columnHeader2;
         private System.Windows.Forms.ColumnHeader columnHeader3;
-        private System.Windows.Forms.Label label2;
-        private System.Windows.Forms.Button button2;
-        private System.Windows.Forms.Label label3;
+        private System.Windows.Forms.Label lblUpdateStatus;
+        private System.Windows.Forms.Button btnIgnoreConflict;
+        private System.Windows.Forms.Label lblDescription;
         private System.Windows.Forms.Panel panel2;
         private System.Windows.Forms.Label label4;
         private System.Windows.Forms.Label label5;
@@ -361,13 +366,13 @@
         private System.Windows.Forms.Label label8;
         private System.Windows.Forms.Label label9;
         private System.Windows.Forms.Panel panel3;
-        private System.Windows.Forms.LinkLabel linkLabel1;
-        private System.Windows.Forms.LinkLabel linkLabel2;
-        private System.Windows.Forms.LinkLabel linkLabel3;
-        private System.Windows.Forms.LinkLabel linkLabel4;
-        private System.Windows.Forms.Label label10;
-        private System.Windows.Forms.Label label11;
-        private System.Windows.Forms.Label label12;
-        private System.Windows.Forms.Label label13;
+        private System.Windows.Forms.LinkLabel lnkHelp;
+        private System.Windows.Forms.LinkLabel lnkAbout;
+        private System.Windows.Forms.LinkLabel lnkLocalFile;
+        private System.Windows.Forms.LinkLabel lnkFileInfo;
+        private System.Windows.Forms.Label lblLocalModifiedDate;
+        private System.Windows.Forms.Label lblLocalFileSize;
+        private System.Windows.Forms.Label lblFileSize;
+        private System.Windows.Forms.Label lblModified;
     }
 }

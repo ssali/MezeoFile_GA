@@ -156,6 +156,9 @@
   <data name="SyncManagerAnalyseMessage3" xml:space="preserve">
     <value>You can start working from your sync folder now.</value>
   </data>
+  <data name="SyncManagerCheckingServer" xml:space="preserve">
+    <value>Checking server for updates...</value>
+  </data>
   <data name="SyncManagerDownloading" xml:space="preserve">
     <value>Updating</value>
   </data>
@@ -268,6 +271,6 @@
     <value> Sync in progress...</value>
   </data>
   <data name="UserIdCueText" xml:space="preserve">
-    <value>User Id</value>
+    <value>Username</value>
   </data>
 </root>
