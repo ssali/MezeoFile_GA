@@ -79,6 +79,105 @@ namespace Mezeo {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to detected a conflict while updating the file. This typically happens when you make a change to a file in your sync folder and the corresponding file in your.
+        /// </summary>
+        internal static string ErrorBlurbConflict1 {
+            get {
+                return ResourceManager.GetString("ErrorBlurbConflict1", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to account was updated between sync cycles..
+        /// </summary>
+        internal static string ErrorBlurbConflict2 {
+            get {
+                return ResourceManager.GetString("ErrorBlurbConflict2", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Your local changes have been saved as the most recent version..
+        /// </summary>
+        internal static string ErrorBlurbConflict3 {
+            get {
+                return ResourceManager.GetString("ErrorBlurbConflict3", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to You can see all versions of the file in your.
+        /// </summary>
+        internal static string ErrorBlurbConflict4 {
+            get {
+                return ResourceManager.GetString("ErrorBlurbConflict4", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to account by clicking on the link below..
+        /// </summary>
+        internal static string ErrorBlurbConflict5 {
+            get {
+                return ResourceManager.GetString("ErrorBlurbConflict5", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to was unable to download the file from your.
+        /// </summary>
+        internal static string ErrorBlurbDownload1 {
+            get {
+                return ResourceManager.GetString("ErrorBlurbDownload1", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to account to your local machine..
+        /// </summary>
+        internal static string ErrorBlurbDownload2 {
+            get {
+                return ResourceManager.GetString("ErrorBlurbDownload2", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to This is typically caused by internet or service interruptions and is usually resolved automatically. Another download attempt will be made during the next sync cycle..
+        /// </summary>
+        internal static string ErrorBlurbDownload3 {
+            get {
+                return ResourceManager.GetString("ErrorBlurbDownload3", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to was unable to upload the file from your local machine to your.
+        /// </summary>
+        internal static string ErrorBlurbUpload1 {
+            get {
+                return ResourceManager.GetString("ErrorBlurbUpload1", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to account..
+        /// </summary>
+        internal static string ErrorBlurbUpload2 {
+            get {
+                return ResourceManager.GetString("ErrorBlurbUpload2", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to This is typically caused by internet or service interruptions and is usually resolved automatically.  Another upload attempt will be made during the next sync cycle..
+        /// </summary>
+        internal static string ErrorBlurbUpload3 {
+            get {
+                return ResourceManager.GetString("ErrorBlurbUpload3", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Login.
         /// </summary>
         internal static string LoginButtonText {
@@ -111,6 +210,15 @@ namespace Mezeo {
         internal static string LoginGuestAccMsgText {
             get {
                 return ResourceManager.GetString("LoginGuestAccMsgText", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Login Success.
+        /// </summary>
+        internal static string LoginSuccess {
+            get {
+                return ResourceManager.GetString("LoginSuccess", resourceCulture);
             }
         }
         
@@ -250,7 +358,7 @@ namespace Mezeo {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Move Fiolder.
+        ///   Looks up a localized string similar to Move Folder.
         /// </summary>
         internal static string SyncManagerMoveFolderButtonText {
             get {

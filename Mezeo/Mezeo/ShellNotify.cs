@@ -100,7 +100,7 @@ namespace Mezeo
 
         #region methods to add/update/delete notifications
 
-        public void StopNotifyIconBalloonText(string strBalloonText, string strBalloonTitle)
+        public void StopNotifyIconBalloonText()
         {
             notifyIconData.uFlags |= NIIF_USER;
 	        notifyIconData.dwInfoFlags = NIF_INFO;
@@ -213,7 +213,7 @@ namespace Mezeo
             notifyIconData.uFlags = NIF_MESSAGE | NIF_INFO;
             notifyIconData.uCallbackMessage = WM_NOTIFY_TRAY;
             notifyIconData.hIcon = IntPtr.Zero;
-            notifyIconData.uTimeoutAndVersion = 5;
+            notifyIconData.uTimeoutAndVersion = 1;
             notifyIconData.dwInfoFlags = NIIF_USER;
 
             notifyIconData.szTip = "";

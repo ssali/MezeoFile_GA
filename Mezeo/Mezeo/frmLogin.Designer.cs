@@ -47,9 +47,6 @@
             this.msSyncMgrExit = new System.Windows.Forms.ToolStripMenuItem();
             this.pbLogo = new System.Windows.Forms.PictureBox();
             this.labelError = new System.Windows.Forms.Label();
-            this.txtServerUrl = new Mezeo.CueTextBox();
-            this.txtPasswrod = new Mezeo.CueTextBox();
-            this.txtUserName = new Mezeo.CueTextBox();
             this.tmrConnectionCheck = new System.Windows.Forms.Timer(this.components);
             this.cmLogin = new System.Windows.Forms.ContextMenu();
             this.menuItem1 = new System.Windows.Forms.MenuItem();
@@ -59,9 +56,13 @@
             this.menuItem4 = new System.Windows.Forms.MenuItem();
             this.menuItem7 = new System.Windows.Forms.MenuItem();
             this.menuItem5 = new System.Windows.Forms.MenuItem();
-            this.menuItem6 = new System.Windows.Forms.MenuItem();
             this.menuItem8 = new System.Windows.Forms.MenuItem();
             this.menuItem9 = new System.Windows.Forms.MenuItem();
+            this.menuItem6 = new System.Windows.Forms.MenuItem();
+            this.niSystemTray = new System.Windows.Forms.NotifyIcon(this.components);
+            this.txtServerUrl = new Mezeo.CueTextBox();
+            this.txtPasswrod = new Mezeo.CueTextBox();
+            this.txtUserName = new Mezeo.CueTextBox();
             this.cmSystemTrayLogin.SuspendLayout();
             this.cmSystemTraySyncMgr.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pbLogo)).BeginInit();
@@ -121,10 +122,10 @@
             // toolStripMenuItem2
             // 
             this.toolStripMenuItem2.BackColor = System.Drawing.SystemColors.Control;
-            this.toolStripMenuItem2.BackgroundImage = global::Mezeo.Properties.Resources.logo_horizontal_right_click;
             resources.ApplyResources(this.toolStripMenuItem2, "toolStripMenuItem2");
-            this.toolStripMenuItem2.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.toolStripMenuItem2.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.None;
             this.toolStripMenuItem2.Name = "toolStripMenuItem2";
+            this.toolStripMenuItem2.Paint += new System.Windows.Forms.PaintEventHandler(this.toolStripMenuItem2_Paint);
             // 
             // toolStripSeparator1
             // 
@@ -175,29 +176,6 @@
             resources.ApplyResources(this.labelError, "labelError");
             this.labelError.ForeColor = System.Drawing.Color.Red;
             this.labelError.Name = "labelError";
-            // 
-            // txtServerUrl
-            // 
-            this.txtServerUrl.CueText = "https://demo.mezeo.net";
-            resources.ApplyResources(this.txtServerUrl, "txtServerUrl");
-            this.txtServerUrl.Name = "txtServerUrl";
-            this.txtServerUrl.TextChanged += new System.EventHandler(this.txtServerUrl_TextChanged);
-            this.txtServerUrl.Leave += new System.EventHandler(this.txtServerUrl_Leave);
-            // 
-            // txtPasswrod
-            // 
-            this.txtPasswrod.CueText = "Password";
-            resources.ApplyResources(this.txtPasswrod, "txtPasswrod");
-            this.txtPasswrod.Name = "txtPasswrod";
-            this.txtPasswrod.UseSystemPasswordChar = true;
-            this.txtPasswrod.TextChanged += new System.EventHandler(this.txtPasswrod_TextChanged);
-            // 
-            // txtUserName
-            // 
-            this.txtUserName.CueText = "User Name";
-            resources.ApplyResources(this.txtUserName, "txtUserName");
-            this.txtUserName.Name = "txtUserName";
-            this.txtUserName.TextChanged += new System.EventHandler(this.txtUserName_TextChanged);
             // 
             // tmrConnectionCheck
             // 
@@ -254,12 +232,6 @@
             this.menuItem5.Index = 2;
             resources.ApplyResources(this.menuItem5, "menuItem5");
             // 
-            // menuItem6
-            // 
-            this.menuItem6.Index = 5;
-            resources.ApplyResources(this.menuItem6, "menuItem6");
-            this.menuItem6.Click += new System.EventHandler(this.exitToolStripMenuItem_Click);
-            // 
             // menuItem8
             // 
             this.menuItem8.Index = 3;
@@ -269,6 +241,39 @@
             // 
             this.menuItem9.Index = 4;
             resources.ApplyResources(this.menuItem9, "menuItem9");
+            // 
+            // menuItem6
+            // 
+            this.menuItem6.Index = 5;
+            resources.ApplyResources(this.menuItem6, "menuItem6");
+            this.menuItem6.Click += new System.EventHandler(this.exitToolStripMenuItem_Click);
+            // 
+            // niSystemTray
+            // 
+            resources.ApplyResources(this.niSystemTray, "niSystemTray");
+            // 
+            // txtServerUrl
+            // 
+            this.txtServerUrl.CueText = "https://demo.mezeo.net";
+            resources.ApplyResources(this.txtServerUrl, "txtServerUrl");
+            this.txtServerUrl.Name = "txtServerUrl";
+            this.txtServerUrl.TextChanged += new System.EventHandler(this.txtServerUrl_TextChanged);
+            this.txtServerUrl.Leave += new System.EventHandler(this.txtServerUrl_Leave);
+            // 
+            // txtPasswrod
+            // 
+            this.txtPasswrod.CueText = "Password";
+            resources.ApplyResources(this.txtPasswrod, "txtPasswrod");
+            this.txtPasswrod.Name = "txtPasswrod";
+            this.txtPasswrod.UseSystemPasswordChar = true;
+            this.txtPasswrod.TextChanged += new System.EventHandler(this.txtPasswrod_TextChanged);
+            // 
+            // txtUserName
+            // 
+            this.txtUserName.CueText = "User Name";
+            resources.ApplyResources(this.txtUserName, "txtUserName");
+            this.txtUserName.Name = "txtUserName";
+            this.txtUserName.TextChanged += new System.EventHandler(this.txtUserName_TextChanged);
             // 
             // frmLogin
             // 
@@ -312,7 +317,6 @@
         private System.Windows.Forms.ToolStripMenuItem toolStripMenuItem2;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator1;
         private System.Windows.Forms.ToolStripMenuItem msShowSyncMgr;
-        private System.Windows.Forms.ToolStripMenuItem toolStripMenuItem4;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator2;
         private System.Windows.Forms.ToolStripMenuItem toolStripMenuItem5;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator3;
@@ -323,13 +327,15 @@
         private System.Windows.Forms.MenuItem menuItem1;
         private System.Windows.Forms.MenuItem menuItem2;
         private System.Windows.Forms.MenuItem menuItem3;
-        private System.Windows.Forms.ContextMenu cmSyncManager;
         private System.Windows.Forms.MenuItem menuItem4;
-        private System.Windows.Forms.MenuItem menuItem7;
         private System.Windows.Forms.MenuItem menuItem5;
         private System.Windows.Forms.MenuItem menuItem6;
         private System.Windows.Forms.MenuItem menuItem8;
         private System.Windows.Forms.MenuItem menuItem9;
+        private System.Windows.Forms.ContextMenu cmSyncManager;
+        public System.Windows.Forms.MenuItem menuItem7;
+        private System.Windows.Forms.NotifyIcon niSystemTray;
+        public System.Windows.Forms.ToolStripMenuItem toolStripMenuItem4;
 
     }
 }

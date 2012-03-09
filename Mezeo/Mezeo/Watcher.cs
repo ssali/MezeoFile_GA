@@ -26,7 +26,7 @@ namespace Mezeo
             this.lockObject = lockObject;
             this.folderToWatch = folder;
             fileWatcher = new FileSystemWatcher(folderToWatch);
-
+            
             fileWatcher.EnableRaisingEvents = false;
             fileWatcher.Filter = "*.*";
             fileWatcher.IncludeSubdirectories = true;

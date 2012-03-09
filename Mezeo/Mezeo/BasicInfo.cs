@@ -83,9 +83,7 @@ namespace Mezeo
         }
 
         public static bool LoadRegistryValues()
-        {
-            
-            
+        {             
             if (regHandler.isKeyExists())
             {
                 ReadRegValue();

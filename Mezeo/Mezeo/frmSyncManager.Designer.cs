@@ -31,13 +31,14 @@
             this.components = new System.ComponentModel.Container();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(frmSyncManager));
             this.pnlStatus = new System.Windows.Forms.Panel();
+            this.btnIssuesFound = new System.Windows.Forms.Button();
+            this.lblStatus = new System.Windows.Forms.Label();
             this.lblPercentDone = new System.Windows.Forms.Label();
             this.pbSyncProgress = new System.Windows.Forms.ProgressBar();
             this.label1 = new System.Windows.Forms.Label();
             this.btnSyncNow = new System.Windows.Forms.Button();
             this.lblStatusL3 = new System.Windows.Forms.Label();
             this.lblStatusL1 = new System.Windows.Forms.Label();
-            this.lblStatus = new System.Windows.Forms.Label();
             this.imgStatus = new System.Windows.Forms.PictureBox();
             this.pnlUsage = new System.Windows.Forms.Panel();
             this.lblUsageDetails = new System.Windows.Forms.Label();
@@ -62,7 +63,6 @@
             this.eventLog1 = new System.Diagnostics.EventLog();
             this.tmrNextSync = new System.Windows.Forms.Timer(this.components);
             this.bwNQUpdate = new System.ComponentModel.BackgroundWorker();
-            this.btnIssuesFound = new System.Windows.Forms.Button();
             this.pnlStatus.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.imgStatus)).BeginInit();
             this.pnlUsage.SuspendLayout();
@@ -91,6 +91,26 @@
             this.pnlStatus.Size = new System.Drawing.Size(614, 80);
             this.pnlStatus.TabIndex = 1;
             this.pnlStatus.Paint += new System.Windows.Forms.PaintEventHandler(this.panel_Paint);
+            // 
+            // btnIssuesFound
+            // 
+            this.btnIssuesFound.Location = new System.Drawing.Point(27, 57);
+            this.btnIssuesFound.Name = "btnIssuesFound";
+            this.btnIssuesFound.Size = new System.Drawing.Size(96, 23);
+            this.btnIssuesFound.TabIndex = 15;
+            this.btnIssuesFound.Text = "Issues Found";
+            this.btnIssuesFound.UseVisualStyleBackColor = true;
+            this.btnIssuesFound.Click += new System.EventHandler(this.btnIssuesFound_Click);
+            // 
+            // lblStatus
+            // 
+            this.lblStatus.AutoSize = true;
+            this.lblStatus.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lblStatus.Location = new System.Drawing.Point(80, 18);
+            this.lblStatus.Name = "lblStatus";
+            this.lblStatus.Size = new System.Drawing.Size(43, 13);
+            this.lblStatus.TabIndex = 3;
+            this.lblStatus.Text = "Status";
             // 
             // lblPercentDone
             // 
@@ -145,16 +165,6 @@
             this.lblStatusL1.Size = new System.Drawing.Size(287, 13);
             this.lblStatusL1.TabIndex = 5;
             this.lblStatusL1.Text = "label6";
-            // 
-            // lblStatus
-            // 
-            this.lblStatus.AutoSize = true;
-            this.lblStatus.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lblStatus.Location = new System.Drawing.Point(80, 18);
-            this.lblStatus.Name = "lblStatus";
-            this.lblStatus.Size = new System.Drawing.Size(43, 13);
-            this.lblStatus.TabIndex = 3;
-            this.lblStatus.Text = "Status";
             // 
             // imgStatus
             // 
@@ -288,6 +298,7 @@
             this.lnkHelp.TabIndex = 6;
             this.lnkHelp.TabStop = true;
             this.lnkHelp.Text = "Help";
+            this.lnkHelp.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.lnkHelp_LinkClicked);
             // 
             // lnkAbout
             // 
@@ -393,16 +404,6 @@
             this.bwNQUpdate.DoWork += new System.ComponentModel.DoWorkEventHandler(this.bwNQUpdate_DoWork);
             this.bwNQUpdate.ProgressChanged += new System.ComponentModel.ProgressChangedEventHandler(this.bwNQUpdate_ProgressChanged);
             this.bwNQUpdate.RunWorkerCompleted += new System.ComponentModel.RunWorkerCompletedEventHandler(this.bwNQUpdate_RunWorkerCompleted);
-            // 
-            // btnIssuesFound
-            // 
-            this.btnIssuesFound.Location = new System.Drawing.Point(27, 57);
-            this.btnIssuesFound.Name = "btnIssuesFound";
-            this.btnIssuesFound.Size = new System.Drawing.Size(96, 23);
-            this.btnIssuesFound.TabIndex = 15;
-            this.btnIssuesFound.Text = "Issues Found";
-            this.btnIssuesFound.UseVisualStyleBackColor = true;
-            this.btnIssuesFound.Click += new System.EventHandler(this.btnIssuesFound_Click);
             // 
             // frmSyncManager
             // 

@@ -127,6 +127,17 @@ namespace Mezeo
                             id.strETag = cFileCloud.GetETag(id.szContentUrl, ref refCode);
                         }
 
+                        if (!bRet)
+                        {
+                            string Description = AboutBox.AssemblyTitle;
+
+                            Description += LanguageTranslator.GetValue("ErrorBlurbDownload1");
+                            Description += AboutBox.AssemblyProduct;
+                            Description += LanguageTranslator.GetValue("ErrorBlurbDownload2");
+                            Description += LanguageTranslator.GetValue("ErrorBlurbDownload3");
+                            cFileCloud.AppEventViewer(AboutBox.AssemblyTitle, Description, 3);
+                        }
+
                         fileFolderInfo.ETag = id.strETag;
 
                         if (fileFolderInfo.ETag == null) { fileFolderInfo.ETag = ""; }

@@ -77,6 +77,7 @@
             this.btnEventViewer.TabIndex = 1;
             this.btnEventViewer.Text = "Event Viewer";
             this.btnEventViewer.UseVisualStyleBackColor = true;
+            this.btnEventViewer.Click += new System.EventHandler(this.btnEventViewer_Click);
             // 
             // label1
             // 
@@ -96,6 +97,7 @@
             this.columnHeader2,
             this.columnHeader3});
             this.lvIssues.FullRowSelect = true;
+            this.lvIssues.GridLines = true;
             this.lvIssues.Location = new System.Drawing.Point(7, 72);
             this.lvIssues.MultiSelect = false;
             this.lvIssues.Name = "lvIssues";
@@ -144,7 +146,7 @@
             // 
             this.lblDescription.Location = new System.Drawing.Point(7, 283);
             this.lblDescription.Name = "lblDescription";
-            this.lblDescription.Size = new System.Drawing.Size(490, 70);
+            this.lblDescription.Size = new System.Drawing.Size(490, 102);
             this.lblDescription.TabIndex = 4;
             this.lblDescription.Text = "This is a descriptive text of the event";
             // 
@@ -153,7 +155,7 @@
             this.panel2.BackColor = System.Drawing.Color.Transparent;
             this.panel2.BackgroundImage = global::Mezeo.Properties.Resources.horizontal_seperator;
             this.panel2.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
-            this.panel2.Location = new System.Drawing.Point(7, 356);
+            this.panel2.Location = new System.Drawing.Point(7, 388);
             this.panel2.Name = "panel2";
             this.panel2.Size = new System.Drawing.Size(490, 2);
             this.panel2.TabIndex = 5;
@@ -161,7 +163,7 @@
             // label4
             // 
             this.label4.AutoSize = true;
-            this.label4.Location = new System.Drawing.Point(7, 365);
+            this.label4.Location = new System.Drawing.Point(7, 399);
             this.label4.Name = "label4";
             this.label4.Size = new System.Drawing.Size(52, 13);
             this.label4.TabIndex = 6;
@@ -170,7 +172,7 @@
             // label5
             // 
             this.label5.AutoSize = true;
-            this.label5.Location = new System.Drawing.Point(7, 381);
+            this.label5.Location = new System.Drawing.Point(7, 415);
             this.label5.Name = "label5";
             this.label5.Size = new System.Drawing.Size(50, 13);
             this.label5.TabIndex = 7;
@@ -179,7 +181,7 @@
             // label6
             // 
             this.label6.AutoSize = true;
-            this.label6.Location = new System.Drawing.Point(7, 397);
+            this.label6.Location = new System.Drawing.Point(7, 431);
             this.label6.Name = "label6";
             this.label6.Size = new System.Drawing.Size(30, 13);
             this.label6.TabIndex = 8;
@@ -188,7 +190,7 @@
             // label7
             // 
             this.label7.AutoSize = true;
-            this.label7.Location = new System.Drawing.Point(7, 461);
+            this.label7.Location = new System.Drawing.Point(7, 495);
             this.label7.Name = "label7";
             this.label7.Size = new System.Drawing.Size(30, 13);
             this.label7.TabIndex = 11;
@@ -197,7 +199,7 @@
             // label8
             // 
             this.label8.AutoSize = true;
-            this.label8.Location = new System.Drawing.Point(7, 445);
+            this.label8.Location = new System.Drawing.Point(7, 479);
             this.label8.Name = "label8";
             this.label8.Size = new System.Drawing.Size(50, 13);
             this.label8.TabIndex = 10;
@@ -206,7 +208,7 @@
             // label9
             // 
             this.label9.AutoSize = true;
-            this.label9.Location = new System.Drawing.Point(7, 429);
+            this.label9.Location = new System.Drawing.Point(7, 463);
             this.label9.Name = "label9";
             this.label9.Size = new System.Drawing.Size(43, 13);
             this.label9.TabIndex = 9;
@@ -250,7 +252,7 @@
             // 
             this.lnkLocalFile.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.lnkLocalFile.LinkBehavior = System.Windows.Forms.LinkBehavior.NeverUnderline;
-            this.lnkLocalFile.Location = new System.Drawing.Point(128, 365);
+            this.lnkLocalFile.Location = new System.Drawing.Point(128, 399);
             this.lnkLocalFile.Name = "lnkLocalFile";
             this.lnkLocalFile.Size = new System.Drawing.Size(369, 13);
             this.lnkLocalFile.TabIndex = 15;
@@ -262,7 +264,7 @@
             // 
             this.lnkFileInfo.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.lnkFileInfo.LinkBehavior = System.Windows.Forms.LinkBehavior.NeverUnderline;
-            this.lnkFileInfo.Location = new System.Drawing.Point(128, 429);
+            this.lnkFileInfo.Location = new System.Drawing.Point(128, 463);
             this.lnkFileInfo.Name = "lnkFileInfo";
             this.lnkFileInfo.Size = new System.Drawing.Size(369, 13);
             this.lnkFileInfo.TabIndex = 16;
@@ -272,7 +274,7 @@
             // 
             // lblLocalModifiedDate
             // 
-            this.lblLocalModifiedDate.Location = new System.Drawing.Point(131, 381);
+            this.lblLocalModifiedDate.Location = new System.Drawing.Point(131, 415);
             this.lblLocalModifiedDate.Name = "lblLocalModifiedDate";
             this.lblLocalModifiedDate.Size = new System.Drawing.Size(366, 12);
             this.lblLocalModifiedDate.TabIndex = 17;
@@ -281,7 +283,7 @@
             // 
             // lblLocalFileSize
             // 
-            this.lblLocalFileSize.Location = new System.Drawing.Point(131, 397);
+            this.lblLocalFileSize.Location = new System.Drawing.Point(131, 431);
             this.lblLocalFileSize.Name = "lblLocalFileSize";
             this.lblLocalFileSize.Size = new System.Drawing.Size(366, 12);
             this.lblLocalFileSize.TabIndex = 18;
@@ -290,7 +292,7 @@
             // 
             // lblFileSize
             // 
-            this.lblFileSize.Location = new System.Drawing.Point(131, 461);
+            this.lblFileSize.Location = new System.Drawing.Point(131, 495);
             this.lblFileSize.Name = "lblFileSize";
             this.lblFileSize.Size = new System.Drawing.Size(366, 12);
             this.lblFileSize.TabIndex = 20;
@@ -299,7 +301,7 @@
             // 
             // lblModified
             // 
-            this.lblModified.Location = new System.Drawing.Point(131, 445);
+            this.lblModified.Location = new System.Drawing.Point(131, 479);
             this.lblModified.Name = "lblModified";
             this.lblModified.Size = new System.Drawing.Size(366, 12);
             this.lblModified.TabIndex = 19;

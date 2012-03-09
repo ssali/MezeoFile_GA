@@ -11,6 +11,8 @@ namespace Mezeo
             
         public string IssueTitle { get; set; }
 
+        public string IssueDescripation { get; set; }
+
         public ConflictType cType { get; set; }
 
         public DateTime LocalIssueDT { get; set; }

@@ -6,15 +6,27 @@ using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Windows.Forms;
+using Mezeo;
+using MezeoFileSupport;
 
 namespace Mezeo
 {
     public partial class frmIssues : Form
     {
+        private MezeoFileCloud cMezeoFileCloud;
+
         public frmIssues()
         {
             InitializeComponent();
             ClearInfoLabels();
+        }
+
+        public frmIssues(MezeoFileCloud mezeoFileCloud)
+        {
+            InitializeComponent();
+            ClearInfoLabels();
+
+            cMezeoFileCloud = mezeoFileCloud;
         }
 
         public void AddIssuesToList(List<IssueFound> issuesList)
@@ -56,14 +68,17 @@ namespace Mezeo
 
         private void lvIssues_SelectedIndexChanged(object sender, EventArgs e)
         {
-            UpdateInfoLabels((IssueFound)lvIssues.SelectedItems[0].Tag);
+            if (lvIssues.SelectedItems.Count > 0)
+            {
+                UpdateInfoLabels((IssueFound)lvIssues.SelectedItems[0].Tag);
+            }
         }
 
         private void UpdateInfoLabels(IssueFound issue)
         {
-            lblUpdateStatus.Text = "";
-            lblDescription.Text = "";
-
+            lblUpdateStatus.Text = issue.IssueTitle;
+  
+            lblDescription.Text = issue.IssueDescripation;
             lnkFileInfo.Text = issue.ServerFileInfo;
             lblFileSize.Text = issue.ServerSize;
             lblModified.Text = issue.ServerIssueDT.ToString();
@@ -108,6 +123,11 @@ namespace Mezeo
         private void btnIgnoreConflict_Click(object sender, EventArgs e)
         {
             DeleteSelectedRow();
+        }
+
+        private void btnEventViewer_Click(object sender, EventArgs e)
+        {
+            bool bRet = cMezeoFileCloud.ExceuteEventViewer(AboutBox.AssemblyTitle);
         }
     }
 }

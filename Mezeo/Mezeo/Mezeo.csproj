@@ -121,6 +121,7 @@
     <Compile Include="LanguageTranslator.cs" />
     <Compile Include="LocalEvents.cs" />
     <Compile Include="LocalItemDetails.cs" />
+    <Compile Include="NotificationManager.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="RegistryHandler.cs" />
@@ -236,6 +237,9 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\horizontal_seperator1.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\logo_horizontal_right_click.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

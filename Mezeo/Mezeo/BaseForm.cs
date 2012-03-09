@@ -42,83 +42,83 @@ namespace Mezeo
             internal int Bottom;
         }
 
-        protected override void WndProc(ref Message msg)
-        {
-            if (shellNotify != null)
-            {
-                /* Listn tray notify messages only */
-                if (msg.Msg == shellNotify.WM_NOTIFY_TRAY)
-                {
-                    if ((int)msg.WParam == shellNotify.uID)
-                    {
-                        MouseButtons mb = MouseButtons.None;
-                        if ((int)msg.LParam == WM_LBUTTONDOWN)
-                        {
-                            /* left click */
-                            if (shellNotify.contextMenuHwnd != IntPtr.Zero)
-                            {
-                                /* if connect menu exists create a rectangle and c */
-                                RECT r = new RECT();
-                                r.Left = Screen.PrimaryScreen.WorkingArea.Left;
-                                r.Right = Screen.PrimaryScreen.WorkingArea.Right;
-                                r.Top = Screen.PrimaryScreen.WorkingArea.Top;
-                                r.Bottom = Screen.PrimaryScreen.WorkingArea.Right;
+        //protected override void WndProc(ref Message msg)
+        //{
+        //    if (shellNotify != null)
+        //    {
+        //        /* Listn tray notify messages only */
+        //        if (msg.Msg == shellNotify.WM_NOTIFY_TRAY)
+        //        {
+        //            if ((int)msg.WParam == shellNotify.uID)
+        //            {
+        //                MouseButtons mb = MouseButtons.None;
+        //                if ((int)msg.LParam == WM_LBUTTONDOWN)
+        //                {
+        //                    /* left click */
+        //                    if (shellNotify.contextMenuHwnd != IntPtr.Zero)
+        //                    {
+        //                        /* if connect menu exists create a rectangle and c */
+        //                        RECT r = new RECT();
+        //                        r.Left = Screen.PrimaryScreen.WorkingArea.Left;
+        //                        r.Right = Screen.PrimaryScreen.WorkingArea.Right;
+        //                        r.Top = Screen.PrimaryScreen.WorkingArea.Top;
+        //                        r.Bottom = Screen.PrimaryScreen.WorkingArea.Right;
 
-                                SetForegroundWindow(shellNotify.formHwnd);
+        //                        SetForegroundWindow(shellNotify.formHwnd);
 
-                                TrackPopupMenu(
-                                    shellNotify.contextMenuHwnd,
-                                    2,
-                                    Cursor.Position.X,
-                                    Cursor.Position.Y,
-                                    0,
-                                    shellNotify.formHwnd,
-                                    ref r
-                                    );
-                            }
-                            else
-                            {
-                                mb = MouseButtons.Left;
-                            }
-                        }
-                        else if ((int)msg.LParam == WM_MBUTTONDOWN)
-                        {
-                            /* middle click */
-                            mb = MouseButtons.Middle;
-                        }
-                        else if ((int)msg.LParam == WM_RBUTTONDOWN)
-                        {
-                            /* right click */
-                            if (shellNotify.contextMenuHwnd != IntPtr.Zero)
-                            {
-                                /* if connect menu exists create a rectangle and c */
-                                RECT r = new RECT();
-                                r.Left = Screen.PrimaryScreen.WorkingArea.Left;
-                                r.Right = Screen.PrimaryScreen.WorkingArea.Right;
-                                r.Top = Screen.PrimaryScreen.WorkingArea.Top;
-                                r.Bottom = Screen.PrimaryScreen.WorkingArea.Right;
+        //                        TrackPopupMenu(
+        //                            shellNotify.contextMenuHwnd,
+        //                            2,
+        //                            Cursor.Position.X,
+        //                            Cursor.Position.Y,
+        //                            0,
+        //                            shellNotify.formHwnd,
+        //                            ref r
+        //                            );
+        //                    }
+        //                    else
+        //                    {
+        //                        mb = MouseButtons.Left;
+        //                    }
+        //                }
+        //                else if ((int)msg.LParam == WM_MBUTTONDOWN)
+        //                {
+        //                    /* middle click */
+        //                    mb = MouseButtons.Middle;
+        //                }
+        //                else if ((int)msg.LParam == WM_RBUTTONDOWN)
+        //                {
+        //                    /* right click */
+        //                    if (shellNotify.contextMenuHwnd != IntPtr.Zero)
+        //                    {
+        //                        /* if connect menu exists create a rectangle and c */
+        //                        RECT r = new RECT();
+        //                        r.Left = Screen.PrimaryScreen.WorkingArea.Left;
+        //                        r.Right = Screen.PrimaryScreen.WorkingArea.Right;
+        //                        r.Top = Screen.PrimaryScreen.WorkingArea.Top;
+        //                        r.Bottom = Screen.PrimaryScreen.WorkingArea.Right;
 
-                                SetForegroundWindow(shellNotify.formHwnd);
+        //                        SetForegroundWindow(shellNotify.formHwnd);
 
-                                TrackPopupMenu(
-                                    shellNotify.contextMenuHwnd,
-                                    2,
-                                    Cursor.Position.X,
-                                    Cursor.Position.Y,
-                                    0,
-                                    shellNotify.formHwnd,
-                                    ref r
-                                    );
-                            }
-                            else
-                            {
-                                // callback mousebuttons.right
-                                mb = MouseButtons.Right;
-                            }
-                        }
-                    }
-                }
-            }
+        //                        TrackPopupMenu(
+        //                            shellNotify.contextMenuHwnd,
+        //                            2,
+        //                            Cursor.Position.X,
+        //                            Cursor.Position.Y,
+        //                            0,
+        //                            shellNotify.formHwnd,
+        //                            ref r
+        //                            );
+        //                    }
+        //                    else
+        //                    {
+        //                        // callback mousebuttons.right
+        //                        mb = MouseButtons.Right;
+        //                    }
+        //                }
+        //            }
+        //        }
+        //    }
 
             //switch (msg.Msg)
             //{
@@ -132,26 +132,26 @@ namespace Mezeo
             //}
 
            
-            if (msg.Msg == s_uTaskbarRestart)
-                ShellNotifyIcon.AddNotifyIcon();
+           // if (msg.Msg == s_uTaskbarRestart)
+            //    ShellNotifyIcon.AddNotifyIcon();
            
-            base.WndProc(ref msg);
-        }
+           // base.WndProc(ref msg);
+       // }
 
-        public BaseForm()
-        {
-            s_uTaskbarRestart = Win32Api.RegisterWindowMessage("TaskbarCreated");
-            InitializeComponent();
-            shellNotify = new ShellNotify(this.Handle);
-        }
+        //public BaseForm()
+        //{
+        //    s_uTaskbarRestart = Win32Api.RegisterWindowMessage("TaskbarCreated");
+        //    InitializeComponent();
+        //    shellNotify = new ShellNotify(this.Handle);
+        //}
 
-        public ShellNotify ShellNotifyIcon
-        {
-            get
-            {
-                return this.shellNotify;
+        //public ShellNotify ShellNotifyIcon
+        //{
+        //    get
+        //    {
+        //        return this.shellNotify;
                 
-            }
-        }
+        //    }
+        //}
     }
 }

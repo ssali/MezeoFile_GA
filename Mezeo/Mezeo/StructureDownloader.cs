@@ -87,7 +87,7 @@ namespace Mezeo
             isRootContainer = true;
             foreach (ItemDetails iDetail in contents)
             {
-                string strCheck = dbhandler.GetString(DbHandler.TABLE_NAME, DbHandler.KEY, DbHandler.KEY + " = '" + iDetail.szContentUrl + "'");
+                string strCheck = dbhandler.GetString(DbHandler.TABLE_NAME, DbHandler.KEY, DbHandler.CONTENT_URL + " = '" + iDetail.szContentUrl + "'");
                 if (strCheck.Trim().Length == 0)
                 {
                     LocalItemDetails lItem = new LocalItemDetails();
@@ -130,7 +130,7 @@ namespace Mezeo
 
             foreach (ItemDetails iDetail in contents)
             {
-                string strCheck = dbhandler.GetString(DbHandler.TABLE_NAME, DbHandler.KEY, DbHandler.KEY + " = '" + iDetail.szContentUrl + "'");
+                string strCheck = dbhandler.GetString(DbHandler.TABLE_NAME, DbHandler.KEY, DbHandler.CONTENT_URL + " = '" + iDetail.szContentUrl + "'");
                 if (strCheck.Trim().Length == 0)
                 {
                     LocalItemDetails lItem = new LocalItemDetails();
