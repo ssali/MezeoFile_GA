@@ -80,7 +80,7 @@ namespace Mezeo
         {
             if (syncManager != null && syncManager.isSyncInProgress)
             {
-                DialogResult dResult = MessageBox.Show("A sync is currently in progress.\n Cancel sync and close Mezeo File Sync now?", "Mezeo File Sync", MessageBoxButtons.OKCancel);
+                DialogResult dResult = MessageBox.Show(LanguageTranslator.GetValue("MezeoExitString1") + "\n" + LanguageTranslator.GetValue("MezeoExitString2"), AboutBox.AssemblyTitle, MessageBoxButtons.OKCancel);
                 if (dResult == DialogResult.Cancel)
                     return;
 
@@ -156,6 +156,10 @@ namespace Mezeo
             this.txtServerUrl.CueText = LanguageTranslator.GetValue("ServerUrlCueText");
             this.labelError.Text = "";
 
+           
+
+
+
             if (!BasicInfo.LoadRegistryValues())
             {
                 showLogin = true;
@@ -210,7 +214,6 @@ namespace Mezeo
             }
             else
             {
-
                 BasicInfo.UserName = txtUserName.Text;
                 BasicInfo.Password = txtPasswrod.Text;
                 BasicInfo.ServiceUrl = txtServerUrl.Text;
@@ -455,6 +458,11 @@ namespace Mezeo
             GraphicsUnit gu = new GraphicsUnit();
             e.Graphics.DrawImage(img, rect, img.GetBounds(ref gu), gu);
             //e.Graphics.DrawImageUnscaled(img, rect);
+        }
+
+        private void toolStripMenuItem5_Click(object sender, EventArgs e)
+        {
+            System.Diagnostics.Process.Start(BasicInfo.ServiceUrl);
         }
 
         //protected override void WndProc(ref Message msg)

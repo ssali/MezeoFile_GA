@@ -79,7 +79,7 @@ namespace Mezeo {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to detected a conflict while updating the file. This typically happens when you make a change to a file in your sync folder and the corresponding file in your.
+        ///   Looks up a localized string similar to  detected a conflict while updating the file. This typically happens when you make a change to a file in your sync folder and the corresponding file in your .
         /// </summary>
         internal static string ErrorBlurbConflict1 {
             get {
@@ -88,7 +88,7 @@ namespace Mezeo {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to account was updated between sync cycles..
+        ///   Looks up a localized string similar to  account was updated between sync cycles..
         /// </summary>
         internal static string ErrorBlurbConflict2 {
             get {
@@ -106,7 +106,7 @@ namespace Mezeo {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to You can see all versions of the file in your.
+        ///   Looks up a localized string similar to You can see all versions of the file in your .
         /// </summary>
         internal static string ErrorBlurbConflict4 {
             get {
@@ -115,7 +115,7 @@ namespace Mezeo {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to account by clicking on the link below..
+        ///   Looks up a localized string similar to  account by clicking on the link below..
         /// </summary>
         internal static string ErrorBlurbConflict5 {
             get {
@@ -151,7 +151,7 @@ namespace Mezeo {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to was unable to upload the file from your local machine to your.
+        ///   Looks up a localized string similar to  was unable to upload the file from your local machine to your .
         /// </summary>
         internal static string ErrorBlurbUpload1 {
             get {
@@ -160,7 +160,7 @@ namespace Mezeo {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to account..
+        ///   Looks up a localized string similar to  account..
         /// </summary>
         internal static string ErrorBlurbUpload2 {
             get {
@@ -219,6 +219,24 @@ namespace Mezeo {
         internal static string LoginSuccess {
             get {
                 return ResourceManager.GetString("LoginSuccess", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to A sync is currently in progress..
+        /// </summary>
+        internal static string MezeoExitString1 {
+            get {
+                return ResourceManager.GetString("MezeoExitString1", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Cancel sync and close Mezeo File Sync now?.
+        /// </summary>
+        internal static string MezeoExitString2 {
+            get {
+                return ResourceManager.GetString("MezeoExitString2", resourceCulture);
             }
         }
         
@@ -363,6 +381,15 @@ namespace Mezeo {
         internal static string SyncManagerMoveFolderButtonText {
             get {
                 return ResourceManager.GetString("SyncManagerMoveFolderButtonText", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Select the desired location for the Mezeo File sync folder:.
+        /// </summary>
+        internal static string SyncManagerMoveFolderDesc {
+            get {
+                return ResourceManager.GetString("SyncManagerMoveFolderDesc", resourceCulture);
             }
         }
         

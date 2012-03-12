@@ -63,6 +63,7 @@
             this.eventLog1 = new System.Diagnostics.EventLog();
             this.tmrNextSync = new System.Windows.Forms.Timer(this.components);
             this.bwNQUpdate = new System.ComponentModel.BackgroundWorker();
+            this.bwOffilneEvent = new System.ComponentModel.BackgroundWorker();
             this.pnlStatus.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.imgStatus)).BeginInit();
             this.pnlUsage.SuspendLayout();
@@ -288,6 +289,7 @@
             this.lnkServerUrl.TabStop = true;
             this.lnkServerUrl.Text = "https://demo.mezeo.net";
             this.lnkServerUrl.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+            this.lnkServerUrl.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.lnkServerUrl_LinkClicked);
             // 
             // lnkHelp
             // 
@@ -405,6 +407,13 @@
             this.bwNQUpdate.ProgressChanged += new System.ComponentModel.ProgressChangedEventHandler(this.bwNQUpdate_ProgressChanged);
             this.bwNQUpdate.RunWorkerCompleted += new System.ComponentModel.RunWorkerCompletedEventHandler(this.bwNQUpdate_RunWorkerCompleted);
             // 
+            // bwOffilneEvent
+            // 
+            this.bwOffilneEvent.WorkerReportsProgress = true;
+            this.bwOffilneEvent.WorkerSupportsCancellation = true;
+            this.bwOffilneEvent.DoWork += new System.ComponentModel.DoWorkEventHandler(this.bwOffilneEvent_DoWork);
+            this.bwOffilneEvent.RunWorkerCompleted += new System.ComponentModel.RunWorkerCompletedEventHandler(this.bwOffilneEvent_RunWorkerCompleted);
+            // 
             // frmSyncManager
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -481,5 +490,6 @@
         private System.Windows.Forms.ProgressBar pbSyncProgress;
         private System.ComponentModel.BackgroundWorker bwNQUpdate;
         private System.Windows.Forms.Button btnIssuesFound;
+        private System.ComponentModel.BackgroundWorker bwOffilneEvent;
     }
 }

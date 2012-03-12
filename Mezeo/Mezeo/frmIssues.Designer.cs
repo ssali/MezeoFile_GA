@@ -235,6 +235,7 @@
             this.lnkHelp.TabIndex = 13;
             this.lnkHelp.TabStop = true;
             this.lnkHelp.Text = "Help";
+            this.lnkHelp.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.lnkHelp_LinkClicked);
             // 
             // lnkAbout
             // 
@@ -247,6 +248,7 @@
             this.lnkAbout.TabIndex = 14;
             this.lnkAbout.TabStop = true;
             this.lnkAbout.Text = "About";
+            this.lnkAbout.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.lnkAbout_LinkClicked);
             // 
             // lnkLocalFile
             // 
@@ -338,7 +340,7 @@
             this.Name = "frmIssues";
             this.ShowIcon = false;
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
-            this.Text = "MezeoVault Sync Issues";
+            this.Text = "Mezeo File Sync Issues";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.frmIssues_FormClosing);
             this.Shown += new System.EventHandler(this.frmIssues_Shown);
             this.panel1.ResumeLayout(false);

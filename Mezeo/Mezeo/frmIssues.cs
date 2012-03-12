@@ -129,5 +129,16 @@ namespace Mezeo
         {
             bool bRet = cMezeoFileCloud.ExceuteEventViewer(AboutBox.AssemblyTitle);
         }
+
+        private void lnkHelp_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
+        {
+            System.Diagnostics.Process.Start(BasicInfo.ServiceUrl + "/help/sync");
+        }
+
+        private void lnkAbout_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
+        {
+            AboutBox aboutBox = new AboutBox();
+            aboutBox.ShowDialog();
+        }
     }
 }

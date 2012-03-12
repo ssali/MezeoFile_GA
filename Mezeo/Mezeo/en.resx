@@ -124,19 +124,19 @@
     <value>Conflict Detected</value>
   </data>
   <data name="ErrorBlurbConflict1" xml:space="preserve">
-    <value>detected a conflict while updating the file. This typically happens when you make a change to a file in your sync folder and the corresponding file in your</value>
+    <value> detected a conflict while updating the file. This typically happens when you make a change to a file in your sync folder and the corresponding file in your </value>
   </data>
   <data name="ErrorBlurbConflict2" xml:space="preserve">
-    <value>account was updated between sync cycles.</value>
+    <value> account was updated between sync cycles.</value>
   </data>
   <data name="ErrorBlurbConflict3" xml:space="preserve">
     <value>Your local changes have been saved as the most recent version.</value>
   </data>
   <data name="ErrorBlurbConflict4" xml:space="preserve">
-    <value>You can see all versions of the file in your</value>
+    <value>You can see all versions of the file in your </value>
   </data>
   <data name="ErrorBlurbConflict5" xml:space="preserve">
-    <value>account by clicking on the link below.</value>
+    <value> account by clicking on the link below.</value>
   </data>
   <data name="ErrorBlurbDownload1" xml:space="preserve">
     <value>was unable to download the file from your</value>
@@ -148,10 +148,10 @@
     <value>This is typically caused by internet or service interruptions and is usually resolved automatically. Another download attempt will be made during the next sync cycle.</value>
   </data>
   <data name="ErrorBlurbUpload1" xml:space="preserve">
-    <value>was unable to upload the file from your local machine to your</value>
+    <value> was unable to upload the file from your local machine to your </value>
   </data>
   <data name="ErrorBlurbUpload2" xml:space="preserve">
-    <value>account.</value>
+    <value> account.</value>
   </data>
   <data name="ErrorBlurbUpload3" xml:space="preserve">
     <value>This is typically caused by internet or service interruptions and is usually resolved automatically.  Another upload attempt will be made during the next sync cycle.</value>
@@ -170,6 +170,12 @@
   </data>
   <data name="LoginSuccess" xml:space="preserve">
     <value>Login Success</value>
+  </data>
+  <data name="MezeoExitString1" xml:space="preserve">
+    <value>A sync is currently in progress.</value>
+  </data>
+  <data name="MezeoExitString2" xml:space="preserve">
+    <value>Cancel sync and close Mezeo File Sync now?</value>
   </data>
   <data name="PasswordCueText" xml:space="preserve">
     <value>Password</value>
@@ -218,6 +224,9 @@
   </data>
   <data name="SyncManagerMoveFolderButtonText" xml:space="preserve">
     <value>Move Folder</value>
+  </data>
+  <data name="SyncManagerMoveFolderDesc" xml:space="preserve">
+    <value>Select the desired location for the Mezeo File sync folder:</value>
   </data>
   <data name="SyncManagerOffButtonText" xml:space="preserve">
     <value>Off</value>

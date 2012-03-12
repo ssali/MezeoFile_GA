@@ -60,6 +60,7 @@ namespace Mezeo
         public void StopMonitor()
         {
             fileWatcher.EnableRaisingEvents = false;
+            fileWatcher.Dispose();
         }
 
         private void StampTime()

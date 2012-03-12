@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading;
 using MezeoFileSupport;
 using System.Text.RegularExpressions;
+using System.IO;
 
 namespace Mezeo
 {
@@ -89,7 +90,7 @@ namespace Mezeo
                         fileFolderInfo.MimeType = id.szMimeType;
                         fileFolderInfo.ModifiedDate = id.dtModified;//DateTime.Parse(id.strModified);
                         fileFolderInfo.ParentUrl = id.szParentUrl;
-                        fileFolderInfo.Status = "SUCCESS";
+                        fileFolderInfo.Status = "INPROGRESS";
                         fileFolderInfo.Type = id.szItemType;
 
                         int lastSepIndex = itemDetail.Path.LastIndexOf("\\");
@@ -106,6 +107,11 @@ namespace Mezeo
                         //}
 
                         fileFolderInfo.ParentDir = parentDirPath;
+
+                        if (fileFolderInfo.ETag == null) { fileFolderInfo.ETag = ""; }
+                        if (fileFolderInfo.MimeType == null) { fileFolderInfo.MimeType = ""; }
+
+                        dbhandler.Write(fileFolderInfo);
 
                         string downloadObjectName = BasicInfo.SyncDirPath + "\\";
                         downloadObjectName += itemDetail.Path;
@@ -137,13 +143,25 @@ namespace Mezeo
                             Description += LanguageTranslator.GetValue("ErrorBlurbDownload3");
                             cFileCloud.AppEventViewer(AboutBox.AssemblyTitle, Description, 3);
                         }
-
-                        fileFolderInfo.ETag = id.strETag;
-
-                        if (fileFolderInfo.ETag == null) { fileFolderInfo.ETag = ""; }
-                        if (fileFolderInfo.MimeType == null) { fileFolderInfo.MimeType = ""; }
-
-                        dbhandler.Write(fileFolderInfo);
+                        else
+                        {
+                            //fileFolderInfo.ETag = id.strETag;
+                            if (id.szItemType == "DIRECTORY")
+                            {
+                                DirectoryInfo dInfo = new DirectoryInfo(downloadObjectName);
+                                dbhandler.UpdateModifiedDate(dInfo.LastWriteTime, fileFolderInfo.Key);
+                                dbhandler.Update(DbHandler.TABLE_NAME, DbHandler.E_TAG + "='" + id.strETag + "'", DbHandler.KEY + "='" + fileFolderInfo.Key + "'");
+                                dbhandler.Update(DbHandler.TABLE_NAME, DbHandler.STATUS + "= 'SUCCESS'", DbHandler.KEY + "='" + fileFolderInfo.Key + "'");
+                            }
+                            else
+                            {
+                                FileInfo fInfo = new FileInfo(downloadObjectName);
+                                dbhandler.UpdateModifiedDate(fInfo.LastWriteTime, fileFolderInfo.Key);
+                                dbhandler.Update(DbHandler.TABLE_NAME, DbHandler.E_TAG + "='" + id.strETag + "'", DbHandler.KEY + "='" + fileFolderInfo.Key + "'");
+                                dbhandler.Update(DbHandler.TABLE_NAME, DbHandler.STATUS + "= 'SUCCESS'", DbHandler.KEY + "='" + fileFolderInfo.Key + "'");
+                            }
+                        }
+                       
                         if (downloadEvent != null)
                         {
                             downloadEvent(this, new FileDownloaderEvents(downloadObjectName, 0));

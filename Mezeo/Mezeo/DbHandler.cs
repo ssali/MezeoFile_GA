@@ -290,10 +290,10 @@ namespace Mezeo
         }
 
 
-        public List<string> GetStringList(string tableName, string fieldName)
+        public bool GetStringList(string tableName, string fieldName, ref List<string> result)
         {
             string query = "select " + fieldName + " from " + tableName;
-            List<string> result =new List<string>();
+          //  List<string> result =new List<string>();
 
             sqlCommand = new SQLiteCommand(query, sqlConnection);
             sqlDataReader = sqlCommand.ExecuteReader();
@@ -303,7 +303,7 @@ namespace Mezeo
             }
             sqlDataReader.Close();
 
-            return result;
+            return true;
         }
 
         public List<int> GetIntList(string tableName, string fieldName)
@@ -388,6 +388,44 @@ namespace Mezeo
             result = sqlCommand.ExecuteNonQuery();
 
             return result;
+        }
+
+        public List<DbKeyModDate> GetStructureList()
+        {
+            List<DbKeyModDate> keyList = new List<DbKeyModDate>();
+
+            string query = "select " + KEY + "," + MODIFIED_DATE + " from " + TABLE_NAME;
+            sqlCommand = new SQLiteCommand(query, sqlConnection);
+            sqlDataReader = sqlCommand.ExecuteReader();
+            
+            while(sqlDataReader.Read())
+            {
+                DbKeyModDate keyMod = new DbKeyModDate();
+                keyMod.Key = sqlDataReader.GetString(0);
+                keyMod.ModifiedDate = sqlDataReader.GetDateTime(1);
+                keyList.Add(keyMod);
+            }
+
+            sqlDataReader.Close();
+            return keyList;
+        }
+
+        public List<string> GetKeyList()
+        {
+            List<string> keys = new List<string>();
+
+            string query = "select " + KEY +  " from " + TABLE_NAME;
+            sqlCommand = new SQLiteCommand(query, sqlConnection);
+            sqlDataReader = sqlCommand.ExecuteReader();
+
+            while (sqlDataReader.Read())
+            {
+                string key = sqlDataReader.GetString(0);
+                keys.Add(key);
+            }
+
+            sqlDataReader.Close();
+            return keys;
         }
     }
 }
