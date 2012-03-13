@@ -186,6 +186,7 @@ namespace MezeoFileSupport
         private XmlDocument m_xmlDocument = new XmlDocument();
         private bool m_bStop = false;
         private bool m_bPause = false;
+        private String StrAPIKey = "c5f5c39e22b4c743ff7c83470499748c6ac46b249c29e3934f5744166af130c6";
 
         //create request format for get details
         private void OnGetRequest(ref HttpWebRequest webRequest, String strRequestURL, String strAccept, String strXCloudDepth, String strMethod)
@@ -200,6 +201,7 @@ namespace MezeoFileSupport
 		        webRequest.Headers.Add("X-Cloud-Depth", strXCloudDepth);
 	        webRequest.Accept = strAccept;
             webRequest.Timeout = System.Threading.Timeout.Infinite;
+            webRequest.Headers.Add("X-Cloud-Key", StrAPIKey);
         }
 
         //responce string for request basic
@@ -228,6 +230,7 @@ namespace MezeoFileSupport
             webRequest.Accept = "application/cdmi-queue";
             webRequest.ContentType = "application/cdmi-queue";
             webRequest.Timeout = System.Threading.Timeout.Infinite;
+            webRequest.Headers.Add("X-Cloud-Key", StrAPIKey);
         }
 
         private void OnPostAndPutRequest(ref HttpWebRequest webRequest, String strRequestURL, String strSource, String strContentType, String strLoadHeader, String strFinalBoundary, String StrMethod, String strDest)
@@ -243,6 +246,7 @@ namespace MezeoFileSupport
 	        webRequest.ContentType = strContentType;
 	        //webRequest.Timeout = 86400000;
             webRequest.Timeout = System.Threading.Timeout.Infinite;
+            webRequest.Headers.Add("X-Cloud-Key", StrAPIKey);
 
             Stream writeStream = webRequest.GetRequestStream();
 	        if( writeStream != null)
@@ -405,6 +409,7 @@ namespace MezeoFileSupport
 	        webRequest.KeepAlive = false;
 	        webRequest.Headers.Add("X-Client-Specification", "2");
             webRequest.Timeout = System.Threading.Timeout.Infinite;
+            webRequest.Headers.Add("X-Cloud-Key", StrAPIKey);
 
             Stream writeStream = webRequest.GetRequestStream();
 	        if( writeStream != null)
@@ -1081,6 +1086,7 @@ namespace MezeoFileSupport
                 webRequest.ContentType = "application/cdmi-queue";
                 webRequest.Accept = "application/cdmi-queue";
                 webRequest.Timeout = System.Threading.Timeout.Infinite;
+                webRequest.Headers.Add("X-Cloud-Key", StrAPIKey);
 
                 Stream writeStream = webRequest.GetRequestStream();
                 if (writeStream != null)
