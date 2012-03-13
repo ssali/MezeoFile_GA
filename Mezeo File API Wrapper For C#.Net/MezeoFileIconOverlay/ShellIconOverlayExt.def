@@ -1,0 +1,5 @@
+LIBRARY	"MezeoFileOverlay"
+
+EXPORTS
+    DllCanUnloadNow private
+    DllGetClassObject private
