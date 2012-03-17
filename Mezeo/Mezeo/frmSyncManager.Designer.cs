@@ -63,7 +63,9 @@
             this.eventLog1 = new System.Diagnostics.EventLog();
             this.tmrNextSync = new System.Windows.Forms.Timer(this.components);
             this.bwNQUpdate = new System.ComponentModel.BackgroundWorker();
-            this.bwOffilneEvent = new System.ComponentModel.BackgroundWorker();
+            this.bwOfflineEvent = new System.ComponentModel.BackgroundWorker();
+            this.bwLocalEvents = new System.ComponentModel.BackgroundWorker();
+            this.bwUpdateUsage = new System.ComponentModel.BackgroundWorker();
             this.pnlStatus.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.imgStatus)).BeginInit();
             this.pnlUsage.SuspendLayout();
@@ -407,12 +409,27 @@
             this.bwNQUpdate.ProgressChanged += new System.ComponentModel.ProgressChangedEventHandler(this.bwNQUpdate_ProgressChanged);
             this.bwNQUpdate.RunWorkerCompleted += new System.ComponentModel.RunWorkerCompletedEventHandler(this.bwNQUpdate_RunWorkerCompleted);
             // 
-            // bwOffilneEvent
+            // bwOfflineEvent
             // 
-            this.bwOffilneEvent.WorkerReportsProgress = true;
-            this.bwOffilneEvent.WorkerSupportsCancellation = true;
-            this.bwOffilneEvent.DoWork += new System.ComponentModel.DoWorkEventHandler(this.bwOffilneEvent_DoWork);
-            this.bwOffilneEvent.RunWorkerCompleted += new System.ComponentModel.RunWorkerCompletedEventHandler(this.bwOffilneEvent_RunWorkerCompleted);
+            this.bwOfflineEvent.WorkerReportsProgress = true;
+            this.bwOfflineEvent.WorkerSupportsCancellation = true;
+            this.bwOfflineEvent.DoWork += new System.ComponentModel.DoWorkEventHandler(this.bwOffilneEvent_DoWork);
+            this.bwOfflineEvent.ProgressChanged += new System.ComponentModel.ProgressChangedEventHandler(this.bwLocalEvents_ProgressChanged);
+            this.bwOfflineEvent.RunWorkerCompleted += new System.ComponentModel.RunWorkerCompletedEventHandler(this.bwOffilneEvent_RunWorkerCompleted);
+            // 
+            // bwLocalEvents
+            // 
+            this.bwLocalEvents.WorkerReportsProgress = true;
+            this.bwLocalEvents.WorkerSupportsCancellation = true;
+            this.bwLocalEvents.DoWork += new System.ComponentModel.DoWorkEventHandler(this.bwLocalEvents_DoWork);
+            this.bwLocalEvents.ProgressChanged += new System.ComponentModel.ProgressChangedEventHandler(this.bwLocalEvents_ProgressChanged);
+            // 
+            // bwUpdateUsage
+            // 
+            this.bwUpdateUsage.WorkerReportsProgress = true;
+            this.bwUpdateUsage.WorkerSupportsCancellation = true;
+            this.bwUpdateUsage.DoWork += new System.ComponentModel.DoWorkEventHandler(this.bwUpdateUsage_DoWork);
+            this.bwUpdateUsage.RunWorkerCompleted += new System.ComponentModel.RunWorkerCompletedEventHandler(this.bwUpdateUsage_RunWorkerCompleted);
             // 
             // frmSyncManager
             // 
@@ -427,12 +444,12 @@
             this.Controls.Add(this.pnlUsage);
             this.Controls.Add(this.pnlStatus);
             this.Controls.Add(this.panel1);
+            this.DoubleBuffered = true;
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.MaximizeBox = false;
             this.MinimizeBox = false;
             this.Name = "frmSyncManager";
-            this.ShowIcon = false;
             this.Text = "frmSyncManager";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.frmSyncManager_FormClosing);
             this.Load += new System.EventHandler(this.frmSyncManager_Load);
@@ -490,6 +507,8 @@
         private System.Windows.Forms.ProgressBar pbSyncProgress;
         private System.ComponentModel.BackgroundWorker bwNQUpdate;
         private System.Windows.Forms.Button btnIssuesFound;
-        private System.ComponentModel.BackgroundWorker bwOffilneEvent;
+        private System.ComponentModel.BackgroundWorker bwOfflineEvent;
+        private System.ComponentModel.BackgroundWorker bwLocalEvents;
+        private System.ComponentModel.BackgroundWorker bwUpdateUsage;
     }
 }

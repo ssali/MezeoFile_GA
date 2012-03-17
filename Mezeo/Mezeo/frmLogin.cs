@@ -32,6 +32,9 @@ namespace Mezeo
             InitializeComponent();
 
             this.Icon = Properties.Resources.MezeoVault;
+
+            //this.HandleCreated += new EventHandler(frmLogin_HandleCreated);
+           // this.HandleDestroyed += new EventHandler(frmLogin_HandleDestroyed);
             
             notificationManager = new NotificationManager();
             notificationManager.NotificationHandler = this.niSystemTray;
@@ -44,6 +47,16 @@ namespace Mezeo
             LoadResources();
             
         }
+
+        //void frmLogin_HandleDestroyed(object sender, EventArgs e)
+        //{
+        //    MessageBox.Show("Handle Destroyed");
+        //}
+
+        //void frmLogin_HandleCreated(object sender, EventArgs e)
+        //{
+        //    MessageBox.Show("Handle Created " + this.Handle);
+        //}
 
         private void frmLogin_FormClosing(object sender, FormClosingEventArgs e)
         {
@@ -136,6 +149,7 @@ namespace Mezeo
             if(!url.Substring(0,8).Equals("https://"))
 	        {
                 url = "https://" + url;
+                txtServerUrl.Text = url;
 	        }
 
 
@@ -210,6 +224,7 @@ namespace Mezeo
             if (loginDetails == null)
             {
                 ShowLoginError();
+                return;
                 
             }
             else
@@ -247,9 +262,19 @@ namespace Mezeo
             syncManager = new frmSyncManager(mezeoFileCloud, loginDetails, notificationManager);
             syncManager.CreateControl();
             syncManager.ParentForm = this;
+
             if (isLoginSuccess)
             {
-                syncManager.InitializeSync();
+                if (BasicInfo.IsInitialSync)
+                {
+                    syncManager.InitializeSync();
+                }
+                else
+                {
+                    syncManager.SetUpSync();
+                    syncManager.SetUpSyncNowNotification();
+                    syncManager.ProcessOfflineEvents();
+                }
             }
             else if (!BasicInfo.IsConnectedToInternet)
             {
@@ -388,7 +413,7 @@ namespace Mezeo
                     else
                     {
                        
-                        notificationManager.NotificationHandler.ShowBalloonTip(5, LanguageTranslator.GetValue("TrayBalloonSyncStatusText"),
+                        notificationManager.NotificationHandler.ShowBalloonTip(1, LanguageTranslator.GetValue("TrayBalloonSyncStatusText"),
                                                                                 LanguageTranslator.GetValue("TrayAppOnlineText"), ToolTipIcon.None);
                         
                         notificationManager.HoverText = LanguageTranslator.GetValue("TrayAppOnlineText");
@@ -405,7 +430,7 @@ namespace Mezeo
                 }
                 else
                 {
-                    notificationManager.NotificationHandler.ShowBalloonTip(5, LanguageTranslator.GetValue("TrayBalloonSyncStatusText"),
+                    notificationManager.NotificationHandler.ShowBalloonTip(1, LanguageTranslator.GetValue("TrayBalloonSyncStatusText"),
                                                                                 LanguageTranslator.GetValue("TrayAppOfflineText"), ToolTipIcon.None);
 
                     notificationManager.HoverText = LanguageTranslator.GetValue("TrayAppOfflineText");
@@ -463,6 +488,32 @@ namespace Mezeo
         private void toolStripMenuItem5_Click(object sender, EventArgs e)
         {
             System.Diagnostics.Process.Start(BasicInfo.ServiceUrl);
+        }
+
+        private void toolStripMenuItem6_Paint(object sender, PaintEventArgs e)
+        {
+            //Point pt = new Point(0, 0);
+            Rectangle rect = new Rectangle();
+            rect.X = 0;
+            rect.Y = 0;
+            rect.Width = ((ToolStripMenuItem)sender).Width;
+            rect.Height = ((ToolStripMenuItem)sender).Height;
+
+            Image img = Properties.Resources.logo_horizontal_right_click;
+            //e.Graphics.DrawImage(img, pt);
+            GraphicsUnit gu = new GraphicsUnit();
+            e.Graphics.DrawImage(img, rect, img.GetBounds(ref gu), gu);
+            //e.Graphics.DrawImageUnscaled(img, rect);
+        }
+
+        private void loginToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            if (this.WindowState == FormWindowState.Minimized)
+            {
+                this.Show();
+                this.WindowState = FormWindowState.Normal;
+                
+            }
         }
 
         //protected override void WndProc(ref Message msg)

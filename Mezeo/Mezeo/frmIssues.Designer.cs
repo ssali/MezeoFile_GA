@@ -165,9 +165,9 @@
             this.label4.AutoSize = true;
             this.label4.Location = new System.Drawing.Point(7, 399);
             this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(52, 13);
+            this.label4.Size = new System.Drawing.Size(55, 13);
             this.label4.TabIndex = 6;
-            this.label4.Text = "Local file:";
+            this.label4.Text = "Local File:";
             // 
             // label5
             // 
@@ -210,9 +210,9 @@
             this.label9.AutoSize = true;
             this.label9.Location = new System.Drawing.Point(7, 463);
             this.label9.Name = "label9";
-            this.label9.Size = new System.Drawing.Size(43, 13);
+            this.label9.Size = new System.Drawing.Size(47, 13);
             this.label9.TabIndex = 9;
-            this.label9.Text = "File info";
+            this.label9.Text = "File Info:";
             // 
             // panel3
             // 
@@ -261,6 +261,7 @@
             this.lnkLocalFile.TabStop = true;
             this.lnkLocalFile.Text = "C:\\users\\mezeo file sync\\abc.txt";
             this.lnkLocalFile.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+            this.lnkLocalFile.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.lnkLocalFile_LinkClicked);
             // 
             // lnkFileInfo
             // 
@@ -273,6 +274,7 @@
             this.lnkFileInfo.TabStop = true;
             this.lnkFileInfo.Text = "/sales/presentation/abc.txt";
             this.lnkFileInfo.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+            this.lnkFileInfo.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.lnkFileInfo_LinkClicked);
             // 
             // lblLocalModifiedDate
             // 

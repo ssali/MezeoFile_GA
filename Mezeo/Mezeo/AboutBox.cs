@@ -84,6 +84,19 @@ namespace Mezeo
             }
         }
 
+        public static string AssemblyGuid
+        {
+            get
+            {
+                object[] attributes = Assembly.GetEntryAssembly().GetCustomAttributes(typeof(System.Runtime.InteropServices.GuidAttribute), false);
+                if (attributes.Length == 0)
+                {
+                    return String.Empty;
+                }
+                return ((System.Runtime.InteropServices.GuidAttribute)attributes[0]).Value;
+            }
+        }
+
         public string AssemblyCompany
         {
             get

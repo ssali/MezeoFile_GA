@@ -60,6 +60,7 @@
             this.menuItem9 = new System.Windows.Forms.MenuItem();
             this.menuItem6 = new System.Windows.Forms.MenuItem();
             this.niSystemTray = new System.Windows.Forms.NotifyIcon(this.components);
+            this.toolStripMenuItem6 = new System.Windows.Forms.ToolStripMenuItem();
             this.txtServerUrl = new Mezeo.CueTextBox();
             this.txtPasswrod = new Mezeo.CueTextBox();
             this.txtUserName = new Mezeo.CueTextBox();
@@ -78,6 +79,7 @@
             // cmSystemTrayLogin
             // 
             this.cmSystemTrayLogin.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.toolStripMenuItem6,
             this.loginToolStripMenuItem,
             this.toolStripMenuItem1,
             this.exitToolStripMenuItem});
@@ -88,6 +90,7 @@
             // 
             this.loginToolStripMenuItem.Name = "loginToolStripMenuItem";
             resources.ApplyResources(this.loginToolStripMenuItem, "loginToolStripMenuItem");
+            this.loginToolStripMenuItem.Click += new System.EventHandler(this.loginToolStripMenuItem_Click);
             // 
             // toolStripMenuItem1
             // 
@@ -252,6 +255,15 @@
             // niSystemTray
             // 
             resources.ApplyResources(this.niSystemTray, "niSystemTray");
+            this.niSystemTray.MouseClick += new System.Windows.Forms.MouseEventHandler(this.niSystemTray_MouseClick);
+            // 
+            // toolStripMenuItem6
+            // 
+            this.toolStripMenuItem6.BackColor = System.Drawing.SystemColors.Control;
+            resources.ApplyResources(this.toolStripMenuItem6, "toolStripMenuItem6");
+            this.toolStripMenuItem6.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.None;
+            this.toolStripMenuItem6.Name = "toolStripMenuItem6";
+            this.toolStripMenuItem6.Paint += new System.Windows.Forms.PaintEventHandler(this.toolStripMenuItem6_Paint);
             // 
             // txtServerUrl
             // 
@@ -337,6 +349,7 @@
         public System.Windows.Forms.MenuItem menuItem7;
         private System.Windows.Forms.NotifyIcon niSystemTray;
         public System.Windows.Forms.ToolStripMenuItem toolStripMenuItem4;
+        private System.Windows.Forms.ToolStripMenuItem toolStripMenuItem6;
 
     }
 }

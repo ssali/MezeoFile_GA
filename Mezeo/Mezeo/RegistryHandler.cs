@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Windows.Forms;
 using Microsoft.Win32;
+using MezeoFileSupport;
 
 namespace Mezeo
 {
@@ -32,7 +33,7 @@ namespace Mezeo
         }
 
       
-        public string Read(string KeyName, RegistryValueKind valueKind)
+        public string Read(string KeyName, RegistryValueKind valueKind,bool isEncrypted)
         {
             RegistryKey rk = baseRegistryKey;
             RegistryKey sk1 = rk.OpenSubKey(subKey);
@@ -47,7 +48,15 @@ namespace Mezeo
                     if (valueKind == RegistryValueKind.Binary)
                     {
                         Byte[] bytes = (Byte[])sk1.GetValue(KeyName.ToUpper());
-                        return System.Text.Encoding.Default.GetString(bytes);
+
+                        if (isEncrypted)
+                        {
+                            return MezeoFileCloud.Decrypt(bytes);
+                        }
+                        else
+                        {
+                            return System.Text.Encoding.Default.GetString(bytes);
+                        }
                     }
                     else
                     {
@@ -63,7 +72,7 @@ namespace Mezeo
         }
 
       
-        public bool Write(string KeyName, object Value, RegistryValueKind valueKind)
+        public bool Write(string KeyName, object Value, RegistryValueKind valueKind,bool isEncrypted)
         {
             try
             {
@@ -72,7 +81,14 @@ namespace Mezeo
                 
                 if (valueKind == RegistryValueKind.Binary)
                 {
-                    sk1.SetValue(KeyName.ToUpper(), Encoding.ASCII.GetBytes(Value.ToString()), valueKind);
+                    if (isEncrypted)
+                    {
+                        sk1.SetValue(KeyName.ToUpper(),MezeoFileCloud.Encrypt(Value.ToString()), valueKind);
+                    }
+                    else
+                    {
+                        sk1.SetValue(KeyName.ToUpper(), Encoding.ASCII.GetBytes(Value.ToString()), valueKind);
+                    }
                 }
                 else
                 {

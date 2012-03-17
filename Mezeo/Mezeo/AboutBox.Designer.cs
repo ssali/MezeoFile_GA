@@ -47,51 +47,51 @@
             // 
             // labelProductName
             // 
+            this.labelProductName.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.labelProductName.Location = new System.Drawing.Point(15, 151);
             this.labelProductName.Margin = new System.Windows.Forms.Padding(6, 0, 3, 0);
             this.labelProductName.MaximumSize = new System.Drawing.Size(0, 17);
             this.labelProductName.Name = "labelProductName";
-            this.labelProductName.Size = new System.Drawing.Size(365, 13);
+            this.labelProductName.Size = new System.Drawing.Size(0, 15);
             this.labelProductName.TabIndex = 28;
             this.labelProductName.Text = "Product Name";
             this.labelProductName.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
-            this.AutoSize = false;
             // 
             // labelVersion
             // 
-            this.labelVersion.Location = new System.Drawing.Point(15, 164);
+            this.labelVersion.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.labelVersion.Location = new System.Drawing.Point(15, 166);
             this.labelVersion.Margin = new System.Windows.Forms.Padding(6, 0, 3, 0);
             this.labelVersion.MaximumSize = new System.Drawing.Size(0, 17);
             this.labelVersion.Name = "labelVersion";
-            this.labelVersion.Size = new System.Drawing.Size(365, 13);
+            this.labelVersion.Size = new System.Drawing.Size(0, 15);
             this.labelVersion.TabIndex = 27;
             this.labelVersion.Text = "Version";
             this.labelVersion.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
-            this.AutoSize = false;
             // 
             // labelCopyright
             // 
-            this.labelCopyright.Location = new System.Drawing.Point(15, 179);
+            this.labelCopyright.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.labelCopyright.Location = new System.Drawing.Point(15, 181);
             this.labelCopyright.Margin = new System.Windows.Forms.Padding(6, 0, 3, 0);
             this.labelCopyright.MaximumSize = new System.Drawing.Size(0, 17);
             this.labelCopyright.Name = "labelCopyright";
-            this.labelCopyright.Size = new System.Drawing.Size(365, 13);
+            this.labelCopyright.Size = new System.Drawing.Size(0, 15);
             this.labelCopyright.TabIndex = 29;
             this.labelCopyright.Text = "Copyright";
             this.labelCopyright.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
-            this.AutoSize = false;
             // 
             // labelCompanyName
             // 
-            this.labelCompanyName.Location = new System.Drawing.Point(15, 194);
+            this.labelCompanyName.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.labelCompanyName.Location = new System.Drawing.Point(15, 196);
             this.labelCompanyName.Margin = new System.Windows.Forms.Padding(6, 0, 3, 0);
             this.labelCompanyName.MaximumSize = new System.Drawing.Size(0, 17);
             this.labelCompanyName.Name = "labelCompanyName";
-            this.labelCompanyName.Size = new System.Drawing.Size(365, 13);
+            this.labelCompanyName.Size = new System.Drawing.Size(0, 15);
             this.labelCompanyName.TabIndex = 30;
             this.labelCompanyName.Text = "Company Name";
             this.labelCompanyName.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
-            this.AutoSize = false;
             // 
             // AboutBox
             // 

@@ -493,7 +493,7 @@ namespace Mezeo {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Sync Manager - Mezeo File Sync.
+        ///   Looks up a localized string similar to Mezeo File Sync.
         /// </summary>
         internal static string SyncManagerTitle {
             get {

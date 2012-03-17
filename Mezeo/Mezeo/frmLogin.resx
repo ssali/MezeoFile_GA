@@ -150,23 +150,38 @@
   <metadata name="cmSystemTrayLogin.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
     <value>136, 17</value>
   </metadata>
+  <data name="toolStripMenuItem6.BackgroundImageLayout" type="System.Windows.Forms.ImageLayout, System.Windows.Forms">
+    <value>Zoom</value>
+  </data>
+  <data name="toolStripMenuItem6.Enabled" type="System.Boolean, mscorlib">
+    <value>False</value>
+  </data>
+  <data name="toolStripMenuItem6.Font" type="System.Drawing.Font, System.Drawing">
+    <value>Tahoma, 12pt</value>
+  </data>
+  <data name="toolStripMenuItem6.Size" type="System.Drawing.Size, System.Drawing">
+    <value>152, 22</value>
+  </data>
+  <data name="toolStripMenuItem6.TextAlign" type="System.Drawing.ContentAlignment, System.Drawing">
+    <value>MiddleLeft</value>
+  </data>
   <data name="loginToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
-    <value>110, 22</value>
+    <value>152, 22</value>
   </data>
   <data name="loginToolStripMenuItem.Text" xml:space="preserve">
     <value>Login</value>
   </data>
   <data name="toolStripMenuItem1.Size" type="System.Drawing.Size, System.Drawing">
-    <value>107, 6</value>
+    <value>149, 6</value>
   </data>
   <data name="exitToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
-    <value>110, 22</value>
+    <value>152, 22</value>
   </data>
   <data name="exitToolStripMenuItem.Text" xml:space="preserve">
     <value>Exit</value>
   </data>
   <data name="cmSystemTrayLogin.Size" type="System.Drawing.Size, System.Drawing">
-    <value>111, 54</value>
+    <value>153, 98</value>
   </data>
   <data name="&gt;&gt;cmSystemTrayLogin.Name" xml:space="preserve">
     <value>cmSystemTrayLogin</value>
@@ -232,7 +247,7 @@
     <value>Exit</value>
   </data>
   <data name="cmSystemTraySyncMgr.Size" type="System.Drawing.Size, System.Drawing">
-    <value>165, 154</value>
+    <value>165, 132</value>
   </data>
   <data name="&gt;&gt;cmSystemTraySyncMgr.Name" xml:space="preserve">
     <value>cmSystemTraySyncMgr</value>
@@ -1076,7 +1091,7 @@
     <value>CenterScreen</value>
   </data>
   <data name="$this.Text" xml:space="preserve">
-    <value>MezeoValut Sync Login</value>
+    <value>Mezeo File Sync Login</value>
   </data>
   <data name="&gt;&gt;loginToolStripMenuItem.Name" xml:space="preserve">
     <value>loginToolStripMenuItem</value>
@@ -1227,6 +1242,12 @@
   </data>
   <data name="&gt;&gt;niSystemTray.Type" xml:space="preserve">
     <value>System.Windows.Forms.NotifyIcon, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;toolStripMenuItem6.Name" xml:space="preserve">
+    <value>toolStripMenuItem6</value>
+  </data>
+  <data name="&gt;&gt;toolStripMenuItem6.Type" xml:space="preserve">
+    <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="&gt;&gt;$this.Name" xml:space="preserve">
     <value>frmLogin</value>

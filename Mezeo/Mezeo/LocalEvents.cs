@@ -24,7 +24,8 @@ namespace Mezeo
             FILE_ACTION_ADDED,
             FILE_ACTION_MODIFIED,
             FILE_ACTION_REMOVED,
-            FILE_ACTION_RENAMED
+            FILE_ACTION_RENAMED,
+            FILE_ACTION_MOVE
         }
 
     }

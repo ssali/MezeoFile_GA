@@ -41,7 +41,7 @@ namespace Mezeo
         {
             lvIssues.Items.Add(issue.LocalFilePath);
             lvIssues.Items[lvIssues.Items.Count - 1].SubItems.Add(issue.IssueTitle);
-            lvIssues.Items[lvIssues.Items.Count - 1].SubItems.Add(issue.ConflictTimeStamp.ToString("d/M/yyyy h:mm tt"));
+            lvIssues.Items[lvIssues.Items.Count - 1].SubItems.Add(issue.ConflictTimeStamp.ToString("M/d/yyyy h:mm tt"));
             lvIssues.Items[lvIssues.Items.Count - 1].Tag = issue;
 
             
@@ -62,6 +62,7 @@ namespace Mezeo
 
             if (lvIssues.Items.Count == 0)
             {
+                btnIgnoreConflict.Visible = false;
                 ClearInfoLabels();
             }
         }
@@ -81,11 +82,16 @@ namespace Mezeo
             lblDescription.Text = issue.IssueDescripation;
             lnkFileInfo.Text = issue.ServerFileInfo;
             lblFileSize.Text = issue.ServerSize;
-            lblModified.Text = issue.ServerIssueDT.ToString();
+            lblModified.Text = issue.ServerIssueDT.ToString("M/d/yyyy h:mm tt");
 
             lblLocalFileSize.Text = issue.LocalSize;
-            lblLocalModifiedDate.Text = issue.LocalIssueDT.ToString();
+            lblLocalModifiedDate.Text = issue.LocalIssueDT.ToString("M/d/yyyy h:mm tt");
             lnkLocalFile.Text = issue.LocalFilePath;
+
+            if (issue.cType == IssueFound.ConflictType.CONFLICT_MODIFIED)
+                btnIgnoreConflict.Visible = true;
+            else
+                btnIgnoreConflict.Visible = false;
 
         }
 
@@ -139,6 +145,24 @@ namespace Mezeo
         {
             AboutBox aboutBox = new AboutBox();
             aboutBox.ShowDialog();
+        }
+
+        private void lnkLocalFile_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
+        {
+            if (lvIssues.SelectedItems.Count > 0)
+            {
+                IssueFound iFound = (IssueFound)lvIssues.SelectedItems[0].Tag;
+                if (iFound.LocalFilePath.Length != 0)
+                {
+                    string argument = iFound.LocalFilePath;
+                    System.Diagnostics.Process.Start("explorer.exe", argument);
+                }
+            }
+        }
+
+        private void lnkFileInfo_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
+        {
+
         }
     }
 }

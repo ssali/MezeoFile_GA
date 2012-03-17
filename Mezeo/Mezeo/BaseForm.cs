@@ -19,28 +19,28 @@ namespace Mezeo
         private const int WM_RBUTTONDOWN = 0x204;
         private const int WM_MBUTTONDOWN = 0x207;
 
-        [DllImport("user32.dll", EntryPoint = "TrackPopupMenu")]
-        private static extern int TrackPopupMenu(
-            IntPtr hMenu,
-            int wFlags,
-            int x,
-            int y,
-            int nReserved,
-            IntPtr hwnd,
-            ref RECT lprc
-            );
+        //[DllImport("user32.dll", EntryPoint = "TrackPopupMenu")]
+        //private static extern int TrackPopupMenu(
+        //    IntPtr hMenu,
+        //    int wFlags,
+        //    int x,
+        //    int y,
+        //    int nReserved,
+        //    IntPtr hwnd,
+        //    ref RECT lprc
+        //    );
 
-        [DllImport("user32.dll", EntryPoint = "SetForegroundWindow")]
-        public static extern bool SetForegroundWindow(IntPtr hWnd);
+        //[DllImport("user32.dll", EntryPoint = "SetForegroundWindow")]
+        //public static extern bool SetForegroundWindow(IntPtr hWnd);
 
-        [StructLayout(LayoutKind.Sequential)]
-        private struct RECT
-        {
-            internal int Left;
-            internal int Top;
-            internal int Right;
-            internal int Bottom;
-        }
+        //[StructLayout(LayoutKind.Sequential)]
+        //private struct RECT
+        //{
+        //    internal int Left;
+        //    internal int Top;
+        //    internal int Right;
+        //    internal int Bottom;
+        //}
 
         //protected override void WndProc(ref Message msg)
         //{

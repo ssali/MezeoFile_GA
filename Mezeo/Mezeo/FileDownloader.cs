@@ -117,16 +117,21 @@ namespace Mezeo
                         downloadObjectName += itemDetail.Path;
 
                         bool bRet = false;
+                        int refCode = 0;
 
                         if (id.szItemType == "DIRECTORY")
                         {
                             System.IO.Directory.CreateDirectory(downloadObjectName);
+                            
+                            if (id.strETag.Trim().Length == 0)
+                                id.strETag = cFileCloud.GetETag(id.szContentUrl, ref refCode);
+                            
                             bRet = true;
                         }
                         else
                         {
                             
-                            int refCode = 0;
+                            
                             bRet = cFileCloud.DownloadFile(id.szContentUrl + '/' + id.strName,
                                                     downloadObjectName, ref refCode);
 

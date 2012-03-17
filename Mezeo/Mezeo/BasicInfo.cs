@@ -28,7 +28,7 @@ namespace Mezeo
             set 
             {
                 userName = value;
-                regHandler.Write("Basic1", userName, Microsoft.Win32.RegistryValueKind.Binary);
+                regHandler.Write("Basic1", userName, Microsoft.Win32.RegistryValueKind.Binary,true);
             }
         }
 
@@ -38,7 +38,7 @@ namespace Mezeo
             set 
             {
                 password = value;
-                regHandler.Write("Basic2", password, Microsoft.Win32.RegistryValueKind.Binary);
+                regHandler.Write("Basic2", password, Microsoft.Win32.RegistryValueKind.Binary, true);
             }
         }
 
@@ -48,7 +48,7 @@ namespace Mezeo
             set 
             { 
                 serviceUrl = value;
-                regHandler.Write("Basic3", serviceUrl, Microsoft.Win32.RegistryValueKind.Binary);
+                regHandler.Write("Basic3", serviceUrl, Microsoft.Win32.RegistryValueKind.Binary,false);
             }
         }
 
@@ -58,7 +58,7 @@ namespace Mezeo
             set 
             { 
                 lastSync = value;
-                regHandler.Write("Basic5", lastSync, Microsoft.Win32.RegistryValueKind.Binary);
+                regHandler.Write("Basic5", lastSync, Microsoft.Win32.RegistryValueKind.Binary, false);
             }
         }
 
@@ -68,7 +68,7 @@ namespace Mezeo
             set 
             { 
                 autoSync = value;
-                regHandler.Write("Basic6", autoSync, Microsoft.Win32.RegistryValueKind.Binary);
+                regHandler.Write("Basic6", autoSync, Microsoft.Win32.RegistryValueKind.Binary, false);
             }
         }
 
@@ -78,7 +78,7 @@ namespace Mezeo
             set 
             { 
                 syncDirPath = value;
-                regHandler.Write("Basic4", syncDirPath, Microsoft.Win32.RegistryValueKind.String);
+                regHandler.Write("Basic4", syncDirPath, Microsoft.Win32.RegistryValueKind.String, false);
             }
         }
 
@@ -105,7 +105,7 @@ namespace Mezeo
             set
             {
                 isInitailSync = value;
-                regHandler.Write("Basic7", isInitailSync, Microsoft.Win32.RegistryValueKind.Binary);
+                regHandler.Write("Basic7", isInitailSync, Microsoft.Win32.RegistryValueKind.Binary, false);
             }
         }
 
@@ -135,24 +135,24 @@ namespace Mezeo
 
         private static void ReadRegValue()
         {
-            userName = regHandler.Read("Basic1", Microsoft.Win32.RegistryValueKind.Binary);
-            password = regHandler.Read("Basic2", Microsoft.Win32.RegistryValueKind.Binary);
-            serviceUrl = regHandler.Read("Basic3", Microsoft.Win32.RegistryValueKind.Binary);
-            syncDirPath = regHandler.Read("Basic4", Microsoft.Win32.RegistryValueKind.String);
-            lastSync = DateTime.Parse(regHandler.Read("Basic5", Microsoft.Win32.RegistryValueKind.Binary));
-            autoSync = Convert.ToBoolean(regHandler.Read("Basic6", Microsoft.Win32.RegistryValueKind.Binary));
-            isInitailSync = Convert.ToBoolean(regHandler.Read("Basic7", Microsoft.Win32.RegistryValueKind.Binary));
+            userName = regHandler.Read("Basic1", Microsoft.Win32.RegistryValueKind.Binary,true);
+            password = regHandler.Read("Basic2", Microsoft.Win32.RegistryValueKind.Binary, true);
+            serviceUrl = regHandler.Read("Basic3", Microsoft.Win32.RegistryValueKind.Binary,false);
+            syncDirPath = regHandler.Read("Basic4", Microsoft.Win32.RegistryValueKind.String, false);
+            lastSync = DateTime.Parse(regHandler.Read("Basic5", Microsoft.Win32.RegistryValueKind.Binary, false));
+            autoSync = Convert.ToBoolean(regHandler.Read("Basic6", Microsoft.Win32.RegistryValueKind.Binary, false));
+            isInitailSync = Convert.ToBoolean(regHandler.Read("Basic7", Microsoft.Win32.RegistryValueKind.Binary, false));
         }
 
         private static void WriteRegValue()
         {
-            regHandler.Write("Basic1",userName, Microsoft.Win32.RegistryValueKind.Binary);
-            regHandler.Write("Basic2",password, Microsoft.Win32.RegistryValueKind.Binary);
-            regHandler.Write("Basic3",serviceUrl, Microsoft.Win32.RegistryValueKind.Binary);
-            regHandler.Write("Basic4", syncDirPath, Microsoft.Win32.RegistryValueKind.String);
-            regHandler.Write("Basic5",lastSync, Microsoft.Win32.RegistryValueKind.Binary);
-            regHandler.Write("Basic6",autoSync, Microsoft.Win32.RegistryValueKind.Binary);
-            regHandler.Write("Basic7", isInitailSync, Microsoft.Win32.RegistryValueKind.Binary);
+            regHandler.Write("Basic1", userName, Microsoft.Win32.RegistryValueKind.Binary, true);
+            regHandler.Write("Basic2",password, Microsoft.Win32.RegistryValueKind.Binary,true);
+            regHandler.Write("Basic3", serviceUrl, Microsoft.Win32.RegistryValueKind.Binary, false);
+            regHandler.Write("Basic4", syncDirPath, Microsoft.Win32.RegistryValueKind.String, false);
+            regHandler.Write("Basic5", lastSync, Microsoft.Win32.RegistryValueKind.Binary, false);
+            regHandler.Write("Basic6", autoSync, Microsoft.Win32.RegistryValueKind.Binary, false);
+            regHandler.Write("Basic7", isInitailSync, Microsoft.Win32.RegistryValueKind.Binary, false);
         }
 
         private static string GetNinMacAddress()

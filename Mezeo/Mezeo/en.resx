@@ -262,7 +262,7 @@
     <value>Stop Sync</value>
   </data>
   <data name="SyncManagerTitle" xml:space="preserve">
-    <value>Sync Manager - Mezeo File Sync</value>
+    <value>Mezeo File Sync</value>
   </data>
   <data name="SyncManagerTrayEnableOnText" xml:space="preserve">
     <value>Enable (click ON) from Sync Manager.</value>
