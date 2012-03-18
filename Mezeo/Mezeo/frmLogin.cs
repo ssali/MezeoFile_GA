@@ -128,19 +128,21 @@ namespace Mezeo
 
         public void Login()
         {
-            //if (BasicInfo.IsConnectedToInternet)
+           // if (BasicInfo.IsConnectedToInternet)
             {
-                CheckForIllegalCrossThreadCalls = false;
+                if (BasicInfo.IsConnectedToInternet)
+                {
+                    CheckForIllegalCrossThreadCalls = false;
 
-                this.UseWaitCursor = true;
+                    this.UseWaitCursor = true;
 
-                this.txtUserName.Enabled = false;
-                this.txtPasswrod.Enabled = false;
-                this.txtServerUrl.Enabled = false;
-                this.btnLogin.Enabled = false;
-
-                //if (BasicInfo.IsConnectedToInternet)
-                bwLogin.RunWorkerAsync();
+                    this.txtUserName.Enabled = false;
+                    this.txtPasswrod.Enabled = false;
+                    this.txtServerUrl.Enabled = false;
+                    this.btnLogin.Enabled = false;
+                }
+               //if (BasicInfo.IsConnectedToInternet)
+                 bwLogin.RunWorkerAsync();
             }
         }
 
@@ -170,10 +172,6 @@ namespace Mezeo
             this.txtServerUrl.CueText = LanguageTranslator.GetValue("ServerUrlCueText");
             this.labelError.Text = "";
 
-           
-
-
-
             if (!BasicInfo.LoadRegistryValues())
             {
                 showLogin = true;
@@ -200,7 +198,7 @@ namespace Mezeo
             }
 
             internetConnection = BasicInfo.IsConnectedToInternet;
-           
+
             //ShellNotifyIcon.SetNotifyIconHandle(Properties.Resources.MezeoVault.Handle);
             //ShellNotifyIcon.AddNotifyIcon();
             //ShellNotifyIcon.ConnectMyMenu(cmLogin.Handle);
@@ -218,12 +216,52 @@ namespace Mezeo
            
         }
 
+        private void ShowSyncManagerOfffline()
+        {
+            BasicInfo.UserName = txtUserName.Text;
+            BasicInfo.Password = txtPasswrod.Text;
+            BasicInfo.ServiceUrl = txtServerUrl.Text;
+
+            isLoginSuccess = false;
+
+            if (showLogin)
+            {
+                this.Close();
+            }
+
+            mezeoFileCloud.AppEventViewer(AboutBox.AssemblyTitle, LanguageTranslator.GetValue("TrayAppOfflineText"), 3);
+            niSystemTray.ContextMenuStrip = cmSystemTraySyncMgr;
+
+            syncManager = new frmSyncManager(mezeoFileCloud, loginDetails, notificationManager);
+
+            syncManager.CreateControl();
+            syncManager.ParentForm = this;
+
+            syncManager.DisableSyncManager();
+            syncManager.ShowOfflineAtStartUpSyncManager();
+
+            notificationManager.NotificationHandler.ShowBalloonTip(1, LanguageTranslator.GetValue("TrayBalloonSyncStatusText"),
+                                                                                LanguageTranslator.GetValue("TrayAppOfflineText"), ToolTipIcon.None);
+
+            notificationManager.HoverText = LanguageTranslator.GetValue("TrayAppOfflineText");
+            notificationManager.NotifyIcon = Properties.Resources.app_offline;
+            toolStripMenuItem4.Text = LanguageTranslator.GetValue("AppOfflineMenu");
+        }
+
         private void bwLogin_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
         {
             this.UseWaitCursor = false;
             if (loginDetails == null)
             {
-                ShowLoginError();
+                tmrConnectionCheck.Enabled = true;
+                if (!BasicInfo.IsConnectedToInternet)
+                {
+                    ShowSyncManagerOfffline();
+                }
+                else
+                {
+                    ShowLoginError();
+                }
                 return;
                 
             }
@@ -283,7 +321,7 @@ namespace Mezeo
                 syncManager.DisableSyncManager();
             }
 
-            tmrConnectionCheck.Enabled = true;            
+            tmrConnectionCheck.Enabled = true;    
 
         }
 
@@ -392,10 +430,16 @@ namespace Mezeo
 
                 if (BasicInfo.IsConnectedToInternet)
                 {
-                    if (loginDetails == null)
+                    if (loginDetails == null && BasicInfo.IsCredentialsAvailable)
                     {
                         int referenceCode = 0;
                         loginDetails = mezeoFileCloud.Login(BasicInfo.UserName, BasicInfo.Password, validateServiceUrl(BasicInfo.ServiceUrl), ref referenceCode);
+                        if (loginDetails != null)
+                        {
+                            mezeoFileCloud.AppEventViewer(AboutBox.AssemblyTitle, LanguageTranslator.GetValue("LoginSuccess"), 3);
+                            CheckAndCreateSyncDirectory();
+                            CheckAndCreateNotificationQueue();
+                        }
                     }
 
                     if (loginDetails == null)
@@ -415,7 +459,7 @@ namespace Mezeo
                        
                         notificationManager.NotificationHandler.ShowBalloonTip(1, LanguageTranslator.GetValue("TrayBalloonSyncStatusText"),
                                                                                 LanguageTranslator.GetValue("TrayAppOnlineText"), ToolTipIcon.None);
-                        
+
                         notificationManager.HoverText = LanguageTranslator.GetValue("TrayAppOnlineText");
                         notificationManager.NotifyIcon = Properties.Resources.MezeoVault;
 
@@ -435,7 +479,7 @@ namespace Mezeo
 
                     notificationManager.HoverText = LanguageTranslator.GetValue("TrayAppOfflineText");
                     notificationManager.NotifyIcon = Properties.Resources.app_offline;
-
+                    toolStripMenuItem4.Text = LanguageTranslator.GetValue("AppOfflineMenu");
                     //ShellNotifyIcon.SetNotifyIconHandle(Properties.Resources.app_offline.Handle);
                     //ShellNotifyIcon.SetNotifyIconBalloonText(LanguageTranslator.GetValue("TrayAppOfflineText"), LanguageTranslator.GetValue("TrayBalloonSyncStatusText"));
                     //ShellNotifyIcon.SetNotifyIconToolTip(LanguageTranslator.GetValue("TrayAppOfflineText"));

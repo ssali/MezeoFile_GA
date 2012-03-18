@@ -65,6 +65,12 @@ namespace Mezeo
         {
             int refCode=0;
             ItemDetails[] contents = cFileCloud.DownloadItemDetails(cRootContainerUrl, ref refCode);
+
+            //if (refCode != 200)
+            //{
+            //    CancelAndNotify();
+            //}
+
             if (contents == null)
             {
                 if (downloadEvent != null)
@@ -87,7 +93,7 @@ namespace Mezeo
             isRootContainer = true;
             foreach (ItemDetails iDetail in contents)
             {
-                string strCheck = dbhandler.GetString(DbHandler.TABLE_NAME, DbHandler.KEY, DbHandler.CONTENT_URL + " = '" + iDetail.szContentUrl + "'");
+                string strCheck = dbhandler.GetString(DbHandler.TABLE_NAME, DbHandler.KEY, DbHandler.CONTENT_URL + " = '" + iDetail.szContentUrl + "' and " + DbHandler.STATUS + "='SUCCESS'");
                 if (strCheck.Trim().Length == 0)
                 {
                     LocalItemDetails lItem = new LocalItemDetails();
@@ -101,7 +107,7 @@ namespace Mezeo
 
             for (int n = 0; n < contents[0].nTotalItem; n++)
             {
-                if (lockObject.StopThread)
+                if (lockObject.StopThread || refCode != 200)
                 {
                     CancelAndNotify();
                     break;
@@ -123,6 +129,11 @@ namespace Mezeo
             int refCode = 0;
             ItemDetails[] contents = cFileCloud.DownloadItemDetails(itemDetail.szContentUrl, ref refCode);
 
+            //if (refCode != 200)
+            //{
+            //    CancelAndNotify();
+            //}
+
             if (contents == null)
             {
                 return;
@@ -130,7 +141,7 @@ namespace Mezeo
 
             foreach (ItemDetails iDetail in contents)
             {
-                string strCheck = dbhandler.GetString(DbHandler.TABLE_NAME, DbHandler.KEY, DbHandler.CONTENT_URL + " = '" + iDetail.szContentUrl + "'");
+                string strCheck = dbhandler.GetString(DbHandler.TABLE_NAME, DbHandler.KEY, DbHandler.CONTENT_URL + " = '" + iDetail.szContentUrl + "' and " + DbHandler.STATUS + "='SUCCESS'");
                 if (strCheck.Trim().Length == 0)
                 {
                     LocalItemDetails lItem = new LocalItemDetails();
@@ -147,7 +158,7 @@ namespace Mezeo
             {
                 for (int n = 0; n < contents[0].nTotalItem; n++)
                 {
-                    if (lockObject.StopThread)
+                    if (lockObject.StopThread || refCode != 200)
                     {
                         CancelAndNotify();
                         break;

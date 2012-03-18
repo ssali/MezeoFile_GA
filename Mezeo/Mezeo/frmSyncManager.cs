@@ -525,23 +525,30 @@ namespace Mezeo
                 rbSyncOff.Checked = true;
             }
 
-            string usedSize = FormatSizeString(cLoginDetails.dblStorage_Used);
-
-            string allocatedSize = "";
-
-
-            if (cLoginDetails.dblStorage_Allocated == -1)
+            if (cLoginDetails != null)
             {
-                allocatedSize = LanguageTranslator.GetValue("SyncManagerUsageUnlimited");
+                string usedSize = FormatSizeString(cLoginDetails.dblStorage_Used);
+
+
+                string allocatedSize = "";
+
+
+                if (cLoginDetails.dblStorage_Allocated == -1)
+                {
+                    allocatedSize = LanguageTranslator.GetValue("SyncManagerUsageUnlimited");
+                }
+                else
+                {
+                    allocatedSize = FormatSizeString(cLoginDetails.dblStorage_Allocated);
+                }
+
+                allocatedSize += " " + LanguageTranslator.GetValue("SyncManagerUsageUsed");
+
+                this.lblUsageDetails.Text = usedSize + " " + LanguageTranslator.GetValue("SyncManagerUsageOfLabel") + " " + allocatedSize;
             }
             else
-            {
-                allocatedSize = FormatSizeString(cLoginDetails.dblStorage_Allocated);
-            }
+                this.lblUsageDetails.Text = LanguageTranslator.GetValue("UsageNotAvailable");
 
-            allocatedSize += " " + LanguageTranslator.GetValue("SyncManagerUsageUsed");
-
-            this.lblUsageDetails.Text = usedSize + " " + LanguageTranslator.GetValue("SyncManagerUsageOfLabel") + " " + allocatedSize;
         }
 
         private void UpdateUsageLabel()
@@ -557,7 +564,7 @@ namespace Mezeo
             }
             else
             {
-                this.lblUsageDetails.Text = "Not Available";
+                this.lblUsageDetails.Text = LanguageTranslator.GetValue("UsageNotAvailable");
             }
         }
 
@@ -1320,6 +1327,15 @@ namespace Mezeo
             label1.Text = LanguageTranslator.GetValue("SyncManagerStatusNextSyncAtLabel") + " " + lastSync.AddMinutes(5).ToString("h:mm tt");
             cnotificationManager.HoverText = AboutBox.AssemblyTitle + "\n" + LanguageTranslator.GetValue("TrayBalloonInitialSyncFilesUpToDateText");
             frmParent.toolStripMenuItem4.Text = LanguageTranslator.GetValue("TrayBalloonInitialSyncFilesUpToDateText");
+        }
+
+        public void ShowOfflineAtStartUpSyncManager()
+        {
+            lblPercentDone.Text = "";
+            pbSyncProgress.Visible = false;
+            lblStatusL1.Text = LanguageTranslator.GetValue("SyncManagerSyncDisabled");
+            label1.Text = LanguageTranslator.GetValue("SyncManagerResumeSync");
+            lblStatusL3.Text = LanguageTranslator.GetValue("SyncManagerStatusLastSyncLabel") + " " + lastSync.ToString("MMM d, yyyy h:mm tt");
         }
 
         private void ShowSyncDisabledMessage()

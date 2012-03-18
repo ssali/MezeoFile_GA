@@ -61,6 +61,15 @@ namespace Mezeo {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Sync is offline.
+        /// </summary>
+        internal static string AppOfflineMenu {
+            get {
+                return ResourceManager.GetString("AppOfflineMenu", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Error Detected.
         /// </summary>
         internal static string ConflictDetectedError {
@@ -651,6 +660,15 @@ namespace Mezeo {
         internal static string TrayHoverSyncProgressText {
             get {
                 return ResourceManager.GetString("TrayHoverSyncProgressText", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Not Available.
+        /// </summary>
+        internal static string UsageNotAvailable {
+            get {
+                return ResourceManager.GetString("UsageNotAvailable", resourceCulture);
             }
         }
         

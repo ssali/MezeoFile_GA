@@ -11,6 +11,9 @@ namespace Mezeo
 {
     class FileDownloader
     {
+        private static string DB_STATUS_SUCCESS = "SUCCESS";
+        private static string DB_STATUS_IN_PROGRESS = "INPROGRESS";
+
         Queue<LocalItemDetails> queue;
         ThreadLockObject lockObject;
         MezeoFileCloud cFileCloud;
@@ -116,6 +119,7 @@ namespace Mezeo
                         string downloadObjectName = BasicInfo.SyncDirPath + "\\";
                         downloadObjectName += itemDetail.Path;
 
+                        MarkParentsStatus(downloadObjectName, DB_STATUS_IN_PROGRESS);
                         bool bRet = false;
                         int refCode = 0;
 
@@ -135,6 +139,13 @@ namespace Mezeo
                             bRet = cFileCloud.DownloadFile(id.szContentUrl + '/' + id.strName,
                                                     downloadObjectName, ref refCode);
 
+                            if (refCode != 200)
+                            {
+                                done = true;
+                                CancelAndNotify();
+                                break;
+                            }
+
                             id.strETag = cFileCloud.GetETag(id.szContentUrl, ref refCode);
                         }
 
@@ -150,6 +161,7 @@ namespace Mezeo
                         }
                         else
                         {
+                            MarkParentsStatus(downloadObjectName, DB_STATUS_SUCCESS);
                             //fileFolderInfo.ETag = id.strETag;
                             if (id.szItemType == "DIRECTORY")
                             {
@@ -185,6 +197,24 @@ namespace Mezeo
                     }
                 }
                 
+            }
+        }
+
+        private void MarkParentsStatus(string path, string status)
+        {
+            string syncPath = path.Substring(BasicInfo.SyncDirPath.Length + 1);
+            ChangeParentStatus(syncPath, status);
+        }
+
+        private void ChangeParentStatus(string syncPath, string status)
+        {
+            int sepIndex = syncPath.LastIndexOf("\\");
+
+            if (sepIndex > 0)
+            {
+                string parentKey = syncPath.Substring(0, sepIndex);
+                dbhandler.Update(DbHandler.TABLE_NAME, DbHandler.STATUS + "='" + status + "'", DbHandler.KEY + "='" + parentKey + "'");
+                ChangeParentStatus(parentKey, status);
             }
         }
 
