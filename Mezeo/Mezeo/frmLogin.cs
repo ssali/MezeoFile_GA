@@ -140,6 +140,7 @@ namespace Mezeo
                     this.txtPasswrod.Enabled = false;
                     this.txtServerUrl.Enabled = false;
                     this.btnLogin.Enabled = false;
+                    this.labelError.Text = "";
                 }
                //if (BasicInfo.IsConnectedToInternet)
                  bwLogin.RunWorkerAsync();
@@ -381,11 +382,18 @@ namespace Mezeo
         private void CheckAndCreateSyncDirectory()
         {
             DbHandler dbHandler = new DbHandler();
-            bool isDbCreateNew = dbHandler.OpenConnection();
+            
 
             bool isDirectoryExists = false;
             if (BasicInfo.SyncDirPath.Trim().Length != 0)
                 isDirectoryExists = System.IO.Directory.Exists(BasicInfo.SyncDirPath);
+
+            if (!isDirectoryExists)
+            {
+                dbHandler.DeleteDb();
+            }
+
+            bool isDbCreateNew = dbHandler.OpenConnection();
 
             if (!isDirectoryExists || isDbCreateNew)
             {

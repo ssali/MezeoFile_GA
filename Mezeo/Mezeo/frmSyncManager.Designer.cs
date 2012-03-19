@@ -423,6 +423,7 @@
             this.bwLocalEvents.WorkerSupportsCancellation = true;
             this.bwLocalEvents.DoWork += new System.ComponentModel.DoWorkEventHandler(this.bwLocalEvents_DoWork);
             this.bwLocalEvents.ProgressChanged += new System.ComponentModel.ProgressChangedEventHandler(this.bwLocalEvents_ProgressChanged);
+            this.bwLocalEvents.RunWorkerCompleted += new System.ComponentModel.RunWorkerCompletedEventHandler(this.bwLocalEvents_RunWorkerCompleted);
             // 
             // bwUpdateUsage
             // 

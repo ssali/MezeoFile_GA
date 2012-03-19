@@ -54,6 +54,15 @@ namespace Mezeo
             return createNew;
         }
 
+        public void DeleteDb()
+        {
+            string dbPath = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData) + "\\" + AboutBox.AssemblyTitle + "\\";
+
+            if (!System.IO.File.Exists(dbPath + DATABASE_NAME))
+            {
+                System.IO.File.Delete(dbPath + DATABASE_NAME);
+            }
+        }
 
         private void CreateTables()
         {
@@ -290,10 +299,10 @@ namespace Mezeo
         }
 
 
-        public bool GetStringList(string tableName, string fieldName, ref List<string> result)
+        public List<string> GetStringList(string tableName, string fieldName, string WhereCondition)
         {
-            string query = "select " + fieldName + " from " + tableName;
-          //  List<string> result =new List<string>();
+            string query = "select " + fieldName + " from " + tableName + " where " + WhereCondition; 
+            List<string> result =new List<string>();
 
             sqlCommand = new SQLiteCommand(query, sqlConnection);
             sqlDataReader = sqlCommand.ExecuteReader();
@@ -303,7 +312,7 @@ namespace Mezeo
             }
             sqlDataReader.Close();
 
-            return true;
+            return result;
         }
 
         public List<int> GetIntList(string tableName, string fieldName)

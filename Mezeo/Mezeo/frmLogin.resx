@@ -160,28 +160,28 @@
     <value>Tahoma, 12pt</value>
   </data>
   <data name="toolStripMenuItem6.Size" type="System.Drawing.Size, System.Drawing">
-    <value>152, 22</value>
+    <value>110, 22</value>
   </data>
   <data name="toolStripMenuItem6.TextAlign" type="System.Drawing.ContentAlignment, System.Drawing">
     <value>MiddleLeft</value>
   </data>
   <data name="loginToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
-    <value>152, 22</value>
+    <value>110, 22</value>
   </data>
   <data name="loginToolStripMenuItem.Text" xml:space="preserve">
     <value>Login</value>
   </data>
   <data name="toolStripMenuItem1.Size" type="System.Drawing.Size, System.Drawing">
-    <value>149, 6</value>
+    <value>107, 6</value>
   </data>
   <data name="exitToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
-    <value>152, 22</value>
+    <value>110, 22</value>
   </data>
   <data name="exitToolStripMenuItem.Text" xml:space="preserve">
     <value>Exit</value>
   </data>
   <data name="cmSystemTrayLogin.Size" type="System.Drawing.Size, System.Drawing">
-    <value>153, 98</value>
+    <value>111, 76</value>
   </data>
   <data name="&gt;&gt;cmSystemTrayLogin.Name" xml:space="preserve">
     <value>cmSystemTrayLogin</value>
@@ -1022,7 +1022,7 @@
     <value>txtServerUrl</value>
   </data>
   <data name="&gt;&gt;txtServerUrl.Type" xml:space="preserve">
-    <value>Mezeo.CueTextBox, MezeoFileSync, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null</value>
+    <value>Mezeo.CueTextBox, MezeoFileSync, Version=2.0.0.1, Culture=neutral, PublicKeyToken=null</value>
   </data>
   <data name="&gt;&gt;txtServerUrl.Parent" xml:space="preserve">
     <value>$this</value>
@@ -1046,7 +1046,7 @@
     <value>txtPasswrod</value>
   </data>
   <data name="&gt;&gt;txtPasswrod.Type" xml:space="preserve">
-    <value>Mezeo.CueTextBox, MezeoFileSync, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null</value>
+    <value>Mezeo.CueTextBox, MezeoFileSync, Version=2.0.0.1, Culture=neutral, PublicKeyToken=null</value>
   </data>
   <data name="&gt;&gt;txtPasswrod.Parent" xml:space="preserve">
     <value>$this</value>
@@ -1070,7 +1070,7 @@
     <value>txtUserName</value>
   </data>
   <data name="&gt;&gt;txtUserName.Type" xml:space="preserve">
-    <value>Mezeo.CueTextBox, MezeoFileSync, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null</value>
+    <value>Mezeo.CueTextBox, MezeoFileSync, Version=2.0.0.1, Culture=neutral, PublicKeyToken=null</value>
   </data>
   <data name="&gt;&gt;txtUserName.Parent" xml:space="preserve">
     <value>$this</value>
@@ -1092,6 +1092,12 @@
   </data>
   <data name="$this.Text" xml:space="preserve">
     <value>Mezeo File Sync Login</value>
+  </data>
+  <data name="&gt;&gt;toolStripMenuItem6.Name" xml:space="preserve">
+    <value>toolStripMenuItem6</value>
+  </data>
+  <data name="&gt;&gt;toolStripMenuItem6.Type" xml:space="preserve">
+    <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="&gt;&gt;loginToolStripMenuItem.Name" xml:space="preserve">
     <value>loginToolStripMenuItem</value>
@@ -1242,12 +1248,6 @@
   </data>
   <data name="&gt;&gt;niSystemTray.Type" xml:space="preserve">
     <value>System.Windows.Forms.NotifyIcon, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;toolStripMenuItem6.Name" xml:space="preserve">
-    <value>toolStripMenuItem6</value>
-  </data>
-  <data name="&gt;&gt;toolStripMenuItem6.Type" xml:space="preserve">
-    <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="&gt;&gt;$this.Name" xml:space="preserve">
     <value>frmLogin</value>

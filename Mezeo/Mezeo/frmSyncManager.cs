@@ -52,6 +52,8 @@ namespace Mezeo
         private static int INITIAL_NQ_SYNC = LOCAL_EVENTS_COMPLETED + 1;
         private static int UPDATE_NQ_PROGRESS = INITIAL_NQ_SYNC + 1;
 
+        private bool IsCalledByNextSyncTmr = false;
+
         private static string DB_STATUS_SUCCESS = "SUCCESS";
         private static string DB_STATUS_IN_PROGRESS = "INPROGRESS";
 
@@ -279,7 +281,10 @@ namespace Mezeo
         private void tmrNextSync_Tick(object sender, EventArgs e)
         {
             if (!isLocalEventInProgress && !isSyncInProgress)
+            {
+                IsCalledByNextSyncTmr = true;
                 InitializeSync();
+            }
         }
                
         private void lnkFolderPath_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
@@ -784,7 +789,6 @@ namespace Mezeo
 
                 cnotificationManager.HoverText = AboutBox.AssemblyTitle + "\n" + LanguageTranslator.GetValue("TrayBalloonSyncFolderUpToDate");
                 frmParent.toolStripMenuItem4.Text = LanguageTranslator.GetValue("TrayHoverInitialSyncUpToDateText");
-
             }
         }
 
@@ -907,7 +911,9 @@ namespace Mezeo
                     {
                         if (strKey != strDBKey)
                         {
-                            File.Move(BasicInfo.SyncDirPath + "\\" + strDBKey, strPath);
+                            if(File.Exists(BasicInfo.SyncDirPath + "\\" + strDBKey))
+                                File.Move(BasicInfo.SyncDirPath + "\\" + strDBKey, strPath);
+
                             dbHandler.Update(DbHandler.TABLE_NAME, DbHandler.KEY + "='" + strKey + "'", DbHandler.KEY + "='" + strDBKey + "'");
                         }
                     }
@@ -946,7 +952,8 @@ namespace Mezeo
                             //int nRet = SHFileOperation(ref shOperation);
                             //nRet = GetLastError();
 
-                            Directory.Delete(strPath);
+                            SendToRecycleBin(strPath, false);
+                            //Directory.Delete(strPath);
                             dbHandler.Delete(DbHandler.TABLE_NAME, DbHandler.KEY + "='" + strKey + "'");
                         }
                     }
@@ -960,7 +967,8 @@ namespace Mezeo
                         //int nRet = SHFileOperation(ref shOperation);
                         //nRet = GetLastError();
 
-                        File.Delete(strPath);
+                        SendToRecycleBin(strPath, true);
+                        //File.Delete(strPath);
                         dbHandler.Delete(DbHandler.TABLE_NAME, DbHandler.KEY + "='" + strKey + "'");
                     }                      
                 }
@@ -1188,9 +1196,7 @@ namespace Mezeo
         }
 
         private void setUpControls()
-        {
-            
-            
+        {            
             lblStatusL1.Text = statusMessages[0];
             lblStatusL1.Visible = true;
 
@@ -1531,6 +1537,26 @@ namespace Mezeo
         private void UpdateDBForRemoveSuccess(LocalEvents lEvent)
         {
             dbHandler.Delete(DbHandler.TABLE_NAME, DbHandler.KEY + " = '" + lEvent.FileName + "'");
+            
+            string strParentDir = lEvent.FullPath.Substring(lEvent.FullPath.LastIndexOf("\\") + 1);
+            UpdateDBForRemoveDir(strParentDir);
+        }
+
+        private void UpdateDBForRemoveDir(string strDir)
+        {
+            List<string> result = dbHandler.GetStringList(DbHandler.TABLE_NAME, DbHandler.KEY, DbHandler.PARENT_DIR + "='" + strDir + "'");
+            foreach (string path in result)
+            {
+                string strType = dbHandler.GetString(DbHandler.TABLE_NAME, DbHandler.TYPE, DbHandler.KEY + "='" + path + "'");
+                if (strType == "DIRECTORY")
+                {
+                    string strpath = path.Substring(path.LastIndexOf("\\") + 1);
+                    UpdateDBForRemoveDir(strpath);
+                    dbHandler.Delete(DbHandler.TABLE_NAME, DbHandler.KEY + "='" + path + "'");
+                }
+                else
+                    dbHandler.Delete(DbHandler.TABLE_NAME, DbHandler.KEY + "='" + path + "'");
+            }
         }
 
         private void UpdateDBForRenameSuccess(LocalEvents lEvent)
@@ -1578,8 +1604,8 @@ namespace Mezeo
 
                     //int nRet = SHFileOperation(ref shOperation);
                     //nRet = GetLastError();
-
-                    File.Delete(fi.FullName);
+                    SendToRecycleBin(fi.FullName, true);
+                   // File.Delete(fi.FullName);
                     dbHandler.Delete(DbHandler.TABLE_NAME, DbHandler.KEY + "='" + Key + "'");
                 }
 
@@ -1601,7 +1627,8 @@ namespace Mezeo
                     //int nRet = SHFileOperation(ref shOperation);
                     //nRet = GetLastError();
 
-                    Directory.Delete(dirInfo.FullName);
+                    SendToRecycleBin(dirInfo.FullName, false);
+                    //Directory.Delete(dirInfo.FullName);
                     dbHandler.Delete(DbHandler.TABLE_NAME, DbHandler.KEY + "='" + Key + "'");
                 }
             }
@@ -1634,8 +1661,11 @@ namespace Mezeo
                    string newKey = fi.FullName.Substring(BasicInfo.SyncDirPath.Length + 1);
                    string oldKey = lEventOldPath.Substring(BasicInfo.SyncDirPath.Length + 1);
                    oldKey += "\\" + fi.Name;
+
+                   string strParentDir = lEventOldPath.Substring(lEventOldPath.LastIndexOf("\\") + 1);
                     
                    dbHandler.Update(DbHandler.TABLE_NAME,DbHandler.KEY + "='" + newKey + "'",DbHandler.KEY + "='" + oldKey + "'");
+                   dbHandler.Update(DbHandler.TABLE_NAME, DbHandler.PARENT_DIR + "='" + strParentDir + "'", DbHandler.KEY + "='" + newKey + "'");
 
                 }
 
@@ -1651,7 +1681,10 @@ namespace Mezeo
                     string oldKey = lEventOldPath.Substring(BasicInfo.SyncDirPath.Length + 1);
                     oldKey += "\\" + dirInfo.Name;
 
+                    string strParentDir = lEventOldPath.Substring(lEventOldPath.LastIndexOf("\\") + 1);
+
                     dbHandler.Update(DbHandler.TABLE_NAME, DbHandler.KEY + "='" + newKey + "'", DbHandler.KEY + "='" + oldKey + "'");
+                    dbHandler.Update(DbHandler.TABLE_NAME, DbHandler.PARENT_DIR + "='" + strParentDir + "'", DbHandler.KEY + "='" + newKey + "'");
                 }
             }
         }
@@ -1742,8 +1775,11 @@ namespace Mezeo
                     attr = File.GetAttributes(lEvent.FullPath);
                 else
                 {
-                    RemoveIndexes.Add(events.IndexOf(lEvent));
-                    continue;
+                    if (lEvent.EventType != LocalEvents.EventsType.FILE_ACTION_REMOVED)
+                    {
+                        RemoveIndexes.Add(events.IndexOf(lEvent));
+                        continue;
+                    }
                 }
 
                 if (lEvent.EventType == LocalEvents.EventsType.FILE_ACTION_MODIFIED)
@@ -1859,7 +1895,6 @@ namespace Mezeo
                     {
                         AddInDBForRename(lEvent);
                     }
-
                 }
               
                 if (!bRet)
@@ -1971,7 +2006,7 @@ namespace Mezeo
 
             if (caller != null)
             {
-                caller.ReportProgress(PROCESS_LOCAL_EVENTS_STARTED);
+                caller.ReportProgress(PROCESS_LOCAL_EVENTS_STARTED,events.Count);
             }
 
             fileDownloadCount = 1;
@@ -2140,12 +2175,34 @@ namespace Mezeo
 
             }
 
-            isLocalEventInProgress = false;
-
             events.Clear();
 
             if (LocalEventList.Count != 0)
-                watcher_WatchCompletedEvent();
+            {
+                lock (folderWatcherLockObject)
+                {
+                    if (LocalEventList.Count != 0)
+                    {
+                        if (events == null)
+                            events = new List<LocalEvents>();
+
+                        events.AddRange(LocalEventList);
+
+                        LocalEventList.Clear();
+                    }
+                }
+
+                HandleEvents(caller);
+
+            }
+
+            isLocalEventInProgress = false;
+
+
+            //if (LocalEventList.Count != 0)
+            //    watcher_WatchCompletedEvent();
+
+
         }
 
         private void SetIssueFound(bool bIsIssueFound)
@@ -2277,7 +2334,8 @@ namespace Mezeo
                                         UpdateDBForModifiedSuccess(lEvent, strContentUrl);
                                     }
 
-                                    File.Move(lEvent.FullPath, FileReName);
+                                    if (File.Exists(lEvent.FullPath))
+                                        File.Move(lEvent.FullPath, FileReName);
                 
                                     lEvent.OldFullPath = lEvent.FullPath;
                                     lEvent.FullPath = FileReName;
@@ -2441,10 +2499,10 @@ namespace Mezeo
         private void bwNQUpdate_DoWork(object sender, DoWorkEventArgs e)
         {
 
-            while (isOfflineWorking)
-            {
-                //nothing to do
-            }
+            //while (isOfflineWorking)
+            //{
+            //    //nothing to do
+            //}
 
             fileDownloadCount = 1;
 
@@ -2497,7 +2555,7 @@ namespace Mezeo
 
             cnotificationManager.HoverText = AboutBox.AssemblyTitle + "\n" + LanguageTranslator.GetValue("TrayBalloonSyncFolderUpToDate");
             frmParent.toolStripMenuItem4.Text = LanguageTranslator.GetValue("TrayHoverInitialSyncUpToDateText");
-
+            lastSync = DateTime.Now;
             isEventCanceled = false;
         }
 
@@ -2564,6 +2622,7 @@ namespace Mezeo
             }
             else if (e.ProgressPercentage == PROCESS_LOCAL_EVENTS_STARTED)
             {
+                pbSyncProgress.Maximum = (int)e.UserState;
                 InitializeLocalEventsProcess();
             }
             else if (e.ProgressPercentage == PROGRESS_CHANGED_WITH_FILE_NAME)
@@ -2622,5 +2681,40 @@ namespace Mezeo
         {
             lblUsageDetails.Text = e.Result.ToString();
         }
+
+
+        private void bwLocalEvents_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
+        {
+            if (IsCalledByNextSyncTmr)
+            {
+                IsCalledByNextSyncTmr = false;
+
+                if (!isEventCanceled)
+                    UpdateNQ();
+            }
+        }
+
+
+        private void SendToRecycleBin(string strPath, bool isFile)
+        {
+            try
+            {
+                if (isFile)
+                {
+                    Microsoft.VisualBasic.FileIO.FileSystem.DeleteFile(strPath, Microsoft.VisualBasic.FileIO.UIOption.OnlyErrorDialogs,
+                                                                       Microsoft.VisualBasic.FileIO.RecycleOption.SendToRecycleBin);
+
+                }
+                else
+                {
+                    Microsoft.VisualBasic.FileIO.FileSystem.DeleteDirectory(strPath, Microsoft.VisualBasic.FileIO.UIOption.OnlyErrorDialogs,
+                                                                            Microsoft.VisualBasic.FileIO.RecycleOption.SendToRecycleBin);
+                }
+            }
+            catch (Exception ex)
+            {
+            }
+        }
+
     }
 }
