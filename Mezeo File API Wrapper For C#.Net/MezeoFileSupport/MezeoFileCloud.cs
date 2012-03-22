@@ -187,11 +187,14 @@ namespace MezeoFileSupport
         private bool m_bStop = false;
         private bool m_bPause = false;
         private String StrAPIKey = "c5f5c39e22b4c743ff7c83470499748c6ac46b249c29e3934f5744166af130c6";
+        private Int32 nTimeout = 120000;
 
         //create request format for get details
         private void OnGetRequest(ref HttpWebRequest webRequest, String strRequestURL, String strAccept, String strXCloudDepth, String strMethod)
         {
 	        webRequest = (HttpWebRequest)WebRequest.Create( strRequestURL );
+            //string credentials = Convert.ToBase64String(ASCIIEncoding.ASCII.GetBytes(m_strLoginName + ":" + m_strPassword));
+            //webRequest.Headers.Add("Authorization", "Basic " + credentials);
 	        webRequest.Credentials = new NetworkCredential(m_strLoginName, m_strPassword);
 	        webRequest.PreAuthenticate = true;
 	        webRequest.Method = strMethod;
@@ -200,8 +203,7 @@ namespace MezeoFileSupport
 	        if(strXCloudDepth != "")
 		        webRequest.Headers.Add("X-Cloud-Depth", strXCloudDepth);
 	        webRequest.Accept = strAccept;
-            webRequest.Timeout = System.Threading.Timeout.Infinite;
-            webRequest.Headers.Add("X-Cloud-Key", StrAPIKey);
+            webRequest.Timeout = nTimeout;
         }
 
         //responce string for request basic
@@ -229,8 +231,7 @@ namespace MezeoFileSupport
             webRequest.Headers.Add("X-CDMI-Specification-Version", "1.0.1");
             webRequest.Accept = "application/cdmi-queue";
             webRequest.ContentType = "application/cdmi-queue";
-            webRequest.Timeout = System.Threading.Timeout.Infinite;
-            webRequest.Headers.Add("X-Cloud-Key", StrAPIKey);
+            webRequest.Timeout = nTimeout;
         }
 
         private void OnPostAndPutRequest(ref HttpWebRequest webRequest, String strRequestURL, String strSource, String strContentType, String strLoadHeader, String strFinalBoundary, String StrMethod, String strDest)
@@ -246,7 +247,6 @@ namespace MezeoFileSupport
 	        webRequest.ContentType = strContentType;
 	        //webRequest.Timeout = 86400000;
             webRequest.Timeout = System.Threading.Timeout.Infinite;
-            webRequest.Headers.Add("X-Cloud-Key", StrAPIKey);
 
             Stream writeStream = webRequest.GetRequestStream();
 	        if( writeStream != null)
@@ -408,8 +408,7 @@ namespace MezeoFileSupport
 	        webRequest.Method = "PUT";
 	        webRequest.KeepAlive = false;
 	        webRequest.Headers.Add("X-Client-Specification", "2");
-            webRequest.Timeout = System.Threading.Timeout.Infinite;
-            webRequest.Headers.Add("X-Cloud-Key", StrAPIKey);
+            webRequest.Timeout = nTimeout;
 
             Stream writeStream = webRequest.GetRequestStream();
 	        if( writeStream != null)
@@ -442,10 +441,15 @@ namespace MezeoFileSupport
 	        try
 	        {
 		        HttpWebRequest webRequest = null;
-                OnGetRequest(ref webRequest, strUrl, "application/vnd.csp.cloud2+xml", "1", "Get");
-		        //OnGetRequest(ref webRequest, strUrl, "", "1", "Get");
+                XmlNode nodeXml;
+                HttpWebResponse response = null;
 
-		        HttpWebResponse response = (HttpWebResponse)webRequest.GetResponse();
+                //------------Root Container and Management URI--------------------------
+                OnGetRequest(ref webRequest, strUrl, "application/vnd.csp.cloud2+xml", "", "GET");           //--- RootContainer and Management URI
+                
+                webRequest.Headers.Add("X-Cloud-Key", StrAPIKey);
+
+		        response = (HttpWebResponse)webRequest.GetResponse();
 
 		        nStatusCode = 200;
                 m_strXmlResource = OnGetResponseString(response.GetResponseStream());
@@ -456,60 +460,93 @@ namespace MezeoFileSupport
                     return null;
 
 		        m_xmlDocument.LoadXml(m_strXmlResource);
+                pLoginDetails = new LoginDetails();
 
-		        XmlNode nodeXml = m_xmlDocument.SelectSingleNode("/cloud/account/account-info/username");
-		        pLoginDetails = new LoginDetails();
-		        pLoginDetails.szUserName = nodeXml.InnerText;
-		
-		        nodeXml.RemoveAll();
-		        nodeXml = m_xmlDocument.SelectSingleNode("/cloud/account/account-info/account_type");
-		        pLoginDetails.nAccountType = Convert.ToInt32(nodeXml.InnerText);
-
-		        nodeXml.RemoveAll();
-		        nodeXml = m_xmlDocument.SelectSingleNode("/cloud/account/account-info/storage/allocated");
-		        pLoginDetails.dblStorage_Allocated = Convert.ToInt32( nodeXml.InnerText );
-
-		        nodeXml.RemoveAll();
-		        nodeXml = m_xmlDocument.SelectSingleNode("/cloud/account/account-info/storage/used");
-		        pLoginDetails.dblStorage_Used = Convert.ToInt32(nodeXml.InnerText);
-
-		        nodeXml.RemoveAll();
-		        nodeXml = m_xmlDocument.SelectSingleNode("/cloud/account/account-info/s3/authid");
-		        pLoginDetails.szS3_Authid = nodeXml.InnerText;
-
-		        nodeXml.RemoveAll();
-		        nodeXml = m_xmlDocument.SelectSingleNode("/cloud/account/account-info/s3/authkey");
-		        pLoginDetails.szs3_Authkey = nodeXml.InnerText;
-
-		        nodeXml.RemoveAll();
-		        nodeXml = m_xmlDocument.SelectSingleNode("/cloud/account/account-info/bandwidth/allocated");
-		        pLoginDetails.dblBandWidth_Allocated = Convert.ToInt32(nodeXml.InnerText);
-
-		        nodeXml.RemoveAll();
-		        nodeXml = m_xmlDocument.SelectSingleNode("/cloud/account/account-info/bandwidth/total");
-		        pLoginDetails.dblBandWidth_Total = Convert.ToDouble( nodeXml.InnerText );
-
-		        nodeXml.RemoveAll();
-		        nodeXml = m_xmlDocument.SelectSingleNode("/cloud/account/account-info/bandwidth/public");
-		        pLoginDetails.dblBandWidth_Public = Convert.ToDouble(nodeXml.InnerText);
-
-		        nodeXml.RemoveAll();
-		        nodeXml = m_xmlDocument.SelectSingleNode("/cloud/account/account-info/bandwidth/private");
-		        pLoginDetails.dblBandwidth_Private = Convert.ToDouble(nodeXml.InnerText);
-
-		        nodeXml.RemoveAll();
-		        nodeXml = m_xmlDocument.SelectSingleNode("/cloud/rootContainer/container/contents");
-		        pLoginDetails.szContainerContentsUri = nodeXml.Attributes["xlink:href"].Value;
-
-		        nodeXml.RemoveAll();
-                nodeXml = m_xmlDocument.SelectSingleNode("/cloud/locations/location/management");
-		        if(nodeXml != null)
-                    pLoginDetails.szManagementUri = nodeXml.Attributes["xlink:href"].Value;
+                nodeXml = m_xmlDocument.SelectSingleNode("/cloud/rootContainer");
+                pLoginDetails.szContainerContentsUri = nodeXml.Attributes["xlink:href"].Value;
+                pLoginDetails.szContainerContentsUri += "/contents";
 
                 nodeXml.RemoveAll();
-                nodeXml = m_xmlDocument.SelectSingleNode("/cloud/namespaces/namespaces/namespace/container");
+                nodeXml = m_xmlDocument.SelectSingleNode("/cloud/locations/location/management");
+                if (nodeXml != null)
+                    pLoginDetails.szManagementUri = nodeXml.Attributes["xlink:href"].Value;
+
+                m_xmlDocument.RemoveAll();
+                nodeXml.RemoveAll();
+                response.Close();
+
+                //--------Account information----------------------
+                OnGetRequest(ref webRequest, strUrl + "/account", "application/vnd.csp.account-info2+xml", "", "GET");   //--- Account Information
+                
+                response = (HttpWebResponse)webRequest.GetResponse();
+
+                nStatusCode = 200;
+                m_strXmlResource = OnGetResponseString(response.GetResponseStream());
+                webRequest.Abort();
+                response.Close();
+
+                m_xmlDocument.LoadXml(m_strXmlResource);
+
+                nodeXml = m_xmlDocument.SelectSingleNode("/account-info/username");
+                pLoginDetails.szUserName = nodeXml.InnerText;
+
+                nodeXml.RemoveAll();
+                nodeXml = m_xmlDocument.SelectSingleNode("/account-info/account_type");
+                pLoginDetails.nAccountType = Convert.ToInt32(nodeXml.InnerText);
+
+                nodeXml.RemoveAll();
+                nodeXml = m_xmlDocument.SelectSingleNode("/account-info/storage/allocated");
+                pLoginDetails.dblStorage_Allocated = Convert.ToInt32(nodeXml.InnerText);
+
+                nodeXml.RemoveAll();
+                nodeXml = m_xmlDocument.SelectSingleNode("/account-info/storage/used");
+                pLoginDetails.dblStorage_Used = Convert.ToInt32(nodeXml.InnerText);
+
+                nodeXml.RemoveAll();
+                nodeXml = m_xmlDocument.SelectSingleNode("/account-info/s3/authid");
+                pLoginDetails.szS3_Authid = nodeXml.InnerText;
+
+                nodeXml.RemoveAll();
+                nodeXml = m_xmlDocument.SelectSingleNode("/account-info/s3/authkey");
+                pLoginDetails.szs3_Authkey = nodeXml.InnerText;
+
+                nodeXml.RemoveAll();
+                nodeXml = m_xmlDocument.SelectSingleNode("/account-info/bandwidth/allocated");
+                pLoginDetails.dblBandWidth_Allocated = Convert.ToInt32(nodeXml.InnerText);
+
+                nodeXml.RemoveAll();
+                nodeXml = m_xmlDocument.SelectSingleNode("/account-info/bandwidth/total");
+                pLoginDetails.dblBandWidth_Total = Convert.ToDouble(nodeXml.InnerText);
+
+                nodeXml.RemoveAll();
+                nodeXml = m_xmlDocument.SelectSingleNode("/account-info/bandwidth/public");
+                pLoginDetails.dblBandWidth_Public = Convert.ToDouble(nodeXml.InnerText);
+
+                nodeXml.RemoveAll();
+                nodeXml = m_xmlDocument.SelectSingleNode("/account-info/bandwidth/private");
+                pLoginDetails.dblBandwidth_Private = Convert.ToDouble(nodeXml.InnerText);
+
+                m_xmlDocument.RemoveAll();
+                nodeXml.RemoveAll();
+                response.Close();
+		        
+                //--------------namespace URI---------------------------------
+                OnGetRequest(ref webRequest, strUrl + "/namespaces", "", "", "GET");                                        //--- NameSpaces URI
+
+                response = (HttpWebResponse)webRequest.GetResponse();
+
+                nStatusCode = 200;
+                m_strXmlResource = OnGetResponseString(response.GetResponseStream());
+                webRequest.Abort();
+                response.Close();
+
+                m_xmlDocument.LoadXml(m_strXmlResource);
+
+                nodeXml = m_xmlDocument.SelectSingleNode("/namespaces/namespace/container");
                 pLoginDetails.szNamespaceUri = nodeXml.Attributes["xlink:href"].Value;
-		
+
+                m_xmlDocument.RemoveAll();
+                nodeXml.RemoveAll();
 		        response.Close();
 	        }
 	        catch(WebException wEx)
@@ -1085,8 +1122,7 @@ namespace MezeoFileSupport
                 webRequest.Headers.Add("X-CDMI-Specification-Version", "1.0.1");
                 webRequest.ContentType = "application/cdmi-queue";
                 webRequest.Accept = "application/cdmi-queue";
-                webRequest.Timeout = System.Threading.Timeout.Infinite;
-                webRequest.Headers.Add("X-Cloud-Key", StrAPIKey);
+                webRequest.Timeout = nTimeout;
 
                 Stream writeStream = webRequest.GetRequestStream();
                 if (writeStream != null)
@@ -1726,7 +1762,7 @@ namespace MezeoFileSupport
             try
             {
                 Process.Start("taskkill.exe", "/f /im explorer.exe");
-                Thread.Sleep(1000);
+                Thread.Sleep(2000);
                 Process.Start(Environment.SystemDirectory + "\\..\\explorer.exe");      
             }
             catch
@@ -1815,6 +1851,8 @@ namespace MezeoFileSupport
 	        {
 		        HttpWebRequest webRequest = (HttpWebRequest)WebRequest.Create( strUrl );
 		        webRequest.Credentials = new NetworkCredential(strLoginName, strPassword);
+                webRequest.Timeout = nTimeout;
+
 		        HttpWebResponse response = (HttpWebResponse)webRequest.GetResponse();
 		        nStatusCode = 200;
                 webRequest.Abort();
@@ -1966,7 +2004,7 @@ namespace MezeoFileSupport
 	        return true;
         }
 
-        public byte[] Encrypt(string StrPadded)
+        static public byte[] Encrypt(string StrPadded)
         {
             byte[] bStr;
             try
@@ -1990,7 +2028,7 @@ namespace MezeoFileSupport
             return bStr;
         }
 
-        public String Decrypt(byte[] bPadded)
+        static public String Decrypt(byte[] bPadded)
         {
             char szBuffer;
             string szBase = "";

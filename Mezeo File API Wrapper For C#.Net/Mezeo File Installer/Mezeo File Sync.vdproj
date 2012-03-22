@@ -39,31 +39,19 @@
         }
         "Entry"
         {
-        "MsmKey" = "8:_30C7920D7F424AE9B97AD0E0336144B2"
+        "MsmKey" = "8:_411331B531DD4646840D3DC365894E16"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_45D063509E684FAA917F1D6C4FE637AB"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
         {
         "MsmKey" = "8:_46F614C9F07146ACAF71A4725D77D527"
-        "OwnerKey" = "8:_UNDEFINED"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_4EC88D5E40BC46D7BE07C7213551B1D7"
-        "OwnerKey" = "8:_UNDEFINED"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_734D77F3C8114BCD8042B16AD660E692"
-        "OwnerKey" = "8:_UNDEFINED"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_73EE427B7C09451087FF7AE1179E8252"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
         }
@@ -93,19 +81,7 @@
         }
         "Entry"
         {
-        "MsmKey" = "8:_A41F61FB2F0E4D6DB2B0ED61DA00CB71"
-        "OwnerKey" = "8:_UNDEFINED"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
         "MsmKey" = "8:_BD8D954ADE8B4DA6874A163D699687DC"
-        "OwnerKey" = "8:_UNDEFINED"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_C2D1262C2B714224B1E04B860D1133FE"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
         }
@@ -129,6 +105,12 @@
         }
         "Entry"
         {
+        "MsmKey" = "8:_DDB9E06437EB4B6A9CAE054EB0168BC7"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
         "MsmKey" = "8:_E326596596C449C5A40544F5F1EF0418"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
@@ -136,18 +118,6 @@
         "Entry"
         {
         "MsmKey" = "8:_E52C42A434764488BEA8B339E73115B2"
-        "OwnerKey" = "8:_UNDEFINED"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_E87588051F4E4B629BC33C534ADD50ED"
-        "OwnerKey" = "8:_UNDEFINED"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_F679D62DDF614C26AB36647489B59202"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
         }
@@ -382,10 +352,30 @@
             "IsDependency" = "11:FALSE"
             "IsolateTo" = "8:"
             }
-            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_30C7920D7F424AE9B97AD0E0336144B2"
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_411331B531DD4646840D3DC365894E16"
             {
-            "SourcePath" = "8:logo_big_light.png"
-            "TargetName" = "8:logo_big_light.png"
+            "SourcePath" = "8:C:\\Windows\\System32\\msiexec.exe"
+            "TargetName" = "8:msiexec.exe"
+            "Tag" = "8:"
+            "Folder" = "8:_E2CA41781701484DA8E973D55A111194"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_45D063509E684FAA917F1D6C4FE637AB"
+            {
+            "SourcePath" = "8:patch_green.jpg"
+            "TargetName" = "8:patch_green.jpg"
             "Tag" = "8:"
             "Folder" = "8:_E2CA41781701484DA8E973D55A111194"
             "Condition" = "8:"
@@ -406,66 +396,6 @@
             {
             "SourcePath" = "8:License.rtf"
             "TargetName" = "8:License.rtf"
-            "Tag" = "8:"
-            "Folder" = "8:_E2CA41781701484DA8E973D55A111194"
-            "Condition" = "8:"
-            "Transitive" = "11:FALSE"
-            "Vital" = "11:TRUE"
-            "ReadOnly" = "11:FALSE"
-            "Hidden" = "11:FALSE"
-            "System" = "11:FALSE"
-            "Permanent" = "11:FALSE"
-            "SharedLegacy" = "11:FALSE"
-            "PackageAs" = "3:1"
-            "Register" = "3:1"
-            "Exclude" = "11:FALSE"
-            "IsDependency" = "11:FALSE"
-            "IsolateTo" = "8:"
-            }
-            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_4EC88D5E40BC46D7BE07C7213551B1D7"
-            {
-            "SourcePath" = "8:ic_usage.png"
-            "TargetName" = "8:ic_usage.png"
-            "Tag" = "8:"
-            "Folder" = "8:_E2CA41781701484DA8E973D55A111194"
-            "Condition" = "8:"
-            "Transitive" = "11:FALSE"
-            "Vital" = "11:TRUE"
-            "ReadOnly" = "11:FALSE"
-            "Hidden" = "11:FALSE"
-            "System" = "11:FALSE"
-            "Permanent" = "11:FALSE"
-            "SharedLegacy" = "11:FALSE"
-            "PackageAs" = "3:1"
-            "Register" = "3:1"
-            "Exclude" = "11:FALSE"
-            "IsDependency" = "11:FALSE"
-            "IsolateTo" = "8:"
-            }
-            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_734D77F3C8114BCD8042B16AD660E692"
-            {
-            "SourcePath" = "8:patch_green.jpg"
-            "TargetName" = "8:patch_green.jpg"
-            "Tag" = "8:"
-            "Folder" = "8:_E2CA41781701484DA8E973D55A111194"
-            "Condition" = "8:"
-            "Transitive" = "11:FALSE"
-            "Vital" = "11:TRUE"
-            "ReadOnly" = "11:FALSE"
-            "Hidden" = "11:FALSE"
-            "System" = "11:FALSE"
-            "Permanent" = "11:FALSE"
-            "SharedLegacy" = "11:FALSE"
-            "PackageAs" = "3:1"
-            "Register" = "3:1"
-            "Exclude" = "11:FALSE"
-            "IsDependency" = "11:FALSE"
-            "IsolateTo" = "8:"
-            }
-            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_73EE427B7C09451087FF7AE1179E8252"
-            {
-            "SourcePath" = "8:logo_medium_light.png"
-            "TargetName" = "8:logo_medium_light.png"
             "Tag" = "8:"
             "Folder" = "8:_E2CA41781701484DA8E973D55A111194"
             "Condition" = "8:"
@@ -564,46 +494,6 @@
             "IsDependency" = "11:FALSE"
             "IsolateTo" = "8:"
             }
-            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_A41F61FB2F0E4D6DB2B0ED61DA00CB71"
-            {
-            "SourcePath" = "8:C:\\Windows\\System32\\msiexec.exe"
-            "TargetName" = "8:msiexec.exe"
-            "Tag" = "8:"
-            "Folder" = "8:_8851EB7E82A540989E97EE29E4384095"
-            "Condition" = "8:"
-            "Transitive" = "11:FALSE"
-            "Vital" = "11:TRUE"
-            "ReadOnly" = "11:FALSE"
-            "Hidden" = "11:FALSE"
-            "System" = "11:FALSE"
-            "Permanent" = "11:FALSE"
-            "SharedLegacy" = "11:FALSE"
-            "PackageAs" = "3:1"
-            "Register" = "3:1"
-            "Exclude" = "11:FALSE"
-            "IsDependency" = "11:FALSE"
-            "IsolateTo" = "8:"
-            }
-            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_C2D1262C2B714224B1E04B860D1133FE"
-            {
-            "SourcePath" = "8:ic_clock.png"
-            "TargetName" = "8:ic_clock.png"
-            "Tag" = "8:"
-            "Folder" = "8:_E2CA41781701484DA8E973D55A111194"
-            "Condition" = "8:"
-            "Transitive" = "11:FALSE"
-            "Vital" = "11:TRUE"
-            "ReadOnly" = "11:FALSE"
-            "Hidden" = "11:FALSE"
-            "System" = "11:FALSE"
-            "Permanent" = "11:FALSE"
-            "SharedLegacy" = "11:FALSE"
-            "PackageAs" = "3:1"
-            "Register" = "3:1"
-            "Exclude" = "11:FALSE"
-            "IsDependency" = "11:FALSE"
-            "IsolateTo" = "8:"
-            }
             "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_C5B453409FC34212ADBAFA2894380A96"
             {
             "SourcePath" = "8:User.ico"
@@ -664,50 +554,30 @@
             "IsDependency" = "11:FALSE"
             "IsolateTo" = "8:"
             }
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_DDB9E06437EB4B6A9CAE054EB0168BC7"
+            {
+            "SourcePath" = "8:rbmez.bat"
+            "TargetName" = "8:rbmez.bat"
+            "Tag" = "8:"
+            "Folder" = "8:_E2CA41781701484DA8E973D55A111194"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
             "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_E52C42A434764488BEA8B339E73115B2"
             {
             "SourcePath" = "8:MezeoFileRmml.exe"
             "TargetName" = "8:MezeoFileRmml.exe"
-            "Tag" = "8:"
-            "Folder" = "8:_E2CA41781701484DA8E973D55A111194"
-            "Condition" = "8:"
-            "Transitive" = "11:FALSE"
-            "Vital" = "11:TRUE"
-            "ReadOnly" = "11:FALSE"
-            "Hidden" = "11:FALSE"
-            "System" = "11:FALSE"
-            "Permanent" = "11:FALSE"
-            "SharedLegacy" = "11:FALSE"
-            "PackageAs" = "3:1"
-            "Register" = "3:1"
-            "Exclude" = "11:FALSE"
-            "IsDependency" = "11:FALSE"
-            "IsolateTo" = "8:"
-            }
-            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_E87588051F4E4B629BC33C534ADD50ED"
-            {
-            "SourcePath" = "8:logo_tiny_light.png"
-            "TargetName" = "8:logo_tiny_light.png"
-            "Tag" = "8:"
-            "Folder" = "8:_E2CA41781701484DA8E973D55A111194"
-            "Condition" = "8:"
-            "Transitive" = "11:FALSE"
-            "Vital" = "11:TRUE"
-            "ReadOnly" = "11:FALSE"
-            "Hidden" = "11:FALSE"
-            "System" = "11:FALSE"
-            "Permanent" = "11:FALSE"
-            "SharedLegacy" = "11:FALSE"
-            "PackageAs" = "3:1"
-            "Register" = "3:1"
-            "Exclude" = "11:FALSE"
-            "IsDependency" = "11:FALSE"
-            "IsolateTo" = "8:"
-            }
-            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_F679D62DDF614C26AB36647489B59202"
-            {
-            "SourcePath" = "8:ic_logo.png"
-            "TargetName" = "8:ic_logo.png"
             "Tag" = "8:"
             "Folder" = "8:_E2CA41781701484DA8E973D55A111194"
             "Condition" = "8:"
@@ -879,7 +749,7 @@
         "Name" = "8:Microsoft Visual Studio"
         "ProductName" = "8:Mezeo File Sync"
         "ProductCode" = "8:{1E25C446-907C-4D73-B9B6-56463AEB08ED}"
-        "PackageCode" = "8:{43AC227B-BD42-479D-80AA-95EC3B88B775}"
+        "PackageCode" = "8:{007BF5AB-F8D2-4F44-A285-FA75797D8A4A}"
         "UpgradeCode" = "8:{9A686460-3EE8-42C7-987B-2AC187ED8477}"
         "AspNetVersion" = "8:4.0.30319.0"
         "RestartWWWService" = "11:FALSE"
@@ -1719,7 +1589,7 @@
             "Icon" = "8:_74C7A9F8EBC14C86863F6D28AAAE1995"
             "Feature" = "8:"
             }
-            "{970C0BB2-C7D0-45D7-ABFA-7EC378858BC0}:_E63CB35120CA46CEBA948BBDA9B262E4"
+            "{970C0BB2-C7D0-45D7-ABFA-7EC378858BC0}:_FE02CE2B497A4D449F1EF1F2885472CB"
             {
             "Name" = "8:Uninstall Mezeo File Sync"
             "Arguments" = "8:/x {1E25C446-907C-4D73-B9B6-56463AEB08ED}"
@@ -1727,9 +1597,9 @@
             "ShowCmd" = "3:1"
             "IconIndex" = "3:0"
             "Transitive" = "11:FALSE"
-            "Target" = "8:_A41F61FB2F0E4D6DB2B0ED61DA00CB71"
+            "Target" = "8:_411331B531DD4646840D3DC365894E16"
             "Folder" = "8:_9BDB5DAA18134DFE94CD0642A429F3DC"
-            "WorkingFolder" = "8:_8851EB7E82A540989E97EE29E4384095"
+            "WorkingFolder" = "8:_E2CA41781701484DA8E973D55A111194"
             "Icon" = "8:"
             "Feature" = "8:"
             }
@@ -2062,7 +1932,7 @@
                             "ContextData" = "8:Bitmap"
                             "Attributes" = "3:4"
                             "Setting" = "3:2"
-                            "Value" = "8:_734D77F3C8114BCD8042B16AD660E692"
+                            "Value" = "8:_45D063509E684FAA917F1D6C4FE637AB"
                             "UsePlugInResources" = "11:TRUE"
                             }
                             "CopyrightWarning"
