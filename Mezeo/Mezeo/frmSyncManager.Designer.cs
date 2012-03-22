@@ -244,9 +244,10 @@
             // lnkFolderPath
             // 
             this.lnkFolderPath.AutoEllipsis = true;
+            this.lnkFolderPath.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Underline, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.lnkFolderPath.Location = new System.Drawing.Point(147, 22);
             this.lnkFolderPath.Name = "lnkFolderPath";
-            this.lnkFolderPath.Size = new System.Drawing.Size(333, 13);
+            this.lnkFolderPath.Size = new System.Drawing.Size(333, 23);
             this.lnkFolderPath.TabIndex = 2;
             this.lnkFolderPath.TabStop = true;
             this.lnkFolderPath.Text = "linkLabel1";
@@ -289,7 +290,7 @@
             this.lnkServerUrl.Size = new System.Drawing.Size(166, 20);
             this.lnkServerUrl.TabIndex = 5;
             this.lnkServerUrl.TabStop = true;
-            this.lnkServerUrl.Text = "https://demo.mezeo.net";
+            this.lnkServerUrl.Text = "https://41.mezeo.net";
             this.lnkServerUrl.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
             this.lnkServerUrl.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.lnkServerUrl_LinkClicked);
             // 

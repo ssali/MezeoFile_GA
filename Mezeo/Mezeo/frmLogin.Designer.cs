@@ -267,7 +267,7 @@
             // 
             // txtServerUrl
             // 
-            this.txtServerUrl.CueText = "https://demo.mezeo.net";
+            this.txtServerUrl.CueText = "https://41.mezeo.net";
             resources.ApplyResources(this.txtServerUrl, "txtServerUrl");
             this.txtServerUrl.Name = "txtServerUrl";
             this.txtServerUrl.TextChanged += new System.EventHandler(this.txtServerUrl_TextChanged);

@@ -184,7 +184,7 @@
     <value>Password</value>
   </data>
   <data name="ServerUrlCueText" xml:space="preserve">
-    <value>https://demo.mezeo.net</value>
+    <value>https://41.mezeo.net</value>
   </data>
   <data name="SyncIssueFoundText" xml:space="preserve">
     <value>Issues found. Launch Sync Manager to review.</value>

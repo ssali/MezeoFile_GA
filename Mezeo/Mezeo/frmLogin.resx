@@ -1016,7 +1016,7 @@
     <value>7</value>
   </data>
   <data name="txtServerUrl.Text" xml:space="preserve">
-    <value>https://demo.mezeo.net</value>
+    <value>https://41.mezeo.net</value>
   </data>
   <data name="&gt;&gt;txtServerUrl.Name" xml:space="preserve">
     <value>txtServerUrl</value>
@@ -1086,6 +1086,9 @@
   </data>
   <data name="$this.ClientSize" type="System.Drawing.Size, System.Drawing">
     <value>483, 331</value>
+  </data>
+  <data name="$this.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
+    <value>NoControl</value>
   </data>
   <data name="$this.StartPosition" type="System.Windows.Forms.FormStartPosition, System.Windows.Forms">
     <value>CenterScreen</value>

@@ -512,7 +512,7 @@ namespace Mezeo
         {
             if (txtServerUrl.Text.Trim().Length == 0)
             {
-                txtServerUrl.Text = "https://demo.mezeo.net";
+                txtServerUrl.Text = LanguageTranslator.GetValue("ServerUrlCueText"); ;
             }
         }
 

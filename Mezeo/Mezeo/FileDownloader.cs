@@ -133,9 +133,7 @@ namespace Mezeo
                             bRet = true;
                         }
                         else
-                        {
-                            
-                            
+                        {        
                             bRet = cFileCloud.DownloadFile(id.szContentUrl + '/' + id.strName,
                                                     downloadObjectName, ref refCode);
 
@@ -177,12 +175,17 @@ namespace Mezeo
                                 dbhandler.Update(DbHandler.TABLE_NAME, DbHandler.E_TAG + "='" + id.strETag + "'", DbHandler.KEY + "='" + fileFolderInfo.Key + "'");
                                 dbhandler.Update(DbHandler.TABLE_NAME, DbHandler.STATUS + "= 'SUCCESS'", DbHandler.KEY + "='" + fileFolderInfo.Key + "'");
                             }
+
+                            if (downloadEvent != null)
+                            {
+                                downloadEvent(this, new FileDownloaderEvents(downloadObjectName, 0));
+                            }
                         }
                        
-                        if (downloadEvent != null)
-                        {
-                            downloadEvent(this, new FileDownloaderEvents(downloadObjectName, 0));
-                        }
+                        //if (downloadEvent != null)
+                        //{
+                        //    downloadEvent(this, new FileDownloaderEvents(downloadObjectName, 0));
+                        //}
 
                     }
                         

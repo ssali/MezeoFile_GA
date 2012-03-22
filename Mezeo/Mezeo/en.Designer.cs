@@ -259,7 +259,7 @@ namespace Mezeo {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to https://demo.mezeo.net.
+        ///   Looks up a localized string similar to https://41.mezeo.net.
         /// </summary>
         internal static string ServerUrlCueText {
             get {
