@@ -137,6 +137,20 @@ namespace Mezeo.Properties {
             }
         }
         
+        internal static System.Drawing.Bitmap meze_menu_logo_small {
+            get {
+                object obj = ResourceManager.GetObject("meze_menu_logo_small", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        internal static System.Drawing.Bitmap mezeo_menu_logo_large {
+            get {
+                object obj = ResourceManager.GetObject("mezeo_menu_logo_large", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
         internal static System.Drawing.Icon mezeosyncstatus_syncing {
             get {
                 object obj = ResourceManager.GetObject("mezeosyncstatus_syncing", resourceCulture);

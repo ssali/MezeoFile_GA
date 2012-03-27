@@ -155,7 +155,7 @@ namespace Mezeo
                 if (iFound.LocalFilePath.Length != 0)
                 {
                     string argument = iFound.LocalFilePath;
-                    System.Diagnostics.Process.Start("explorer.exe", argument);
+                    System.Diagnostics.Process.Start(argument);
                 }
             }
         }

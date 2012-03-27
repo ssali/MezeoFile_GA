@@ -45,7 +45,7 @@ namespace Mezeo
                 if (BasicInfo.SyncDirPath.Trim().Length != 0)
                 {
                     string argument = BasicInfo.SyncDirPath;
-                    System.Diagnostics.Process.Start("explorer.exe", argument);
+                    System.Diagnostics.Process.Start(argument);
                 }
                 //else
                 //{

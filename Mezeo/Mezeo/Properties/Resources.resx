@@ -166,4 +166,10 @@
   <data name="logo_horizontal_right_click" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\logo_horizontal_right_click.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
+  <data name="mezeo_menu_logo_large" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\mezeo_menu_logo_large.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="meze_menu_logo_small" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\meze_menu_logo_small.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
 </root>

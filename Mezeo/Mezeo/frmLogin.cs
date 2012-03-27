@@ -419,7 +419,7 @@ namespace Mezeo
                 BasicInfo.IsInitialSync = true;
                 BasicInfo.SyncDirPath = dirName;
 
-                mezeoFileCloud.GetOverlayRegisteration();
+                //mezeoFileCloud.GetOverlayRegisteration();
             }            
         }
 
@@ -530,7 +530,7 @@ namespace Mezeo
             rect.Width=((ToolStripMenuItem)sender).Width;
             rect.Height=((ToolStripMenuItem)sender).Height;
 
-            Image img = Properties.Resources.logo_horizontal_right_click;
+            Image img = Properties.Resources.mezeo_menu_logo_large;
             //e.Graphics.DrawImage(img, pt);
             GraphicsUnit gu = new GraphicsUnit();
             e.Graphics.DrawImage(img, rect, img.GetBounds(ref gu), gu);
@@ -551,7 +551,7 @@ namespace Mezeo
             rect.Width = ((ToolStripMenuItem)sender).Width;
             rect.Height = ((ToolStripMenuItem)sender).Height;
 
-            Image img = Properties.Resources.logo_horizontal_right_click;
+            Image img = Properties.Resources.meze_menu_logo_small;
             //e.Graphics.DrawImage(img, pt);
             GraphicsUnit gu = new GraphicsUnit();
             e.Graphics.DrawImage(img, rect, img.GetBounds(ref gu), gu);

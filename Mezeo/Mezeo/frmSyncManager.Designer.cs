@@ -97,7 +97,7 @@
             // 
             // btnIssuesFound
             // 
-            this.btnIssuesFound.Location = new System.Drawing.Point(27, 57);
+            this.btnIssuesFound.Location = new System.Drawing.Point(19, 55);
             this.btnIssuesFound.Name = "btnIssuesFound";
             this.btnIssuesFound.Size = new System.Drawing.Size(96, 23);
             this.btnIssuesFound.TabIndex = 15;
@@ -156,7 +156,7 @@
             this.lblStatusL3.AutoEllipsis = true;
             this.lblStatusL3.Location = new System.Drawing.Point(147, 55);
             this.lblStatusL3.Name = "lblStatusL3";
-            this.lblStatusL3.Size = new System.Drawing.Size(333, 13);
+            this.lblStatusL3.Size = new System.Drawing.Size(449, 13);
             this.lblStatusL3.TabIndex = 7;
             this.lblStatusL3.Text = "label8";
             // 
