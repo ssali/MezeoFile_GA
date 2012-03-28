@@ -37,6 +37,8 @@ namespace MezeoFileSupport
         public String szNamespaceUri;
         public String szNQParentUri;
 
+       
+
         public LoginDetails()
         {
             szUserName = "";
@@ -189,6 +191,9 @@ namespace MezeoFileSupport
         private String StrAPIKey = "c5f5c39e22b4c743ff7c83470499748c6ac46b249c29e3934f5744166af130c6";
         private Int32 nTimeout = 120000;
 
+        public delegate void FileDownloadStoppedEvent(string fileName);
+        public event FileDownloadStoppedEvent downloadStoppedEvent;
+
         //create request format for get details
         private void OnGetRequest(ref HttpWebRequest webRequest, String strRequestURL, String strAccept, String strXCloudDepth, String strMethod)
         {
@@ -280,6 +285,7 @@ namespace MezeoFileSupport
 	        byte[] buffer = new byte[4096];
 	        int bytes_read = 0;
 	        FileStream fstPersons;
+            bool bStatus = true;
 
 	        if(lFrom > 0)
 	        {
@@ -295,15 +301,27 @@ namespace MezeoFileSupport
 		        if(m_bStop)
 		        {
 			        m_bStop = false;
-			        return false;
+                    bStatus = false;
+			        break;
 		        }
 		        if(m_bPause)
-			        return false;
+                {
+			        bStatus = false;
+                    break;
+                }
 	        }
 	        responseStream.Close();
 	        fstPersons.Close();
 
-	        return true;
+            if (!bStatus)
+            {
+                if (downloadStoppedEvent != null)
+                {
+                    downloadStoppedEvent(strSaveInFile);
+                }
+            }
+
+            return bStatus;
         }
 
         public void StopSyncProcess()
@@ -441,7 +459,7 @@ namespace MezeoFileSupport
 	        try
 	        {
 		        HttpWebRequest webRequest = null;
-                XmlNode nodeXml;
+                XmlNode nodeXml, nodeChildXml;
                 HttpWebResponse response = null;
 
                 //------------Root Container and Management URI--------------------------
@@ -462,7 +480,7 @@ namespace MezeoFileSupport
 		        m_xmlDocument.LoadXml(m_strXmlResource);
                 pLoginDetails = new LoginDetails();
 
-                nodeXml = m_xmlDocument.SelectSingleNode("/cloud/rootContainer");
+                nodeXml = m_xmlDocument.SelectSingleNode("/cloud/locations/location/rootContainer");
                 pLoginDetails.szContainerContentsUri = nodeXml.Attributes["xlink:href"].Value;
                 pLoginDetails.szContainerContentsUri += "/contents";
 
@@ -470,6 +488,35 @@ namespace MezeoFileSupport
                 nodeXml = m_xmlDocument.SelectSingleNode("/cloud/locations/location/management");
                 if (nodeXml != null)
                     pLoginDetails.szManagementUri = nodeXml.Attributes["xlink:href"].Value;
+
+                /*nodeXml = m_xmlDocument.SelectSingleNode("/cloud/rootContainer");
+                pLoginDetails.szContainerContentsUri = nodeXml.Attributes["xlink:href"].Value;
+                nodeXml.RemoveAll();
+
+                nodeXml = m_xmlDocument.SelectSingleNode("/cloud/locations");
+                String StrModXml = "";
+                for (int nNodePos = 0; nNodePos < nodeXml.ChildNodes.Count; nNodePos++)
+                {
+                    m_xmlDocument.RemoveAll();
+                    StrModXml = "<cloud xmlns:xlink=\"http://www.w3.org/1999/xlink\">";
+                    StrModXml += nodeXml.ChildNodes[nNodePos].InnerXml + "</cloud>";
+
+                    m_xmlDocument.LoadXml(StrModXml);
+
+                    nodeChildXml = m_xmlDocument.SelectSingleNode("/cloud/rootContainer");
+                    if(pLoginDetails.szContainerContentsUri == nodeChildXml.Attributes["xlink:href"].Value)
+                    {
+                        pLoginDetails.szContainerContentsUri += "/contents";
+                        nodeChildXml.RemoveAll();
+                        nodeChildXml = m_xmlDocument.SelectSingleNode("/cloud/management");
+                        if (nodeXml != null)
+                        {
+                            pLoginDetails.szManagementUri = nodeChildXml.Attributes["xlink:href"].Value;
+                            nodeChildXml.RemoveAll();
+                        }
+                        break;
+                    } 
+                }*/
 
                 m_xmlDocument.RemoveAll();
                 nodeXml.RemoveAll();
@@ -704,6 +751,7 @@ namespace MezeoFileSupport
 
         public bool DownloadFile(String strSource, String strDestination, ref int nStatusCode)
         {
+            bool bStatus = true;
             nStatusCode = 0;
 	        try
 	        {
@@ -712,22 +760,27 @@ namespace MezeoFileSupport
 
 		        HttpWebResponse response = (HttpWebResponse)webRequest.GetResponse();
 		        nStatusCode = 200;
-                OnSaveResponseFile(response.GetResponseStream(), strDestination, 0);
+                if (!OnSaveResponseFile(response.GetResponseStream(), strDestination, 0))
+                {
+                    nStatusCode = -4;
+                    bStatus = false;
+                }
+
 			    webRequest.Abort();
 			    response.Close();
 	        }
 	        catch(WebException wEx)
 	        {
 		        nStatusCode = OnGetException(wEx);
-		        return false;
+		        bStatus = false;
 	        }
 	        catch
 	        {
 		        nStatusCode = -3;
-		        return false;
+		        bStatus = false;
 	        }
 
-	        return true;
+            return bStatus;
         }
 
         public String GetETag(String strContainUrl, ref int nStatusCode)
@@ -1759,7 +1812,7 @@ namespace MezeoFileSupport
 
         public bool GetOverlayRegisteration()
         {
-            try
+            /*try
             {
                 Process.Start("taskkill.exe", "/f /im explorer.exe");
                 Thread.Sleep(2000);
@@ -1768,7 +1821,7 @@ namespace MezeoFileSupport
             catch
             {
                 return false;
-            }
+            }*/
             return true;
         }
 

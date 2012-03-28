@@ -536,6 +536,11 @@
             "AssemblyAsmDisplayName" = "8:MezeoFileSupport, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL"
                 "ScatterAssemblies"
                 {
+                    "_952769F1A4F84068BAC4DED1D5A461AD"
+                    {
+                    "Name" = "8:MezeoFileSupport.dll"
+                    "Attributes" = "3:512"
+                    }
                 }
             "SourcePath" = "8:MezeoFileSupport.dll"
             "TargetName" = "8:"
@@ -769,21 +774,21 @@
         {
         "Name" = "8:Microsoft Visual Studio"
         "ProductName" = "8:Mezeo File Sync"
-        "ProductCode" = "8:{1E25C446-907C-4D73-B9B6-56463AEB08ED}"
-        "PackageCode" = "8:{BEF441DF-00CE-4E0D-B1BA-486BB02CEB6E}"
+        "ProductCode" = "8:{7FF42A76-3986-4173-AA1E-49E9DA402BDA}"
+        "PackageCode" = "8:{2557F86F-6FED-4529-9813-7655FC624011}"
         "UpgradeCode" = "8:{9A686460-3EE8-42C7-987B-2AC187ED8477}"
         "AspNetVersion" = "8:4.0.30319.0"
         "RestartWWWService" = "11:FALSE"
         "RemovePreviousVersions" = "11:FALSE"
         "DetectNewerInstalledVersion" = "11:TRUE"
         "InstallAllUsers" = "11:FALSE"
-        "ProductVersion" = "8:1.0.0"
-        "Manufacturer" = "8:Microsoft"
+        "ProductVersion" = "8:2.0.5"
+        "Manufacturer" = "8:Mezeo File Sync"
         "ARPHELPTELEPHONE" = "8:"
         "ARPHELPLINK" = "8:"
         "Title" = "8:Mezeo File Sync"
         "Subject" = "8:"
-        "ARPCONTACT" = "8:Microsoft"
+        "ARPCONTACT" = "8:Mezeo File Sync"
         "Keywords" = "8:"
         "ARPCOMMENTS" = "8:"
         "ARPURLINFOABOUT" = "8:"
@@ -1188,14 +1193,6 @@
                                                         }
                                                         "Values"
                                                         {
-                                                            "{ADCFDA98-8FDD-45E4-90BC-E3D20B029870}:_923E6EDD7F6F4CACAEB9775A8E661368"
-                                                            {
-                                                            "Name" = "8:MezeoFileSync"
-                                                            "Condition" = "8:"
-                                                            "Transitive" = "11:FALSE"
-                                                            "ValueTypes" = "3:1"
-                                                            "Value" = "8:[ProgramFiles64Folder]Mezeo File Sync\\MezeoFileSync.exe"
-                                                            }
                                                         }
                                                     }
                                                     "{60EA8692-D2D5-43EB-80DC-7906BF13D6EF}:_5CC249B73A394253A1B238D95337BEB8"
@@ -1537,6 +1534,70 @@
                                 {
                                 }
                             }
+                            "{60EA8692-D2D5-43EB-80DC-7906BF13D6EF}:_89C352156E6B49EABE3FCFEAAA310633"
+                            {
+                            "Name" = "8:Microsoft"
+                            "Condition" = "8:"
+                            "AlwaysCreate" = "11:FALSE"
+                            "DeleteAtUninstall" = "11:FALSE"
+                            "Transitive" = "11:FALSE"
+                                "Keys"
+                                {
+                                    "{60EA8692-D2D5-43EB-80DC-7906BF13D6EF}:_D01F79C88D3C4C0E89E81EBF3C7C504C"
+                                    {
+                                    "Name" = "8:Windows"
+                                    "Condition" = "8:"
+                                    "AlwaysCreate" = "11:FALSE"
+                                    "DeleteAtUninstall" = "11:FALSE"
+                                    "Transitive" = "11:FALSE"
+                                        "Keys"
+                                        {
+                                            "{60EA8692-D2D5-43EB-80DC-7906BF13D6EF}:_AB94DC031BC344E5A00148AA11C10774"
+                                            {
+                                            "Name" = "8:CurrentVersion"
+                                            "Condition" = "8:"
+                                            "AlwaysCreate" = "11:FALSE"
+                                            "DeleteAtUninstall" = "11:FALSE"
+                                            "Transitive" = "11:FALSE"
+                                                "Keys"
+                                                {
+                                                    "{60EA8692-D2D5-43EB-80DC-7906BF13D6EF}:_9C81B31068C84316903D0991E9541B8D"
+                                                    {
+                                                    "Name" = "8:Run"
+                                                    "Condition" = "8:"
+                                                    "AlwaysCreate" = "11:FALSE"
+                                                    "DeleteAtUninstall" = "11:FALSE"
+                                                    "Transitive" = "11:FALSE"
+                                                        "Keys"
+                                                        {
+                                                        }
+                                                        "Values"
+                                                        {
+                                                            "{ADCFDA98-8FDD-45E4-90BC-E3D20B029870}:_E248B36960304CD2B3B8670B85C2AA5C"
+                                                            {
+                                                            "Name" = "8:MezeoFileSync"
+                                                            "Condition" = "8:"
+                                                            "Transitive" = "11:FALSE"
+                                                            "ValueTypes" = "3:1"
+                                                            "Value" = "8:[ProgramFiles64Folder]Mezeo File Sync\\MezeoFileSync.exe"
+                                                            }
+                                                        }
+                                                    }
+                                                }
+                                                "Values"
+                                                {
+                                                }
+                                            }
+                                        }
+                                        "Values"
+                                        {
+                                        }
+                                    }
+                                }
+                                "Values"
+                                {
+                                }
+                            }
                             "{60EA8692-D2D5-43EB-80DC-7906BF13D6EF}:_D5BC63E50DC647F38F7704E50918794C"
                             {
                             "Name" = "8:[Manufacturer]"
@@ -1599,7 +1660,7 @@
             "{970C0BB2-C7D0-45D7-ABFA-7EC378858BC0}:_33A615A6549D44C9A6CB5168A4C75448"
             {
             "Name" = "8:Uninstall Mezeo File Sync"
-            "Arguments" = "8:/x {1E25C446-907C-4D73-B9B6-56463AEB08ED}"
+            "Arguments" = "8:/x {7FF42A76-3986-4173-AA1E-49E9DA402BDA}"
             "Description" = "8:"
             "ShowCmd" = "3:1"
             "IconIndex" = "3:0"
@@ -1613,7 +1674,7 @@
             "{970C0BB2-C7D0-45D7-ABFA-7EC378858BC0}:_90242B55312043129E882FC7B6FEACCB"
             {
             "Name" = "8:Mezeo File Sync"
-            "Arguments" = "8:/x {1E25C446-907C-4D73-B9B6-56463AEB08ED}"
+            "Arguments" = "8:"
             "Description" = "8:"
             "ShowCmd" = "3:1"
             "IconIndex" = "3:0"
@@ -2021,8 +2082,8 @@
                             "Type" = "3:15"
                             "ContextData" = "8:"
                             "Attributes" = "3:0"
-                            "Setting" = "3:1"
-                            "Value" = "8:#1258"
+                            "Setting" = "3:2"
+                            "Value" = "8:The file icons will not reflect sync status until you have rebooted the machine."
                             "DefaultValue" = "8:#1258"
                             "UsePlugInResources" = "11:TRUE"
                             }
