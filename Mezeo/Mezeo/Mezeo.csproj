@@ -250,6 +250,12 @@
   <ItemGroup>
     <None Include="Resources\mezeo_menu_logo_large.png" />
   </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\app_icon_warning.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\app_icon_disabled.ico" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

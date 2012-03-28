@@ -67,6 +67,20 @@ namespace Mezeo.Properties {
             }
         }
         
+        internal static System.Drawing.Icon app_icon_disabled {
+            get {
+                object obj = ResourceManager.GetObject("app_icon_disabled", resourceCulture);
+                return ((System.Drawing.Icon)(obj));
+            }
+        }
+        
+        internal static System.Drawing.Icon app_icon_warning {
+            get {
+                object obj = ResourceManager.GetObject("app_icon_warning", resourceCulture);
+                return ((System.Drawing.Icon)(obj));
+            }
+        }
+        
         internal static System.Drawing.Icon app_offline {
             get {
                 object obj = ResourceManager.GetObject("app_offline", resourceCulture);

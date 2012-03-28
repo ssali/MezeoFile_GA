@@ -147,6 +147,11 @@ namespace Mezeo
             aboutBox.ShowDialog();
         }
 
+        public int GetItemsInList()
+        {
+            return lvIssues.Items.Count;
+        }
+
         private void lnkLocalFile_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
         {
             if (lvIssues.SelectedItems.Count > 0)

@@ -55,8 +55,9 @@ namespace Mezeo
                         continue;
                 }
 
-
-                if (dbKeys.Contains(localKeys))
+                string strCheck = dbHandler.GetString(DbHandler.TABLE_NAME, DbHandler.CONTENT_URL, DbHandler.KEY + " = '" + localKeys + "' and " + DbHandler.STATUS + "='SUCCESS'");
+                //if (dbKeys.Contains(localKeys))
+                if(strCheck.Trim().Length != 0)
                 {
                     DateTime dbModDate = dbHandler.GetDateTime(DbHandler.TABLE_NAME, DbHandler.MODIFIED_DATE, DbHandler.KEY + "='" + localKeys + "'");
                     

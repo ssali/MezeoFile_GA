@@ -91,7 +91,7 @@ namespace Mezeo
 
         private void exitToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            if (syncManager != null && syncManager.isSyncInProgress)
+            if (syncManager != null && (syncManager.isSyncInProgress || syncManager.isLocalEventInProgress || syncManager.isOfflineWorking))
             {
                 DialogResult dResult = MessageBox.Show(LanguageTranslator.GetValue("MezeoExitString1") + "\n" + LanguageTranslator.GetValue("MezeoExitString2"), AboutBox.AssemblyTitle, MessageBoxButtons.OKCancel);
                 if (dResult == DialogResult.Cancel)
@@ -99,6 +99,7 @@ namespace Mezeo
 
                 niSystemTray.Visible = false;
                 syncManager.ApplicationExit();
+                Application.Exit();
                // ShellNotifyIcon.RemoveNotifyIcon();
             }
             else
