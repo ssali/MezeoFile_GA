@@ -64,6 +64,7 @@ namespace Mezeo
             {
                 btnIgnoreConflict.Visible = false;
                 ClearInfoLabels();
+                lblDescription.Text = "  Everything is great!    All your files are in sync and there are no conflicts or errors to report at this time.";
             }
         }
 
@@ -107,11 +108,11 @@ namespace Mezeo
             lblLocalFileSize.Text ="";
             lblLocalModifiedDate.Text ="";
             lnkLocalFile.Text = "";
-
         }
 
         private void frmIssues_FormClosing(object sender, FormClosingEventArgs e)
         {
+            ClearInfoLabels();
             e.Cancel = true;
             this.Hide();
             return;
