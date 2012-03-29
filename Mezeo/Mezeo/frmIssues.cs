@@ -18,14 +18,14 @@ namespace Mezeo
         public frmIssues()
         {
             InitializeComponent();
-            ClearInfoLabels();
+            ClearInfoLabels();      
         }
 
         public frmIssues(MezeoFileCloud mezeoFileCloud)
         {
             InitializeComponent();
             ClearInfoLabels();
-
+   
             cMezeoFileCloud = mezeoFileCloud;
         }
 
@@ -64,8 +64,29 @@ namespace Mezeo
             {
                 btnIgnoreConflict.Visible = false;
                 ClearInfoLabels();
+                DisableNameLabels();
                 lblDescription.Text = "  Everything is great!    All your files are in sync and there are no conflicts or errors to report at this time.";
             }
+        }
+
+        private void DisableNameLabels()
+        {
+            label4.Visible = false;
+            label5.Visible = false;
+            label6.Visible = false;
+            label7.Visible = false;
+            label8.Visible = false;
+            label9.Visible = false;
+        }
+
+        private void EnableNameLabels()
+        {
+            label4.Visible = true;
+            label5.Visible = true;
+            label6.Visible = true;
+            label7.Visible = true;
+            label8.Visible = true;
+            label9.Visible = true;
         }
 
         private void lvIssues_SelectedIndexChanged(object sender, EventArgs e)
@@ -113,6 +134,7 @@ namespace Mezeo
         private void frmIssues_FormClosing(object sender, FormClosingEventArgs e)
         {
             ClearInfoLabels();
+            EnableNameLabels();
             e.Cancel = true;
             this.Hide();
             return;
