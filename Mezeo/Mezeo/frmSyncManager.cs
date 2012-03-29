@@ -898,7 +898,7 @@ namespace Mezeo
 
                     frmParent.toolStripMenuItem4.Text = LanguageTranslator.GetValue("SyncManagerMenuIssueFoundText");
                 }
-                else
+                else if (events.Count > 0)
                 {
                     cnotificationManager.NotificationHandler.Icon = Properties.Resources.MezeoVault;
 
@@ -3182,7 +3182,7 @@ namespace Mezeo
 
                 frmParent.toolStripMenuItem4.Text = LanguageTranslator.GetValue("SyncManagerMenuIssueFoundText");
             }
-            else
+            else if (isLocalEventInProgress)
             {
                 cnotificationManager.NotificationHandler.Icon = Properties.Resources.MezeoVault;
 
@@ -3327,7 +3327,7 @@ namespace Mezeo
 
                 frmParent.toolStripMenuItem4.Text = LanguageTranslator.GetValue("SyncManagerMenuIssueFoundText");
             }
-            else
+            else if (!isLocalEventInProgress)
             {
                 cnotificationManager.NotificationHandler.Icon = Properties.Resources.MezeoVault;
 
