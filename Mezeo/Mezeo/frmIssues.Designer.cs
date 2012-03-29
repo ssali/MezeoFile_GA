@@ -259,7 +259,7 @@
             this.lnkLocalFile.Size = new System.Drawing.Size(369, 13);
             this.lnkLocalFile.TabIndex = 15;
             this.lnkLocalFile.TabStop = true;
-            this.lnkLocalFile.Text = "C:\\users\\mezeo file sync\\abc.txt";
+            this.lnkLocalFile.Text = "C:\\users\\MezeoFile\\abc.txt";
             this.lnkLocalFile.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
             this.lnkLocalFile.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.lnkLocalFile_LinkClicked);
             // 
@@ -342,7 +342,7 @@
             this.Name = "frmIssues";
             this.ShowIcon = false;
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
-            this.Text = "Mezeo File Sync Issues";
+            this.Text = "MezeoFile Issues";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.frmIssues_FormClosing);
             this.Shown += new System.EventHandler(this.frmIssues_Shown);
             this.panel1.ResumeLayout(false);

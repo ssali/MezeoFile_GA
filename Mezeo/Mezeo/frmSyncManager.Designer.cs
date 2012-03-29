@@ -375,6 +375,7 @@
             this.rbSyncOn.Text = "On";
             this.rbSyncOn.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             this.rbSyncOn.UseVisualStyleBackColor = true;
+            this.rbSyncOn.CheckedChanged += new System.EventHandler(this.rbSyncOn_CheckedChanged);
             this.rbSyncOn.Click += new System.EventHandler(this.rbSyncOn_Click);
             // 
             // pictureBox1

@@ -99,7 +99,8 @@ namespace Mezeo
 
                 niSystemTray.Visible = false;
                 syncManager.ApplicationExit();
-                Application.Exit();
+                //Application.Exit();
+                Environment.Exit(Environment.ExitCode);
                // ShellNotifyIcon.RemoveNotifyIcon();
             }
             else
@@ -172,6 +173,7 @@ namespace Mezeo
             this.txtUserName.CueText = LanguageTranslator.GetValue("UserIdCueText");
             this.txtPasswrod.CueText=LanguageTranslator.GetValue("PasswordCueText");
             this.txtServerUrl.CueText = LanguageTranslator.GetValue("ServerUrlCueText");
+            this.txtServerUrl.Text = LanguageTranslator.GetValue("ServerUrlCueText");
             this.labelError.Text = "";
 
             if (!BasicInfo.LoadRegistryValues())
@@ -215,6 +217,7 @@ namespace Mezeo
         {
             int referenceCode = 0;
             loginDetails = mezeoFileCloud.Login(txtUserName.Text, txtPasswrod.Text,validateServiceUrl(txtServerUrl.Text), ref referenceCode);
+            e.Result = referenceCode;
            
         }
 
@@ -267,12 +270,17 @@ namespace Mezeo
                 return;
                 
             }
+            else if (loginDetails.nAccountType == 0)
+            {
+                ShowGuestLoginError();
+                return;
+            }
             else
             {
                 BasicInfo.UserName = txtUserName.Text;
                 BasicInfo.Password = txtPasswrod.Text;
                 BasicInfo.ServiceUrl = txtServerUrl.Text;
-                
+
                 isLoginSuccess = true;
                 //ShellNotifyIcon.ConnectMyMenu(cmSyncManager.Handle);
                 //niSystemTray.ContextMenuStrip = cmSystemTraySyncMgr;
@@ -281,7 +289,7 @@ namespace Mezeo
                 ////syncManager.CreateControl();
                 ////syncManager.Show();
                 //syncManager.CreateControl();
-                
+
                 //syncManager.InitializeSync();
 
                 //if (showLogin)
@@ -338,6 +346,18 @@ namespace Mezeo
 
             isLoginSuccess = false;
         }
+        private void ShowGuestLoginError()
+        {
+            this.labelError.Text = LanguageTranslator.GetValue("LoginGuestAccMsgText");
+            this.txtUserName.Enabled = true;
+            this.txtPasswrod.Enabled = true;
+            this.txtServerUrl.Enabled = true;
+
+            this.btnLogin.Enabled = true;
+
+            isLoginSuccess = false;
+        }
+
 
         private void frmLogin_Load(object sender, EventArgs e)
         {
@@ -476,9 +496,12 @@ namespace Mezeo
                         //ShellNotifyIcon.SetNotifyIconBalloonText(LanguageTranslator.GetValue("TrayAppOnlineText"), LanguageTranslator.GetValue("TrayBalloonSyncStatusText"));
                        // ShellNotifyIcon.SetNotifyIconToolTip(LanguageTranslator.GetValue("TrayAppOnlineText"));
 
-                        syncManager.LoginDetail = loginDetails;
-                        syncManager.EnableSyncManager();
-                        syncManager.InitializeSync();
+                        if (syncManager != null)
+                        {
+                            syncManager.LoginDetail = loginDetails;
+                            syncManager.EnableSyncManager();
+                            syncManager.InitializeSync();
+                        }
                     }
                 }
                 else
@@ -493,7 +516,10 @@ namespace Mezeo
                     //ShellNotifyIcon.SetNotifyIconBalloonText(LanguageTranslator.GetValue("TrayAppOfflineText"), LanguageTranslator.GetValue("TrayBalloonSyncStatusText"));
                     //ShellNotifyIcon.SetNotifyIconToolTip(LanguageTranslator.GetValue("TrayAppOfflineText"));
 
-                    syncManager.DisableSyncManager();
+                    if (syncManager != null)
+                    {
+                        syncManager.DisableSyncManager();
+                    }
                 }
                 tmrConnectionCheck.Enabled = true;
             }

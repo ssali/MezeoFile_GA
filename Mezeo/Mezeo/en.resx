@@ -166,7 +166,7 @@
     <value>User name or password you entered is incorrect.</value>
   </data>
   <data name="LoginFormTitle" xml:space="preserve">
-    <value>Mezeo File Sync Login</value>
+    <value>MezeoFile Login</value>
   </data>
   <data name="LoginGuestAccMsgText" xml:space="preserve">
     <value>Guest access not allowed</value>
@@ -178,13 +178,13 @@
     <value>A sync is currently in progress.</value>
   </data>
   <data name="MezeoExitString2" xml:space="preserve">
-    <value>Cancel sync and close Mezeo File Sync now?</value>
+    <value>Cancel sync and close MezeoFile now?</value>
   </data>
   <data name="PasswordCueText" xml:space="preserve">
     <value>Password</value>
   </data>
   <data name="ServerUrlCueText" xml:space="preserve">
-    <value>https://41.mezeo.net</value>
+    <value>https://demo.mezeofile.com</value>
   </data>
   <data name="SyncIssueFoundText" xml:space="preserve">
     <value>Issues found. Launch Sync Manager to review.</value>
@@ -229,7 +229,7 @@
     <value>Move Folder</value>
   </data>
   <data name="SyncManagerMoveFolderDesc" xml:space="preserve">
-    <value>Select the desired location for the Mezeo File sync folder:</value>
+    <value>Select the desired location for the MezeoFile folder:</value>
   </data>
   <data name="SyncManagerOffButtonText" xml:space="preserve">
     <value>Off</value>
@@ -265,7 +265,7 @@
     <value>Stop Sync</value>
   </data>
   <data name="SyncManagerTitle" xml:space="preserve">
-    <value>Mezeo File Sync</value>
+    <value>MezeoFile</value>
   </data>
   <data name="SyncManagerTrayEnableOnText" xml:space="preserve">
     <value>Enable (click ON) from Sync Manager.</value>

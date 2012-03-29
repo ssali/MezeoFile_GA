@@ -90,8 +90,7 @@ namespace Mezeo
         Watcher watcher;
         List<LocalEvents> LocalEventList;
         Object folderWatcherLockObject;
-        //string folder = @"C:\Documents and Settings\Vinod Maurya\Mezeo File Sync (nikhil)";
-        //LocalEvents[] events;
+
         List<LocalEvents> events;
 
         Thread analyseThread;
@@ -352,26 +351,32 @@ namespace Mezeo
 
         private void rbSyncOn_Click(object sender, EventArgs e)
         {
-            BasicInfo.AutoSync = true;
-
-            tmrNextSync.Interval = FIVE_MINUTES;
-            tmrNextSync.Enabled = true;
-           
-            if (!isSyncInProgress)
+            if (!BasicInfo.AutoSync)
             {
-                ShowSyncMessage();
+                BasicInfo.AutoSync = true;
+
+                tmrNextSync.Interval = FIVE_MINUTES;
+                tmrNextSync.Enabled = true;
+
+                if (!isSyncInProgress && !isLocalEventInProgress && !isOfflineWorking)
+                {
+                   InitializeSync();
+                }
             }
         }
 
         private void rbSyncOff_CheckedChanged(object sender, EventArgs e)
         {
-            BasicInfo.AutoSync = false;
-            
-            tmrNextSync.Enabled = false;
-
-            if (!isSyncInProgress)
+            if (BasicInfo.AutoSync)
             {
-                ShowSyncMessage();
+                BasicInfo.AutoSync = false;
+
+                tmrNextSync.Enabled = false;
+
+                if (!isSyncInProgress && !isLocalEventInProgress && !isOfflineWorking)
+                {
+                    ShowSyncMessage();
+                }
             }
         }
 
@@ -1076,7 +1081,6 @@ namespace Mezeo
                         SendToRecycleBin(strPath, false);
                         //Directory.Delete(strPath);
                         dbHandler.Delete(DbHandler.TABLE_NAME, DbHandler.KEY + "='" + strKey + "'");
-                        bIssuccess = true;
                     }
                 }
                 else
@@ -1092,8 +1096,8 @@ namespace Mezeo
                     SendToRecycleBin(strPath, true);
                     //File.Delete(strPath);
                     dbHandler.Delete(DbHandler.TABLE_NAME, DbHandler.KEY + "='" + strKey + "'");
-                    bIssuccess = true;
-                }                      
+                }
+                bIssuccess = true; 
             }
             else if (nqDetail.StrEvent == "cdmi_rename")
             {
@@ -1601,6 +1605,7 @@ namespace Mezeo
 
         public void ShowOfflineAtStartUpSyncManager()
         {
+            lastSync = BasicInfo.LastSyncAt;
             lblPercentDone.Text = "";
             pbSyncProgress.Visible = false;
             lblStatusL1.Text = LanguageTranslator.GetValue("SyncManagerSyncDisabled");
@@ -1644,6 +1649,7 @@ namespace Mezeo
             lblPercentDone.Visible = true;
             pbSyncProgress.Visible = true;
             ShowNextSyncLabel(false);
+            Application.DoEvents();
         }
 
         private void OpenFolder()
@@ -3086,7 +3092,7 @@ namespace Mezeo
 
         void watcher_WatchCompletedEvent()
         {
-            if (!isLocalEventInProgress && !isSyncInProgress && BasicInfo.IsConnectedToInternet && LocalEventList.Count != 0 && BasicInfo.AutoSync && !BasicInfo.IsInitialSync)
+            if (!isLocalEventInProgress && !isSyncInProgress && !isOfflineWorking && BasicInfo.IsConnectedToInternet && LocalEventList.Count != 0 && BasicInfo.AutoSync && !BasicInfo.IsInitialSync)
             {
                 lock (folderWatcherLockObject)
                 {
@@ -3187,8 +3193,15 @@ namespace Mezeo
                 cnotificationManager.HoverText = AboutBox.AssemblyTitle + "\n" + LanguageTranslator.GetValue("TrayBalloonSyncFolderUpToDate");
                 frmParent.toolStripMenuItem4.Text = LanguageTranslator.GetValue("TrayHoverInitialSyncUpToDateText");
             }
+
             lastSync = DateTime.Now;
             isEventCanceled = false;
+
+            if (LocalEventList.Count > 0)
+            {
+                watcher_WatchCompletedEvent();
+            }
+           
         }
 
         private void bwNQUpdate_ProgressChanged(object sender, ProgressChangedEventArgs e)
@@ -3374,6 +3387,11 @@ namespace Mezeo
             catch (Exception ex)
             {
             }
+        }
+
+        private void rbSyncOn_CheckedChanged(object sender, EventArgs e)
+        {
+
         }
 
     }

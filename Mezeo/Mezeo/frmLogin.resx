@@ -998,7 +998,7 @@
 </value>
   </data>
   <data name="niSystemTray.Text" xml:space="preserve">
-    <value>Mezeo File Sync</value>
+    <value>MezeoFile</value>
   </data>
   <data name="niSystemTray.Visible" type="System.Boolean, mscorlib">
     <value>True</value>
@@ -1015,14 +1015,11 @@
   <data name="txtServerUrl.TabIndex" type="System.Int32, mscorlib">
     <value>7</value>
   </data>
-  <data name="txtServerUrl.Text" xml:space="preserve">
-    <value>https://41.mezeo.net</value>
-  </data>
   <data name="&gt;&gt;txtServerUrl.Name" xml:space="preserve">
     <value>txtServerUrl</value>
   </data>
   <data name="&gt;&gt;txtServerUrl.Type" xml:space="preserve">
-    <value>Mezeo.CueTextBox, MezeoFileSync, Version=2.0.0.1, Culture=neutral, PublicKeyToken=null</value>
+    <value>Mezeo.CueTextBox, MezeoFile, Version=2.0.6.0, Culture=neutral, PublicKeyToken=null</value>
   </data>
   <data name="&gt;&gt;txtServerUrl.Parent" xml:space="preserve">
     <value>$this</value>
@@ -1046,7 +1043,7 @@
     <value>txtPasswrod</value>
   </data>
   <data name="&gt;&gt;txtPasswrod.Type" xml:space="preserve">
-    <value>Mezeo.CueTextBox, MezeoFileSync, Version=2.0.0.1, Culture=neutral, PublicKeyToken=null</value>
+    <value>Mezeo.CueTextBox, MezeoFile, Version=2.0.6.0, Culture=neutral, PublicKeyToken=null</value>
   </data>
   <data name="&gt;&gt;txtPasswrod.Parent" xml:space="preserve">
     <value>$this</value>
@@ -1070,7 +1067,7 @@
     <value>txtUserName</value>
   </data>
   <data name="&gt;&gt;txtUserName.Type" xml:space="preserve">
-    <value>Mezeo.CueTextBox, MezeoFileSync, Version=2.0.0.1, Culture=neutral, PublicKeyToken=null</value>
+    <value>Mezeo.CueTextBox, MezeoFile, Version=2.0.6.0, Culture=neutral, PublicKeyToken=null</value>
   </data>
   <data name="&gt;&gt;txtUserName.Parent" xml:space="preserve">
     <value>$this</value>
@@ -1094,7 +1091,7 @@
     <value>CenterScreen</value>
   </data>
   <data name="$this.Text" xml:space="preserve">
-    <value>Mezeo File Sync Login</value>
+    <value>MezeoFile Login</value>
   </data>
   <data name="&gt;&gt;toolStripMenuItem6.Name" xml:space="preserve">
     <value>toolStripMenuItem6</value>

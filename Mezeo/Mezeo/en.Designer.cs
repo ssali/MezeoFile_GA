@@ -205,7 +205,7 @@ namespace Mezeo {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Mezeo File Sync Login.
+        ///   Looks up a localized string similar to MezeoFile Login.
         /// </summary>
         internal static string LoginFormTitle {
             get {
@@ -241,7 +241,7 @@ namespace Mezeo {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Cancel sync and close Mezeo File Sync now?.
+        ///   Looks up a localized string similar to Cancel sync and close MezeoFile now?.
         /// </summary>
         internal static string MezeoExitString2 {
             get {
@@ -259,7 +259,7 @@ namespace Mezeo {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to https://41.mezeo.net.
+        ///   Looks up a localized string similar to https://demo.mezeofile.com.
         /// </summary>
         internal static string ServerUrlCueText {
             get {
@@ -394,7 +394,7 @@ namespace Mezeo {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Select the desired location for the Mezeo File sync folder:.
+        ///   Looks up a localized string similar to Select the desired location for the MezeoFile folder:.
         /// </summary>
         internal static string SyncManagerMoveFolderDesc {
             get {
@@ -502,7 +502,7 @@ namespace Mezeo {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Mezeo File Sync.
+        ///   Looks up a localized string similar to MezeoFile.
         /// </summary>
         internal static string SyncManagerTitle {
             get {
