@@ -140,7 +140,7 @@ STDMETHODIMP CShellIconOverlayExt::IsMemberOf(LPCWSTR pwszPath, DWORD dwAttrib)
 		if(SHGetFolderPath(NULL, CSIDL_LOCAL_APPDATA, NULL, 0, ctPath))
 			return bStatus;
 
-		wcscat(ctPath, _T("\\Mezeo File Sync\\mezeoDb.s3db"));
+		wcscat(ctPath, _T("\\MezeoFile\\mezeoDb.s3db"));
 
 		CppSQLite3DB m_sqliteDB;
 		
@@ -159,7 +159,7 @@ STDMETHODIMP CShellIconOverlayExt::IsMemberOf(LPCWSTR pwszPath, DWORD dwAttrib)
 		HKEY hkey = NULL;
 		DWORD dwLen = _MAX_PATH;
 
-		if( RegOpenKeyEx (HKEY_CURRENT_USER, L"Software\\Mezeo File Sync\\Basic Info", 0, KEY_QUERY_VALUE, &hkey) != ERROR_SUCCESS )
+		if( RegOpenKeyEx (HKEY_CURRENT_USER, L"Software\\MezeoFile\\Basic Info", 0, KEY_QUERY_VALUE, &hkey) != ERROR_SUCCESS )
 			return bStatus;
 		RegQueryValueEx(hkey, L"Basic4", NULL, NULL, (LPBYTE)ctPath, &dwLen);
 		RegCloseKey(hkey);

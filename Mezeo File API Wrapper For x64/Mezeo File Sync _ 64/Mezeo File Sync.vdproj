@@ -3,7 +3,7 @@
 "VSVersion" = "3:800"
 "ProjectType" = "8:{978C614F-708E-4E1A-B201-565925725DBA}"
 "IsWebType" = "8:FALSE"
-"ProjectName" = "8:Mezeo File Sync"
+"ProjectName" = "8:MezeoFile"
 "LanguageId" = "3:1033"
 "CodePage" = "3:1252"
 "UILanguageId" = "3:1033"
@@ -45,12 +45,6 @@
         }
         "Entry"
         {
-        "MsmKey" = "8:_1836F5DE3F68461B988C342F2BE3E4DB"
-        "OwnerKey" = "8:_UNDEFINED"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
         "MsmKey" = "8:_1E63C3C31F254E7D95C7751B5B7153A3"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
@@ -59,6 +53,12 @@
         {
         "MsmKey" = "8:_2524B07745894E0F8A9210F11040476D"
         "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_2B48656010A15B81D2632FA65A68BD24"
+        "OwnerKey" = "8:_7534F32F1B53476FAA72264608D6113B"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
@@ -87,6 +87,12 @@
         }
         "Entry"
         {
+        "MsmKey" = "8:_7534F32F1B53476FAA72264608D6113B"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
         "MsmKey" = "8:_78343A559D554A6B92989F0BBF67D367"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
@@ -94,12 +100,6 @@
         "Entry"
         {
         "MsmKey" = "8:_952769F1A4F84068BAC4DED1D5A461AD"
-        "OwnerKey" = "8:_UNDEFINED"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_9AFA98FC1F314FAABC818D598F918077"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
         }
@@ -123,14 +123,8 @@
         }
         "Entry"
         {
-        "MsmKey" = "8:_D7F32612D0E8489D9A034AA531A55470"
-        "OwnerKey" = "8:_UNDEFINED"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_F815955FCF504993B1E21AB9174FFAE8"
-        "OwnerKey" = "8:_UNDEFINED"
+        "MsmKey" = "8:_F1636F102AE448F70DF6C1A91AFA84B4"
+        "OwnerKey" = "8:_7534F32F1B53476FAA72264608D6113B"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
@@ -142,7 +136,25 @@
         "Entry"
         {
         "MsmKey" = "8:_UNDEFINED"
+        "OwnerKey" = "8:_F1636F102AE448F70DF6C1A91AFA84B4"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_UNDEFINED"
         "OwnerKey" = "8:_78343A559D554A6B92989F0BBF67D367"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_UNDEFINED"
+        "OwnerKey" = "8:_7534F32F1B53476FAA72264608D6113B"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_UNDEFINED"
+        "OwnerKey" = "8:_2B48656010A15B81D2632FA65A68BD24"
         "MsmSig" = "8:_UNDEFINED"
         }
     }
@@ -153,7 +165,7 @@
         "DisplayName" = "8:Debug"
         "IsDebugOnly" = "11:TRUE"
         "IsReleaseOnly" = "11:FALSE"
-        "OutputFilename" = "8:Debug\\Mezeo File Sync.msi"
+        "OutputFilename" = "8:Debug\\MezeoFile_64.msi"
         "PackageFilesAs" = "3:2"
         "PackageFileSize" = "3:-2147483648"
         "CabType" = "3:1"
@@ -190,7 +202,7 @@
         "DisplayName" = "8:Release"
         "IsDebugOnly" = "11:FALSE"
         "IsReleaseOnly" = "11:TRUE"
-        "OutputFilename" = "8:Release\\Mezeo File Sync_64.msi"
+        "OutputFilename" = "8:Release\\MezeoFile_64.msi"
         "PackageFilesAs" = "3:2"
         "PackageFileSize" = "3:-2147483648"
         "CabType" = "3:1"
@@ -418,6 +430,37 @@
             "IsDependency" = "11:FALSE"
             "IsolateTo" = "8:"
             }
+            "{9F6F8455-1EF1-4B85-886A-4223BCC8E7F7}:_2B48656010A15B81D2632FA65A68BD24"
+            {
+            "AssemblyRegister" = "3:1"
+            "AssemblyIsInGAC" = "11:FALSE"
+            "AssemblyAsmDisplayName" = "8:MezeoFileSupport, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL"
+                "ScatterAssemblies"
+                {
+                    "_2B48656010A15B81D2632FA65A68BD24"
+                    {
+                    "Name" = "8:MezeoFileSupport.DLL"
+                    "Attributes" = "3:512"
+                    }
+                }
+            "SourcePath" = "8:MezeoFileSupport.DLL"
+            "TargetName" = "8:"
+            "Tag" = "8:"
+            "Folder" = "8:_E2CA41781701484DA8E973D55A111194"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:TRUE"
+            "IsolateTo" = "8:"
+            }
             "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_46F614C9F07146ACAF71A4725D77D527"
             {
             "SourcePath" = "8:License.rtf"
@@ -482,6 +525,37 @@
             {
             "SourcePath" = "8:app.ico"
             "TargetName" = "8:app.ico"
+            "Tag" = "8:"
+            "Folder" = "8:_E2CA41781701484DA8E973D55A111194"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
+            "{9F6F8455-1EF1-4B85-886A-4223BCC8E7F7}:_7534F32F1B53476FAA72264608D6113B"
+            {
+            "AssemblyRegister" = "3:1"
+            "AssemblyIsInGAC" = "11:FALSE"
+            "AssemblyAsmDisplayName" = "8:MezeoFile, Version=2.0.8.0, Culture=neutral, processorArchitecture=x86"
+                "ScatterAssemblies"
+                {
+                    "_7534F32F1B53476FAA72264608D6113B"
+                    {
+                    "Name" = "8:MezeoFile.exe"
+                    "Attributes" = "3:512"
+                    }
+                }
+            "SourcePath" = "8:MezeoFile.exe"
+            "TargetName" = "8:"
             "Tag" = "8:"
             "Folder" = "8:_E2CA41781701484DA8E973D55A111194"
             "Condition" = "8:"
@@ -620,10 +694,21 @@
             "IsDependency" = "11:FALSE"
             "IsolateTo" = "8:"
             }
-            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_D7F32612D0E8489D9A034AA531A55470"
+            "{9F6F8455-1EF1-4B85-886A-4223BCC8E7F7}:_F1636F102AE448F70DF6C1A91AFA84B4"
             {
-            "SourcePath" = "8:MezeoFileSync.exe"
-            "TargetName" = "8:MezeoFileSync.exe"
+            "AssemblyRegister" = "3:1"
+            "AssemblyIsInGAC" = "11:FALSE"
+            "AssemblyAsmDisplayName" = "8:SQLite.NET, Version=0.21.1869.3794, Culture=neutral, PublicKeyToken=c273bd375e695f9c"
+                "ScatterAssemblies"
+                {
+                    "_F1636F102AE448F70DF6C1A91AFA84B4"
+                    {
+                    "Name" = "8:SQLite.NET.DLL"
+                    "Attributes" = "3:512"
+                    }
+                }
+            "SourcePath" = "8:SQLite.NET.DLL"
+            "TargetName" = "8:"
             "Tag" = "8:"
             "Folder" = "8:_E2CA41781701484DA8E973D55A111194"
             "Condition" = "8:"
@@ -637,7 +722,7 @@
             "PackageAs" = "3:1"
             "Register" = "3:1"
             "Exclude" = "11:FALSE"
-            "IsDependency" = "11:FALSE"
+            "IsDependency" = "11:TRUE"
             "IsolateTo" = "8:"
             }
         }
@@ -658,7 +743,7 @@
                 {
                     "{9EF0B969-E518-4E46-987F-47570745A589}:_C27A9F452E70409D833D14EA6E6B067A"
                     {
-                    "Name" = "8:Mezeo File Sync"
+                    "Name" = "8:MezeoFile"
                     "AlwaysCreate" = "11:TRUE"
                     "Condition" = "8:"
                     "Transitive" = "11:FALSE"
@@ -702,7 +787,7 @@
                 {
                     "{9EF0B969-E518-4E46-987F-47570745A589}:_AEC52BA4E85C4C629254310955D39374"
                     {
-                    "Name" = "8:Mezeo File Overlay"
+                    "Name" = "8:MezeoFile Overlay"
                     "AlwaysCreate" = "11:FALSE"
                     "Condition" = "8:"
                     "Transitive" = "11:FALSE"
@@ -747,7 +832,7 @@
                 {
                     "{9EF0B969-E518-4E46-987F-47570745A589}:_9BDB5DAA18134DFE94CD0642A429F3DC"
                     {
-                    "Name" = "8:Mezeo File Sync"
+                    "Name" = "8:MezeoFile"
                     "AlwaysCreate" = "11:FALSE"
                     "Condition" = "8:"
                     "Transitive" = "11:FALSE"
@@ -773,26 +858,26 @@
         "Product"
         {
         "Name" = "8:Microsoft Visual Studio"
-        "ProductName" = "8:Mezeo File Sync"
-        "ProductCode" = "8:{BC0E5F54-6139-40FF-9CC7-001FBB3D618E}"
-        "PackageCode" = "8:{F726195D-9EA7-47E3-9FF4-6C5B8DFF58D7}"
+        "ProductName" = "8:MezeoFile"
+        "ProductCode" = "8:{0A9CDCE6-C5E2-4CC6-BD26-5B9B946D8E62}"
+        "PackageCode" = "8:{E81898B7-7D85-4DA2-A1DB-D306331DAD5C}"
         "UpgradeCode" = "8:{9A686460-3EE8-42C7-987B-2AC187ED8477}"
         "AspNetVersion" = "8:4.0.30319.0"
         "RestartWWWService" = "11:FALSE"
         "RemovePreviousVersions" = "11:FALSE"
         "DetectNewerInstalledVersion" = "11:TRUE"
         "InstallAllUsers" = "11:FALSE"
-        "ProductVersion" = "8:2.0.6"
-        "Manufacturer" = "8:Mezeo File Sync"
+        "ProductVersion" = "8:2.0.8"
+        "Manufacturer" = "8:MezeoFile"
         "ARPHELPTELEPHONE" = "8:"
         "ARPHELPLINK" = "8:"
-        "Title" = "8:Mezeo File Sync"
+        "Title" = "8:MezeoFile"
         "Subject" = "8:"
-        "ARPCONTACT" = "8:Mezeo File Sync"
+        "ARPCONTACT" = "8:MezeoFile"
         "Keywords" = "8:"
         "ARPCOMMENTS" = "8:"
         "ARPURLINFOABOUT" = "8:"
-        "ARPPRODUCTICON" = "8:"
+        "ARPPRODUCTICON" = "8:_74C7A9F8EBC14C86863F6D28AAAE1995"
         "ARPIconIndex" = "3:0"
         "SearchPath" = "8:"
         "UseSystemSearchPath" = "11:TRUE"
@@ -922,7 +1007,7 @@
                                     "Condition" = "8:"
                                     "Transitive" = "11:FALSE"
                                     "ValueTypes" = "3:1"
-                                    "Value" = "8:[CommonFiles64Folder]Mezeo File Overlay\\Icons\\Complete.ico"
+                                    "Value" = "8:[CommonFiles64Folder]MezeoFile Overlay\\Icons\\Complete.ico"
                                     }
                                     "{ADCFDA98-8FDD-45E4-90BC-E3D20B029870}:_5EEA40EA8FFF4E52A6F87C003A2E4DC9"
                                     {
@@ -930,7 +1015,7 @@
                                     "Condition" = "8:"
                                     "Transitive" = "11:FALSE"
                                     "ValueTypes" = "3:1"
-                                    "Value" = "8:[CommonFiles64Folder]Mezeo File Overlay\\Icons\\Processes.ico"
+                                    "Value" = "8:[CommonFiles64Folder]MezeoFile Overlay\\Icons\\Processes.ico"
                                     }
                                     "{ADCFDA98-8FDD-45E4-90BC-E3D20B029870}:_876272E2BCAD4B12B892A158AD9C9F19"
                                     {
@@ -938,7 +1023,7 @@
                                     "Condition" = "8:"
                                     "Transitive" = "11:FALSE"
                                     "ValueTypes" = "3:1"
-                                    "Value" = "8:[CommonFiles64Folder]Mezeo File Overlay\\Icons\\Error.ico"
+                                    "Value" = "8:[CommonFiles64Folder]MezeoFile Overlay\\Icons\\Error.ico"
                                     }
                                     "{ADCFDA98-8FDD-45E4-90BC-E3D20B029870}:_E77767BCAED442E49D555DC4B0023453"
                                     {
@@ -946,7 +1031,7 @@
                                     "Condition" = "8:"
                                     "Transitive" = "11:FALSE"
                                     "ValueTypes" = "3:1"
-                                    "Value" = "8:[CommonFiles64Folder]Mezeo File Overlay\\Icons\\User.ico"
+                                    "Value" = "8:[CommonFiles64Folder]MezeoFile Overlay\\Icons\\User.ico"
                                     }
                                 }
                             }
@@ -995,7 +1080,7 @@
                                                             "Condition" = "8:"
                                                             "Transitive" = "11:FALSE"
                                                             "ValueTypes" = "3:1"
-                                                            "Value" = "8:[CommonFiles64Folder]Mezeo File Overlay\\MezeoFileOverlay.dll"
+                                                            "Value" = "8:[CommonFiles64Folder]MezeoFile Overlay\\MezeoFileOverlay.dll"
                                                             }
                                                             "{ADCFDA98-8FDD-45E4-90BC-E3D20B029870}:_2E0D357BA72E49388D32FD6BC237E22E"
                                                             {
@@ -1039,7 +1124,7 @@
                                                             "Condition" = "8:"
                                                             "Transitive" = "11:FALSE"
                                                             "ValueTypes" = "3:1"
-                                                            "Value" = "8:[CommonFiles64Folder]Mezeo File Overlay\\MezeoFileOverlay.dll"
+                                                            "Value" = "8:[CommonFiles64Folder]MezeoFile Overlay\\MezeoFileOverlay.dll"
                                                             }
                                                             "{ADCFDA98-8FDD-45E4-90BC-E3D20B029870}:_46070697BD714FC39114F6C36CB0F388"
                                                             {
@@ -1083,7 +1168,7 @@
                                                             "Condition" = "8:"
                                                             "Transitive" = "11:FALSE"
                                                             "ValueTypes" = "3:1"
-                                                            "Value" = "8:[CommonFiles64Folder]Mezeo File Overlay\\MezeoFileOverlay.dll"
+                                                            "Value" = "8:[CommonFiles64Folder]MezeoFile Overlay\\MezeoFileOverlay.dll"
                                                             }
                                                             "{ADCFDA98-8FDD-45E4-90BC-E3D20B029870}:_FC0235C4007E4EDDAEE2C299AB53B32E"
                                                             {
@@ -1135,7 +1220,7 @@
                                                             "Condition" = "8:"
                                                             "Transitive" = "11:FALSE"
                                                             "ValueTypes" = "3:1"
-                                                            "Value" = "8:[CommonFiles64Folder]Mezeo File Overlay\\MezeoFileOverlay.dll"
+                                                            "Value" = "8:[CommonFiles64Folder]MezeoFile Overlay\\MezeoFileOverlay.dll"
                                                             }
                                                         }
                                                     }
@@ -1443,7 +1528,7 @@
                                                 {
                                                     "{60EA8692-D2D5-43EB-80DC-7906BF13D6EF}:_8BE97A2C25B94C7FAAFB4DCFECDB268C"
                                                     {
-                                                    "Name" = "8:Mezeo File Sync"
+                                                    "Name" = "8:MezeoFile"
                                                     "Condition" = "8:"
                                                     "AlwaysCreate" = "11:FALSE"
                                                     "DeleteAtUninstall" = "11:TRUE"
@@ -1452,7 +1537,7 @@
                                                         {
                                                             "{60EA8692-D2D5-43EB-80DC-7906BF13D6EF}:_A845AF40235540DB85A18A847C87EDA7"
                                                             {
-                                                            "Name" = "8:Mezeo File Sync"
+                                                            "Name" = "8:MezeoFile"
                                                             "Condition" = "8:"
                                                             "AlwaysCreate" = "11:TRUE"
                                                             "DeleteAtUninstall" = "11:FALSE"
@@ -1522,7 +1607,7 @@
                         {
                             "{60EA8692-D2D5-43EB-80DC-7906BF13D6EF}:_0865A5E0D8E142E49397E75C8D913A78"
                             {
-                            "Name" = "8:Mezeo File Sync"
+                            "Name" = "8:MezeoFile"
                             "Condition" = "8:"
                             "AlwaysCreate" = "11:FALSE"
                             "DeleteAtUninstall" = "11:TRUE"
@@ -1575,11 +1660,11 @@
                                                         {
                                                             "{ADCFDA98-8FDD-45E4-90BC-E3D20B029870}:_E248B36960304CD2B3B8670B85C2AA5C"
                                                             {
-                                                            "Name" = "8:MezeoFileSync"
+                                                            "Name" = "8:MezeoFile"
                                                             "Condition" = "8:"
                                                             "Transitive" = "11:FALSE"
                                                             "ValueTypes" = "3:1"
-                                                            "Value" = "8:[ProgramFiles64Folder]Mezeo File Sync\\MezeoFileSync.exe"
+                                                            "Value" = "8:[ProgramFiles64Folder]MezeoFile\\MezeoFile.exe"
                                                             }
                                                         }
                                                     }
@@ -1643,15 +1728,15 @@
         }
         "Shortcut"
         {
-            "{970C0BB2-C7D0-45D7-ABFA-7EC378858BC0}:_30E9D5DB11DA4D638C49BB5FA278D8C8"
+            "{970C0BB2-C7D0-45D7-ABFA-7EC378858BC0}:_07C9E11EA4D44BB1988C0D1AEBA1F5F8"
             {
-            "Name" = "8:Mezeo File Sync"
+            "Name" = "8:MezeoFile"
             "Arguments" = "8:"
             "Description" = "8:"
             "ShowCmd" = "3:1"
             "IconIndex" = "3:0"
             "Transitive" = "11:FALSE"
-            "Target" = "8:_D7F32612D0E8489D9A034AA531A55470"
+            "Target" = "8:_7534F32F1B53476FAA72264608D6113B"
             "Folder" = "8:_9BDB5DAA18134DFE94CD0642A429F3DC"
             "WorkingFolder" = "8:_E2CA41781701484DA8E973D55A111194"
             "Icon" = "8:_74C7A9F8EBC14C86863F6D28AAAE1995"
@@ -1659,8 +1744,8 @@
             }
             "{970C0BB2-C7D0-45D7-ABFA-7EC378858BC0}:_33A615A6549D44C9A6CB5168A4C75448"
             {
-            "Name" = "8:Uninstall Mezeo File Sync"
-            "Arguments" = "8:/x {BC0E5F54-6139-40FF-9CC7-001FBB3D618E}"
+            "Name" = "8:Uninstall MezeoFile"
+            "Arguments" = "8:/x {0A9CDCE6-C5E2-4CC6-BD26-5B9B946D8E62}"
             "Description" = "8:"
             "ShowCmd" = "3:1"
             "IconIndex" = "3:0"
@@ -1671,15 +1756,15 @@
             "Icon" = "8:"
             "Feature" = "8:"
             }
-            "{970C0BB2-C7D0-45D7-ABFA-7EC378858BC0}:_90242B55312043129E882FC7B6FEACCB"
+            "{970C0BB2-C7D0-45D7-ABFA-7EC378858BC0}:_B7669C1A23EF4B62BB69DC171D41F268"
             {
-            "Name" = "8:Mezeo File Sync"
+            "Name" = "8:MezeoFile"
             "Arguments" = "8:"
             "Description" = "8:"
             "ShowCmd" = "3:1"
             "IconIndex" = "3:0"
             "Transitive" = "11:FALSE"
-            "Target" = "8:_D7F32612D0E8489D9A034AA531A55470"
+            "Target" = "8:_7534F32F1B53476FAA72264608D6113B"
             "Folder" = "8:_6210985D92704C318732CBCC463E8C04"
             "WorkingFolder" = "8:_E2CA41781701484DA8E973D55A111194"
             "Icon" = "8:_74C7A9F8EBC14C86863F6D28AAAE1995"
@@ -1929,7 +2014,7 @@
                 {
                     "{688940B3-5CA9-4162-8DEE-2993FA9D8CBC}:_74C6F1AFBACD4BB3A06CDD2C6BADF541"
                     {
-                    "Sequence" = "3:110"
+                    "Sequence" = "3:200"
                     "DisplayName" = "8:License Agreement"
                     "UseDynamicProperties" = "11:TRUE"
                     "IsDependency" = "11:FALSE"
@@ -1974,9 +2059,44 @@
                             }
                         }
                     }
+                    "{688940B3-5CA9-4162-8DEE-2993FA9D8CBC}:_B012A1ED5DE24BC59DBA536AB50A6EF0"
+                    {
+                    "Sequence" = "3:210"
+                    "DisplayName" = "8:Installation Folder"
+                    "UseDynamicProperties" = "11:TRUE"
+                    "IsDependency" = "11:FALSE"
+                    "SourcePath" = "8:<VsdDialogDir>\\VsdFolderDlg.wid"
+                        "Properties"
+                        {
+                            "BannerBitmap"
+                            {
+                            "Name" = "8:BannerBitmap"
+                            "DisplayName" = "8:#1001"
+                            "Description" = "8:#1101"
+                            "Type" = "3:8"
+                            "ContextData" = "8:Bitmap"
+                            "Attributes" = "3:4"
+                            "Setting" = "3:1"
+                            "UsePlugInResources" = "11:TRUE"
+                            }
+                            "InstallAllUsersVisible"
+                            {
+                            "Name" = "8:InstallAllUsersVisible"
+                            "DisplayName" = "8:#1059"
+                            "Description" = "8:#1159"
+                            "Type" = "3:5"
+                            "ContextData" = "8:1;True=1;False=0"
+                            "Attributes" = "3:0"
+                            "Setting" = "3:0"
+                            "Value" = "3:1"
+                            "DefaultValue" = "3:1"
+                            "UsePlugInResources" = "11:TRUE"
+                            }
+                        }
+                    }
                     "{688940B3-5CA9-4162-8DEE-2993FA9D8CBC}:_B73D5FB017F942D28880B0D3E6AD71DA"
                     {
-                    "Sequence" = "3:200"
+                    "Sequence" = "3:300"
                     "DisplayName" = "8:Confirm Installation"
                     "UseDynamicProperties" = "11:TRUE"
                     "IsDependency" = "11:FALSE"
@@ -2026,7 +2146,7 @@
                             "ContextData" = "8:"
                             "Attributes" = "3:0"
                             "Setting" = "3:2"
-                            "Value" = "8:Welcome to Mezeo File! [ProductName] creates a folder to sync files from your [ProductName] account. "
+                            "Value" = "8:Changes to files in your local sync folder are automatically uploaded to your account as they happen.  Any changes to files in your [ProductName] account from other machines or devices are automatically synced, making it easy to access the latest version of your files anywhere, anytime."
                             "DefaultValue" = "8:#1202"
                             "UsePlugInResources" = "11:TRUE"
                             }
@@ -2038,8 +2158,8 @@
                             "Type" = "3:3"
                             "ContextData" = "8:"
                             "Attributes" = "3:0"
-                            "Setting" = "3:1"
-                            "Value" = "8:#1203"
+                            "Setting" = "3:2"
+                            "Value" = "8:Welcome to MezeoFile! [ProductName] creates a folder to sync files from your [ProductName] account. "
                             "DefaultValue" = "8:#1203"
                             "UsePlugInResources" = "11:TRUE"
                             }
@@ -2094,48 +2214,6 @@
         }
         "MergeModule"
         {
-            "{CEE29DC0-9FBA-4B99-8D47-5BC643D9B626}:_1836F5DE3F68461B988C342F2BE3E4DB"
-            {
-            "UseDynamicProperties" = "11:TRUE"
-            "IsDependency" = "11:FALSE"
-            "SourcePath" = "8:C:\\Program Files (x86)\\Common Files\\Merge Modules\\Microsoft_VC100_ATL_x64.msm"
-                "Properties"
-                {
-                }
-            "LanguageId" = "3:0"
-            "Exclude" = "11:FALSE"
-            "Folder" = "8:"
-            "Feature" = "8:"
-            "IsolateTo" = "8:"
-            }
-            "{CEE29DC0-9FBA-4B99-8D47-5BC643D9B626}:_9AFA98FC1F314FAABC818D598F918077"
-            {
-            "UseDynamicProperties" = "11:TRUE"
-            "IsDependency" = "11:FALSE"
-            "SourcePath" = "8:C:\\Program Files (x86)\\Common Files\\Merge Modules\\Microsoft_VC100_MFC_x64.msm"
-                "Properties"
-                {
-                }
-            "LanguageId" = "3:0"
-            "Exclude" = "11:FALSE"
-            "Folder" = "8:"
-            "Feature" = "8:"
-            "IsolateTo" = "8:"
-            }
-            "{CEE29DC0-9FBA-4B99-8D47-5BC643D9B626}:_F815955FCF504993B1E21AB9174FFAE8"
-            {
-            "UseDynamicProperties" = "11:TRUE"
-            "IsDependency" = "11:FALSE"
-            "SourcePath" = "8:C:\\Program Files (x86)\\Common Files\\Merge Modules\\Microsoft_VC100_CRT_x64.msm"
-                "Properties"
-                {
-                }
-            "LanguageId" = "3:0"
-            "Exclude" = "11:FALSE"
-            "Folder" = "8:"
-            "Feature" = "8:"
-            "IsolateTo" = "8:"
-            }
         }
         "ProjectOutput"
         {

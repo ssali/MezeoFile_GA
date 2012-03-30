@@ -35,7 +35,7 @@ int main(int argc, char* argv[])
 
 		do
 		{
-			if(!wcscmp(pe32.szExeFile, L"MezeoFileSync.exe"))
+			if(!wcscmp(pe32.szExeFile, L"MezeoFile.exe"))
 			{    //  checks if process at current position has the name of to be killed app
 				hProcess = OpenProcess(PROCESS_TERMINATE,0, pe32.th32ProcessID);  // gets handle to process
 				TerminateProcess(hProcess,0);   // Terminate process by handle
@@ -54,9 +54,9 @@ int main(int argc, char* argv[])
 		if(SUCCEEDED(SHGetFolderPath(NULL, CSIDL_LOCAL_APPDATA, NULL, 0, szPath))) 
 		{
 			wsFolderPath = szPath;
-			wsFolderPath.append(L"\\Mezeo File Sync");
+			wsFolderPath.append(L"\\MezeoFile");
 
-			wcscat(szPath, L"\\Mezeo File Sync\\*.*");
+			wcscat(szPath, L"\\MezeoFile\\*.*");
 			WIN32_FIND_DATA fndData;
 			HANDLE hFnd = FindFirstFile(szPath, &fndData);
 			USES_CONVERSION;

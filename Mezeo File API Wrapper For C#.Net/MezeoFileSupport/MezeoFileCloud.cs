@@ -286,6 +286,7 @@ namespace MezeoFileSupport
 	        int bytes_read = 0;
 	        FileStream fstPersons;
             bool bStatus = true;
+            m_bStop = false;
 
 	        if(lFrom > 0)
 	        {
@@ -481,13 +482,23 @@ namespace MezeoFileSupport
                 pLoginDetails = new LoginDetails();
 
                 nodeXml = m_xmlDocument.SelectSingleNode("/cloud/locations/location/rootContainer");
-                pLoginDetails.szContainerContentsUri = nodeXml.Attributes["xlink:href"].Value;
-                pLoginDetails.szContainerContentsUri += "/contents";
+                if (nodeXml != null)
+                {
+                    pLoginDetails.szContainerContentsUri = nodeXml.Attributes["xlink:href"].Value;
+                    pLoginDetails.szContainerContentsUri += "/contents";
+                    nodeXml.RemoveAll();
+                }
+                else
+                    nStatusCode = -4;
 
-                nodeXml.RemoveAll();
                 nodeXml = m_xmlDocument.SelectSingleNode("/cloud/locations/location/management");
                 if (nodeXml != null)
+                {
                     pLoginDetails.szManagementUri = nodeXml.Attributes["xlink:href"].Value;
+                    nodeXml.RemoveAll();
+                }
+                else
+                    nStatusCode = -4;
 
                 /*nodeXml = m_xmlDocument.SelectSingleNode("/cloud/rootContainer");
                 pLoginDetails.szContainerContentsUri = nodeXml.Attributes["xlink:href"].Value;
@@ -519,7 +530,6 @@ namespace MezeoFileSupport
                 }*/
 
                 m_xmlDocument.RemoveAll();
-                nodeXml.RemoveAll();
                 response.Close();
 
                 //--------Account information----------------------
@@ -590,10 +600,13 @@ namespace MezeoFileSupport
                 m_xmlDocument.LoadXml(m_strXmlResource);
 
                 nodeXml = m_xmlDocument.SelectSingleNode("/namespaces/namespace/container");
-                pLoginDetails.szNamespaceUri = nodeXml.Attributes["xlink:href"].Value;
+                if (nodeXml != null)
+                {
+                    pLoginDetails.szNamespaceUri = nodeXml.Attributes["xlink:href"].Value;
+                    nodeXml.RemoveAll();
+                }
 
                 m_xmlDocument.RemoveAll();
-                nodeXml.RemoveAll();
 		        response.Close();
 	        }
 	        catch(WebException wEx)
@@ -749,12 +762,26 @@ namespace MezeoFileSupport
 	        return pItemDetails;
         }
 
-        public bool DownloadFile(String strSource, String strDestination, ref int nStatusCode)
+        public bool DownloadFile(String strSource, String strDestination, double dblFileSizeInBytes, ref int nStatusCode)
         {
             bool bStatus = true;
             nStatusCode = 0;
+
 	        try
 	        {
+                foreach (DriveInfo driveInfo in DriveInfo.GetDrives())
+                {
+                    if (driveInfo.Name == strDestination.Substring(0, 3))
+                    {
+                        if (dblFileSizeInBytes > driveInfo.TotalFreeSpace)
+                        {
+                            nStatusCode = -5;
+                            return false;
+                        }
+                        break;
+                    }
+                }
+
 		        HttpWebRequest webRequest = null;
 		        OnGetRequest(ref webRequest, strSource, "", "1", "Get");
 
