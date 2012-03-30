@@ -169,7 +169,7 @@ namespace Mezeo
         private void LoadResources()
         {
             LanguageTranslator.SetLanguage("en");
-            this.Text = LanguageTranslator.GetValue("LoginFormTitle");
+            this.Text =   AboutBox.AssemblyTitle + " " + LanguageTranslator.GetValue("LoginFormTitle");
             this.txtUserName.CueText = LanguageTranslator.GetValue("UserIdCueText");
             this.txtPasswrod.CueText=LanguageTranslator.GetValue("PasswordCueText");
             this.txtServerUrl.CueText = LanguageTranslator.GetValue("ServerUrlCueText");
@@ -367,7 +367,16 @@ namespace Mezeo
         public void showSyncManager()
         {
             if (syncManager != null)
-                syncManager.Show();
+            {
+                if (!syncManager.Visible)
+                {
+                    syncManager.Show();
+                }
+                else
+                {
+                    Win32Api.SwitchToCurrentInstance();
+                }
+            }
         }
 
         private void msShowSyncMgr_Click(object sender, EventArgs e)
@@ -500,7 +509,8 @@ namespace Mezeo
                         {
                             syncManager.LoginDetail = loginDetails;
                             syncManager.EnableSyncManager();
-                            syncManager.InitializeSync();
+                            if(BasicInfo.AutoSync)
+                                syncManager.InitializeSync();
                         }
                     }
                 }

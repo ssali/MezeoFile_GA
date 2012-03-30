@@ -187,6 +187,114 @@ namespace Mezeo {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Not enough space available to download file(s)..
+        /// </summary>
+        internal static string InsufficientStorageMessage {
+            get {
+                return ResourceManager.GetString("InsufficientStorageMessage", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Date and Time.
+        /// </summary>
+        internal static string IssuesDateAndTimeColumn {
+            get {
+                return ResourceManager.GetString("IssuesDateAndTimeColumn", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Event Viewer.
+        /// </summary>
+        internal static string IssuesEventViewerButtonText {
+            get {
+                return ResourceManager.GetString("IssuesEventViewerButtonText", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to File Info:.
+        /// </summary>
+        internal static string IssuesFileInfoLabel {
+            get {
+                return ResourceManager.GetString("IssuesFileInfoLabel", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to File Sync Issues.
+        /// </summary>
+        internal static string IssuesHeader {
+            get {
+                return ResourceManager.GetString("IssuesHeader", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Ignore Conflict.
+        /// </summary>
+        internal static string IssuesIgnoreConflictButtonText {
+            get {
+                return ResourceManager.GetString("IssuesIgnoreConflictButtonText", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Issue.
+        /// </summary>
+        internal static string IssuesIssueColumnText {
+            get {
+                return ResourceManager.GetString("IssuesIssueColumnText", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Local File:.
+        /// </summary>
+        internal static string IssuesLocalFileLabel {
+            get {
+                return ResourceManager.GetString("IssuesLocalFileLabel", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Modified:.
+        /// </summary>
+        internal static string IssuesModifiedLabel {
+            get {
+                return ResourceManager.GetString("IssuesModifiedLabel", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Name.
+        /// </summary>
+        internal static string IssuesNameColumnText {
+            get {
+                return ResourceManager.GetString("IssuesNameColumnText", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Size:.
+        /// </summary>
+        internal static string IssuesSizeLabel {
+            get {
+                return ResourceManager.GetString("IssuesSizeLabel", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Issues.
+        /// </summary>
+        internal static string IssuesTitle {
+            get {
+                return ResourceManager.GetString("IssuesTitle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Login.
         /// </summary>
         internal static string LoginButtonText {
@@ -205,7 +313,7 @@ namespace Mezeo {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to MezeoFile Login.
+        ///   Looks up a localized string similar to  Login.
         /// </summary>
         internal static string LoginFormTitle {
             get {

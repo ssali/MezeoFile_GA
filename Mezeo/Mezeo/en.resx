@@ -159,6 +159,42 @@
   <data name="ErrorBlurbUpload3" xml:space="preserve">
     <value>This is typically caused by internet or service interruptions and is usually resolved automatically.  Another upload attempt will be made during the next sync cycle.</value>
   </data>
+  <data name="InsufficientStorageMessage" xml:space="preserve">
+    <value>Not enough space available to download file(s).</value>
+  </data>
+  <data name="IssuesDateAndTimeColumn" xml:space="preserve">
+    <value>Date and Time</value>
+  </data>
+  <data name="IssuesEventViewerButtonText" xml:space="preserve">
+    <value>Event Viewer</value>
+  </data>
+  <data name="IssuesFileInfoLabel" xml:space="preserve">
+    <value>File Info:</value>
+  </data>
+  <data name="IssuesHeader" xml:space="preserve">
+    <value>File Sync Issues</value>
+  </data>
+  <data name="IssuesIgnoreConflictButtonText" xml:space="preserve">
+    <value>Ignore Conflict</value>
+  </data>
+  <data name="IssuesIssueColumnText" xml:space="preserve">
+    <value>Issue</value>
+  </data>
+  <data name="IssuesLocalFileLabel" xml:space="preserve">
+    <value>Local File:</value>
+  </data>
+  <data name="IssuesModifiedLabel" xml:space="preserve">
+    <value>Modified:</value>
+  </data>
+  <data name="IssuesNameColumnText" xml:space="preserve">
+    <value>Name</value>
+  </data>
+  <data name="IssuesSizeLabel" xml:space="preserve">
+    <value>Size:</value>
+  </data>
+  <data name="IssuesTitle" xml:space="preserve">
+    <value>Issues</value>
+  </data>
   <data name="LoginButtonText" xml:space="preserve">
     <value>Login</value>
   </data>
@@ -166,7 +202,7 @@
     <value>User name or password you entered is incorrect.</value>
   </data>
   <data name="LoginFormTitle" xml:space="preserve">
-    <value>MezeoFile Login</value>
+    <value> Login</value>
   </data>
   <data name="LoginGuestAccMsgText" xml:space="preserve">
     <value>Guest access not allowed</value>

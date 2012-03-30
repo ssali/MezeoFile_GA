@@ -14,6 +14,16 @@ namespace Mezeo
         private static string DB_STATUS_SUCCESS = "SUCCESS";
         private static string DB_STATUS_IN_PROGRESS = "INPROGRESS";
 
+        private static int INSUFFICIENT_STORAGE_AVAILABLE = -5;
+        private static int FILE_DOWNLOAD_SUCCESS = 200;
+
+        public enum CancelReason
+        {
+            INSUFFICIENT_STORAGE,
+            USER_CANCEL,
+            DOWNLOAD_FAILED
+        }
+
         Queue<LocalItemDetails> queue;
         ThreadLockObject lockObject;
         MezeoFileCloud cFileCloud;
@@ -26,7 +36,7 @@ namespace Mezeo
         public delegate void FileDownloadCompletedEvent();
         public event FileDownloadCompletedEvent fileDownloadCompletedEvent;
 
-        public delegate void CancelDownLoadEvent();
+        public delegate void CancelDownLoadEvent(CancelReason reason);
         public event CancelDownLoadEvent cancelDownloadEvent;
 
         public FileDownloader(Queue<LocalItemDetails> queue, ThreadLockObject lockObject, MezeoFileCloud fileCloud, bool analysisCompleted)
@@ -50,7 +60,7 @@ namespace Mezeo
                     if (lockObject.StopThread)
                     {
                         done = true;
-                        CancelAndNotify();
+                        CancelAndNotify(CancelReason.USER_CANCEL);
                         break;
                     }
 
@@ -73,7 +83,7 @@ namespace Mezeo
                     if (lockObject.StopThread)
                     {
                         done = true;
-                        CancelAndNotify();
+                        CancelAndNotify(CancelReason.USER_CANCEL);
                         break;
                     }
 
@@ -133,14 +143,20 @@ namespace Mezeo
                             bRet = true;
                         }
                         else
-                        {        
+                        {
                             bRet = cFileCloud.DownloadFile(id.szContentUrl + '/' + id.strName,
-                                                    downloadObjectName, ref refCode);
+                                                    downloadObjectName, id.dblSizeInBytes, ref refCode);
 
-                            if (refCode != 200)
+                            if (refCode == INSUFFICIENT_STORAGE_AVAILABLE)
                             {
                                 done = true;
-                                CancelAndNotify();
+                                CancelAndNotify(CancelReason.INSUFFICIENT_STORAGE);
+                                break;
+                            }
+                            else if (refCode != FILE_DOWNLOAD_SUCCESS)
+                            {
+                                done = true;
+                                CancelAndNotify(CancelReason.DOWNLOAD_FAILED);
                                 break;
                             }
 
@@ -229,11 +245,11 @@ namespace Mezeo
             }
         }
 
-        private void CancelAndNotify()
+        private void CancelAndNotify(CancelReason reason)
         {
             if (cancelDownloadEvent != null)
             {
-                cancelDownloadEvent();
+                cancelDownloadEvent(reason);
             }
         }
 

@@ -30,7 +30,7 @@
         {
             this.panel1 = new System.Windows.Forms.Panel();
             this.btnEventViewer = new System.Windows.Forms.Button();
-            this.label1 = new System.Windows.Forms.Label();
+            this.lblHeader = new System.Windows.Forms.Label();
             this.lvIssues = new System.Windows.Forms.ListView();
             this.columnHeader1 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.columnHeader2 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
@@ -39,12 +39,12 @@
             this.btnIgnoreConflict = new System.Windows.Forms.Button();
             this.lblDescription = new System.Windows.Forms.Label();
             this.panel2 = new System.Windows.Forms.Panel();
-            this.label4 = new System.Windows.Forms.Label();
-            this.label5 = new System.Windows.Forms.Label();
-            this.label6 = new System.Windows.Forms.Label();
-            this.label7 = new System.Windows.Forms.Label();
-            this.label8 = new System.Windows.Forms.Label();
-            this.label9 = new System.Windows.Forms.Label();
+            this.lblLocalFileTitle = new System.Windows.Forms.Label();
+            this.lblLocalModifiedTitle = new System.Windows.Forms.Label();
+            this.lblLocalSizeTitle = new System.Windows.Forms.Label();
+            this.lblServerSizeTitle = new System.Windows.Forms.Label();
+            this.lblServerModifiedTitle = new System.Windows.Forms.Label();
+            this.lblFileInfoTitle = new System.Windows.Forms.Label();
             this.panel3 = new System.Windows.Forms.Panel();
             this.lnkHelp = new System.Windows.Forms.LinkLabel();
             this.lnkAbout = new System.Windows.Forms.LinkLabel();
@@ -62,7 +62,7 @@
             this.panel1.BackgroundImage = global::Mezeo.Properties.Resources.patch_yellow1;
             this.panel1.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Center;
             this.panel1.Controls.Add(this.btnEventViewer);
-            this.panel1.Controls.Add(this.label1);
+            this.panel1.Controls.Add(this.lblHeader);
             this.panel1.Dock = System.Windows.Forms.DockStyle.Top;
             this.panel1.Location = new System.Drawing.Point(0, 0);
             this.panel1.Name = "panel1";
@@ -79,16 +79,16 @@
             this.btnEventViewer.UseVisualStyleBackColor = true;
             this.btnEventViewer.Click += new System.EventHandler(this.btnEventViewer_Click);
             // 
-            // label1
+            // lblHeader
             // 
-            this.label1.AutoSize = true;
-            this.label1.BackColor = System.Drawing.Color.Transparent;
-            this.label1.Font = new System.Drawing.Font("Calibri", 15F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label1.Location = new System.Drawing.Point(3, 21);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(136, 24);
-            this.label1.TabIndex = 0;
-            this.label1.Text = "File Sync Issues";
+            this.lblHeader.AutoSize = true;
+            this.lblHeader.BackColor = System.Drawing.Color.Transparent;
+            this.lblHeader.Font = new System.Drawing.Font("Calibri", 15F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lblHeader.Location = new System.Drawing.Point(3, 21);
+            this.lblHeader.Name = "lblHeader";
+            this.lblHeader.Size = new System.Drawing.Size(136, 24);
+            this.lblHeader.TabIndex = 0;
+            this.lblHeader.Text = "File Sync Issues";
             // 
             // lvIssues
             // 
@@ -160,59 +160,59 @@
             this.panel2.Size = new System.Drawing.Size(490, 2);
             this.panel2.TabIndex = 5;
             // 
-            // label4
+            // lblLocalFileTitle
             // 
-            this.label4.AutoSize = true;
-            this.label4.Location = new System.Drawing.Point(7, 399);
-            this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(55, 13);
-            this.label4.TabIndex = 6;
-            this.label4.Text = "Local File:";
+            this.lblLocalFileTitle.AutoSize = true;
+            this.lblLocalFileTitle.Location = new System.Drawing.Point(7, 399);
+            this.lblLocalFileTitle.Name = "lblLocalFileTitle";
+            this.lblLocalFileTitle.Size = new System.Drawing.Size(55, 13);
+            this.lblLocalFileTitle.TabIndex = 6;
+            this.lblLocalFileTitle.Text = "Local File:";
             // 
-            // label5
+            // lblLocalModifiedTitle
             // 
-            this.label5.AutoSize = true;
-            this.label5.Location = new System.Drawing.Point(7, 415);
-            this.label5.Name = "label5";
-            this.label5.Size = new System.Drawing.Size(50, 13);
-            this.label5.TabIndex = 7;
-            this.label5.Text = "Modified:";
+            this.lblLocalModifiedTitle.AutoSize = true;
+            this.lblLocalModifiedTitle.Location = new System.Drawing.Point(7, 415);
+            this.lblLocalModifiedTitle.Name = "lblLocalModifiedTitle";
+            this.lblLocalModifiedTitle.Size = new System.Drawing.Size(50, 13);
+            this.lblLocalModifiedTitle.TabIndex = 7;
+            this.lblLocalModifiedTitle.Text = "Modified:";
             // 
-            // label6
+            // lblLocalSizeTitle
             // 
-            this.label6.AutoSize = true;
-            this.label6.Location = new System.Drawing.Point(7, 431);
-            this.label6.Name = "label6";
-            this.label6.Size = new System.Drawing.Size(30, 13);
-            this.label6.TabIndex = 8;
-            this.label6.Text = "Size:";
+            this.lblLocalSizeTitle.AutoSize = true;
+            this.lblLocalSizeTitle.Location = new System.Drawing.Point(7, 431);
+            this.lblLocalSizeTitle.Name = "lblLocalSizeTitle";
+            this.lblLocalSizeTitle.Size = new System.Drawing.Size(30, 13);
+            this.lblLocalSizeTitle.TabIndex = 8;
+            this.lblLocalSizeTitle.Text = "Size:";
             // 
-            // label7
+            // lblServerSizeTitle
             // 
-            this.label7.AutoSize = true;
-            this.label7.Location = new System.Drawing.Point(7, 495);
-            this.label7.Name = "label7";
-            this.label7.Size = new System.Drawing.Size(30, 13);
-            this.label7.TabIndex = 11;
-            this.label7.Text = "Size:";
+            this.lblServerSizeTitle.AutoSize = true;
+            this.lblServerSizeTitle.Location = new System.Drawing.Point(7, 495);
+            this.lblServerSizeTitle.Name = "lblServerSizeTitle";
+            this.lblServerSizeTitle.Size = new System.Drawing.Size(30, 13);
+            this.lblServerSizeTitle.TabIndex = 11;
+            this.lblServerSizeTitle.Text = "Size:";
             // 
-            // label8
+            // lblServerModifiedTitle
             // 
-            this.label8.AutoSize = true;
-            this.label8.Location = new System.Drawing.Point(7, 479);
-            this.label8.Name = "label8";
-            this.label8.Size = new System.Drawing.Size(50, 13);
-            this.label8.TabIndex = 10;
-            this.label8.Text = "Modified:";
+            this.lblServerModifiedTitle.AutoSize = true;
+            this.lblServerModifiedTitle.Location = new System.Drawing.Point(7, 479);
+            this.lblServerModifiedTitle.Name = "lblServerModifiedTitle";
+            this.lblServerModifiedTitle.Size = new System.Drawing.Size(50, 13);
+            this.lblServerModifiedTitle.TabIndex = 10;
+            this.lblServerModifiedTitle.Text = "Modified:";
             // 
-            // label9
+            // lblFileInfoTitle
             // 
-            this.label9.AutoSize = true;
-            this.label9.Location = new System.Drawing.Point(7, 463);
-            this.label9.Name = "label9";
-            this.label9.Size = new System.Drawing.Size(47, 13);
-            this.label9.TabIndex = 9;
-            this.label9.Text = "File Info:";
+            this.lblFileInfoTitle.AutoSize = true;
+            this.lblFileInfoTitle.Location = new System.Drawing.Point(7, 463);
+            this.lblFileInfoTitle.Name = "lblFileInfoTitle";
+            this.lblFileInfoTitle.Size = new System.Drawing.Size(47, 13);
+            this.lblFileInfoTitle.TabIndex = 9;
+            this.lblFileInfoTitle.Text = "File Info:";
             // 
             // panel3
             // 
@@ -326,12 +326,12 @@
             this.Controls.Add(this.lnkAbout);
             this.Controls.Add(this.lnkHelp);
             this.Controls.Add(this.panel3);
-            this.Controls.Add(this.label7);
-            this.Controls.Add(this.label8);
-            this.Controls.Add(this.label9);
-            this.Controls.Add(this.label6);
-            this.Controls.Add(this.label5);
-            this.Controls.Add(this.label4);
+            this.Controls.Add(this.lblServerSizeTitle);
+            this.Controls.Add(this.lblServerModifiedTitle);
+            this.Controls.Add(this.lblFileInfoTitle);
+            this.Controls.Add(this.lblLocalSizeTitle);
+            this.Controls.Add(this.lblLocalModifiedTitle);
+            this.Controls.Add(this.lblLocalFileTitle);
             this.Controls.Add(this.panel2);
             this.Controls.Add(this.lblDescription);
             this.Controls.Add(this.btnIgnoreConflict);
@@ -355,7 +355,7 @@
         #endregion
 
         private System.Windows.Forms.Panel panel1;
-        private System.Windows.Forms.Label label1;
+        private System.Windows.Forms.Label lblHeader;
         private System.Windows.Forms.Button btnEventViewer;
         private System.Windows.Forms.ListView lvIssues;
         private System.Windows.Forms.ColumnHeader columnHeader1;
@@ -365,12 +365,12 @@
         private System.Windows.Forms.Button btnIgnoreConflict;
         private System.Windows.Forms.Label lblDescription;
         private System.Windows.Forms.Panel panel2;
-        private System.Windows.Forms.Label label4;
-        private System.Windows.Forms.Label label5;
-        private System.Windows.Forms.Label label6;
-        private System.Windows.Forms.Label label7;
-        private System.Windows.Forms.Label label8;
-        private System.Windows.Forms.Label label9;
+        private System.Windows.Forms.Label lblLocalFileTitle;
+        private System.Windows.Forms.Label lblLocalModifiedTitle;
+        private System.Windows.Forms.Label lblLocalSizeTitle;
+        private System.Windows.Forms.Label lblServerSizeTitle;
+        private System.Windows.Forms.Label lblServerModifiedTitle;
+        private System.Windows.Forms.Label lblFileInfoTitle;
         private System.Windows.Forms.Panel panel3;
         private System.Windows.Forms.LinkLabel lnkHelp;
         private System.Windows.Forms.LinkLabel lnkAbout;

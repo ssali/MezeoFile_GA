@@ -18,14 +18,15 @@ namespace Mezeo
         public frmIssues()
         {
             InitializeComponent();
-            ClearInfoLabels();      
+            ClearInfoLabels();
+            LoadResources();
         }
 
         public frmIssues(MezeoFileCloud mezeoFileCloud)
         {
             InitializeComponent();
             ClearInfoLabels();
-   
+
             cMezeoFileCloud = mezeoFileCloud;
         }
 
@@ -64,29 +65,8 @@ namespace Mezeo
             {
                 btnIgnoreConflict.Visible = false;
                 ClearInfoLabels();
-                DisableNameLabels();
                 lblDescription.Text = "  Everything is great!    All your files are in sync and there are no conflicts or errors to report at this time.";
             }
-        }
-
-        private void DisableNameLabels()
-        {
-            label4.Visible = false;
-            label5.Visible = false;
-            label6.Visible = false;
-            label7.Visible = false;
-            label8.Visible = false;
-            label9.Visible = false;
-        }
-
-        private void EnableNameLabels()
-        {
-            label4.Visible = true;
-            label5.Visible = true;
-            label6.Visible = true;
-            label7.Visible = true;
-            label8.Visible = true;
-            label9.Visible = true;
         }
 
         private void lvIssues_SelectedIndexChanged(object sender, EventArgs e)
@@ -134,7 +114,6 @@ namespace Mezeo
         private void frmIssues_FormClosing(object sender, FormClosingEventArgs e)
         {
             ClearInfoLabels();
-            EnableNameLabels();
             e.Cancel = true;
             this.Hide();
             return;
@@ -190,6 +169,28 @@ namespace Mezeo
 
         private void lnkFileInfo_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
         {
+
+        }
+
+        private void LoadResources()
+        {
+            this.Text = AboutBox.AssemblyTitle + " " + LanguageTranslator.GetValue("IssuesTitle");
+            lblHeader.Text = LanguageTranslator.GetValue("IssuesHeader");
+            btnEventViewer.Text = LanguageTranslator.GetValue("IssuesEventViewerButtonText");
+            btnIgnoreConflict.Text = LanguageTranslator.GetValue("IssuesIgnoreConflictButtonText");
+            lblLocalFileTitle.Text = LanguageTranslator.GetValue("IssuesLocalFileLabel");
+            lblLocalModifiedTitle.Text = LanguageTranslator.GetValue("IssuesModifiedLabel");
+            lblServerModifiedTitle.Text = LanguageTranslator.GetValue("IssuesModifiedLabel");
+            lblLocalSizeTitle.Text = LanguageTranslator.GetValue("IssuesSizeLabel");
+            lblServerSizeTitle.Text = LanguageTranslator.GetValue("IssuesSizeLabel");
+            lblFileInfoTitle.Text = LanguageTranslator.GetValue("IssuesFileInfoLabel");
+
+            lvIssues.Columns[0].Text = LanguageTranslator.GetValue("IssuesNameColumnText");
+            lvIssues.Columns[1].Text = LanguageTranslator.GetValue("IssuesIssuesColumnText");
+            lvIssues.Columns[2].Text = LanguageTranslator.GetValue("IssuesDateAndTimeColumnText");
+
+            lnkAbout.Text = LanguageTranslator.GetValue("SyncManagerAboutLinkText");
+            lnkHelp.Text = LanguageTranslator.GetValue("SyncManagerHelpLinkText");
 
         }
     }
