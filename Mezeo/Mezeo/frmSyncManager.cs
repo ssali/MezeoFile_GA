@@ -3217,7 +3217,8 @@ namespace Mezeo
 
                 frmParent.toolStripMenuItem4.Text = LanguageTranslator.GetValue("SyncManagerMenuIssueFoundText");
             }
-            else
+
+            else if (isLocalEventInProgress || LocalEventList.Count > 0)
             {
                 if (BasicInfo.AutoSync)
                     cnotificationManager.NotificationHandler.Icon = Properties.Resources.MezeoVault;
