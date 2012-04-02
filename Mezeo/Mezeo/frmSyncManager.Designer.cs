@@ -275,19 +275,21 @@
             // 
             // lblUserName
             // 
+            this.lblUserName.AutoEllipsis = true;
             this.lblUserName.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.lblUserName.Location = new System.Drawing.Point(98, 99);
             this.lblUserName.Name = "lblUserName";
-            this.lblUserName.Size = new System.Drawing.Size(315, 13);
+            this.lblUserName.Size = new System.Drawing.Size(189, 13);
             this.lblUserName.TabIndex = 4;
             this.lblUserName.Text = "User Name";
             // 
             // lnkServerUrl
             // 
+            this.lnkServerUrl.AutoEllipsis = true;
             this.lnkServerUrl.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lnkServerUrl.Location = new System.Drawing.Point(427, 95);
+            this.lnkServerUrl.Location = new System.Drawing.Point(303, 95);
             this.lnkServerUrl.Name = "lnkServerUrl";
-            this.lnkServerUrl.Size = new System.Drawing.Size(205, 20);
+            this.lnkServerUrl.Size = new System.Drawing.Size(329, 20);
             this.lnkServerUrl.TabIndex = 5;
             this.lnkServerUrl.TabStop = true;
             this.lnkServerUrl.Text = "https://41.mezeo.net";

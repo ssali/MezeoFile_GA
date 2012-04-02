@@ -296,6 +296,7 @@ namespace Mezeo
             {
                 btnSyncNow.Enabled = false;
                 isLocalEventInProgress = false;
+                bwLocalEvents.CancelAsync();
             }
         }
 
@@ -3217,8 +3218,7 @@ namespace Mezeo
 
                 frmParent.toolStripMenuItem4.Text = LanguageTranslator.GetValue("SyncManagerMenuIssueFoundText");
             }
-
-            else if (isLocalEventInProgress || LocalEventList.Count > 0)
+            else
             {
                 if (BasicInfo.AutoSync)
                     cnotificationManager.NotificationHandler.Icon = Properties.Resources.MezeoVault;
@@ -3303,6 +3303,13 @@ namespace Mezeo
             pbSyncProgress.Visible = true;
             label1.Visible = false;
             pbSyncProgress.Refresh();
+
+            if (!lblPercentDone.Visible)
+            {
+                lblPercentDone.Text = "";
+                lblPercentDone.Visible = true;
+                Application.DoEvents();
+            }
 
             if (e.ProgressPercentage == SYNC_STARTED)
             {

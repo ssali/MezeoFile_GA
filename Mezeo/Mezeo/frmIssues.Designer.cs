@@ -338,6 +338,7 @@
             this.Controls.Add(this.lblUpdateStatus);
             this.Controls.Add(this.lvIssues);
             this.Controls.Add(this.panel1);
+            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
             this.MaximizeBox = false;
             this.Name = "frmIssues";
             this.ShowIcon = false;

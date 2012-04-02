@@ -368,14 +368,8 @@ namespace Mezeo
         {
             if (syncManager != null)
             {
-                if (!syncManager.Visible)
-                {
-                    syncManager.Show();
-                }
-                else
-                {
-                    Win32Api.SwitchToCurrentInstance();
-                }
+                syncManager.Show();
+                syncManager.Focus();
             }
         }
 
