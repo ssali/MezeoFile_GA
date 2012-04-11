@@ -54,6 +54,26 @@ namespace Mezeo
             lvIssues.Items.Clear();
         }
 
+        private void DisableNameLabels()
+        {
+            lblLocalFileTitle.Visible = false;
+            lblLocalModifiedTitle.Visible = false;
+            lblLocalSizeTitle.Visible = false;
+            lblFileInfoTitle.Visible = false;
+            lblServerModifiedTitle.Visible = false;
+            lblServerSizeTitle.Visible = false;
+        }
+
+        private void EnableNameLabels()
+        {
+            lblLocalFileTitle.Visible = true;
+            lblLocalModifiedTitle.Visible = true;
+            lblLocalSizeTitle.Visible = true;
+            lblFileInfoTitle.Visible = true;
+            lblServerModifiedTitle.Visible = true;
+            lblServerSizeTitle.Visible = true;
+        } 
+
         private void DeleteSelectedRow()
         {
             foreach (int index in lvIssues.SelectedIndices)
@@ -65,6 +85,7 @@ namespace Mezeo
             {
                 btnIgnoreConflict.Visible = false;
                 ClearInfoLabels();
+                DisableNameLabels();
                 lblDescription.Text = "  Everything is great!    All your files are in sync and there are no conflicts or errors to report at this time.";
             }
         }
@@ -114,6 +135,7 @@ namespace Mezeo
         private void frmIssues_FormClosing(object sender, FormClosingEventArgs e)
         {
             ClearInfoLabels();
+            EnableNameLabels();
             e.Cancel = true;
             this.Hide();
             return;

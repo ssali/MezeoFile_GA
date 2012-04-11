@@ -20,18 +20,18 @@ namespace Mezeo
 
         public static void SetLanguage(string language)
         {
-            Debugger.logMessage("LanguageTranslator", "Setting language to " + language);
+            //("LanguageTranslator", "Setting language to " + language);
             currentLanguage=language;
             resManager=Language.GetResourceManager(language);
         }
 
         public static string GetValue(string key) 
         {
-            Debugger.logMessage("LanguageTranslator", "Getting value for key " + key);
+            //("LanguageTranslator", "Getting value for key " + key);
 
             if (resManager == null)
             {
-                Debugger.logMessage("LanguageTranslator", "Resource manager null.");
+                //("LanguageTranslator", "Resource manager null.");
                 return key;
             }
             string originalKey = key; 
@@ -42,21 +42,21 @@ namespace Mezeo
                 string value = resManager.GetString(key);
                 if (value != null)
                 {
-                    Debugger.logMessage("LanguageTranslator", "Language: " + currentLanguage + ", Key: " + key + ", Value: " + value);
+                    //("LanguageTranslator", "Language: " + currentLanguage + ", Key: " + key + ", Value: " + value);
                     return value;
                 }
-                Debugger.logMessage("LanguageTranslator", "No value found for the Key: " + key + ", Language: " + currentLanguage);
+                //("LanguageTranslator", "No value found for the Key: " + key + ", Language: " + currentLanguage);
                 return originalKey; 
             } 
             catch (MissingManifestResourceException) 
             {
-                Debugger.logMessage("LanguageTranslator", "Missing resource found for language: " + currentLanguage );
+                //("LanguageTranslator", "Missing resource found for language: " + currentLanguage );
                 throw new System.IO.FileNotFoundException("Could not locate the resource file for the language " + currentLanguage); 
                 
             } 
             catch (NullReferenceException) 
             {
-                Debugger.logMessage("LanguageTranslator", "NPE");
+                //("LanguageTranslator", "NPE");
                 return originalKey; 
             } 
         } 

@@ -189,13 +189,61 @@ namespace Mezeo
             return result;
         }
 
-        public int Delete(string tableName, string whereCondition)
+        public int Update(string tableName, string fieldName, string newValues, string whereFields,string whereValues)
         {
-            string query = "delete from " + tableName + " where " + whereCondition;
+            int result = -1;
+            string query = "";
+
+            sqlCommand = new SQLiteCommand();
+
+            query = "update " + tableName + " set " + fieldName + "=@newValue where " + whereFields + "=@whereValue";
+
+            sqlCommand.Parameters.Add("@newValue" , System.Data.DbType.String);
+            sqlCommand.Parameters["@newValue" ].Value = newValues;
+
+            sqlCommand.Parameters.Add("@whereValue", System.Data.DbType.String);
+            sqlCommand.Parameters["@whereValue"].Value = whereValues;
+            
+            sqlCommand.CommandText = query;
+            sqlCommand.Connection = sqlConnection;
+
+            result = sqlCommand.ExecuteNonQuery();
+
+            return result;
+        }
+
+        public int Update(string tableName, string fieldName, bool newValues, string whereFields, string whereValues)
+        {
+            int result = -1;
+            string query = "";
+
+            sqlCommand = new SQLiteCommand();
+
+            query = "update " + tableName + " set " + fieldName + "=@newValue where " + whereFields + "=@whereValue";
+
+            sqlCommand.Parameters.Add("@newValue", System.Data.DbType.Boolean);
+            sqlCommand.Parameters["@newValue"].Value = newValues;
+
+            sqlCommand.Parameters.Add("@whereValue", System.Data.DbType.String);
+            sqlCommand.Parameters["@whereValue"].Value = whereValues;
+
+            sqlCommand.CommandText = query;
+            sqlCommand.Connection = sqlConnection;
+
+            result = sqlCommand.ExecuteNonQuery();
+
+            return result;
+        }
+
+        public int Delete(string tableName, string wherefield, string whereValue)
+        {
+            string query = "delete from " + tableName + " where " + wherefield + "=@whereValue";
             int result = -1;
 
             sqlCommand = new SQLiteCommand(query, sqlConnection);
             //sqlCommand.Parameters.Add("@WhereCondition", whereCondition);
+            sqlCommand.Parameters.Add("@whereValue", System.Data.DbType.String);
+            sqlCommand.Parameters["@whereValue"].Value = whereValue;
 
             result = sqlCommand.ExecuteNonQuery();
 
@@ -223,7 +271,53 @@ namespace Mezeo
             string query = "select " + fieldName + " from " + tableName + " where " + WhereCondition;
             string result = "";
 
+            //query = HandleSpecialCharacter(query);
+            
             sqlCommand = new SQLiteCommand(query, sqlConnection);
+            sqlDataReader = sqlCommand.ExecuteReader();
+            sqlDataReader.Read();
+
+            result = sqlDataReader.GetString(0);
+
+            sqlDataReader.Close();
+
+            return result;
+        }
+
+        public string GetString(string tableName, string fieldName, string[] whereFields,string[] whereValues,System.Data.DbType[] fieldDataType)
+        {
+            string whereQuery = "";
+            string query = "";// "select " + fieldName + " from " + tableName + " where " + WhereCondition;
+            string result = "";
+
+            sqlCommand = new SQLiteCommand();
+
+            if (whereFields == null || whereValues == null)
+            {
+                query = "select " + fieldName + " from " + tableName;
+            }
+            else
+            {
+                for (int i = 0; i < whereFields.Length; i++)
+                {
+                    whereQuery += whereFields[i] + "=@" + whereFields[i] ;
+                    
+                    if (i < whereFields.Length - 1)
+                        whereQuery += " and ";
+
+                    sqlCommand.Parameters.Add("@" + whereFields[i], fieldDataType[i]);
+                    sqlCommand.Parameters["@" + whereFields[i]].Value = whereValues[i];
+
+                }
+
+                query = "select " + fieldName + " from " + tableName + " where " + whereQuery;
+            }
+
+            //query = HandleSpecialCharacter(query);
+
+            //sqlCommand = new SQLiteCommand(query, sqlConnection);
+            sqlCommand.CommandText = query;
+            sqlCommand.Connection = sqlConnection;
             sqlDataReader = sqlCommand.ExecuteReader();
             sqlDataReader.Read();
 
@@ -248,6 +342,18 @@ namespace Mezeo
             sqlDataReader.Close();
 
             return result;
+        }
+
+        private string HandleSpecialCharacter(string query)
+        {
+            string handeledQuery = query;
+
+            if (handeledQuery.Contains("'"))
+            {
+                handeledQuery = handeledQuery.Replace("'", "''");
+            }
+
+            return handeledQuery;
         }
 
         public decimal GetFloat(string tableName, string fieldName)
@@ -282,12 +388,16 @@ namespace Mezeo
             return result;
         }
 
-        public DateTime GetDateTime(string tableName, string fieldName, string WhereCondition)
+        public DateTime GetDateTime(string tableName, string fieldName, string WhereField, string whereValue)
         {
-            string query = "select " + fieldName + " from " + tableName + " where " + WhereCondition;
+            string query = "select " + fieldName + " from " + tableName + " where " + WhereField + "=@whereValue";
             DateTime result;
 
             sqlCommand = new SQLiteCommand(query, sqlConnection);
+
+            sqlCommand.Parameters.Add("@whereValue", System.Data.DbType.String);
+            sqlCommand.Parameters["@whereValue"].Value = whereValue;
+
             sqlDataReader = sqlCommand.ExecuteReader();
             sqlDataReader.Read();
 
@@ -299,12 +409,16 @@ namespace Mezeo
         }
 
 
-        public List<string> GetStringList(string tableName, string fieldName, string WhereCondition)
+        public List<string> GetStringList(string tableName, string fieldName, string WhereField, string whereValue)
         {
-            string query = "select " + fieldName + " from " + tableName + " where " + WhereCondition; 
+            string query = "select " + fieldName + " from " + tableName + " where " + WhereField + "=@whereValue"; 
             List<string> result =new List<string>();
 
             sqlCommand = new SQLiteCommand(query, sqlConnection);
+            
+            sqlCommand.Parameters.Add("@whereValue", System.Data.DbType.String);
+            sqlCommand.Parameters["@whereValue"].Value = whereValue;
+
             sqlDataReader = sqlCommand.ExecuteReader();
             while (sqlDataReader.Read())
             {
@@ -386,13 +500,16 @@ namespace Mezeo
 
         public int UpdateModifiedDate(DateTime newDate, string key)
         {
-            string query = "update " + TABLE_NAME + " set " + MODIFIED_DATE + "= @modifiedDate where " + KEY + "='" + key + "'";
+            string query = "update " + TABLE_NAME + " set " + MODIFIED_DATE + "= @modifiedDate where " + KEY + "=@key";
             int result = -1;
 
             sqlCommand = new SQLiteCommand(query, sqlConnection);
 
             sqlCommand.Parameters.Add("@modifiedDate",System.Data.DbType.DateTime);
             sqlCommand.Parameters["@modifiedDate"].Value = newDate;
+
+            sqlCommand.Parameters.Add("@key", System.Data.DbType.String);
+            sqlCommand.Parameters["@key"].Value = key;
 
             result = sqlCommand.ExecuteNonQuery();
 

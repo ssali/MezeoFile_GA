@@ -118,7 +118,7 @@
             // lblPercentDone
             // 
             this.lblPercentDone.AutoSize = true;
-            this.lblPercentDone.Location = new System.Drawing.Point(445, 13);
+            this.lblPercentDone.Location = new System.Drawing.Point(454, 13);
             this.lblPercentDone.Name = "lblPercentDone";
             this.lblPercentDone.Size = new System.Drawing.Size(36, 13);
             this.lblPercentDone.TabIndex = 14;
@@ -158,16 +158,14 @@
             this.lblStatusL3.Name = "lblStatusL3";
             this.lblStatusL3.Size = new System.Drawing.Size(449, 13);
             this.lblStatusL3.TabIndex = 7;
-            this.lblStatusL3.Text = "label8";
             // 
             // lblStatusL1
             // 
             this.lblStatusL1.AutoEllipsis = true;
             this.lblStatusL1.Location = new System.Drawing.Point(147, 13);
             this.lblStatusL1.Name = "lblStatusL1";
-            this.lblStatusL1.Size = new System.Drawing.Size(287, 13);
+            this.lblStatusL1.Size = new System.Drawing.Size(301, 13);
             this.lblStatusL1.TabIndex = 5;
-            this.lblStatusL1.Text = "label6";
             // 
             // imgStatus
             // 

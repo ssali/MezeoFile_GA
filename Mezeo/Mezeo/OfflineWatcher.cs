@@ -55,17 +55,16 @@ namespace Mezeo
                         continue;
                 }
 
-                string strCheck = dbHandler.GetString(DbHandler.TABLE_NAME, DbHandler.CONTENT_URL, DbHandler.KEY + " = '" + localKeys + "' and " + DbHandler.STATUS + "='SUCCESS'");
+                string strCheck = dbHandler.GetString(DbHandler.TABLE_NAME, DbHandler.CONTENT_URL, new string[] { DbHandler.KEY, DbHandler.STATUS }, new string[] { localKeys, "SUCCESS" }, new System.Data.DbType[] { System.Data.DbType.String, System.Data.DbType.String });
                 //if (dbKeys.Contains(localKeys))
                 if(strCheck.Trim().Length != 0)
                 {
-                    DateTime dbModDate = dbHandler.GetDateTime(DbHandler.TABLE_NAME, DbHandler.MODIFIED_DATE, DbHandler.KEY + "='" + localKeys + "'");
+                    DateTime dbModDate = dbHandler.GetDateTime(DbHandler.TABLE_NAME, DbHandler.MODIFIED_DATE , DbHandler.KEY , localKeys);
                     
                     bool isModified = false;
 
                     if (IsFile)
-                    {
-                        
+                    {                        
                         DateTime lastWriteTime = fInfo.LastWriteTime;
                         lastWriteTime = lastWriteTime.AddMilliseconds(-lastWriteTime.Millisecond);
                         

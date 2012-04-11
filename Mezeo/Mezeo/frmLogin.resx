@@ -1019,7 +1019,7 @@
     <value>txtServerUrl</value>
   </data>
   <data name="&gt;&gt;txtServerUrl.Type" xml:space="preserve">
-    <value>Mezeo.CueTextBox, MezeoFile, Version=2.0.6.0, Culture=neutral, PublicKeyToken=null</value>
+    <value>Mezeo.CueTextBox, MezeoFile, Version=2.0.10.0, Culture=neutral, PublicKeyToken=null</value>
   </data>
   <data name="&gt;&gt;txtServerUrl.Parent" xml:space="preserve">
     <value>$this</value>
@@ -1043,7 +1043,7 @@
     <value>txtPasswrod</value>
   </data>
   <data name="&gt;&gt;txtPasswrod.Type" xml:space="preserve">
-    <value>Mezeo.CueTextBox, MezeoFile, Version=2.0.6.0, Culture=neutral, PublicKeyToken=null</value>
+    <value>Mezeo.CueTextBox, MezeoFile, Version=2.0.10.0, Culture=neutral, PublicKeyToken=null</value>
   </data>
   <data name="&gt;&gt;txtPasswrod.Parent" xml:space="preserve">
     <value>$this</value>
@@ -1067,7 +1067,7 @@
     <value>txtUserName</value>
   </data>
   <data name="&gt;&gt;txtUserName.Type" xml:space="preserve">
-    <value>Mezeo.CueTextBox, MezeoFile, Version=2.0.6.0, Culture=neutral, PublicKeyToken=null</value>
+    <value>Mezeo.CueTextBox, MezeoFile, Version=2.0.10.0, Culture=neutral, PublicKeyToken=null</value>
   </data>
   <data name="&gt;&gt;txtUserName.Parent" xml:space="preserve">
     <value>$this</value>
@@ -1083,9 +1083,6 @@
   </data>
   <data name="$this.ClientSize" type="System.Drawing.Size, System.Drawing">
     <value>483, 331</value>
-  </data>
-  <data name="$this.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
-    <value>NoControl</value>
   </data>
   <data name="$this.StartPosition" type="System.Windows.Forms.FormStartPosition, System.Windows.Forms">
     <value>CenterScreen</value>

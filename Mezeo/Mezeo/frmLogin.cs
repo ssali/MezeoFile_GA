@@ -244,6 +244,7 @@ namespace Mezeo
 
             syncManager.DisableSyncManager();
             syncManager.ShowOfflineAtStartUpSyncManager();
+            syncManager.ShowSyncManagerOffline();
 
             notificationManager.NotificationHandler.ShowBalloonTip(1, LanguageTranslator.GetValue("TrayBalloonSyncStatusText"),
                                                                                 LanguageTranslator.GetValue("TrayAppOfflineText"), ToolTipIcon.None);
@@ -390,16 +391,17 @@ namespace Mezeo
                 string queueName = BasicInfo.GetMacAddress + "-" + BasicInfo.UserName;
 
                 int nNQLength = mezeoFileCloud.NQGetLength(BasicInfo.ServiceUrl + loginDetails.szNQParentUri, queueName, ref nStatusCode);
-                if (nNQLength > 0)
-                    pNQDetails = mezeoFileCloud.NQGetData(BasicInfo.ServiceUrl + NQParentURI, queueName, nNQLength, ref nStatusCode);
-
-                if (BasicInfo.IsInitialSync && pNQDetails!= null)
-                    mezeoFileCloud.NQDeleteValue(BasicInfo.ServiceUrl + loginDetails.szNQParentUri, queueName, nNQLength, ref nStatusCode);
-
-                if (nStatusCode == 404 && pNQDetails == null)
+                if (nStatusCode == 404)
                 {
                     bool bRet = mezeoFileCloud.NQCreate(BasicInfo.ServiceUrl + NQParentURI, queueName, NQParentURI, ref nStatusCode);
                 }
+                else
+                {
+                    if (BasicInfo.IsInitialSync && nNQLength > 0)
+                        mezeoFileCloud.NQDeleteValue(BasicInfo.ServiceUrl + loginDetails.szNQParentUri, queueName, nNQLength, ref nStatusCode);
+                }
+
+                
             }
         }
 
@@ -452,8 +454,7 @@ namespace Mezeo
 
         }
 
-
-        private void tmrConnectionCheck_Tick(object sender, EventArgs e)
+        public void HandleConnectionState()
         {
             if (BasicInfo.IsConnectedToInternet != internetConnection)
             {
@@ -488,34 +489,28 @@ namespace Mezeo
                     }
                     else
                     {
-                       
+
                         notificationManager.NotificationHandler.ShowBalloonTip(1, LanguageTranslator.GetValue("TrayBalloonSyncStatusText"),
                                                                                 LanguageTranslator.GetValue("TrayAppOnlineText"), ToolTipIcon.None);
 
                         notificationManager.HoverText = LanguageTranslator.GetValue("TrayAppOnlineText");
                         notificationManager.NotifyIcon = Properties.Resources.MezeoVault;
 
-                       // ShellNotifyIcon.SetNotifyIconHandle(Properties.Resources.MezeoVault.Handle);
+                        // ShellNotifyIcon.SetNotifyIconHandle(Properties.Resources.MezeoVault.Handle);
                         //ShellNotifyIcon.SetNotifyIconBalloonText(LanguageTranslator.GetValue("TrayAppOnlineText"), LanguageTranslator.GetValue("TrayBalloonSyncStatusText"));
-                       // ShellNotifyIcon.SetNotifyIconToolTip(LanguageTranslator.GetValue("TrayAppOnlineText"));
+                        // ShellNotifyIcon.SetNotifyIconToolTip(LanguageTranslator.GetValue("TrayAppOnlineText"));
 
                         if (syncManager != null)
                         {
                             syncManager.LoginDetail = loginDetails;
                             syncManager.EnableSyncManager();
-                            if(BasicInfo.AutoSync)
+                            if (BasicInfo.AutoSync)
                                 syncManager.InitializeSync();
                         }
                     }
                 }
                 else
                 {
-                    notificationManager.NotificationHandler.ShowBalloonTip(1, LanguageTranslator.GetValue("TrayBalloonSyncStatusText"),
-                                                                                LanguageTranslator.GetValue("TrayAppOfflineText"), ToolTipIcon.None);
-
-                    notificationManager.HoverText = LanguageTranslator.GetValue("TrayAppOfflineText");
-                    notificationManager.NotifyIcon = Properties.Resources.app_offline;
-                    toolStripMenuItem4.Text = LanguageTranslator.GetValue("AppOfflineMenu");
                     //ShellNotifyIcon.SetNotifyIconHandle(Properties.Resources.app_offline.Handle);
                     //ShellNotifyIcon.SetNotifyIconBalloonText(LanguageTranslator.GetValue("TrayAppOfflineText"), LanguageTranslator.GetValue("TrayBalloonSyncStatusText"));
                     //ShellNotifyIcon.SetNotifyIconToolTip(LanguageTranslator.GetValue("TrayAppOfflineText"));
@@ -523,10 +518,18 @@ namespace Mezeo
                     if (syncManager != null)
                     {
                         syncManager.DisableSyncManager();
+                        syncManager.ShowSyncManagerOffline();
                     }
+
+                    
                 }
                 tmrConnectionCheck.Enabled = true;
             }
+        }
+
+        private void tmrConnectionCheck_Tick(object sender, EventArgs e)
+        {
+            HandleConnectionState();
         }
 
         private void txtUserName_TextChanged(object sender, EventArgs e)
