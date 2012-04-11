@@ -1,4 +1,4 @@
-﻿/*File Watcher class*/
+﻿/*File Sync Dir Watcher class*/
 
 
 using System;
