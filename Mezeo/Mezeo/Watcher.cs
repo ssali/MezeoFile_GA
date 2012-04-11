@@ -1,5 +1,10 @@
+<<<<<<< HEAD
 ﻿/*File Sync Dir Watcher class*/
 
+=======
+﻿/*File Watcher class*/
+/*Sync Dir Watcher*/
+>>>>>>> 66195490355687478709eaabc5052d363fe9095f
 
 using System;
 using System.Collections.Generic;
