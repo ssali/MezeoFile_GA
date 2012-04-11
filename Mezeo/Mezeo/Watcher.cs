@@ -1,5 +1,5 @@
 ﻿/*File Watcher class*/
-
+/*Sync Dir Watcher*/
 
 using System;
 using System.Collections.Generic;
