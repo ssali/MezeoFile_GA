@@ -27,6 +27,8 @@ namespace Mezeo
 
         public DateTime ConflictTimeStamp { get; set; }
 
+        public string ServerFileUri { get; set; }
+
         public enum ConflictType
         {
             CONFLICT_UPLOAD,

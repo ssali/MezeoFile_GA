@@ -130,13 +130,7 @@
         "Entry"
         {
         "MsmKey" = "8:_UNDEFINED"
-        "OwnerKey" = "8:_DFF7F401643C436EB485570961CD88CC"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_UNDEFINED"
-        "OwnerKey" = "8:_BFB501EDB203F8DC8C2A5E87806ECAE5"
+        "OwnerKey" = "8:_3BC4E0234267039564392FB54A981313"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
@@ -148,7 +142,13 @@
         "Entry"
         {
         "MsmKey" = "8:_UNDEFINED"
-        "OwnerKey" = "8:_3BC4E0234267039564392FB54A981313"
+        "OwnerKey" = "8:_BFB501EDB203F8DC8C2A5E87806ECAE5"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_UNDEFINED"
+        "OwnerKey" = "8:_DFF7F401643C436EB485570961CD88CC"
         "MsmSig" = "8:_UNDEFINED"
         }
     }
@@ -632,7 +632,7 @@
             {
             "AssemblyRegister" = "3:1"
             "AssemblyIsInGAC" = "11:FALSE"
-            "AssemblyAsmDisplayName" = "8:MezeoFile, Version=2.0.8.0, Culture=neutral, processorArchitecture=x86"
+            "AssemblyAsmDisplayName" = "8:MezeoFile, Version=2.0.17.0, Culture=neutral, processorArchitecture=x86"
                 "ScatterAssemblies"
                 {
                     "_DFF7F401643C436EB485570961CD88CC"
@@ -820,6 +820,13 @@
         }
         "LaunchCondition"
         {
+            "{836E08B8-0285-4809-BA42-01DB6754A45D}:_4CF2F3567D624B8BA5FDDBBB8EC12277"
+            {
+            "Name" = "8:osVersionCheck"
+            "Condition" = "8:Not VersionNT64"
+            "Message" = "8:This installation package is not supported by this processor type.  Contact your product vendor."
+            "InstallUrl" = "8:"
+            }
         }
         "Locator"
         {
@@ -833,15 +840,15 @@
         {
         "Name" = "8:Microsoft Visual Studio"
         "ProductName" = "8:MezeoFile"
-        "ProductCode" = "8:{B145AD8C-44A6-4D1E-957A-56782123DE89}"
-        "PackageCode" = "8:{13F49ABA-A78C-4D88-B8AD-3432B6110D3C}"
+        "ProductCode" = "8:{22B86C05-4ED5-44E0-B4A1-8F762A4DCA99}"
+        "PackageCode" = "8:{7CF087FD-FF4F-45E9-B580-7C4F0C063BE9}"
         "UpgradeCode" = "8:{9A686460-3EE8-42C7-987B-2AC187ED8477}"
         "AspNetVersion" = "8:4.0.30319.0"
         "RestartWWWService" = "11:FALSE"
         "RemovePreviousVersions" = "11:FALSE"
         "DetectNewerInstalledVersion" = "11:TRUE"
         "InstallAllUsers" = "11:FALSE"
-        "ProductVersion" = "8:2.0.8"
+        "ProductVersion" = "8:2.0.17"
         "Manufacturer" = "8:MezeoFile"
         "ARPHELPTELEPHONE" = "8:"
         "ARPHELPLINK" = "8:"
@@ -1733,7 +1740,7 @@
             "{970C0BB2-C7D0-45D7-ABFA-7EC378858BC0}:_FE02CE2B497A4D449F1EF1F2885472CB"
             {
             "Name" = "8:Uninstall MezeoFile"
-            "Arguments" = "8:/x {B145AD8C-44A6-4D1E-957A-56782123DE89}"
+            "Arguments" = "8:/x {22B86C05-4ED5-44E0-B4A1-8F762A4DCA99}"
             "Description" = "8:"
             "ShowCmd" = "3:1"
             "IconIndex" = "3:0"

@@ -103,7 +103,7 @@ namespace Mezeo
             lblUpdateStatus.Text = issue.IssueTitle;
   
             lblDescription.Text = issue.IssueDescripation;
-            lnkFileInfo.Text = issue.ServerFileInfo;
+            lnkFileInfo.Text = BasicInfo.ServiceUrl + "/#info/" + issue.ServerFileInfo;
             lblFileSize.Text = issue.ServerSize;
             lblModified.Text = issue.ServerIssueDT.ToString("M/d/yyyy h:mm tt");
 
@@ -191,6 +191,18 @@ namespace Mezeo
 
         private void lnkFileInfo_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
         {
+            if (lvIssues.SelectedItems.Count > 0)
+            {
+                IssueFound iFound = (IssueFound)lvIssues.SelectedItems[0].Tag;
+                if (iFound.LocalFilePath.Length != 0)
+                {
+                    int nLen = iFound.ServerFileUri.LastIndexOf("/");
+                    string szSunUri = iFound.ServerFileUri.Substring(0, nLen);
+
+                    string argument = BasicInfo.ServiceUrl + "/#info" + iFound.ServerFileUri.Substring(szSunUri.LastIndexOf("/")); ;
+                    System.Diagnostics.Process.Start(argument);
+                }
+            }
 
         }
 
@@ -213,6 +225,11 @@ namespace Mezeo
 
             lnkAbout.Text = LanguageTranslator.GetValue("SyncManagerAboutLinkText");
             lnkHelp.Text = LanguageTranslator.GetValue("SyncManagerHelpLinkText");
+
+        }
+
+        private void frmIssues_Load(object sender, EventArgs e)
+        {
 
         }
     }

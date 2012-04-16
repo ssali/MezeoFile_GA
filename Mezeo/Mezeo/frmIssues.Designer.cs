@@ -71,12 +71,14 @@
             // 
             // btnEventViewer
             // 
+            this.btnEventViewer.Enabled = false;
             this.btnEventViewer.Location = new System.Drawing.Point(411, 22);
             this.btnEventViewer.Name = "btnEventViewer";
             this.btnEventViewer.Size = new System.Drawing.Size(86, 23);
             this.btnEventViewer.TabIndex = 1;
             this.btnEventViewer.Text = "Event Viewer";
             this.btnEventViewer.UseVisualStyleBackColor = true;
+            this.btnEventViewer.Visible = false;
             this.btnEventViewer.Click += new System.EventHandler(this.btnEventViewer_Click);
             // 
             // lblHeader
@@ -210,9 +212,9 @@
             this.lblFileInfoTitle.AutoSize = true;
             this.lblFileInfoTitle.Location = new System.Drawing.Point(7, 463);
             this.lblFileInfoTitle.Name = "lblFileInfoTitle";
-            this.lblFileInfoTitle.Size = new System.Drawing.Size(47, 13);
+            this.lblFileInfoTitle.Size = new System.Drawing.Size(81, 13);
             this.lblFileInfoTitle.TabIndex = 9;
-            this.lblFileInfoTitle.Text = "File Info:";
+            this.lblFileInfoTitle.Text = "Server File Info:";
             // 
             // panel3
             // 
@@ -252,8 +254,7 @@
             // 
             // lnkLocalFile
             // 
-            this.lnkLocalFile.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lnkLocalFile.LinkBehavior = System.Windows.Forms.LinkBehavior.NeverUnderline;
+            this.lnkLocalFile.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Underline, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.lnkLocalFile.Location = new System.Drawing.Point(128, 399);
             this.lnkLocalFile.Name = "lnkLocalFile";
             this.lnkLocalFile.Size = new System.Drawing.Size(369, 13);
@@ -265,8 +266,7 @@
             // 
             // lnkFileInfo
             // 
-            this.lnkFileInfo.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lnkFileInfo.LinkBehavior = System.Windows.Forms.LinkBehavior.NeverUnderline;
+            this.lnkFileInfo.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Underline, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.lnkFileInfo.Location = new System.Drawing.Point(128, 463);
             this.lnkFileInfo.Name = "lnkFileInfo";
             this.lnkFileInfo.Size = new System.Drawing.Size(369, 13);
@@ -345,6 +345,7 @@
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "MezeoFile Issues";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.frmIssues_FormClosing);
+            this.Load += new System.EventHandler(this.frmIssues_Load);
             this.Shown += new System.EventHandler(this.frmIssues_Shown);
             this.panel1.ResumeLayout(false);
             this.panel1.PerformLayout();

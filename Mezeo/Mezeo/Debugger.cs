@@ -8,56 +8,42 @@ namespace Mezeo
 {
     public class Debugger
     {
-       // private FileStream debugFile=new FileStream(@"C:\MezeoFileLogs.txt",FileMode.Append,FileAccess.Write);
+        private static FileStream debugFile =null;// new FileStream(@"C:\MezeoFileLogs.txt", FileMode.Append, FileAccess.Write);
 
-      //  public static Debugger Instance { get; private set; }
+        public static Debugger calssInstance = null;
 
-        public Debugger()
+        public static Debugger Instance
         {
-          //  Instance = new Debugger();
+            get
+            {
+                if (calssInstance == null)
+                {
+                    calssInstance = new Debugger();
+                    debugFile = new FileStream( Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData) + "\\" + "MezeoFileLogs.txt", FileMode.Append, FileAccess.Write);
+                }
+
+                return calssInstance;
+            }
         }
 
         ~Debugger()
         {
-            //debugFile.Close();
+            debugFile.Close();
         }
 
         public void logMessage(string tag, string message)
         {
-            //if (!File.Exists(@"C:\MezeoFileLogs.txt"))
-            //{
-            //    using (StreamWriter sw = File.CreateText(@"C:\MezeoFileLogs.txt"))
-            //    {
-            //        sw.WriteLine(DateTime.Now.ToString());
-            //        sw.WriteLine(tag);
-            //        sw.WriteLine(message);
-            //        sw.WriteLine("\n\n");
-            //        sw.Close();
-            //    }
-            //}
-            //else
-            //{
-            //    using (StreamWriter sw = File.AppendText(@"C:\MezeoFileLogs.txt"))
-            //    {
-            //        sw.WriteLine(DateTime.Now.ToString());
-            //        sw.WriteLine(tag);
-            //        sw.WriteLine(message);
-            //        sw.WriteLine("\n\n");
-            //        sw.Close();
-            //    }
-            //}
+            byte[] byteBuff = System.Text.Encoding.ASCII.GetBytes(DateTime.Now.ToString() + "\n");
 
-            //byte[] byteBuff = System.Text.Encoding.ASCII.GetBytes(DateTime.Now.ToString() + "\n");
+            debugFile.Write(byteBuff, 0, byteBuff.Length);
 
-            //debugFile.Write(byteBuff, 0, byteBuff.Length);
+            byteBuff = System.Text.Encoding.ASCII.GetBytes(tag + " - " + message + "\n");
+            debugFile.Write(byteBuff, 0, byteBuff.Length);
 
-            //byteBuff = System.Text.Encoding.ASCII.GetBytes(tag + "\n");
-            //debugFile.Write(byteBuff, 0, byteBuff.Length);
+            byteBuff = System.Text.Encoding.ASCII.GetBytes("---\n");
+            debugFile.Write(byteBuff, 0, byteBuff.Length);
 
-            //byteBuff = System.Text.Encoding.ASCII.GetBytes(message + "\n");
-            //debugFile.Write(byteBuff, 0, byteBuff.Length);
-
-            //debugFile.Flush();
+            debugFile.Flush();
         }
     }
 }

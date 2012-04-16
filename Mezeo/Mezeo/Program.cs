@@ -21,6 +21,8 @@ namespace Mezeo
         static void Main()
         {//// {D19F100E-113F-4751-820C-FD5AF8D17A55}
 
+            AppDomain.CurrentDomain.UnhandledException += new UnhandledExceptionEventHandler(CurrentDomain_UnhandledException);
+
             string strLoc = Assembly.GetExecutingAssembly().Location;
             FileSystemInfo fileInfo = new FileInfo(strLoc);
             string sExeName = fileInfo.Name; 
@@ -60,6 +62,23 @@ namespace Mezeo
                 Application.Run();
             }
 
+        }
+
+        static void CurrentDomain_UnhandledException(object sender, UnhandledExceptionEventArgs e)
+        {
+            
+            Debugger.Instance.logMessage("APP DOMAIN CRASH ", e.ToString());
+            
+            StackTrace trace = new StackTrace(true);
+
+            for (int i = 0; i < trace.FrameCount; i++)
+            {
+                StackFrame sf = trace.GetFrame(i);
+                Debugger.Instance.logMessage("High up the call stack, Method: ",  sf.GetMethod().ToString());
+                Debugger.Instance.logMessage("High up the call stack, Method: ", sf.GetFileLineNumber().ToString());
+            }
+
+            
         }
     }
 }

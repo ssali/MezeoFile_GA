@@ -164,7 +164,7 @@
             this.lblStatusL1.AutoEllipsis = true;
             this.lblStatusL1.Location = new System.Drawing.Point(147, 13);
             this.lblStatusL1.Name = "lblStatusL1";
-            this.lblStatusL1.Size = new System.Drawing.Size(301, 13);
+            this.lblStatusL1.Size = new System.Drawing.Size(343, 13);
             this.lblStatusL1.TabIndex = 5;
             // 
             // imgStatus
@@ -494,6 +494,7 @@
         private System.Windows.Forms.Label lblFolder;
         private System.Windows.Forms.Button btnSyncNow;
         private System.Windows.Forms.Label lblStatusL3;
+        //private LabelEllipsis lblStatusL3;
         private System.Windows.Forms.Label lblStatusL1;
         private System.Windows.Forms.Label lblUsageDetails;
         private System.Windows.Forms.Button btnMoveFolder;

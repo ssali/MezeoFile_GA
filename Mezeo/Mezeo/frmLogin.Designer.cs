@@ -191,7 +191,7 @@
             // 
             // tmrConnectionCheck
             // 
-            this.tmrConnectionCheck.Interval = 5000;
+            this.tmrConnectionCheck.Interval = 300000;
             this.tmrConnectionCheck.Tick += new System.EventHandler(this.tmrConnectionCheck_Tick);
             // 
             // cmLogin

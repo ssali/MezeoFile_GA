@@ -181,6 +181,17 @@ namespace MezeoFileSupport
         }
     };
 
+    public class NQLengthResult
+    {
+        public int nStart;
+        public int nEnd;
+        public NQLengthResult()
+        {
+            nStart  = 0;
+            nEnd = 0;
+        }
+    };
+
     public class MezeoFileCloud
     {
         private String m_strLoginName;
@@ -193,6 +204,9 @@ namespace MezeoFileSupport
 
         public delegate void FileDownloadStoppedEvent(string fileName);
         public event FileDownloadStoppedEvent downloadStoppedEvent;
+
+        public delegate void FileUploadStoppedEvent(string szSourceFileName, string szContantURI);
+        public event FileUploadStoppedEvent uploadStoppedEvent;
 
         //create request format for get details
         private void OnGetRequest(ref HttpWebRequest webRequest, String strRequestURL, String strAccept, String strXCloudDepth, String strMethod)
@@ -239,8 +253,9 @@ namespace MezeoFileSupport
             webRequest.Timeout = nTimeout;
         }
 
-        private void OnPostAndPutRequest(ref HttpWebRequest webRequest, String strRequestURL, String strSource, String strContentType, String strLoadHeader, String strFinalBoundary, String StrMethod, String strDest)
+        private bool OnPostAndPutRequest(ref HttpWebRequest webRequest, String strRequestURL, String strSource, String strContentType, String strLoadHeader, String strFinalBoundary, String StrMethod, String strDest)
         {
+            bool bStatus = true;
 	        webRequest = (HttpWebRequest)WebRequest.Create( strRequestURL );
 	        webRequest.Credentials = new NetworkCredential(m_strLoginName, m_strPassword);
 	        webRequest.PreAuthenticate = true;
@@ -250,8 +265,9 @@ namespace MezeoFileSupport
             if(strDest != "")
                 webRequest.Headers.Add("Content-Location", strDest);
 	        webRequest.ContentType = strContentType;
-	        //webRequest.Timeout = 86400000;
             webRequest.Timeout = System.Threading.Timeout.Infinite;
+            webRequest.SendChunked = true;
+            webRequest.AllowWriteStreamBuffering = false;
 
             Stream writeStream = webRequest.GetRequestStream();
 	        if( writeStream != null)
@@ -260,15 +276,22 @@ namespace MezeoFileSupport
 		        writeStream.Write(bytes, 0, bytes.Length);
 		        if(strSource != "")
 		        {
-                    FileStream fileStream = new FileStream(strSource, FileMode.Open, FileAccess.Read);
+                    FileStream fileStream = new FileStream(strSource, FileMode.Open, FileAccess.Read, FileShare.ReadWrite);
 			        if( fileStream != null)
 			        {
 				        byte[] buffer = new byte[4096];
 				        int bytesRead = 0;
-
+                        
 				        while ((bytesRead = fileStream.Read(buffer, 0, buffer.Length)) != 0)
 				        {
 					        writeStream.Write(buffer, 0, bytesRead);
+                            
+                            if (m_bStop)
+                            {
+                                m_bStop = false;
+                                bStatus = false;
+                                break;
+                            }
 				        }
 				        fileStream.Close();
 			        }
@@ -277,6 +300,7 @@ namespace MezeoFileSupport
 		        }
 		        writeStream.Close();
 	        }
+            return bStatus;
         }
 
         //save on the local drive
@@ -357,64 +381,26 @@ namespace MezeoFileSupport
         }
 
         //get exception for item get
-        private int OnGetException(WebException webEx)
+        private int OnException(WebException webEx)
         {
 	        if (webEx.Status == WebExceptionStatus.NameResolutionFailure)
 		        return -2;
 	        else if(webEx.Status == WebExceptionStatus.ProtocolError)
 	        {
-		        if(((HttpWebResponse)webEx.Response).StatusCode == HttpStatusCode.NotFound)
-			        return 404;
-		        else if(((HttpWebResponse)webEx.Response).StatusCode == HttpStatusCode.NotAcceptable)
-			        return 406;
-		        else if(((HttpWebResponse)webEx.Response).StatusCode == HttpStatusCode.Conflict)
-			        return 409;
-                else if (((HttpWebResponse)webEx.Response).StatusCode == HttpStatusCode.NotModified)
+                if (((HttpWebResponse)webEx.Response).StatusCode == HttpStatusCode.NotModified)
                     return 304;
-	        }
-	        return -1;
-        }
-
-        private int OnPostException(WebException webEx)
-        {
-	        if (webEx.Status == WebExceptionStatus.NameResolutionFailure)
-		        return -2;
-	        else if(webEx.Status == WebExceptionStatus.ProtocolError)
-	        {
-		        if(((HttpWebResponse)webEx.Response).StatusCode == HttpStatusCode.UnsupportedMediaType)
-			        return 415;
-		        else if(((HttpWebResponse)webEx.Response).StatusCode == HttpStatusCode.Conflict)
-			        return 409;
-	        }
-	        return -1;
-        }
-
-        private int OnDeleteException(WebException webEx)
-        {
-	        if (webEx.Status == WebExceptionStatus.NameResolutionFailure)
-		        return -2;
-	        else if(webEx.Status == WebExceptionStatus.ProtocolError)
-	        {
-		        if(((HttpWebResponse)webEx.Response).StatusCode == HttpStatusCode.NotFound)
-			        return 404;
-		        else if(((HttpWebResponse)webEx.Response).StatusCode == HttpStatusCode.Conflict)
-			        return 409;
-	        }
-	        return -1;
-        }
-
-        private int OnPutException(WebException webEx)
-        {
-	        if (webEx.Status == WebExceptionStatus.NameResolutionFailure)
-		        return -2;
-	        else if(webEx.Status == WebExceptionStatus.ProtocolError)
-	        {
-		        if(((HttpWebResponse)webEx.Response).StatusCode == HttpStatusCode.NotFound)
-			        return 404;
-		        else if(((HttpWebResponse)webEx.Response).StatusCode == HttpStatusCode.UnsupportedMediaType)
-			        return 415;
-		        else if(((HttpWebResponse)webEx.Response).StatusCode == HttpStatusCode.Conflict)
-			        return 409;
+                else if (((HttpWebResponse)webEx.Response).StatusCode == HttpStatusCode.Unauthorized)
+                    return 401;
+                else if (((HttpWebResponse)webEx.Response).StatusCode == HttpStatusCode.Forbidden)
+                    return 403;
+                else if (((HttpWebResponse)webEx.Response).StatusCode == HttpStatusCode.NotFound)
+                    return 404;
+                else if (((HttpWebResponse)webEx.Response).StatusCode == HttpStatusCode.NotAcceptable)
+                    return 406;
+                else if (((HttpWebResponse)webEx.Response).StatusCode == HttpStatusCode.Conflict)
+                    return 409;
+                else if (((HttpWebResponse)webEx.Response).StatusCode == HttpStatusCode.UnsupportedMediaType)
+                    return 415;
 	        }
 	        return -1;
         }
@@ -432,7 +418,7 @@ namespace MezeoFileSupport
             Stream writeStream = webRequest.GetRequestStream();
 	        if( writeStream != null)
 	        {
-                FileStream fileStream = new FileStream(strSource, FileMode.Open, FileAccess.Read);
+                FileStream fileStream = new FileStream(strSource, FileMode.Open, FileAccess.Read, FileShare.ReadWrite);
 		        if(fileStream != null)
 		        {
 			        byte[] buffer = new byte[4096];
@@ -489,7 +475,10 @@ namespace MezeoFileSupport
                     nodeXml.RemoveAll();
                 }
                 else
+                {
+                    pLoginDetails.szContainerContentsUri = "";
                     nStatusCode = -4;
+                }
 
                 nodeXml = m_xmlDocument.SelectSingleNode("/cloud/locations/location/management");
                 if (nodeXml != null)
@@ -498,7 +487,10 @@ namespace MezeoFileSupport
                     nodeXml.RemoveAll();
                 }
                 else
+                {
+                    pLoginDetails.szManagementUri = "";
                     nStatusCode = -4;
+                }
 
                 /*nodeXml = m_xmlDocument.SelectSingleNode("/cloud/rootContainer");
                 pLoginDetails.szContainerContentsUri = nodeXml.Attributes["xlink:href"].Value;
@@ -553,23 +545,38 @@ namespace MezeoFileSupport
 
                 nodeXml.RemoveAll();
                 nodeXml = m_xmlDocument.SelectSingleNode("/account-info/storage/allocated");
-                pLoginDetails.dblStorage_Allocated = Convert.ToInt32(nodeXml.InnerText);
+                pLoginDetails.dblStorage_Allocated = Convert.ToDouble(nodeXml.InnerText);
 
                 nodeXml.RemoveAll();
                 nodeXml = m_xmlDocument.SelectSingleNode("/account-info/storage/used");
-                pLoginDetails.dblStorage_Used = Convert.ToInt32(nodeXml.InnerText);
+                if (nodeXml != null)
+                {
+                    pLoginDetails.dblStorage_Used = Convert.ToInt64(nodeXml.InnerText);
+                    nodeXml.RemoveAll();
+                }
+                else
+                    pLoginDetails.dblStorage_Used = 0;
 
-                nodeXml.RemoveAll();
                 nodeXml = m_xmlDocument.SelectSingleNode("/account-info/s3/authid");
-                pLoginDetails.szS3_Authid = nodeXml.InnerText;
+                if (nodeXml != null)
+                {
+                    pLoginDetails.szS3_Authid = nodeXml.InnerText;
+                    nodeXml.RemoveAll();
+                }
+                else
+                    pLoginDetails.szS3_Authid = "";
 
-                nodeXml.RemoveAll();
                 nodeXml = m_xmlDocument.SelectSingleNode("/account-info/s3/authkey");
-                pLoginDetails.szs3_Authkey = nodeXml.InnerText;
+                if (nodeXml != null)
+                {
+                    pLoginDetails.szs3_Authkey = nodeXml.InnerText;
+                    nodeXml.RemoveAll();
+                }
+                else
+                    pLoginDetails.szs3_Authkey = "";
 
-                nodeXml.RemoveAll();
                 nodeXml = m_xmlDocument.SelectSingleNode("/account-info/bandwidth/allocated");
-                pLoginDetails.dblBandWidth_Allocated = Convert.ToInt32(nodeXml.InnerText);
+                pLoginDetails.dblBandWidth_Allocated = Convert.ToInt64(nodeXml.InnerText);
 
                 nodeXml.RemoveAll();
                 nodeXml = m_xmlDocument.SelectSingleNode("/account-info/bandwidth/total");
@@ -611,7 +618,7 @@ namespace MezeoFileSupport
 	        }
 	        catch(WebException wEx)
 	        {
-		        nStatusCode = OnGetException(wEx);
+                nStatusCode = OnException(wEx);
 		        return null;
 	        }
 	        catch
@@ -745,7 +752,7 @@ namespace MezeoFileSupport
 	        }
 	        catch(WebException wEx)
 	        {
-		        nStatusCode = OnGetException(wEx);
+                nStatusCode = OnException(wEx);
 		        return null;
 	        }
 	        catch
@@ -798,7 +805,7 @@ namespace MezeoFileSupport
 	        }
 	        catch(WebException wEx)
 	        {
-		        nStatusCode = OnGetException(wEx);
+                nStatusCode = OnException(wEx);
 		        bStatus = false;
 	        }
 	        catch
@@ -869,7 +876,7 @@ namespace MezeoFileSupport
 	        }
 	        catch(WebException wEx)
 	        {
-		        nStatusCode = OnGetException(wEx);
+                nStatusCode = OnException(wEx);
 		        return "";
 	        }
 	        catch
@@ -974,7 +981,7 @@ namespace MezeoFileSupport
 	        }
 	        catch(WebException wEx)
 	        {
-		        nStatusCode = OnGetException(wEx);
+                nStatusCode = OnException(wEx);
 		        return null;
 	        }
 	        catch
@@ -1063,13 +1070,14 @@ namespace MezeoFileSupport
             public string cdmi_size { get; set; }
         }
 
-        public Int32 NQGetLength(String StrUri, String StrQueueName, ref int nStatusCode)
+        public NQLengthResult NQGetLength(String StrUri, String StrQueueName, ref int nStatusCode)
         {
             nStatusCode = 0;
             StrUri += "/" + StrQueueName + "?queueValues";
             
             String StrRev;
             Int32 nRet = 0;
+            NQLengthResult pNQLengthResult = null;
             try
             {
                 HttpWebRequest webRequest = null;
@@ -1082,25 +1090,51 @@ namespace MezeoFileSupport
                 webRequest.Abort();
                 response.Close();
 
+                pNQLengthResult = new NQLengthResult();
+
                 OnGetNQQueueValue pGetNQQueueValue = OnJSONHelper.Deserialise<OnGetNQQueueValue>(StrRev);
-                nRet = pGetNQQueueValue.queueValues.IndexOf('-') ;
-                StrRev = pGetNQQueueValue.queueValues.Substring(0, nRet);
-                nRet++;
-                nRet = Convert.ToInt32( pGetNQQueueValue.queueValues.Substring(nRet, pGetNQQueueValue.queueValues.Length - nRet) );
-                nRet -= Convert.ToInt32(StrRev);
-                nRet += 1;
+                nRet = pGetNQQueueValue.queueValues.IndexOf('-');
+
+                if (nRet > -1)
+                {
+                    StrRev = pGetNQQueueValue.queueValues.Substring(0, nRet);
+                    nRet++;
+                    nRet = Convert.ToInt32(pGetNQQueueValue.queueValues.Substring(nRet, pGetNQQueueValue.queueValues.Length - nRet));
+
+                    pNQLengthResult.nStart = Convert.ToInt32(StrRev);
+                    pNQLengthResult.nEnd = nRet;
+                }
+                else
+                {
+                    pNQLengthResult.nStart = -1;
+                    pNQLengthResult.nEnd = -1;
+                }
+
+                /*if (nRet > -1)
+                {
+                    StrRev = pGetNQQueueValue.queueValues.Substring(0, nRet);
+                    nRet++;
+                    if (nRet < pGetNQQueueValue.queueValues.Length)
+                    {
+                        nRet = Convert.ToInt32(pGetNQQueueValue.queueValues.Substring(nRet, pGetNQQueueValue.queueValues.Length - nRet));
+                        nRet -= Convert.ToInt32(StrRev);
+                        nRet += 1;
+                    }
+                    else
+                        nRet = 0;
+                }*/
             }
             catch (WebException wEx)
             {
-                nStatusCode = OnGetException(wEx);
-                return 0;
+                nStatusCode = OnException(wEx);
+                return null;
             }
             catch
             {
                 nStatusCode = -3;
-                return 0;
+                return null;
             }
-            return nRet;
+            return pNQLengthResult;
         }
 
         public NQDetails[] NQGetData(String StrUri, String StrQueueName, Int32 nCountValue, ref int nStatusCode)
@@ -1167,7 +1201,7 @@ namespace MezeoFileSupport
             }
             catch (WebException wEx)
             {
-                nStatusCode = OnGetException(wEx);
+                nStatusCode = OnException(wEx);
                 return null;
             }
             catch
@@ -1219,7 +1253,7 @@ namespace MezeoFileSupport
             }
             catch (WebException wEx)
             {
-                nStatusCode = OnGetException(wEx);
+                nStatusCode = OnException(wEx);
                 return false;
             }
             catch
@@ -1249,7 +1283,36 @@ namespace MezeoFileSupport
             }
             catch (WebException wEx)
             {
-                nStatusCode = OnGetException(wEx);
+                nStatusCode = OnException(wEx);
+                return false;
+            }
+            catch
+            {
+                nStatusCode = -3;
+                return false;
+            }
+            return true;
+        }
+
+        public bool NQDelete(String StrUri, String StrQueueName, ref int nStatusCode)
+        {
+            StrUri += "/" + StrQueueName;
+
+            try
+            {
+                HttpWebRequest webRequest = null;
+                OnNotificationQueue(ref webRequest, StrUri, "DELETE");
+
+                HttpWebResponse response = (HttpWebResponse)webRequest.GetResponse();
+                nStatusCode = 200;
+
+                webRequest.Abort();
+                response.Close();
+
+            }
+            catch (WebException wEx)
+            {
+                nStatusCode = OnException(wEx);
                 return false;
             }
             catch
@@ -1281,7 +1344,7 @@ namespace MezeoFileSupport
             }
             catch (WebException wEx)
             {
-                nStatusCode = OnGetException(wEx);
+                nStatusCode = OnException(wEx);
                 return "";
             }
             catch
@@ -1316,10 +1379,11 @@ namespace MezeoFileSupport
                 StrRef = StrRef.Substring(0, (StrRef.Length - Environment.NewLine.Length));
 		        webRequest.Abort();
 		        response.Close();
+
 	        }
 	        catch(WebException wEx)
 	        {
-		        nStatusCode = OnPostException(wEx);
+                nStatusCode = OnException(wEx);
 		        return "";
 	        }
 	        catch
@@ -1350,28 +1414,36 @@ namespace MezeoFileSupport
             strLoadHeader += "Content-Disposition: form-data; name=\"Filedata\"; filename=\"" + strFileName + "\"\r\n";
             strLoadHeader += "Content-Type: " + OnGetMimeType(strSource) + "\r\n\r\n";
 
-	        try
-	        {
-		        HttpWebRequest webRequest = null;
-                OnPostAndPutRequest(ref webRequest, strDestination, strSource, "multipart/form-data; boundary=" + strBoundary, strLoadHeader, "\r\n--" + strBoundary + "--\r\n", "POST", "");
+            try
+            {
+                HttpWebRequest webRequest = null;
+                bool bStatus = OnPostAndPutRequest(ref webRequest, strDestination, strSource, "multipart/form-data; boundary=" + strBoundary, strLoadHeader, "\r\n--" + strBoundary + "--\r\n", "POST", "");
 
-		        HttpWebResponse response = (HttpWebResponse)webRequest.GetResponse();
-		        nStatusCode = 201;
-		        StrRet = OnGetResponseString(response.GetResponseStream());
+                HttpWebResponse response = (HttpWebResponse)webRequest.GetResponse();
+                nStatusCode = 201;
+                StrRet = OnGetResponseString(response.GetResponseStream());
                 StrRet = StrRet.Substring(0, (StrRet.Length - Environment.NewLine.Length));
-		        webRequest.Abort();
-		        response.Close();
-	        }
-	        catch(WebException wEx)
-	        {
-		        nStatusCode = OnPostException(wEx);
-		        return "";
-	        }
-	        catch
-	        {
-		        nStatusCode = -3;
-		        return "";
-	        }
+                webRequest.Abort();
+                response.Close();
+                if (!bStatus)
+                {
+                    if (uploadStoppedEvent != null)
+                    {
+                        nStatusCode = -4;
+                        uploadStoppedEvent(strSource, StrRet);
+                    }
+                }
+            }
+            catch (WebException wEx)
+            {
+                nStatusCode = OnException(wEx);
+                return "";
+            }
+            catch
+            {
+                nStatusCode = -3;
+                return "";
+            }
 
             return StrRet;
         }
@@ -1391,7 +1463,7 @@ namespace MezeoFileSupport
 	        }
 	        catch(WebException wEx)
 	        {
-		        nStatusCode = OnPutException(wEx);
+                nStatusCode = OnException(wEx);
 		        return false;
 	        }
 	        catch
@@ -1433,7 +1505,7 @@ namespace MezeoFileSupport
 	        }
 	        catch(WebException wEx)
 	        {
-		        nStatusCode = OnGetException(wEx);
+                nStatusCode = OnException(wEx);
 		        return null;
 	        }
 	        catch
@@ -1481,7 +1553,7 @@ namespace MezeoFileSupport
 	        }
 	        catch(WebException wEx)
 	        {
-		        nStatusCode = OnGetException(wEx);
+                nStatusCode = OnException(wEx);
 		        return "";
 	        }
 	        catch
@@ -1519,11 +1591,11 @@ namespace MezeoFileSupport
 		        HttpWebResponse response = (HttpWebResponse)webRequest.GetResponse();
 		        nStatusCode = 204;
 		        webRequest.Abort();
-		        response.Close();
+		        response.Close();             
 	        }
 	        catch(WebException wEx)
 	        {
-		        nStatusCode = OnPutException(wEx);
+                nStatusCode = OnException(wEx);
 		        return false;
 	        }
 	        catch
@@ -1558,7 +1630,7 @@ namespace MezeoFileSupport
 	        }
 	        catch(WebException wEx)
 	        {
-		        nStatusCode = OnPutException(wEx);
+                nStatusCode = OnException(wEx);
 		        return false;
 	        }
 	        catch
@@ -1585,7 +1657,7 @@ namespace MezeoFileSupport
 	        }
 	        catch(WebException wEx)
 	        {
-		        nStatusCode = OnDeleteException(wEx);
+                nStatusCode = OnException(wEx);
 		        return false;
 	        }
 	        catch
@@ -1628,7 +1700,7 @@ namespace MezeoFileSupport
             }
             catch (WebException wEx)
             {
-                nStatusCode = OnPutException(wEx);
+                nStatusCode = OnException(wEx);
                 return false;
             }
             catch
@@ -1670,7 +1742,7 @@ namespace MezeoFileSupport
             }
             catch (WebException wEx)
             {
-                nStatusCode = OnPutException(wEx);
+                nStatusCode = OnException(wEx);
                 return false;
             }
             catch
@@ -1715,7 +1787,7 @@ namespace MezeoFileSupport
             }
             catch (WebException wEx)
             {
-                nStatusCode = OnPutException(wEx);
+                nStatusCode = OnException(wEx);
                 return "";
             }
             catch
@@ -1826,7 +1898,7 @@ namespace MezeoFileSupport
             }
             catch (WebException wEx)
             {
-                nStatusCode = OnGetException(wEx);
+                nStatusCode = OnException(wEx);
                 return null;
             }
             catch
@@ -1871,7 +1943,7 @@ namespace MezeoFileSupport
             }
             catch (WebException wEx)
             {
-                nStatusCode = OnGetException(wEx);
+                nStatusCode = OnException(wEx);
                 return "";
             }
             catch
@@ -1912,7 +1984,7 @@ namespace MezeoFileSupport
 	        }
 	        catch(WebException wEx)
 	        {
-		        nStatusCode = OnGetException(wEx);
+                nStatusCode = OnException(wEx);
 		        return 0;
 	        }
 	        catch
@@ -1934,13 +2006,15 @@ namespace MezeoFileSupport
                 webRequest.Timeout = nTimeout;
 
 		        HttpWebResponse response = (HttpWebResponse)webRequest.GetResponse();
+
 		        nStatusCode = 200;
+
                 webRequest.Abort();
 		        response.Close();
 	        }
 	        catch(WebException wEx)
 	        {
-		        nStatusCode = OnGetException(wEx);
+                nStatusCode = OnException(wEx);
 		        return false;
 	        }
 	        catch
@@ -1990,7 +2064,7 @@ namespace MezeoFileSupport
 	        }
 	        catch(WebException wEx)
 	        {
-		        nStatusCode = OnGetException(wEx);
+                nStatusCode = OnException(wEx);
 		        return false;
 	        }
 	        catch

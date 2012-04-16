@@ -143,9 +143,17 @@ namespace Mezeo
                     this.txtServerUrl.Enabled = false;
                     this.btnLogin.Enabled = false;
                     this.labelError.Text = "";
+
+                    bwLogin.RunWorkerAsync();
+                }
+                else
+                {
+                    tmrConnectionCheck.Enabled = true;
+                    internetConnection = false;
+                    ShowSyncManagerOfffline();
                 }
                //if (BasicInfo.IsConnectedToInternet)
-                 bwLogin.RunWorkerAsync();
+                // bwLogin.RunWorkerAsync();
             }
         }
 
@@ -260,14 +268,25 @@ namespace Mezeo
             if (loginDetails == null)
             {
                 tmrConnectionCheck.Enabled = true;
-                if (!BasicInfo.IsConnectedToInternet)
-                {
-                    ShowSyncManagerOfffline();
-                }
-                else
+                if ((int)e.Result == 403 || (int)e.Result == 401)
                 {
                     ShowLoginError();
                 }
+                else
+                {
+                    internetConnection = false;
+                    ShowSyncManagerOfffline();
+                }
+
+                //tmrConnectionCheck.Enabled = true;
+                //if (!BasicInfo.IsConnectedToInternet)
+                //{
+                //    ShowSyncManagerOfffline();
+                //}
+                //else
+                //{
+                //    ShowLoginError();
+                //}
                 return;
                 
             }
@@ -327,6 +346,7 @@ namespace Mezeo
             }
             else if (!BasicInfo.IsConnectedToInternet)
             {
+                internetConnection = false;
                 //ShellNotifyIcon.SetNotifyIconHandle(Properties.Resources.app_offline.Handle);
                 notificationManager.NotifyIcon = Properties.Resources.app_offline;
                 syncManager.DisableSyncManager();
@@ -390,15 +410,27 @@ namespace Mezeo
                 NQDetails[] pNQDetails = null;
                 string queueName = BasicInfo.GetMacAddress + "-" + BasicInfo.UserName;
 
-                int nNQLength = mezeoFileCloud.NQGetLength(BasicInfo.ServiceUrl + loginDetails.szNQParentUri, queueName, ref nStatusCode);
+                //int nNQLength = mezeoFileCloud.NQGetLength(BasicInfo.ServiceUrl + loginDetails.szNQParentUri, queueName, ref nStatusCode);
+                NQLengthResult nqLengthRes = mezeoFileCloud.NQGetLength(BasicInfo.ServiceUrl + loginDetails.szNQParentUri, queueName, ref nStatusCode);
                 if (nStatusCode == 404)
                 {
                     bool bRet = mezeoFileCloud.NQCreate(BasicInfo.ServiceUrl + NQParentURI, queueName, NQParentURI, ref nStatusCode);
                 }
                 else
                 {
+                    int nNQLength = 0;
+                    if(nqLengthRes.nEnd == -1 || nqLengthRes.nStart == -1)
+                        nNQLength = 0;
+                    else
+                        nNQLength = (nqLengthRes.nEnd + 1) - nqLengthRes.nStart;
+ 
                     if (BasicInfo.IsInitialSync && nNQLength > 0)
-                        mezeoFileCloud.NQDeleteValue(BasicInfo.ServiceUrl + loginDetails.szNQParentUri, queueName, nNQLength, ref nStatusCode);
+                    {
+                        bool bRet = mezeoFileCloud.NQDelete(BasicInfo.ServiceUrl + NQParentURI, queueName, ref nStatusCode);
+                        if(bRet && nStatusCode == 200)
+                            bRet = mezeoFileCloud.NQCreate(BasicInfo.ServiceUrl + NQParentURI, queueName, NQParentURI, ref nStatusCode);
+                        //mezeoFileCloud.NQDeleteValue(BasicInfo.ServiceUrl + loginDetails.szNQParentUri, queueName, nNQLength, ref nStatusCode);
+                    }
                 }
 
                 
@@ -456,27 +488,34 @@ namespace Mezeo
 
         public void HandleConnectionState()
         {
+            Debugger.Instance.logMessage("frmLogin - HandleConnectionState()", "Enter");
+            Debugger.Instance.logMessage("frmLogin - HandleConnectionState() internetConnection -", internetConnection.ToString());
             if (BasicInfo.IsConnectedToInternet != internetConnection)
             {
                 tmrConnectionCheck.Enabled = false;
                 internetConnection = BasicInfo.IsConnectedToInternet;
+                Debugger.Instance.logMessage("frmLogin - HandleConnectionState() internetConnection Changed -", internetConnection.ToString());
 
                 if (BasicInfo.IsConnectedToInternet)
                 {
+                    Debugger.Instance.logMessage("frmLogin - HandleConnectionState() ", "Connected Enter");
+                    int referenceCode = 0;
                     if (loginDetails == null && BasicInfo.IsCredentialsAvailable)
                     {
-                        int referenceCode = 0;
+                        Debugger.Instance.logMessage("frmLogin - HandleConnectionState() ", "Login try");
                         loginDetails = mezeoFileCloud.Login(BasicInfo.UserName, BasicInfo.Password, validateServiceUrl(BasicInfo.ServiceUrl), ref referenceCode);
                         if (loginDetails != null)
                         {
+                            Debugger.Instance.logMessage("frmLogin - HandleConnectionState() ", "Login Success");
                             mezeoFileCloud.AppEventViewer(AboutBox.AssemblyTitle, LanguageTranslator.GetValue("LoginSuccess"), 3);
                             CheckAndCreateSyncDirectory();
                             CheckAndCreateNotificationQueue();
                         }
                     }
 
-                    if (loginDetails == null)
+                    if (loginDetails == null && (referenceCode == 403 || referenceCode == 401))
                     {
+                        Debugger.Instance.logMessage("frmLogin - HandleConnectionState() ", "Login Error referenceCode - " + referenceCode.ToString());
                         this.labelError.Text = LanguageTranslator.GetValue("LoginErrorText");
                         this.txtUserName.Enabled = false;
                         this.txtPasswrod.Enabled = true;
@@ -508,9 +547,11 @@ namespace Mezeo
                                 syncManager.InitializeSync();
                         }
                     }
+                    Debugger.Instance.logMessage("frmLogin - HandleConnectionState() ", "Connected Leave");
                 }
                 else
                 {
+                    Debugger.Instance.logMessage("frmLogin - HandleConnectionState() ", "DisConnected Enter");
                     //ShellNotifyIcon.SetNotifyIconHandle(Properties.Resources.app_offline.Handle);
                     //ShellNotifyIcon.SetNotifyIconBalloonText(LanguageTranslator.GetValue("TrayAppOfflineText"), LanguageTranslator.GetValue("TrayBalloonSyncStatusText"));
                     //ShellNotifyIcon.SetNotifyIconToolTip(LanguageTranslator.GetValue("TrayAppOfflineText"));
@@ -521,15 +562,19 @@ namespace Mezeo
                         syncManager.ShowSyncManagerOffline();
                     }
 
-                    
+                    Debugger.Instance.logMessage("frmLogin - HandleConnectionState() ", "DisConnected Leave");   
                 }
                 tmrConnectionCheck.Enabled = true;
             }
+
+            Debugger.Instance.logMessage("frmLogin - HandleConnectionState()", "Leave");
         }
 
         private void tmrConnectionCheck_Tick(object sender, EventArgs e)
         {
+            Debugger.Instance.logMessage("frmLogin - tmrConnectionCheck_Tick", "Enter");
             HandleConnectionState();
+            Debugger.Instance.logMessage("frmLogin - tmrConnectionCheck_Tick", "Leave");
         }
 
         private void txtUserName_TextChanged(object sender, EventArgs e)

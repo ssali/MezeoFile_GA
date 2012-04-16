@@ -9,7 +9,6 @@ namespace Mezeo
 {
     class StructureDownloader
     {
-        Debugger debugger = new Debugger();
         public delegate void StructureDownloadEvent(object sender, StructureDownloaderEvent e);
         public event StructureDownloadEvent downloadEvent;
 
@@ -41,38 +40,38 @@ namespace Mezeo
         static int seq = 0;
         public StructureDownloader(Queue<LocalItemDetails> queue, ThreadLockObject lockObject, string rootContainerUrl, MezeoFileCloud fileCloud)
         {
-            debugger.logMessage("StructureDownloader - Constructor", "Enter");
+            Debugger.Instance.logMessage("StructureDownloader - Constructor", "Enter");
             this.queue = queue;
             this.lockObject = lockObject;
             cRootContainerUrl = rootContainerUrl;
             cFileCloud = fileCloud;
             dbhandler.OpenConnection();
 
-            debugger.logMessage("StructureDownloader - Constructor Call", "Content Url: " + rootContainerUrl);
-            debugger.logMessage("StructureDownloader - Constructor", "Leave");
-           // debugger.ShowLogger();
+            Debugger.Instance.logMessage("StructureDownloader - Constructor Call", "Content Url: " + rootContainerUrl);
+            Debugger.Instance.logMessage("StructureDownloader - Constructor", "Leave");
+           // Debugger.Instance.Instance.ShowLogger();
         }
 
         public void PrepareStructure(LocalItemDetails lItemdDetails)
         {
-            debugger.logMessage("StructureDownloader - PrepareStructure", "Enter");
+            Debugger.Instance.logMessage("StructureDownloader - PrepareStructure", "Enter");
 
                 lock (lockObject)
                 {
                     queue.Enqueue(lItemdDetails);
                     if (isRootContainer)
                     {
-                        debugger.logMessage("StructureDownloader - PrepareStructure", "Pulse");
+                        Debugger.Instance.logMessage("StructureDownloader - PrepareStructure", "Pulse");
                         Monitor.PulseAll(lockObject);
                     }
                 }
 
-                debugger.logMessage("StructureDownloader - PrepareStructure", "Leave");
+                Debugger.Instance.logMessage("StructureDownloader - PrepareStructure", "Leave");
         }
 
         public void startAnalyseItemDetails()
         {
-            debugger.logMessage("StructureDownloader - startAnalyseItemDetails", "Enter");
+            Debugger.Instance.logMessage("StructureDownloader - startAnalyseItemDetails", "Enter");
 
             int refCode=0;
             ItemDetails[] contents = cFileCloud.DownloadItemDetails(cRootContainerUrl, ref refCode);
@@ -84,81 +83,81 @@ namespace Mezeo
 
             if (contents == null)
             {
-                debugger.logMessage("StructureDownloader - startAnalyseItemDetails", "Contents Null");
+                Debugger.Instance.logMessage("StructureDownloader - startAnalyseItemDetails", "Contents Null");
 
                 if (downloadEvent != null)
                 {
 
-                    debugger.logMessage("StructureDownloader - startAnalyseItemDetails", "Called download event with TRUE");
+                    Debugger.Instance.logMessage("StructureDownloader - startAnalyseItemDetails", "Called download event with TRUE");
                     downloadEvent(this, new StructureDownloaderEvent(true));
                 }
 
                 if (startDownloaderEvent != null)
                 {
-                    debugger.logMessage("StructureDownloader - startAnalyseItemDetails", "Called startDownloaderEvent event with FALSE");
+                    Debugger.Instance.logMessage("StructureDownloader - startAnalyseItemDetails", "Called startDownloaderEvent event with FALSE");
                     startDownloaderEvent(false);
                 }
-                debugger.logMessage("StructureDownloader - startAnalyseItemDetails", "Leaving as contents are null");
+                Debugger.Instance.logMessage("StructureDownloader - startAnalyseItemDetails", "Leaving as contents are null");
                 return;
             }
 
             if (startDownloaderEvent != null)
             {
-                debugger.logMessage("StructureDownloader - startAnalyseItemDetails", "Called startDownloaderEvent event with TRUE");
+                Debugger.Instance.logMessage("StructureDownloader - startAnalyseItemDetails", "Called startDownloaderEvent event with TRUE");
                 startDownloaderEvent(true);
             }
 
             isRootContainer = true;
 
-            debugger.logMessage("StructureDownloader - startAnalyseItemDetails", "setting isRootContainer to TRUE");
-            debugger.logMessage("StructureDownloader - startAnalyseItemDetails", "Contents Length: " + contents.Length);
+            Debugger.Instance.logMessage("StructureDownloader - startAnalyseItemDetails", "setting isRootContainer to TRUE");
+            Debugger.Instance.logMessage("StructureDownloader - startAnalyseItemDetails", "Contents Length: " + contents.Length);
             foreach (ItemDetails iDetail in contents)
             {
-                debugger.logMessage("StructureDownloader - startAnalyseItemDetails", "Checking KEY in DB for content url: " + iDetail.szContentUrl + " with SUCCESS");
+                Debugger.Instance.logMessage("StructureDownloader - startAnalyseItemDetails", "Checking KEY in DB for content url: " + iDetail.szContentUrl + " with SUCCESS");
 
                 string strCheck = dbhandler.GetString(DbHandler.TABLE_NAME, DbHandler.KEY, new string[] { DbHandler.CONTENT_URL, DbHandler.STATUS }, new string[] { iDetail.szContentUrl, "SUCCESS" }, new System.Data.DbType[] { System.Data.DbType.String, System.Data.DbType.String });
                 if (strCheck.Trim().Length == 0)
                 {
-                    debugger.logMessage("StructureDownloader - startAnalyseItemDetails", "KEY for content url: " + iDetail.szContentUrl + " with SUCCESS not found in DB");
-                    debugger.logMessage("StructureDownloader - startAnalyseItemDetails", "Creating a new LocalItemDetails with Path: " + iDetail.strName);
+                    Debugger.Instance.logMessage("StructureDownloader - startAnalyseItemDetails", "KEY for content url: " + iDetail.szContentUrl + " with SUCCESS not found in DB");
+                    Debugger.Instance.logMessage("StructureDownloader - startAnalyseItemDetails", "Creating a new LocalItemDetails with Path: " + iDetail.strName);
                     LocalItemDetails lItem = new LocalItemDetails();
                     lItem.ItemDetails = iDetail;
                     lItem.Path = iDetail.strName;
                     totalFileCount++;
-                    debugger.logMessage("StructureDownloader - startAnalyseItemDetails", "totalFileCount: " + totalFileCount + "\n Calling PrepareStructure with lItem");
+                    Debugger.Instance.logMessage("StructureDownloader - startAnalyseItemDetails", "totalFileCount: " + totalFileCount + "\n Calling PrepareStructure with lItem");
                     PrepareStructure(lItem);
-                    debugger.logMessage("StructureDownloader - startAnalyseItemDetails", "returned from PrepareStructure");
+                    Debugger.Instance.logMessage("StructureDownloader - startAnalyseItemDetails", "returned from PrepareStructure");
                 }
             }
 
-            debugger.logMessage("StructureDownloader - startAnalyseItemDetails", "Contents total item count: " + contents[0].nTotalItem);
+            Debugger.Instance.logMessage("StructureDownloader - startAnalyseItemDetails", "Contents total item count: " + contents[0].nTotalItem);
             for (int n = 0; n < contents[0].nTotalItem; n++)
             {
                 if (lockObject.StopThread /*|| refCode != 200*/)
                 {
-                    debugger.logMessage("StructureDownloader - startAnalyseItemDetails", "Stop thread requested Calling CancelAndNotify");
+                    Debugger.Instance.logMessage("StructureDownloader - startAnalyseItemDetails", "Stop thread requested Calling CancelAndNotify");
                     CancelAndNotify();
                     break;
                 }
                 if (contents[n].szItemType == "DIRECTORY")
                 {
-                    debugger.logMessage("StructureDownloader - startAnalyseItemDetails", "Calling analyseItemDetails for DIR: " + contents[n].strName);
+                    Debugger.Instance.logMessage("StructureDownloader - startAnalyseItemDetails", "Calling analyseItemDetails for DIR: " + contents[n].strName);
                     analyseItemDetails(contents[n], contents[n].strName);
                 }
             }
 
             if (downloadEvent != null)
             {
-                debugger.logMessage("StructureDownloader - startAnalyseItemDetails", "Calling downloadEvent with TRUE");
+                Debugger.Instance.logMessage("StructureDownloader - startAnalyseItemDetails", "Calling downloadEvent with TRUE");
                 downloadEvent(this, new StructureDownloaderEvent(true));
             }
 
-            debugger.logMessage("StructureDownloader - startAnalyseItemDetails", "Leave");
+            Debugger.Instance.logMessage("StructureDownloader - startAnalyseItemDetails", "Leave");
         }
 
         public void analyseItemDetails(ItemDetails itemDetail,string strPath)
         {
-            debugger.logMessage("StructureDownloader - analyseItemDetails", "Enter");
+            Debugger.Instance.logMessage("StructureDownloader - analyseItemDetails", "Enter");
             int refCode = 0;
             ItemDetails[] contents = cFileCloud.DownloadItemDetails(itemDetail.szContentUrl, ref refCode);
 
@@ -169,61 +168,61 @@ namespace Mezeo
 
             if (contents == null)
             {
-                debugger.logMessage("StructureDownloader - analyseItemDetails", "Contents Null");
+                Debugger.Instance.logMessage("StructureDownloader - analyseItemDetails", "Contents Null");
                 return;
             }
 
             foreach (ItemDetails iDetail in contents)
             {
-                debugger.logMessage("StructureDownloader - analyseItemDetails", "Checking KEY in DB for content url: " + iDetail.szContentUrl + " with SUCCESS");
+                Debugger.Instance.logMessage("StructureDownloader - analyseItemDetails", "Checking KEY in DB for content url: " + iDetail.szContentUrl + " with SUCCESS");
 
                 string strCheck = dbhandler.GetString(DbHandler.TABLE_NAME, DbHandler.KEY, new string[] { DbHandler.CONTENT_URL, DbHandler.STATUS }, new string[] { iDetail.szContentUrl, "SUCCESS" }, new System.Data.DbType[] { System.Data.DbType.String, System.Data.DbType.String });
                 if (strCheck.Trim().Length == 0)
                 {
-                    debugger.logMessage("StructureDownloader - analyseItemDetails", "KEY for content url: " + iDetail.szContentUrl + " with SUCCESS not found in DB");
-                    debugger.logMessage("StructureDownloader - analyseItemDetails", "Creating a new LocalItemDetails with Path: " + iDetail.strName);
+                    Debugger.Instance.logMessage("StructureDownloader - analyseItemDetails", "KEY for content url: " + iDetail.szContentUrl + " with SUCCESS not found in DB");
+                    Debugger.Instance.logMessage("StructureDownloader - analyseItemDetails", "Creating a new LocalItemDetails with Path: " + iDetail.strName);
                     LocalItemDetails lItem = new LocalItemDetails();
                     lItem.ItemDetails = iDetail;
                     lItem.Path += strPath;
                     lItem.Path += "\\" + iDetail.strName;
                     totalFileCount++;
-                    debugger.logMessage("StructureDownloader - analyseItemDetails", "totalFileCount: " + totalFileCount + "\n Calling PrepareStructure with lItem");
+                    Debugger.Instance.logMessage("StructureDownloader - analyseItemDetails", "totalFileCount: " + totalFileCount + "\n Calling PrepareStructure with lItem");
                     PrepareStructure(lItem);
-                    debugger.logMessage("StructureDownloader - analyseItemDetails", "returned from PrepareStructure");
+                    Debugger.Instance.logMessage("StructureDownloader - analyseItemDetails", "returned from PrepareStructure");
                 }
             }
 
-            debugger.logMessage("StructureDownloader - analyseItemDetails", "Contents total item count: " + contents[0].nTotalItem);
+            Debugger.Instance.logMessage("StructureDownloader - analyseItemDetails", "Contents total item count: " + contents[0].nTotalItem);
             if (contents[0].nTotalItem > 0)
             {
                 for (int n = 0; n < contents[0].nTotalItem; n++)
                 {
                     if (lockObject.StopThread /*|| refCode != 200*/)
                     {
-                        debugger.logMessage("StructureDownloader - analyseItemDetails", "Stop thread requested Calling CancelAndNotify");
+                        Debugger.Instance.logMessage("StructureDownloader - analyseItemDetails", "Stop thread requested Calling CancelAndNotify");
                         CancelAndNotify();
                         break;
                     }
 
                     if (contents[n].szItemType == "DIRECTORY")
                     {
-                        debugger.logMessage("StructureDownloader - analyseItemDetails", "Calling analyseItemDetails for DIR: " + contents[n].strName);
+                        Debugger.Instance.logMessage("StructureDownloader - analyseItemDetails", "Calling analyseItemDetails for DIR: " + contents[n].strName);
                         analyseItemDetails(contents[n], strPath + "\\" + contents[n].strName);
                     }
                 }
             }
 
-            debugger.logMessage("StructureDownloader - analyseItemDetails", "Leave");
+            Debugger.Instance.logMessage("StructureDownloader - analyseItemDetails", "Leave");
         }
 
         private void CancelAndNotify()
         {
-            debugger.logMessage("StructureDownloader - CancelAndNotify", "Enter");
+            Debugger.Instance.logMessage("StructureDownloader - CancelAndNotify", "Enter");
             if(cancelDownloadEvent != null)
             {
                 cancelDownloadEvent();
             }
-            debugger.logMessage("StructureDownloader - CancelAndNotify", "Leave");
+            Debugger.Instance.logMessage("StructureDownloader - CancelAndNotify", "Leave");
         }
 
     }

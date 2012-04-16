@@ -58,6 +58,7 @@ namespace Mezeo
         private static int INITIAL_NQ_SYNC = LOCAL_EVENTS_COMPLETED + 1;
         private static int UPDATE_NQ_PROGRESS = INITIAL_NQ_SYNC + 1;
         private static int UPDATE_NQ_CANCELED = UPDATE_NQ_PROGRESS + 1;
+        private static int UPDATE_NQ_MAXIMUM = UPDATE_NQ_CANCELED + 1;
 
         private bool IsCalledByNextSyncTmr = false;
 
@@ -132,6 +133,8 @@ namespace Mezeo
 
             cMezeoFileCloud.downloadStoppedEvent += new MezeoFileCloud.FileDownloadStoppedEvent(cMezeoFileCloud_downloadStoppedEvent);
 
+            cMezeoFileCloud.uploadStoppedEvent += new MezeoFileCloud.FileUploadStoppedEvent(cMezeoFileCloud_uploadStoppedEvent);
+
             cLoginDetails = loginDetails;
             cnotificationManager = notificationManager;
 
@@ -150,6 +153,20 @@ namespace Mezeo
 
             frmIssuesFound = new frmIssues(mezeoFileCloud);
             offlineWatcher = new OfflineWatcher(dbHandler);
+        }
+
+        void cMezeoFileCloud_uploadStoppedEvent(string szSourceFileName, string szContantURI)
+        {
+            DeleteUploadedIncompleteFile(szContantURI);
+        }
+
+        void DeleteUploadedIncompleteFile(string szContantURI)
+        {
+            if (szContantURI.Trim().Length != 0)
+            {
+                int nStatusCode = 0;
+                bool bRet = cMezeoFileCloud.Delete(szContantURI, ref nStatusCode);
+            }
         }
 
         void cMezeoFileCloud_downloadStoppedEvent(string fileName)
@@ -289,6 +306,12 @@ namespace Mezeo
 
         private void btnSyncNow_Click(object sender, EventArgs e)
         {
+            if (!BasicInfo.IsConnectedToInternet)
+            {
+                frmParent.HandleConnectionState();
+                return;
+            }
+
             isEventCanceled = false;
             if (!isLocalEventInProgress)
             {
@@ -296,13 +319,14 @@ namespace Mezeo
             }
             else
             {
-                btnSyncNow.Enabled = false;
-                isLocalEventInProgress = false;
-                isEventCanceled = true;
-                bwLocalEvents.CancelAsync();
+                StopSync();
+                //btnSyncNow.Enabled = false;
+                //isLocalEventInProgress = false;
+                //isEventCanceled = true;
+                //bwLocalEvents.CancelAsync();
 
-                isOfflineWorking = false;
-                bwOfflineEvent.CancelAsync();
+                //isOfflineWorking = false;
+                //bwOfflineEvent.CancelAsync();
             }
         }
 
@@ -480,7 +504,7 @@ namespace Mezeo
                 
                 if (stDownloader.TotalFileCount > 0)
                 {
-                    pbSyncProgress.Maximum = stDownloader.TotalFileCount - (fileDownloadCount);
+                    pbSyncProgress.Maximum = stDownloader.TotalFileCount - (fileDownloadCount -1);
                 }
 
                 //pbSyncProgress.Maximum++;
@@ -643,7 +667,12 @@ namespace Mezeo
 
         public void InitializeSync()
         {
-           
+            if (!BasicInfo.IsConnectedToInternet)
+            {
+                frmParent.HandleConnectionState();
+                return;
+            }
+
             if (!isSyncInProgress)
             {
                 SetUpSync();
@@ -905,6 +934,8 @@ namespace Mezeo
 
         public void UpdateNQ()
         {
+            Debugger.Instance.logMessage("frmSyncManager - UpdateNQ", "Enter");
+
             lblStatusL1.Text = LanguageTranslator.GetValue("SyncManagerCheckingServer");
             lblStatusL3.Text = "";
             ShowNextSyncLabel(false);
@@ -912,15 +943,29 @@ namespace Mezeo
             Application.DoEvents();
             int nStatusCode = 0;
             string queueName = BasicInfo.GetMacAddress + "-" + BasicInfo.UserName;
-            int nNQLength = cMezeoFileCloud.NQGetLength(BasicInfo.ServiceUrl + cLoginDetails.szNQParentUri, queueName, ref nStatusCode);
+            //int nNQLength = cMezeoFileCloud.NQGetLength(BasicInfo.ServiceUrl + cLoginDetails.szNQParentUri, queueName, ref nStatusCode);
+
+            NQLengthResult nqLengthRes = cMezeoFileCloud.NQGetLength(BasicInfo.ServiceUrl + cLoginDetails.szNQParentUri, queueName, ref nStatusCode);
+            int nNQLength = 0;
+            if (nqLengthRes.nEnd == -1 || nqLengthRes.nStart == -1)
+                nNQLength = 0;
+            else
+                nNQLength = (nqLengthRes.nEnd + 1) - nqLengthRes.nStart;
+
             if (nNQLength > 0)
             {
+                Debugger.Instance.logMessage("frmSyncManager - UpdateNQ", "nNQLength" + nNQLength.ToString());
                 //ShowNextSyncLabel(false);
                 if (!bwNQUpdate.IsBusy)
+                {
+                    Debugger.Instance.logMessage("frmSyncManager - UpdateNQ", "bwNQUpdate.RunWorkerAsync called");
                     bwNQUpdate.RunWorkerAsync(nNQLength);
+                }
             }
             else
             {
+                Debugger.Instance.logMessage("frmSyncManager - UpdateNQ", "nNQLength 0");
+
                 isSyncInProgress = false;
                 ShowSyncMessage();
 
@@ -957,10 +1002,14 @@ namespace Mezeo
                     frmParent.toolStripMenuItem4.Text = LanguageTranslator.GetValue("TrayHoverInitialSyncUpToDateText");
                 }
             }
+
+            Debugger.Instance.logMessage("frmSyncManager - UpdateNQ", "Leave");
         }
 
         private bool UpdateFromNQ(NQDetails UpdateQ)
         {
+            Debugger.Instance.logMessage("frmSyncManager - UpdateFromNQ - ", "Enter"); 
+
             NQDetails nqDetail = UpdateQ;
             bool bIssuccess = false;
 
@@ -972,6 +1021,8 @@ namespace Mezeo
 
             if (nsResult == null && nqDetail.StrEvent != "cdmi_delete")
             {
+                Debugger.Instance.logMessage("frmSyncManager - UpdateFromNQ - ", "nsResult Null"); 
+
                 bIssuccess = true;
                 return bIssuccess;
             }
@@ -989,6 +1040,8 @@ namespace Mezeo
 
             if (nqDetail.StrEvent == "cdmi_create_complete")
             {
+                Debugger.Instance.logMessage("frmSyncManager - UpdateFromNQ - ", nqDetail.StrEvent + "-" + strKey + "Enter"); 
+
                 string strDBKey = dbHandler.GetString(DbHandler.TABLE_NAME, DbHandler.KEY, new string[] { DbHandler.CONTENT_URL }, new string[] { nsResult.StrContentsUri }, new DbType[] { DbType.String });
                 if (strDBKey.Trim().Length == 0)
                 {
@@ -1077,9 +1130,13 @@ namespace Mezeo
                 }
                 else
                     bIssuccess = true;
+
+                Debugger.Instance.logMessage("frmSyncManager - UpdateFromNQ - ", nqDetail.StrEvent + "-" + strKey + "Leave"); 
             }
             else if (nqDetail.StrEvent == "cdmi_modify_complete")
             {
+                Debugger.Instance.logMessage("frmSyncManager - UpdateFromNQ - ", nqDetail.StrEvent + "-" + strKey + "Enter"); 
+
                 string strDBKey = dbHandler.GetString(DbHandler.TABLE_NAME, DbHandler.KEY, new string[] { DbHandler.CONTENT_URL }, new string[] { nsResult.StrContentsUri }, new DbType[] { DbType.String });
                 string strDBEtag = dbHandler.GetString(DbHandler.TABLE_NAME, DbHandler.E_TAG, new string[] { DbHandler.KEY }, new string[] { strDBKey }, new DbType[] { DbType.String });
                 string strEtagCloud = cMezeoFileCloud.GetETag(nsResult.StrContentsUri, ref nStatusCode);
@@ -1087,8 +1144,15 @@ namespace Mezeo
                 {
                     if (strKey != strDBKey)
                     {
-                        if(File.Exists(BasicInfo.SyncDirPath + "\\" + strDBKey))
-                            File.Move(BasicInfo.SyncDirPath + "\\" + strDBKey, strPath);
+                        if (File.Exists(strPath))
+                        {
+                            nqEventCdmiDelete(BasicInfo.SyncDirPath + "\\" + strDBKey, strDBKey);
+                        }
+                        else
+                        {
+                            if(File.Exists(BasicInfo.SyncDirPath + "\\" + strDBKey))
+                                File.Move(BasicInfo.SyncDirPath + "\\" + strDBKey, strPath);
+                        }
 
                         dbHandler.Update(DbHandler.TABLE_NAME, DbHandler.KEY , strKey , DbHandler.KEY , strDBKey );
                     }
@@ -1109,67 +1173,87 @@ namespace Mezeo
                         bIssuccess = true;
                     }
                 }
+
+                Debugger.Instance.logMessage("frmSyncManager - UpdateFromNQ - ", nqDetail.StrEvent + "-" + strKey + "Leave"); 
             }
             else if (nqDetail.StrEvent == "cdmi_delete")
             {
-                bool isDirectory = false;
-                bool isFile = File.Exists(strPath);
-                if (!isFile)
-                {
-                    isDirectory = Directory.Exists(strPath);
-                    if (isDirectory)
-                    {                            
-                        DirectoryInfo rootDir = new DirectoryInfo(strPath);
-                        WalkDirectoryTreeForDelete(rootDir);
+                Debugger.Instance.logMessage("frmSyncManager - UpdateFromNQ - ", nqDetail.StrEvent + "-" + strKey + "Enter");
 
-                        //SHFILEOPSTRUCT shOperation = new SHFILEOPSTRUCT();
-                        //shOperation.wFunc = FO_DELETE;
-                        //shOperation.pFrom = strPath;
-                        //shOperation.fFlags = FOF_ALLOWUNDO | FOF_NOCONFIRMATION | FOF_NOERRORUI;
+                nqEventCdmiDelete(strPath, strKey);
+                //bool isDirectory = false;
+                //bool isFile = File.Exists(strPath);
+                //if (!isFile)
+                //{
+                //    isDirectory = Directory.Exists(strPath);
+                //    if (isDirectory)
+                //    {                            
+                //        DirectoryInfo rootDir = new DirectoryInfo(strPath);
+                //        WalkDirectoryTreeForDelete(rootDir);
 
-                        //int nRet = SHFileOperation(ref shOperation);
-                        //nRet = GetLastError();
+                //        //SHFILEOPSTRUCT shOperation = new SHFILEOPSTRUCT();
+                //        //shOperation.wFunc = FO_DELETE;
+                //        //shOperation.pFrom = strPath;
+                //        //shOperation.fFlags = FOF_ALLOWUNDO | FOF_NOCONFIRMATION | FOF_NOERRORUI;
 
-                        SendToRecycleBin(strPath, false);
-                        //Directory.Delete(strPath);
-                        dbHandler.Delete(DbHandler.TABLE_NAME, DbHandler.KEY , strKey );
-                    }
-                }
-                else
-                {
-                    //SHFILEOPSTRUCT shOperation = new SHFILEOPSTRUCT();
-                    //shOperation.wFunc = FO_DELETE;
-                    //shOperation.pFrom = strPath;
-                    //shOperation.fFlags = FOF_ALLOWUNDO | FOF_NOCONFIRMATION | FOF_NOERRORUI;
+                //        //int nRet = SHFileOperation(ref shOperation);
+                //        //nRet = GetLastError();
 
-                    //int nRet = SHFileOperation(ref shOperation);
-                    //nRet = GetLastError();
+                //        SendToRecycleBin(strPath, false);
+                //        //Directory.Delete(strPath);
+                //        dbHandler.Delete(DbHandler.TABLE_NAME, DbHandler.KEY , strKey );
+                //    }
+                //}
+                //else
+                //{
+                //    //SHFILEOPSTRUCT shOperation = new SHFILEOPSTRUCT();
+                //    //shOperation.wFunc = FO_DELETE;
+                //    //shOperation.pFrom = strPath;
+                //    //shOperation.fFlags = FOF_ALLOWUNDO | FOF_NOCONFIRMATION | FOF_NOERRORUI;
 
-                    SendToRecycleBin(strPath, true);
-                    //File.Delete(strPath);
-                    dbHandler.Delete(DbHandler.TABLE_NAME, DbHandler.KEY , strKey);
-                }
-                bIssuccess = true; 
+                //    //int nRet = SHFileOperation(ref shOperation);
+                //    //nRet = GetLastError();
+
+                //    SendToRecycleBin(strPath, true);
+                //    //File.Delete(strPath);
+                //    dbHandler.Delete(DbHandler.TABLE_NAME, DbHandler.KEY , strKey);
+                //}
+                bIssuccess = true;
+
+                Debugger.Instance.logMessage("frmSyncManager - UpdateFromNQ - ", nqDetail.StrEvent + "-" + strKey + "Leave"); 
             }
             else if (nqDetail.StrEvent == "cdmi_rename")
             {
+                Debugger.Instance.logMessage("frmSyncManager - UpdateFromNQ - ", nqDetail.StrEvent + "-" + strKey + "Enter"); 
+
                 string strDBKey = dbHandler.GetString(DbHandler.TABLE_NAME, DbHandler.KEY, new string[] { DbHandler.CONTENT_URL }, new string[] { nsResult.StrContentsUri }, new DbType[] { DbType.String });
                 if (strDBKey.Trim().Length != 0 && strDBKey != strKey)
                 {
-                    Directory.Move(BasicInfo.SyncDirPath + "\\" + strDBKey, strPath);
-                    dbHandler.Update(DbHandler.TABLE_NAME, DbHandler.KEY , strKey , DbHandler.KEY , strDBKey );
+                    if(Directory.Exists(strPath))
+                    {
+                        nqEventCdmiDelete(BasicInfo.SyncDirPath + "\\" + strDBKey, strDBKey);
+                    }
+                    else
+                    {
+                        Directory.Move(BasicInfo.SyncDirPath + "\\" + strDBKey, strPath);
+                        dbHandler.Update(DbHandler.TABLE_NAME, DbHandler.KEY , strKey , DbHandler.KEY , strDBKey );
 
-                    DirectoryInfo rootDir = new DirectoryInfo(strPath);
-                    WalkDirectoryTree(rootDir, BasicInfo.SyncDirPath + "\\" + strDBKey);
+                        DirectoryInfo rootDir = new DirectoryInfo(strPath);
+                        WalkDirectoryTree(rootDir, BasicInfo.SyncDirPath + "\\" + strDBKey);
+                    }
                     bIssuccess = true; 
                 }
                 //else
                 //{
                 //    bIssuccess = nqEventCdmiCreate(nqDetail, nsResult, strKey, strPath);
                 //}
+
+                Debugger.Instance.logMessage("frmSyncManager - UpdateFromNQ - ", nqDetail.StrEvent + "-" + strKey + "Leave"); 
             }
             else if (nqDetail.StrEvent == "cdmi_copy")
             {
+                Debugger.Instance.logMessage("frmSyncManager - UpdateFromNQ - ", nqDetail.StrEvent + "-" + strKey + "Enter"); 
+
                 if (strKey.LastIndexOf("\\") != -1)
                     CheckAndCreateForParentDir(strKey.Substring(0, strKey.LastIndexOf("\\")));
 
@@ -1251,9 +1335,54 @@ namespace Mezeo
                     dbHandler.Write(fileFolderInfo);
                     bIssuccess = true;
                 }
+
+                Debugger.Instance.logMessage("frmSyncManager - UpdateFromNQ - ", nqDetail.StrEvent + "-" + strKey + "Leave"); 
             }
 
+            Debugger.Instance.logMessage("frmSyncManager - UpdateFromNQ - ", "Leave"); 
+
             return bIssuccess;
+        }
+
+        private void nqEventCdmiDelete(string strPath, string strKey)
+        {
+            bool isDirectory = false;
+            bool isFile = File.Exists(strPath);
+            if (!isFile)
+            {
+                isDirectory = Directory.Exists(strPath);
+                if (isDirectory)
+                {
+                    DirectoryInfo rootDir = new DirectoryInfo(strPath);
+                    WalkDirectoryTreeForDelete(rootDir);
+
+                    //SHFILEOPSTRUCT shOperation = new SHFILEOPSTRUCT();
+                    //shOperation.wFunc = FO_DELETE;
+                    //shOperation.pFrom = strPath;
+                    //shOperation.fFlags = FOF_ALLOWUNDO | FOF_NOCONFIRMATION | FOF_NOERRORUI;
+
+                    //int nRet = SHFileOperation(ref shOperation);
+                    //nRet = GetLastError();
+
+                    SendToRecycleBin(strPath, false);
+                    //Directory.Delete(strPath);
+                    dbHandler.Delete(DbHandler.TABLE_NAME, DbHandler.KEY, strKey);
+                }
+            }
+            else
+            {
+                //SHFILEOPSTRUCT shOperation = new SHFILEOPSTRUCT();
+                //shOperation.wFunc = FO_DELETE;
+                //shOperation.pFrom = strPath;
+                //shOperation.fFlags = FOF_ALLOWUNDO | FOF_NOCONFIRMATION | FOF_NOERRORUI;
+
+                //int nRet = SHFileOperation(ref shOperation);
+                //nRet = GetLastError();
+
+                SendToRecycleBin(strPath, true);
+                //File.Delete(strPath);
+                dbHandler.Delete(DbHandler.TABLE_NAME, DbHandler.KEY, strKey);
+            }
         }
 
         private bool nqEventCdmiCreate(NQDetails nqDetail, NSResult nsResult, string strKey, string strPath)
@@ -1728,6 +1857,7 @@ namespace Mezeo
 
             btnMoveFolder.Enabled = false;
             btnSyncNow.Enabled = false;
+            tmrNextSync.Enabled = false;
             //lnkFolderPath.Enabled = false;
 
         }
@@ -2231,7 +2361,10 @@ namespace Mezeo
 
            try
            {
-               stream = file.Open(FileMode.Open, FileAccess.Read, FileShare.ReadWrite);
+               if (File.Exists(file.FullName))
+                   stream = file.Open(FileMode.Open, FileAccess.Read, FileShare.ReadWrite);
+               else
+                   return false;
            }
            catch (IOException)
            {
@@ -2240,6 +2373,10 @@ namespace Mezeo
                //or being processed by another thread
                //or does not exist (has already been processed)
                return true;
+           }
+           catch (Exception)
+           {
+               return File.Exists(file.FullName);
            }
            finally
            {
@@ -2251,12 +2388,15 @@ namespace Mezeo
            return false;
        }
 
-        private void HandleEvents(BackgroundWorker caller)
+        private int HandleEvents(BackgroundWorker caller)
         {
+            Debugger.Instance.logMessage("frmSyncManager - HandleEvents", "Enter");
+
             if (!BasicInfo.IsConnectedToInternet)
             {
-                frmParent.HandleConnectionState();
-                return;
+                //frmParent.HandleConnectionState();
+                Debugger.Instance.logMessage("frmSyncManager - HandleEvents", "return with -2");
+                return -2;
             }
 
             isLocalEventInProgress = true;
@@ -2273,12 +2413,15 @@ namespace Mezeo
             {
                 if (caller.CancellationPending)
                 {
+                    Debugger.Instance.logMessage("frmSyncManager - HandleEvents ", "Cancelled called");
                     caller.CancelAsync();
                     break;
                 }
 
                 bool bRet = true;
-               
+
+                Debugger.Instance.logMessage("frmSyncManager - HandleEvents - lEvent - ", lEvent.FullPath);
+
                 FileAttributes attr = FileAttributes.Normal ;
 
                 bool isDirectory = false;
@@ -2300,6 +2443,8 @@ namespace Mezeo
 
                 if (lEvent.EventType == LocalEvents.EventsType.FILE_ACTION_MODIFIED)
                 {
+                    Debugger.Instance.logMessage("frmSyncManager - HandleEvents - lEvent - ", lEvent.FullPath + "-" + lEvent.EventType.ToString() + "Enter");
+
                     if ((attr & FileAttributes.Directory) == FileAttributes.Directory)
                             bRet = false;
                     else
@@ -2335,10 +2480,12 @@ namespace Mezeo
                         }
 
                     }
+                    Debugger.Instance.logMessage("frmSyncManager - HandleEvents - lEvent - ", lEvent.FullPath + "-" + lEvent.EventType.ToString() + "Leave");
                 }
 
                 if (lEvent.EventType == LocalEvents.EventsType.FILE_ACTION_ADDED || lEvent.EventType == LocalEvents.EventsType.FILE_ACTION_RENAMED)
                 {
+                    Debugger.Instance.logMessage("frmSyncManager - HandleEvents - lEvent - ", lEvent.FullPath + "-" + lEvent.EventType.ToString() + "Enter");
                     //string strCheck = dbHandler.GetString(DbHandler.TABLE_NAME, DbHandler.CONTENT_URL, DbHandler.KEY + " = '" + lEvent.FileName + "' and " + DbHandler.STATUS + "='SUCCESS'");
 
                     string strCheck = dbHandler.GetString(DbHandler.TABLE_NAME, DbHandler.CONTENT_URL, new string[] { DbHandler.KEY, DbHandler.STATUS }, new string[] { lEvent.FileName, DB_STATUS_SUCCESS }, new DbType[] { DbType.String, DbType.String });
@@ -2347,10 +2494,13 @@ namespace Mezeo
                         bRet = true;
                     else
                         bRet = false;
+
+                    Debugger.Instance.logMessage("frmSyncManager - HandleEvents - lEvent - ", lEvent.FullPath + "-" + lEvent.EventType.ToString() + "Leave");
                 }
 
                 if (lEvent.EventType == LocalEvents.EventsType.FILE_ACTION_ADDED && bRet)
                 {
+                    Debugger.Instance.logMessage("frmSyncManager - HandleEvents - lEvent - ", lEvent.FullPath + "- checking for move events - Enter");
                     string strNameAdd = lEvent.FileName.Substring(lEvent.FileName.LastIndexOf("\\") + 1);
                     foreach (LocalEvents id in events)
                     {
@@ -2395,10 +2545,14 @@ namespace Mezeo
                             WalkDirectoryTreeforAddFolder(new DirectoryInfo(lEvent.FullPath), lEvent.FileName, ref eAddEvents);
                         }
                     }
+
+                    Debugger.Instance.logMessage("frmSyncManager - HandleEvents - lEvent - ", lEvent.FullPath + "- checking for move events - Leave");
                 }
 
                 if (lEvent.EventType == LocalEvents.EventsType.FILE_ACTION_RENAMED)
                 {
+                    Debugger.Instance.logMessage("frmSyncManager - HandleEvents - lEvent - ", lEvent.FullPath + "-" + lEvent.EventType.ToString() + "Enter");
+
                     string strCheck = dbHandler.GetString(DbHandler.TABLE_NAME, DbHandler.CONTENT_URL, new string[] { DbHandler.KEY }, new string[] { lEvent.OldFileName }, new DbType[] { DbType.String });
                     if (strCheck.Trim().Length == 0)
                     {
@@ -2426,16 +2580,23 @@ namespace Mezeo
                             {
                                 //LocalEvents lNewEvent = new LocalEvents();
                                 lEvent.EventType = LocalEvents.EventsType.FILE_ACTION_ADDED;
-
+                                if ((attr & FileAttributes.Directory) == FileAttributes.Directory)
+                                {
+                                    WalkDirectoryTreeforAddFolder(new DirectoryInfo(lEvent.FullPath), lEvent.FileName, ref eAddEvents);
+                                }
                                 //eAddEvents.Add(lNewEvent);
                                 //bRet = false;
                             }
                         }
                     }
+
+                    Debugger.Instance.logMessage("frmSyncManager - HandleEvents - lEvent - ", lEvent.FullPath + "-" + lEvent.EventType.ToString() + "Leave");
                 }
 
                 if (lEvent.EventType == LocalEvents.EventsType.FILE_ACTION_REMOVED)
                 {
+                    Debugger.Instance.logMessage("frmSyncManager - HandleEvents - lEvent - ", lEvent.FullPath + "-" + lEvent.EventType.ToString() + "Enter");
+
                     string strCheck = dbHandler.GetString(DbHandler.TABLE_NAME, DbHandler.CONTENT_URL, new string[] { DbHandler.KEY }, new string[] { lEvent.FileName }, new DbType[] { DbType.String });
                     if (strCheck.Trim().Length == 0)
                         bRet = false;
@@ -2458,6 +2619,7 @@ namespace Mezeo
                     //        }
                     //    }
                     //}
+                    Debugger.Instance.logMessage("frmSyncManager - HandleEvents - lEvent - ", lEvent.FullPath + "-" + lEvent.EventType.ToString() + "Leave");
                 }
 
                // if (lEvent.EventType != LocalEvents.EventsType.FILE_ACTION_REMOVED)
@@ -2468,6 +2630,8 @@ namespace Mezeo
 
                 if (bRet)
                 {
+                    Debugger.Instance.logMessage("frmSyncManager - HandleEvents - lEvent - ", lEvent.FullPath + "AddinDB Enter");
+
                     if (lEvent.EventType == LocalEvents.EventsType.FILE_ACTION_MODIFIED)
                     {
                         UpdateDBForStatus(lEvent, DB_STATUS_IN_PROGRESS);
@@ -2480,6 +2644,8 @@ namespace Mezeo
                     {
                         AddInDBForRename(lEvent);
                     }
+
+                    Debugger.Instance.logMessage("frmSyncManager - HandleEvents - lEvent - ", lEvent.FullPath + "AddinDB Leave");
                 }
               
                 if (!bRet)
@@ -2499,26 +2665,35 @@ namespace Mezeo
 
             if (eModified.Count != 0)
             {
+                Debugger.Instance.logMessage("frmSyncManager - HandleEvents eModifiedList -", eModified.Count.ToString() + " Enter");
+
                 foreach (LocalEvents levent in eModified)
                 {
                     UpdateDBForStatus(levent, DB_STATUS_IN_PROGRESS);
                 }
                 events.AddRange(eModified);
                 eModified.Clear();
+
+                Debugger.Instance.logMessage("frmSyncManager - HandleEvents eModifiedList -", eModified.Count.ToString() + " Leave");
             }
 
             if (eAddEvents.Count != 0)
             {
+                Debugger.Instance.logMessage("frmSyncManager - HandleEvents eAddEventsList -", eAddEvents.Count.ToString() + " Enter");
+
                 foreach (LocalEvents levent in eAddEvents)
                 {
                     AddInDBForAdded(levent);
                 }
                 events.AddRange(eAddEvents);
                 eAddEvents.Clear();
+
+                Debugger.Instance.logMessage("frmSyncManager - HandleEvents eAddEventsList -", eAddEvents.Count.ToString() + " Leave");
             }
 
             if (eMove.Count != 0)
             {
+                Debugger.Instance.logMessage("frmSyncManager - HandleEvents eMoveList -", eMove.Count.ToString() + " Enter");
                 foreach (LocalEvents levent in eMove)
                 {
                     UpdateKeyInDb(levent.OldFileName, levent.FileName);
@@ -2543,10 +2718,14 @@ namespace Mezeo
                 }
                 events.AddRange(eMove);
                 eMove.Clear();
+
+                Debugger.Instance.logMessage("frmSyncManager - HandleEvents eMoveList -", eMove.Count.ToString() + " Leave");
             }
 
             if (events.Count == 0)
             {
+                Debugger.Instance.logMessage("frmSyncManager - HandleEvents" ," Events Count NUll");
+
                 isLocalEventInProgress = false;
                 if (LocalEventList.Count != 0)
                 {
@@ -2566,7 +2745,7 @@ namespace Mezeo
                     HandleEvents(caller);
 
                 }
-                return;
+                return 1;
             }
 
             if (caller != null)
@@ -2574,13 +2753,21 @@ namespace Mezeo
                 caller.ReportProgress(SYNC_STARTED);
             }
 
-            bool bIsCompleted = ProcessLocalEvents(caller);
+            Debugger.Instance.logMessage("frmSyncManager - HandleEvents", " ProcessLocalEvents Going");
+
+            int bIsCompleted = ProcessLocalEvents(caller);
+
+            Debugger.Instance.logMessage("frmSyncManager - HandleEvents", " ProcessLocalEvents Exit");
+
             isLocalEventInProgress = false;
 
             if (caller != null)
             {
                 caller.ReportProgress(LOCAL_EVENTS_COMPLETED);
             }
+            
+            Debugger.Instance.logMessage("frmSyncManager - HandleEvents", "Leave");
+            return bIsCompleted;
         }
 
         private void UpdateKeyInDb(string oldKey, string newKey)
@@ -2644,24 +2831,30 @@ namespace Mezeo
 
         }
 
-        private bool ProcessLocalEvents(BackgroundWorker caller)
+        private int ProcessLocalEvents(BackgroundWorker caller)
         {
+            Debugger.Instance.logMessage("SyncManager - ProcessLocalEvents", "Enter");
             string strUrl = "";
             bool bRetConflicts = true;
 
             if (caller != null)
             {
+                Debugger.Instance.logMessage("SyncManager - ProcessLocalEvents", "Calling ReportProgress with PROCESS_LOCAL_EVENTS_STARTED");
                 caller.ReportProgress(PROCESS_LOCAL_EVENTS_STARTED,events.Count);
             }
 
             fileDownloadCount = 1;
 
+            List<int> SuccessIndexes = new List<int>();
+            bool bOffline = false;
+
             foreach (LocalEvents lEvent in events)
             {
                 if (caller.CancellationPending)
                 {
+                    Debugger.Instance.logMessage("SyncManager - ProcessLocalEvents", "Canceled Called");
                     caller.CancelAsync();
-                    return false;
+                    return 0;
                 }
 
                 //if (!isLocalEventInProgress)
@@ -2674,6 +2867,7 @@ namespace Mezeo
 
                 if (caller != null)
                 {
+                    Debugger.Instance.logMessage("SyncManager - ProcessLocalEvents", "ReportProgress Called with PROGRESS_CHANGED_WITH_FILE_NAME for " + lEvent.FullPath);
                     caller.ReportProgress(PROGRESS_CHANGED_WITH_FILE_NAME, lEvent.FullPath);
                 }
 
@@ -2681,6 +2875,20 @@ namespace Mezeo
 
                 bool isDirectory = false;
                 bool isFile = File.Exists(lEvent.FullPath);
+
+                if (isFile && lEvent.EventType == LocalEvents.EventsType.FILE_ACTION_ADDED)
+                {
+                    Debugger.Instance.logMessage("SyncManager - ProcessLocalEvents", "Check for file lock - Enter");
+                    FileInfo fInfo = new FileInfo(lEvent.FullPath);
+                    bool IsLocked = IsFileLocked(fInfo);
+                    while (IsLocked && fInfo.Exists)
+                    {
+                        IsLocked = IsFileLocked(fInfo);
+                    }
+                    Debugger.Instance.logMessage("SyncManager - ProcessLocalEvents", "Check for file lock - Leave");
+                }
+
+                isFile = File.Exists(lEvent.FullPath);
                 if(!isFile)
                     isDirectory = Directory.Exists(lEvent.FullPath);
                 if (isFile || isDirectory)
@@ -2689,24 +2897,22 @@ namespace Mezeo
                 {
                     if (lEvent.EventType != LocalEvents.EventsType.FILE_ACTION_REMOVED)
                         continue;
-                }
-
-                FileInfo fInfo = new FileInfo(lEvent.FullPath);
-                bool IsLocked = IsFileLocked(fInfo);
-                while (IsLocked)
-                {
-                    IsLocked = IsFileLocked(fInfo);
-                }
+                }               
 
                 int nStatusCode = 0;
                 bool bRet = true;
+                
                 switch (lEvent.EventType)
                 {
                     case LocalEvents.EventsType.FILE_ACTION_MOVE:
                         {
+                            Debugger.Instance.logMessage("SyncManager - ProcessLocalEvents", "FILE_ACTION_MOVE - Enter for file path " + lEvent.FullPath);
                              string strContentURi =GetContentURI(lEvent.FileName);
                              if (strContentURi.Trim().Length == 0)
-                                continue;
+                             {
+                                 Debugger.Instance.logMessage("SyncManager - ProcessLocalEvents", "GetContentURI for length ZERO");
+                                 continue;
+                             }
 
                             if (strContentURi.Substring(strContentURi.Length - 9).Equals("/contents") ||
                                 strContentURi.Substring(strContentURi.Length - 8).Equals("/content"))
@@ -2716,7 +2922,10 @@ namespace Mezeo
 
                             string strParentUri = GetParentURI(lEvent.FileName);
                             if (strParentUri.Trim().Length == 0)
+                            {
+                                Debugger.Instance.logMessage("SyncManager - ProcessLocalEvents", "GetParentURI for length ZERO");
                                 continue;
+                            }
 
                             if (strParentUri.Substring(strParentUri.Length - 9).Equals("/contents") ||
                                 strParentUri.Substring(strParentUri.Length - 8).Equals("/content"))
@@ -2738,40 +2947,62 @@ namespace Mezeo
                                 bRet = cMezeoFileCloud.FileMove(strContentURi, strName, mimeType, iDetails.bPublic, strParentUri, ref nStatusCode);
                             }
 
-                            if (bRet)
+                            if (bRet && nStatusCode == 204)
                             {
+                                SuccessIndexes.Add(events.IndexOf(lEvent));
                                 UpdateDBForStatus(lEvent, DB_STATUS_SUCCESS);
                                 MarkParentsStatus(lEvent.FullPath, DB_STATUS_SUCCESS);
                             }
+                            else if (nStatusCode != 204 && nStatusCode != 401 && nStatusCode != 403)
+                            {
+                                bRet = false;
+                                bOffline = true;
+
+                            }
+
+                            Debugger.Instance.logMessage("SyncManager - ProcessLocalEvents", "FILE_ACTION_MOVE - Leave for file path " + lEvent.FullPath);
 
                         }
                         break;
                     case LocalEvents.EventsType.FILE_ACTION_ADDED:
                         {
+                            Debugger.Instance.logMessage("SyncManager - ProcessLocalEvents", "FILE_ACTION_ADDED - Enter for file path " + lEvent.FullPath);
                             MarkParentsStatus(lEvent.FullPath, DB_STATUS_IN_PROGRESS);
                             string strParentURi = GetParentURI(lEvent.FileName);
                             if (strParentURi.Trim().Length == 0)
+                            {
+                                Debugger.Instance.logMessage("SyncManager - ProcessLocalEvents", "GetParentURI for length ZERO");
                                 continue;
+                            }
 
                             if ((attr & FileAttributes.Directory) == FileAttributes.Directory)
                             {           
                                 string folderName = lEvent.FullPath.Substring((lEvent.FullPath.LastIndexOf("\\") + 1));
+
+                                Debugger.Instance.logMessage("SyncManager - ProcessLocalEvents", "Create new container for folder " + folderName);
                                 
                                 strUrl = cMezeoFileCloud.NewContainer(folderName, strParentURi, ref nStatusCode);
-                                strUrl += "/contents";
+                                if (nStatusCode == 201)
+                                    strUrl += "/contents";
+
+                                Debugger.Instance.logMessage("SyncManager - ProcessLocalEvents", "Container URI for folder " + folderName + " is " + strUrl);
                             }
                             else
                             {
                                 //if (strParentURi.Trim().Length == 0)
                                 //    strParentURi = CheckAndCreateForEventsParentDir(lEvent.FileName);
 
+                                Debugger.Instance.logMessage("SyncManager - ProcessLocalEvents", "Start uploading file for " + lEvent.FullPath + ", at parent URI " + strParentURi);
+
                                 strUrl = cMezeoFileCloud.UploadingFile(lEvent.FullPath, strParentURi, ref nStatusCode);
-                                strUrl += "/content"; 
+                                if(nStatusCode == 201)
+                                    strUrl += "/content"; 
                             }
 
                             if ((strUrl.Trim().Length != 0) && (nStatusCode == 201))
                             {
-                                bRet = true;
+                                SuccessIndexes.Add(events.IndexOf(lEvent));
+                                bRet = true;  
 
                                 string strParent = dbHandler.GetString(DbHandler.TABLE_NAME, DbHandler.PARENT_URL, new string[] { DbHandler.KEY }, new string[] { lEvent.FileName }, new DbType[] { DbType.String });
                                 if (strParent.Trim().Length == 0)
@@ -2780,18 +3011,26 @@ namespace Mezeo
                                 MarkParentsStatus(lEvent.FullPath, DB_STATUS_SUCCESS);
                                 UpdateDBForAddedSuccess(strUrl, lEvent);
                             }
-                            else
+                            else if (nStatusCode != 201 && nStatusCode != 401 && nStatusCode != 403)
                             {
                                 bRet = false;
+                                bOffline = true;
                             }
+
+                            Debugger.Instance.logMessage("SyncManager - ProcessLocalEvents", "FILE_ACTION_ADDED - Leave for file path " + lEvent.FullPath);
                         }
                         break;
                     case LocalEvents.EventsType.FILE_ACTION_MODIFIED:
                         {
+                            Debugger.Instance.logMessage("SyncManager - ProcessLocalEvents", "FILE_ACTION_MODIFIED - Enter for file path " + lEvent.FullPath);
+
                             MarkParentsStatus(lEvent.FullPath, DB_STATUS_IN_PROGRESS);
                             string strContentURi = GetContentURI(lEvent.FileName);
                             if (strContentURi.Trim().Length == 0)
+                            {
+                                Debugger.Instance.logMessage("SyncManager - ProcessLocalEvents", "GetContentURI for length ZERO");
                                 continue;
+                            }
 
                             if ((attr & FileAttributes.Directory) == FileAttributes.Directory)
                                 bRet = false;
@@ -2803,8 +3042,14 @@ namespace Mezeo
                                     bRet = cMezeoFileCloud.OverWriteFile(lEvent.FullPath, strContentURi, ref nStatusCode);
                                     if (bRet)
                                     {
+                                        SuccessIndexes.Add(events.IndexOf(lEvent));
                                         MarkParentsStatus(lEvent.FullPath, DB_STATUS_SUCCESS);
                                         UpdateDBForModifiedSuccess(lEvent, strContentURi);
+                                    }
+                                    else if (nStatusCode != 204 && nStatusCode != 401 && nStatusCode != 403)
+                                    {
+                                        bRet = false;
+                                        bOffline = true;
                                     }
                                     //else
                                     //{
@@ -2813,13 +3058,20 @@ namespace Mezeo
                                     //}
                                 }                               
                             }
+
+                            Debugger.Instance.logMessage("SyncManager - ProcessLocalEvents", "FILE_ACTION_MODIFIED - Leave for file path " + lEvent.FullPath);
                         }
                         break;
                     case LocalEvents.EventsType.FILE_ACTION_REMOVED:
                         {
+                            Debugger.Instance.logMessage("SyncManager - ProcessLocalEvents", "FILE_ACTION_REMOVED - Enter for file path " + lEvent.FullPath);
+
                             string strContentURi = GetContentURI(lEvent.FileName);
                             if (strContentURi.Trim().Length == 0)
+                            {
+                                Debugger.Instance.logMessage("SyncManager - ProcessLocalEvents", "GetContentURI for length ZERO");
                                 continue;
+                            }
 
                             MarkParentsStatus(lEvent.FullPath, DB_STATUS_IN_PROGRESS);
 
@@ -2837,25 +3089,44 @@ namespace Mezeo
                                 bRet = cMezeoFileCloud.Delete(strContentURi, ref nStatusCode);
                                 if (bRet)
                                 {
+                                    SuccessIndexes.Add(events.IndexOf(lEvent));
                                     MarkParentsStatus(lEvent.FullPath, DB_STATUS_SUCCESS);
                                     UpdateDBForRemoveSuccess(lEvent);
                                 }
+                                else if (nStatusCode != 204 && nStatusCode != 401 && nStatusCode != 403)
+                                {
+                                    bRet = false;
+                                    bOffline = true;
+                                }
                             }
+
+                            Debugger.Instance.logMessage("SyncManager - ProcessLocalEvents", "FILE_ACTION_REMOVED - Leave for file path " + lEvent.FullPath);
                         }
                         break;
                     case LocalEvents.EventsType.FILE_ACTION_RENAMED:
-                        {                        
+                        {
+                            Debugger.Instance.logMessage("SyncManager - ProcessLocalEvents", "case FILE_ACTION_RENAMED");
+
+                            Debugger.Instance.logMessage("SyncManager - ProcessLocalEvents", "GetContentURI for " + lEvent.FileName);
+
                             string strContentURi = GetContentURI(lEvent.FileName);
                             if (strContentURi.Trim().Length == 0)
+                            {
+                                Debugger.Instance.logMessage("SyncManager - ProcessLocalEvents", "GetContentURI for length ZERO");
                                 continue;
+                            }
 
+                            Debugger.Instance.logMessage("SyncManager - ProcessLocalEvents", "MarkParentsStatus DB_STATUS_IN_PROGRESS for " + lEvent.FullPath);
                             MarkParentsStatus(lEvent.FullPath, DB_STATUS_IN_PROGRESS);
 
                             string changedName = lEvent.FileName.Substring((lEvent.FileName.LastIndexOf("\\") + 1));
+                            Debugger.Instance.logMessage("SyncManager - ProcessLocalEvents", "changedName " + changedName);
 
                             if (isFile)
+                            {
                                 bRetConflicts = CheckForConflicts(lEvent, strContentURi);
-
+                                Debugger.Instance.logMessage("SyncManager - ProcessLocalEvents", "isFile bRetConflicts " + bRetConflicts.ToString());
+                            }
                             if (strContentURi.Substring(strContentURi.Length - 9).Equals("/contents") ||
                                strContentURi.Substring(strContentURi.Length - 8).Equals("/content"))
                             {
@@ -2864,27 +3135,55 @@ namespace Mezeo
 
                             if ((attr & FileAttributes.Directory) == FileAttributes.Directory)
                             {
+                               
                                 bRet = cMezeoFileCloud.ContainerRename(strContentURi, changedName, ref nStatusCode);
+
+                                Debugger.Instance.logMessage("SyncManager - ProcessLocalEvents", "Directory bRet " + bRet.ToString());
+
                                 if (bRet)
                                 {
+                                    SuccessIndexes.Add(events.IndexOf(lEvent));
+                                    Debugger.Instance.logMessage("SyncManager - ProcessLocalEvents", "MarkParentsStatus DB_STATUS_SUCCESS for  " + lEvent.FullPath);
                                     MarkParentsStatus(lEvent.FullPath, DB_STATUS_SUCCESS);
+                                    Debugger.Instance.logMessage("SyncManager - ProcessLocalEvents", "Calling for UpdateDBForRenameSuccess");
                                     UpdateDBForRenameSuccess(lEvent);
+                                }
+                                else if (nStatusCode != 204 && nStatusCode != 401 && nStatusCode != 403)
+                                {
+                                    bRet = false;
+                                    bOffline = true;
                                 }
                             }
                             else
                             {
                                 if (bRetConflicts)
                                 {
+                                    Debugger.Instance.logMessage("SyncManager - ProcessLocalEvents", "isFile bRetConflicts " + bRetConflicts.ToString());
                                     ItemDetails iDetails = cMezeoFileCloud.GetContinerResult(strContentURi, ref nStatusCode);
+
+                                    Debugger.Instance.logMessage("SyncManager - ProcessLocalEvents", "updating DB   DbHandler.PUBLIC to " + iDetails.bPublic + " for DbHandler.KEY " + lEvent.FileName);
+
                                     dbHandler.Update(DbHandler.TABLE_NAME, DbHandler.PUBLIC , iDetails.bPublic , DbHandler.KEY , lEvent.FileName ); 
                                     //bool bPublic = dbHandler.GetBoolean(DbHandler.TABLE_NAME, DbHandler.PUBLIC, DbHandler.KEY + " = '" + lEvent.FileName + "'");
-                                    string mimeType = dbHandler.GetString(DbHandler.TABLE_NAME, DbHandler.MIMIE_TYPE, new string[] { DbHandler.KEY }, new string[] { lEvent.FileName }, new DbType[] { DbType.String });
 
+                                    Debugger.Instance.logMessage("SyncManager - ProcessLocalEvents", "getting mime type from DB");
+                                    string mimeType = dbHandler.GetString(DbHandler.TABLE_NAME, DbHandler.MIMIE_TYPE, new string[] { DbHandler.KEY }, new string[] { lEvent.FileName }, new DbType[] { DbType.String });
+                                    Debugger.Instance.logMessage("SyncManager - ProcessLocalEvents", "mime type " + mimeType);
+
+                                    Debugger.Instance.logMessage("SyncManager - ProcessLocalEvents", "Calling cMezeoFileCloud.FileRename for content uri " + strContentURi + " with new name " + changedName);
                                     bRet = cMezeoFileCloud.FileRename(strContentURi, changedName, mimeType, iDetails.bPublic, ref nStatusCode);
                                     if (bRet)
                                     {
+                                        SuccessIndexes.Add(events.IndexOf(lEvent));
+                                        Debugger.Instance.logMessage("SyncManager - ProcessLocalEvents", "MarkParentsStatus " + lEvent.FullPath + " to DB_STATUS_SUCCESS");
                                         MarkParentsStatus(lEvent.FullPath, DB_STATUS_SUCCESS);
+                                        Debugger.Instance.logMessage("SyncManager - ProcessLocalEvents", "Calling UpdateDBForRenameSuccess");
                                         UpdateDBForRenameSuccess(lEvent);
+                                    }
+                                    else if (nStatusCode != 204 && nStatusCode != 401 && nStatusCode != 403)
+                                    {
+                                        bRet = false;
+                                        bOffline = true;
                                     }
                                 }
                             }                            
@@ -2892,13 +3191,34 @@ namespace Mezeo
                         break; 
                 }
 
+                if (bOffline)
+                    break;
+
                 fileDownloadCount++;
+                Debugger.Instance.logMessage("SyncManager - ProcessLocalEvents", "file download count: " + fileDownloadCount);
             }
 
-            events.Clear();
+            Debugger.Instance.logMessage("SyncManager - ProcessLocalEvents", "clear events");
+            if (events.Count == SuccessIndexes.Count)
+                events.Clear();
+            else
+            {
+                SuccessIndexes.Sort();
+                for (int n = SuccessIndexes.Count - 1; n >= 0; n--)
+                {
+                    events.RemoveAt(SuccessIndexes[n]);
+                }
+            }
+
+            if (bOffline)
+            {
+                Debugger.Instance.logMessage("SyncManager - ProcessLocalEvents", "return with -2");
+                return -2;
+            }
 
             if (LocalEventList.Count != 0)
             {
+                Debugger.Instance.logMessage("SyncManager - ProcessLocalEvents", "LocalEventList.Count NOT ZERO, locking folderWatcherLockObject");
                 lock (folderWatcherLockObject)
                 {
                     if (LocalEventList.Count != 0)
@@ -2906,18 +3226,24 @@ namespace Mezeo
                         if (events == null)
                             events = new List<LocalEvents>();
 
+                        Debugger.Instance.logMessage("SyncManager - ProcessLocalEvents", "adding LocalEventList to events");
                         events.AddRange(LocalEventList);
-
+                        Debugger.Instance.logMessage("SyncManager - ProcessLocalEvents", "clear LocalEventList");
                         LocalEventList.Clear();
                     }
                 }
+
+                Debugger.Instance.logMessage("SyncManager - ProcessLocalEvents", "Calling HandleEvents");
 
                 HandleEvents(caller);
 
             }
 
             isLocalEventInProgress = false;
-            return true;
+
+            Debugger.Instance.logMessage("SyncManager - ProcessLocalEvents", "Leave");
+
+            return 1;
 
             //if (LocalEventList.Count != 0)
             //    watcher_WatchCompletedEvent();
@@ -2943,6 +3269,7 @@ namespace Mezeo
 
         private void ReportConflict(LocalEvents lEvent , IssueFound.ConflictType cType)
         {
+            Debugger.Instance.logMessage("SyncManager - ReportConflict", "Enter");
             FileInfo fInfo = new FileInfo(lEvent.FullPath);
 
             IssueFound iFound = new IssueFound();
@@ -3000,6 +3327,7 @@ namespace Mezeo
              iFound.ServerSize = FormatSizeString(iDetails.dblSizeInBytes);
              iFound.ServerIssueDT = iDetails.dtModified;
              iFound.ServerFileInfo = lEvent.FileName;
+             iFound.ServerFileUri = iDetails.szContentUrl;
 
              frmIssuesFound.AddIssueToList(iFound);
 
@@ -3012,10 +3340,12 @@ namespace Mezeo
              //frmParent.toolStripMenuItem4.Text = LanguageTranslator.GetValue("SyncManagerMenuIssueFoundText");
 
              //SetIssueFound(true);
+             Debugger.Instance.logMessage("SyncManager - ReportConflict", "Leave");
         }
 
         private bool CheckForConflicts(LocalEvents lEvent, string strContentUrl)
         {
+            Debugger.Instance.logMessage("SyncManager - CheckForConflicts", "Enter, content uri " + strContentUrl);
             int nStatusCode = 0;
             bool bRet = false;
             string strEtag;
@@ -3187,13 +3517,14 @@ namespace Mezeo
                     }
                     break;
             }
-
+            
+            Debugger.Instance.logMessage("SyncManager - CheckForConflicts", "Leave");
             return true;
         }
 
         void watcher_WatchCompletedEvent()
         {
-            if (!isLocalEventInProgress && !isSyncInProgress && !isOfflineWorking && BasicInfo.IsConnectedToInternet && LocalEventList.Count != 0 && BasicInfo.AutoSync && !BasicInfo.IsInitialSync)
+            if (!isLocalEventInProgress && !isSyncInProgress && !isOfflineWorking && BasicInfo.IsConnectedToInternet && LocalEventList.Count != 0 && BasicInfo.AutoSync && !BasicInfo.IsInitialSync && !isDisabledByConnection)
             {
                 lock (folderWatcherLockObject)
                 {
@@ -3218,11 +3549,15 @@ namespace Mezeo
             
         private void bwNQUpdate_DoWork(object sender, DoWorkEventArgs e)
         {
+            Debugger.Instance.logMessage("frmSyncManager - bwNQUpdate_DoWork", "Enter");
+
             isDisabledByConnection = false;
             //while (isOfflineWorking)
             //{
             //    //nothing to do
             //}
+
+            
 
             fileDownloadCount = 1;
 
@@ -3230,38 +3565,152 @@ namespace Mezeo
             NQDetails[] pNQDetails = null;
             string queueName = BasicInfo.GetMacAddress + "-" + BasicInfo.UserName;
 
-            int nNQLength = (int)e.Argument; //cMezeoFileCloud.NQGetLength(BasicInfo.ServiceUrl + cLoginDetails.szNQParentUri, queueName, ref nStatusCode);
+            NQLengthResult nqLengthRange = cMezeoFileCloud.NQGetLength(BasicInfo.ServiceUrl + cLoginDetails.szNQParentUri, queueName, ref nStatusCode);
+            int nqRangeStart = nqLengthRange.nStart;
+            int nqRangeEnd = nqLengthRange.nEnd;
 
-            if (nNQLength > 0)
-                pNQDetails = cMezeoFileCloud.NQGetData(BasicInfo.ServiceUrl + cLoginDetails.szNQParentUri, queueName, nNQLength, ref nStatusCode);
+            int maxProgressValue = 0;
 
-            if (pNQDetails != null)
+            if (BasicInfo.NQRangeStart == -1)
             {
-                nNQLength = pNQDetails.Length;
-                ((BackgroundWorker)sender).ReportProgress(INITIAL_NQ_SYNC, nNQLength);
+                BasicInfo.NQRangeStart = nqRangeStart;
+                BasicInfo.NQRangeEnd = nqRangeEnd;
+            }
 
-                for (int n = 0; n < nNQLength ; n++)
-                { 
+            int totalNQLength = (nqRangeEnd - nqRangeStart) + 1;
+            maxProgressValue = totalNQLength;
+
+            ((BackgroundWorker)sender).ReportProgress(INITIAL_NQ_SYNC, maxProgressValue);
+
+            while (totalNQLength > 0)
+            {
+                int NQnumToRequest = 0;
+
+                if (totalNQLength >= 10)
+                {
+                    NQnumToRequest = 10;
+                }
+                else
+                {
+                    NQnumToRequest = totalNQLength;
+                }               
+
+                pNQDetails = cMezeoFileCloud.NQGetData(BasicInfo.ServiceUrl + cLoginDetails.szNQParentUri, queueName, NQnumToRequest, ref nStatusCode);
+
+                foreach (NQDetails nq in pNQDetails)
+                {
                     if (bwNQUpdate.CancellationPending)
                     {
-                        e.Cancel = true;
-                        bwNQUpdate.ReportProgress(UPDATE_NQ_CANCELED);
+                        Debugger.Instance.logMessage("frmSyncManager - bwNQUpdate_DoWork", "bwNQUpdate.CancellationPending called inner");
+
+                        //e.Cancel = true;
+                        //bwNQUpdate.ReportProgress(UPDATE_NQ_CANCELED);
                         break;
                     }
 
-                    bool isSuccess = UpdateFromNQ(pNQDetails[n]);
+                    bool isSuccess = UpdateFromNQ(nq);
                     if (isSuccess)
                     {
+                        Debugger.Instance.logMessage("frmSyncManager - bwNQUpdate_DoWork - ", nq.StrObjectName + " - Delete From NQ");
                         cMezeoFileCloud.NQDeleteValue(BasicInfo.ServiceUrl + cLoginDetails.szNQParentUri, queueName, 1, ref nStatusCode);
                     }
-                   
+
                     bwNQUpdate.ReportProgress(UPDATE_NQ_PROGRESS);
                     fileDownloadCount++;
                 }
-                
-                isSyncInProgress = false;
+
+                if (bwNQUpdate.CancellationPending)
+                {
+                    Debugger.Instance.logMessage("frmSyncManager - bwNQUpdate_DoWork", "bwNQUpdate.CancellationPending called outer");
+
+                    e.Cancel = true;
+                    bwNQUpdate.ReportProgress(UPDATE_NQ_CANCELED);
+                    break;
+                }
+
+                totalNQLength -= NQnumToRequest;
+
+                bool gotUpdadtedValueOfNq = false;
+
+                while (!gotUpdadtedValueOfNq)
+                {
+                    nqLengthRange = cMezeoFileCloud.NQGetLength(BasicInfo.ServiceUrl + cLoginDetails.szNQParentUri, queueName, ref nStatusCode);
+
+                    nqRangeStart = nqLengthRange.nStart;
+                    nqRangeEnd = nqLengthRange.nEnd;
+
+                    if (nqRangeStart == -1)
+                    {
+                        break;
+                    }
+
+                    if (BasicInfo.NQRangeStart + NQnumToRequest != nqRangeStart)
+                    {
+                        Thread.Sleep(3000);
+                    }
+                    else
+                    {
+                        gotUpdadtedValueOfNq = true;
+                    }
+                }
+
+                BasicInfo.NQRangeStart = nqRangeStart;
+
+                if (BasicInfo.NQRangeEnd <= nqRangeEnd)
+                {
+                    totalNQLength += nqRangeEnd - BasicInfo.NQRangeEnd;
+                    maxProgressValue += nqRangeEnd - BasicInfo.NQRangeEnd;
+                    ((BackgroundWorker)sender).ReportProgress(UPDATE_NQ_MAXIMUM, maxProgressValue);
+                }
+
+                BasicInfo.NQRangeEnd = nqRangeEnd;
+
             }
-            
+
+            //int nNQLength = (int)e.Argument; //cMezeoFileCloud.NQGetLength(BasicInfo.ServiceUrl + cLoginDetails.szNQParentUri, queueName, ref nStatusCode);
+
+            //if (nNQLength > 0)
+            //    pNQDetails = cMezeoFileCloud.NQGetData(BasicInfo.ServiceUrl + cLoginDetails.szNQParentUri, queueName, nNQLength, ref nStatusCode);
+
+            //if (pNQDetails != null)
+            //{
+            //    nNQLength = pNQDetails.Length;
+
+            //    Debugger.Instance.logMessage("frmSyncManager - bwNQUpdate_DoWork", "nNQLength" + nNQLength.ToString());   
+
+            //    ((BackgroundWorker)sender).ReportProgress(INITIAL_NQ_SYNC, nNQLength);
+
+            //    for (int n = 0; n < nNQLength ; n++)
+            //    { 
+            //        if (bwNQUpdate.CancellationPending)
+            //        {
+            //            Debugger.Instance.logMessage("frmSyncManager - bwNQUpdate_DoWork", "bwNQUpdate.CancellationPending called"); 
+
+            //            e.Cancel = true;
+            //            bwNQUpdate.ReportProgress(UPDATE_NQ_CANCELED);
+            //            break;
+            //        }
+
+            //        Debugger.Instance.logMessage("frmSyncManager - bwNQUpdate_DoWork - ", pNQDetails[n].StrObjectName + " - Enter"); 
+
+            //        bool isSuccess = UpdateFromNQ(pNQDetails[n]);
+            //        if (isSuccess)
+            //        {
+            //            Debugger.Instance.logMessage("frmSyncManager - bwNQUpdate_DoWork - ", pNQDetails[n].StrObjectName + " - Delete From NQ"); 
+            //            cMezeoFileCloud.NQDeleteValue(BasicInfo.ServiceUrl + cLoginDetails.szNQParentUri, queueName, 1, ref nStatusCode);
+            //        }
+
+            //        Debugger.Instance.logMessage("frmSyncManager - bwNQUpdate_DoWork - ", pNQDetails[n].StrObjectName + " - Leave"); 
+
+            //        bwNQUpdate.ReportProgress(UPDATE_NQ_PROGRESS);
+            //        fileDownloadCount++;
+            //    }
+                
+            //    isSyncInProgress = false;
+            //}
+
+            isSyncInProgress = false;
+            Debugger.Instance.logMessage("frmSyncManager - bwNQUpdate_DoWork", "Leave");   
         }
 
         private void bwNQUpdate_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
@@ -3345,6 +3794,11 @@ namespace Mezeo
                     ShowSyncMessage(true);
                 }
             }
+            else if (e.ProgressPercentage == UPDATE_NQ_MAXIMUM)
+            {
+                pbSyncProgress.Maximum = (int)e.UserState;
+                showProgress();
+            }
             
             
         }
@@ -3386,7 +3840,8 @@ namespace Mezeo
         private void bwLocalEvents_DoWork(object sender, DoWorkEventArgs e)
         {
             isDisabledByConnection = false;
-            HandleEvents((BackgroundWorker)sender);
+            int statusCode = HandleEvents((BackgroundWorker)sender);
+            e.Result = statusCode;
         }
 
         private void bwLocalEvents_ProgressChanged(object sender, ProgressChangedEventArgs e)
@@ -3525,7 +3980,24 @@ namespace Mezeo
 
         private void bwLocalEvents_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
         {
-            if (IsCalledByNextSyncTmr)
+
+            if ((int)e.Result == -2)
+            {
+                if (this.InvokeRequired)
+                {
+                    this.Invoke((MethodInvoker)delegate
+                    {
+                        frmParent.HandleConnectionState();
+                    });
+
+                }
+                else
+                {
+                    frmParent.HandleConnectionState();
+                }
+                
+            }
+            else  if (IsCalledByNextSyncTmr)
             {
                 IsCalledByNextSyncTmr = false;
 
