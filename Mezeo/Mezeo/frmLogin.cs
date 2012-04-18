@@ -476,9 +476,9 @@ namespace Mezeo
                 System.IO.Directory.CreateDirectory(dirName);
                 BasicInfo.IsInitialSync = true;
                 BasicInfo.SyncDirPath = dirName;
-
                 //mezeoFileCloud.GetOverlayRegisteration();
-            }            
+            }
+            System.IO.Directory.SetCurrentDirectory(BasicInfo.SyncDirPath);
         }
 
         private void txtPasswrod_TextChanged(object sender, EventArgs e)

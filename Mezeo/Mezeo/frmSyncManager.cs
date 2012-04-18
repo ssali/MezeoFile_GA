@@ -240,6 +240,8 @@ namespace Mezeo
             
             if (browserDialog.ShowDialog() == System.Windows.Forms.DialogResult.OK)
             {
+                string exePath = System.IO.Path.GetDirectoryName(Application.ExecutablePath);
+                System.IO.Directory.SetCurrentDirectory(exePath);
                 watcher.StopMonitor();
 
                 int index = BasicInfo.SyncDirPath.LastIndexOf("\\");
@@ -258,7 +260,7 @@ namespace Mezeo
                 watcher = new Watcher(LocalEventList, lockObject, BasicInfo.SyncDirPath);
                 watcher.WatchCompletedEvent += new Watcher.WatchCompleted(watcher_WatchCompletedEvent);
                 watcher.StartMonitor();
-
+                System.IO.Directory.SetCurrentDirectory(BasicInfo.SyncDirPath);
             }
         }
 
