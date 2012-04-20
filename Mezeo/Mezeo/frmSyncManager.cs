@@ -4324,10 +4324,5 @@ namespace Mezeo
             }
         }
 
-        private void rbSyncOn_CheckedChanged(object sender, EventArgs e)
-        {
-
-        }
-
     }
 }
