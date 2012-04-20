@@ -506,7 +506,7 @@ namespace Mezeo
         private void CheckAndCreateSyncDirectory()
         {
             DbHandler dbHandler = new DbHandler();
-            
+
 
             bool isDirectoryExists = false;
             if (BasicInfo.SyncDirPath.Trim().Length != 0)
@@ -530,21 +530,50 @@ namespace Mezeo
                 //    userName = userName.Substring(0, atIndex-1);
                 //}
 
-                string dirName = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile) + "\\" + AboutBox.AssemblyTitle ;
-                
-                if( System.IO.Directory.Exists(dirName))
+                string dirName = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) + "\\" + AboutBox.AssemblyTitle;
+
+                if (showLogin == false && !isDirectoryExists)
                 {
-                    DateTime time = System.IO.Directory.GetCreationTime(dirName);
+                    DialogResult checkDir;
 
-                    System.IO.Directory.Move(dirName, dirName + time.ToString("M-d-yyyy-h-mm-ss"));
+                    string message = LanguageTranslator.GetValue("ExpectedLocation") + Environment.NewLine + BasicInfo.SyncDirPath + ". " + Environment.NewLine + Environment.NewLine + LanguageTranslator.GetValue("FolderMoved") + Environment.NewLine + Environment.NewLine + LanguageTranslator.GetValue("ClickNoExit") + Environment.NewLine + Environment.NewLine + LanguageTranslator.GetValue("ClickYesRestore");
+                    string caption = "MezeoFile Setup";
+                    MessageBoxButtons buttons = MessageBoxButtons.YesNo;
+                    MessageBoxDefaultButton defaultbutton = MessageBoxDefaultButton.Button2;
+
+                    checkDir = MessageBox.Show(message, caption,
+                       buttons, MessageBoxIcon.None, defaultbutton);
+
+                    if (checkDir == DialogResult.Yes)
+                    {
+                        System.IO.Directory.CreateDirectory(dirName);
+                        BasicInfo.IsInitialSync = true;
+                        BasicInfo.SyncDirPath = dirName;
+                    }
+                    else
+                    {
+                        System.Environment.Exit(0);
+                    }
                 }
+                else
+                {
 
-                System.IO.Directory.CreateDirectory(dirName);
-                BasicInfo.IsInitialSync = true;
-                BasicInfo.SyncDirPath = dirName;
+                    if (System.IO.Directory.Exists(dirName))
+                    {
+                        DateTime time = System.IO.Directory.GetCreationTime(dirName);
 
-                //mezeoFileCloud.GetOverlayRegisteration();
-            }            
+                        System.IO.Directory.Move(dirName, dirName + time.ToString("M-d-yyyy-h-mm-ss"));
+                    }
+
+                    System.IO.Directory.CreateDirectory(dirName);
+                    BasicInfo.IsInitialSync = true;
+                    BasicInfo.SyncDirPath = dirName;
+
+                    //mezeoFileCloud.GetOverlayRegisteration();
+                }
+            }
+
+            System.IO.Directory.SetCurrentDirectory(BasicInfo.SyncDirPath);
         }
 
         private void txtPasswrod_TextChanged(object sender, EventArgs e)
