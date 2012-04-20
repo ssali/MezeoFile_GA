@@ -152,13 +152,13 @@ namespace Mezeo
             }
         }
 
-        public static bool IsConnectedToInternet
-        {
-            get
-            {
-                return ConnectedToInternet();
-            }
-        }
+        //public static bool IsConnectedToInternet
+        //{
+        //    get
+        //    {
+        //        return ConnectedToInternet();
+        //    }
+        //}
 
         public static bool IsCredentialsAvailable
         {

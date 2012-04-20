@@ -400,6 +400,7 @@
             // 
             // tmrNextSync
             // 
+            this.tmrNextSync.Enabled = true;
             this.tmrNextSync.Interval = 300000;
             this.tmrNextSync.Tick += new System.EventHandler(this.tmrNextSync_Tick);
             // 

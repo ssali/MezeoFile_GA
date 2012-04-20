@@ -120,12 +120,6 @@
   <data name="AppOfflineMenu" xml:space="preserve">
     <value>Sync is offline</value>
   </data>
-  <data name="ClickNoExit" xml:space="preserve">
-    <value>Click "No" to exit the application and then re-run the application after you have returned the folder to its expected location.  The application will resume automatic syncing with your online account.</value>
-  </data>
-  <data name="ClickYesRestore" xml:space="preserve">
-    <value>Click "Yes" if you want to create a new sync folder and restore files from your online account.  Automatic sync will resume once your files are downloaded.</value>
-  </data>
   <data name="ConflictDetectedError" xml:space="preserve">
     <value>Error Detected</value>
   </data>
@@ -164,12 +158,6 @@
   </data>
   <data name="ErrorBlurbUpload3" xml:space="preserve">
     <value>This is typically caused by internet or service interruptions and is usually resolved automatically.  Another upload attempt will be made during the next sync cycle.</value>
-  </data>
-  <data name="ExpectedLocation" xml:space="preserve">
-    <value>Your MezeoFile folder was not found in its expected location:</value>
-  </data>
-  <data name="FolderMoved" xml:space="preserve">
-    <value>The folder may have been moved, renamed, or deleted.</value>
   </data>
   <data name="InsufficientStorageMessage" xml:space="preserve">
     <value>Not enough space available to download file(s).</value>

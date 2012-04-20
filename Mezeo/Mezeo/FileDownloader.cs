@@ -17,16 +17,9 @@ namespace Mezeo
         private static int INSUFFICIENT_STORAGE_AVAILABLE = -5;
         private static int FILE_DOWNLOAD_SUCCESS = 200;
 
-        public enum CancelReason
-        {
-            INSUFFICIENT_STORAGE,
-            USER_CANCEL,
-            DOWNLOAD_FAILED
-        }
-
         Queue<LocalItemDetails> queue;
         ThreadLockObject lockObject;
-        MezeoFileCloud cFileCloud;
+        CloudService cFileCloud;
         DbHandler dbhandler = new DbHandler();
         public bool IsAnalysisCompleted { get; set; }
 
@@ -39,7 +32,7 @@ namespace Mezeo
         public delegate void CancelDownLoadEvent(CancelReason reason);
         public event CancelDownLoadEvent cancelDownloadEvent;
 
-        public FileDownloader(Queue<LocalItemDetails> queue, ThreadLockObject lockObject, MezeoFileCloud fileCloud, bool analysisCompleted)
+        public FileDownloader(Queue<LocalItemDetails> queue, ThreadLockObject lockObject, CloudService fileCloud, bool analysisCompleted)
         {
             Debugger.Instance.logMessage("FileDownloader - Constructor", "Enter");
             Debugger.Instance.logMessage("FileDownloader - Constructor", "Setting queue with count: " + queue.Count);
@@ -165,7 +158,22 @@ namespace Mezeo
                             {
                                 Debugger.Instance.logMessage("FileDownloader - consume", "Getting eTag for " + id.strName );
                                 id.strETag = cFileCloud.GetETag(id.szContentUrl, ref refCode);
-                            }
+                                if (refCode == ResponseCode.LOGINFAILED1 || refCode == ResponseCode.LOGINFAILED2)
+                                {
+                                    lockObject.StopThread = true;
+                                    done = true;
+                                    CancelAndNotify(CancelReason.LOGIN_FAILED);
+                                    break;
+                                }
+                                else if (refCode != ResponseCode.GETETAG)
+                                {
+                                    lockObject.StopThread = true;
+                                    done = true;
+                                    CancelAndNotify(CancelReason.SERVER_INACCESSIBLE);
+                                    break;
+                                }
+                            }                           
+                            
                             Debugger.Instance.logMessage("FileDownloader - consume", "eTag for " + id.strName + ": " + id.strETag + ", bRet TRUE");
                             bRet = true;
                         }
@@ -174,6 +182,21 @@ namespace Mezeo
                             Debugger.Instance.logMessage("FileDownloader - consume", id.strName + " is NOT DIRECTORY");
                             bRet = cFileCloud.DownloadFile(id.szContentUrl + '/' + id.strName,
                                                     downloadObjectName, id.dblSizeInBytes, ref refCode);
+                           
+                            if (refCode == ResponseCode.LOGINFAILED1 || refCode == ResponseCode.LOGINFAILED2)
+                            {
+                                lockObject.StopThread = true;
+                                done = true;
+                                CancelAndNotify(CancelReason.LOGIN_FAILED);
+                                break;
+                            }
+                            else if (refCode != ResponseCode.DOWNLOADFILE)
+                            {
+                                lockObject.StopThread = true;
+                                done = true;
+                                CancelAndNotify(CancelReason.SERVER_INACCESSIBLE);
+                                break;
+                            }
 
                             Debugger.Instance.logMessage("FileDownloader - consume", "bRet for " + id.strName + " is " + bRet.ToString());
                             if (refCode == INSUFFICIENT_STORAGE_AVAILABLE)
@@ -183,14 +206,24 @@ namespace Mezeo
                                 CancelAndNotify(CancelReason.INSUFFICIENT_STORAGE);
                                 break;
                             }
-                            //else if (refCode != FILE_DOWNLOAD_SUCCESS)
-                            //{
-                            //    done = true;
-                            //    CancelAndNotify(CancelReason.DOWNLOAD_FAILED);
-                            //    break;
-                            //}
+                            
                             Debugger.Instance.logMessage("FileDownloader - consume", "Getting eTag for " + id.strName);
                             id.strETag = cFileCloud.GetETag(id.szContentUrl, ref refCode);
+                            
+                            if (refCode == ResponseCode.LOGINFAILED1 || refCode == ResponseCode.LOGINFAILED2)
+                            {
+                                lockObject.StopThread = true;
+                                done = true;
+                                CancelAndNotify(CancelReason.LOGIN_FAILED);
+                                break;
+                            }
+                            else if (refCode != ResponseCode.GETETAG)
+                            {
+                                lockObject.StopThread = true;
+                                done = true;
+                                CancelAndNotify(CancelReason.SERVER_INACCESSIBLE);
+                                break;
+                            }
                             Debugger.Instance.logMessage("FileDownloader - consume", "eTag for " + id.strName + ": " + id.strETag );
                         }
 

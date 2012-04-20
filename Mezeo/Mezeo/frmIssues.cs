@@ -13,7 +13,7 @@ namespace Mezeo
 {
     public partial class frmIssues : Form
     {
-        private MezeoFileCloud cMezeoFileCloud;
+        private CloudService cMezeoFileCloud;
 
         public frmIssues()
         {
@@ -22,7 +22,7 @@ namespace Mezeo
             LoadResources();
         }
 
-        public frmIssues(MezeoFileCloud mezeoFileCloud)
+        public frmIssues(CloudService mezeoFileCloud)
         {
             InitializeComponent();
             ClearInfoLabels();

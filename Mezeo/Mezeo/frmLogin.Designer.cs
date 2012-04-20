@@ -48,7 +48,6 @@
             this.msSyncMgrExit = new System.Windows.Forms.ToolStripMenuItem();
             this.pbLogo = new System.Windows.Forms.PictureBox();
             this.labelError = new System.Windows.Forms.Label();
-            this.tmrConnectionCheck = new System.Windows.Forms.Timer(this.components);
             this.cmLogin = new System.Windows.Forms.ContextMenu();
             this.menuItem1 = new System.Windows.Forms.MenuItem();
             this.menuItem2 = new System.Windows.Forms.MenuItem();
@@ -188,11 +187,6 @@
             resources.ApplyResources(this.labelError, "labelError");
             this.labelError.ForeColor = System.Drawing.Color.Red;
             this.labelError.Name = "labelError";
-            // 
-            // tmrConnectionCheck
-            // 
-            this.tmrConnectionCheck.Interval = 300000;
-            this.tmrConnectionCheck.Tick += new System.EventHandler(this.tmrConnectionCheck_Tick);
             // 
             // cmLogin
             // 
@@ -334,7 +328,6 @@
         private System.Windows.Forms.ToolStripMenuItem toolStripMenuItem5;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator3;
         private System.Windows.Forms.ToolStripMenuItem msSyncMgrExit;
-        private System.Windows.Forms.Timer tmrConnectionCheck;
         private System.Windows.Forms.Label labelError;
         private System.Windows.Forms.ContextMenu cmLogin;
         private System.Windows.Forms.MenuItem menuItem1;

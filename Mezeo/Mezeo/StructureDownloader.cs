@@ -12,7 +12,7 @@ namespace Mezeo
         public delegate void StructureDownloadEvent(object sender, StructureDownloaderEvent e);
         public event StructureDownloadEvent downloadEvent;
 
-        public delegate void CancelDownLoadEvent();
+        public delegate void CancelDownLoadEvent(CancelReason reason);
         public event CancelDownLoadEvent cancelDownloadEvent;
 
         public delegate void StartDownLoaderEvent(bool bStart);
@@ -33,12 +33,12 @@ namespace Mezeo
         Queue<LocalItemDetails> queue;
         ThreadLockObject lockObject;
         string cRootContainerUrl;
-        MezeoFileCloud cFileCloud;//=new MezeoFileCloud();
+        CloudService cFileCloud;//=new MezeoFileCloud();
 
         bool isRootContainer = false;
 
         static int seq = 0;
-        public StructureDownloader(Queue<LocalItemDetails> queue, ThreadLockObject lockObject, string rootContainerUrl, MezeoFileCloud fileCloud)
+        public StructureDownloader(Queue<LocalItemDetails> queue, ThreadLockObject lockObject, string rootContainerUrl, CloudService fileCloud)
         {
             Debugger.Instance.logMessage("StructureDownloader - Constructor", "Enter");
             this.queue = queue;
@@ -75,11 +75,19 @@ namespace Mezeo
 
             int refCode=0;
             ItemDetails[] contents = cFileCloud.DownloadItemDetails(cRootContainerUrl, ref refCode);
-
-            //if (refCode != 200)
-            //{
-            //    CancelAndNotify();
-            //}
+            
+            if (refCode == ResponseCode.LOGINFAILED1 || refCode == ResponseCode.LOGINFAILED2)
+            {
+                lockObject.StopThread = true;
+                CancelAndNotify(CancelReason.LOGIN_FAILED);
+                return;
+            }
+            else if (refCode != ResponseCode.DOWNLOADITEMDETAILS)
+            {
+                lockObject.StopThread = true;
+                CancelAndNotify(CancelReason.SERVER_INACCESSIBLE);
+                return;
+            }
 
             if (contents == null)
             {
@@ -136,7 +144,7 @@ namespace Mezeo
                 if (lockObject.StopThread /*|| refCode != 200*/)
                 {
                     Debugger.Instance.logMessage("StructureDownloader - startAnalyseItemDetails", "Stop thread requested Calling CancelAndNotify");
-                    CancelAndNotify();
+                    CancelAndNotify(CancelReason.USER_CANCEL);
                     break;
                 }
                 if (contents[n].szItemType == "DIRECTORY")
@@ -160,11 +168,19 @@ namespace Mezeo
             Debugger.Instance.logMessage("StructureDownloader - analyseItemDetails", "Enter");
             int refCode = 0;
             ItemDetails[] contents = cFileCloud.DownloadItemDetails(itemDetail.szContentUrl, ref refCode);
-
-            //if (refCode != 200)
-            //{
-            //    CancelAndNotify();
-            //}
+            
+            if (refCode == ResponseCode.LOGINFAILED1 || refCode == ResponseCode.LOGINFAILED2)
+            {
+                lockObject.StopThread = true;
+                CancelAndNotify(CancelReason.LOGIN_FAILED);
+                return;
+            }
+            else if (refCode != ResponseCode.DOWNLOADITEMDETAILS)
+            {
+                lockObject.StopThread = true;
+                CancelAndNotify(CancelReason.SERVER_INACCESSIBLE);
+                return;
+            }
 
             if (contents == null)
             {
@@ -200,7 +216,7 @@ namespace Mezeo
                     if (lockObject.StopThread /*|| refCode != 200*/)
                     {
                         Debugger.Instance.logMessage("StructureDownloader - analyseItemDetails", "Stop thread requested Calling CancelAndNotify");
-                        CancelAndNotify();
+                        CancelAndNotify(CancelReason.USER_CANCEL);
                         break;
                     }
 
@@ -215,12 +231,12 @@ namespace Mezeo
             Debugger.Instance.logMessage("StructureDownloader - analyseItemDetails", "Leave");
         }
 
-        private void CancelAndNotify()
+        private void CancelAndNotify(CancelReason reason)
         {
             Debugger.Instance.logMessage("StructureDownloader - CancelAndNotify", "Enter");
             if(cancelDownloadEvent != null)
             {
-                cancelDownloadEvent();
+                cancelDownloadEvent(reason);
             }
             Debugger.Instance.logMessage("StructureDownloader - CancelAndNotify", "Leave");
         }
