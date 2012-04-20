@@ -949,10 +949,15 @@ namespace Mezeo
 
             NQLengthResult nqLengthRes = cMezeoFileCloud.NQGetLength(BasicInfo.ServiceUrl + cLoginDetails.szNQParentUri, queueName, ref nStatusCode);
             int nNQLength = 0;
-            if (nqLengthRes.nEnd == -1 || nqLengthRes.nStart == -1)
-                nNQLength = 0;
+            if (nqLengthRes != null)
+                if (nqLengthRes.nEnd == -1 || nqLengthRes.nStart == -1)
+                    nNQLength = 0;
+                else
+                    nNQLength = (nqLengthRes.nEnd + 1) - nqLengthRes.nStart;
             else
-                nNQLength = (nqLengthRes.nEnd + 1) - nqLengthRes.nStart;
+            {
+                Debugger.Instance.logMessage("frmSyncManager - UpdateNQ", "cMezeoFileCloud.NQGetLength returned a null object.  Status code was " + nStatusCode.ToString());
+            }
 
             if (nNQLength > 0)
             {
@@ -3646,7 +3651,7 @@ namespace Mezeo
                         break;
                     }
 
-                    if (BasicInfo.NQRangeStart + NQnumToRequest != nqRangeStart)
+                    if ((BasicInfo.NQRangeStart + NQnumToRequest) > nqRangeStart)
                     {
                         Thread.Sleep(3000);
                     }
