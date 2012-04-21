@@ -3126,10 +3126,35 @@ namespace Mezeo
                                 string folderName = lEvent.FullPath.Substring((lEvent.FullPath.LastIndexOf("\\") + 1));
 
                                 Debugger.Instance.logMessage("SyncManager - ProcessLocalEvents", "Create new container for folder " + folderName);
-                                
-                                strUrl = cMezeoFileCloud.NewContainer(folderName, strParentURi, ref nStatusCode);
-                                if (nStatusCode == 201)
-                                    strUrl += "/contents";
+
+                                // Defect 273 - If somehow, someway the same folder name exists locally and on the cloud,
+                                //              do not create a new folder in the cloud with this name.  Just use the existing
+                                //              container and upload files/containers into it.
+                                ItemDetails[] itemDetails;
+                                bool bCreateCloudContainer = true;
+                                // Grab a list of files and containers for the parent.
+                                itemDetails = cMezeoFileCloud.DownloadItemDetails(strParentURi, ref nStatusCode);
+                                if (nStatusCode == 200)
+                                {
+                                    // Look through each item for a container with the same name.
+                                    foreach (ItemDetails item in itemDetails)
+                                    {
+                                        if ("DIRECTORY" == item.szItemType)
+                                        {
+                                            if (folderName == item.strName)
+                                            {
+                                                // Don't create a new/duplicate folder.
+                                                bCreateCloudContainer = false;
+                                                // Populate the url with this folder.
+                                                strUrl = item.szContentUrl;
+                                            }
+                                        }
+                                    }
+                                }
+                                if (bCreateCloudContainer)
+                                   strUrl = cMezeoFileCloud.NewContainer(folderName, strParentURi, ref nStatusCode);
+                                    if (nStatusCode == 201)
+                                        strUrl += "/contents";
 
                                 Debugger.Instance.logMessage("SyncManager - ProcessLocalEvents", "Container URI for folder " + folderName + " is " + strUrl);
                             }
@@ -3380,7 +3405,7 @@ namespace Mezeo
                                     //    bOffline = true;
                                     //}
                                 }
-                            }                            
+                            }
                         }
                         break; 
                 }
@@ -3412,7 +3437,6 @@ namespace Mezeo
             int returnCode = 1;
             if (LocalEventList.Count != 0)
             {
-               
                 Debugger.Instance.logMessage("SyncManager - ProcessLocalEvents", "LocalEventList.Count NOT ZERO, locking folderWatcherLockObject");
                 lock (folderWatcherLockObject)
                 {
@@ -3431,7 +3455,6 @@ namespace Mezeo
                 Debugger.Instance.logMessage("SyncManager - ProcessLocalEvents", "Calling HandleEvents");
 
                 returnCode = HandleEvents(caller);
-
             }
 
             isLocalEventInProgress = false;
@@ -3442,8 +3465,6 @@ namespace Mezeo
 
             //if (LocalEventList.Count != 0)
             //    watcher_WatchCompletedEvent();
-
-
         }
 
         private void SetIssueFound(bool bIsIssueFound)
@@ -4198,7 +4219,6 @@ namespace Mezeo
             btnMoveFolder.Enabled = false;
             lblPercentDone.Text = "";
             pbSyncProgress.Visible = false;
-
         }
 
         private void ShowLocalEventsCompletedMessage()
@@ -4329,6 +4349,5 @@ namespace Mezeo
             {
             }
         }
-
     }
 }
