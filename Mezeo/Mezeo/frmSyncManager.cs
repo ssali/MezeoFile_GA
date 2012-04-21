@@ -3981,24 +3981,30 @@ namespace Mezeo
             tmrNextSync.Interval = FIVE_MINUTES;
             isSyncInProgress = false;
             isEventCanceled = false;
-            if (e.Result != null && (CancelReason)e.Result == CancelReason.LOGIN_FAILED)
+            try
             {
-                this.Hide();
-                frmParent.ShowLoginAgainFromSyncMgr();
-            }
-            else if (e.Result != null && (CancelReason)e.Result == CancelReason.SERVER_INACCESSIBLE)
-            {
-                DisableSyncManager();
-                ShowSyncManagerOffline();
-            }
-            else
-            {
-                if (LocalEventList.Count > 0)
+                if (e.Result != null && (CancelReason)e.Result == CancelReason.LOGIN_FAILED)
                 {
-                    watcher_WatchCompletedEvent();
+                    this.Hide();
+                    frmParent.ShowLoginAgainFromSyncMgr();
+                }
+                else if (e.Result != null && (CancelReason)e.Result == CancelReason.SERVER_INACCESSIBLE)
+                {
+                    DisableSyncManager();
+                    ShowSyncManagerOffline();
+                }
+                else
+                {
+                    if (LocalEventList.Count > 0)
+                    {
+                        watcher_WatchCompletedEvent();
+                    }
                 }
             }
-           
+            catch(Exception ex)
+            {
+
+            }
         }
 
         private void bwNQUpdate_ProgressChanged(object sender, ProgressChangedEventArgs e)
