@@ -3901,6 +3901,7 @@ namespace Mezeo
 
                 bool gotUpdadtedValueOfNq = false;
 
+                int nqRangeStartOriginal = nqRangeStart;
                 while (!gotUpdadtedValueOfNq)
                 {
                     nqLengthRange = cMezeoFileCloud.NQGetLength(BasicInfo.ServiceUrl + cLoginDetails.szNQParentUri, queueName, ref nStatusCode);
@@ -3924,7 +3925,7 @@ namespace Mezeo
                         break;
                     }
 
-                    if (BasicInfo.NQRangeStart + NQnumToRequest != nqRangeStart)
+                    if (nqRangeStartOriginal + NQnumToRequest < nqRangeStart)
                     {
                         Thread.Sleep(3000);
                     }
