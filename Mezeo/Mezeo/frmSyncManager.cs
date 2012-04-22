@@ -361,15 +361,29 @@ namespace Mezeo
                 {
                     int nStatusCode = 0;
                     string queueName = BasicInfo.GetMacAddress + "-" + BasicInfo.UserName;
-                    NQLengthResult nqLengthRes = cMezeoFileCloud.NQGetLength(BasicInfo.ServiceUrl + cLoginDetails.szNQParentUri, queueName, ref nStatusCode);
-                    if (nStatusCode == ResponseCode.LOGINFAILED1 || nStatusCode == ResponseCode.LOGINFAILED2)
+                    try
                     {
-                        this.Hide();
-                        frmParent.ShowLoginAgainFromSyncMgr();
+                        NQLengthResult nqLengthRes = cMezeoFileCloud.NQGetLength(BasicInfo.ServiceUrl + cLoginDetails.szNQParentUri, queueName, ref nStatusCode);
+                        if (nStatusCode == ResponseCode.LOGINFAILED1 || nStatusCode == ResponseCode.LOGINFAILED2)
+                        {
+                            this.Hide();
+                            frmParent.ShowLoginAgainFromSyncMgr();
+                        }
+                        else if (nStatusCode == ResponseCode.NQGETLENGTH)
+                        {
+                            BasicInfo.AutoSync = true;
+                            EnableSyncManager();
+                            BasicInfo.AutoSync = true;
+                            InitializeSync();
+                        }
                     }
-                    else if (nStatusCode == ResponseCode.NQGETLENGTH)
+                    catch (Exception ex)
                     {
+                        // order of these statement is important as it is triggering rbsyncoff button event
+                        BasicInfo.AutoSync = true;
                         EnableSyncManager();
+                        BasicInfo.AutoSync = true;
+                        InitializeSync();
                     }
                 }
             }
