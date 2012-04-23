@@ -183,6 +183,10 @@ namespace Mezeo
 
         public LoginDetails LoginDetail
         {
+            get
+            {
+                return cLoginDetails;
+            }
             set
             {
                 cLoginDetails = value;
@@ -3148,17 +3152,20 @@ namespace Mezeo
                                 if (nStatusCode == 200)
                                 {
                                     // Look through each item for a container with the same name.
-                                    foreach (ItemDetails item in itemDetails)
+                                    if (itemDetails != null)
                                     {
-                                        if ("DIRECTORY" == item.szItemType)
+                                        foreach (ItemDetails item in itemDetails)
                                         {
-                                            if (folderName == item.strName)
+                                            if ("DIRECTORY" == item.szItemType)
                                             {
-                                                // Don't create a new/duplicate folder.
-                                                bCreateCloudContainer = false;
-                                                // Populate the url with this folder.
-                                                strUrl = item.szContentUrl;
-                                                break;
+                                                if (folderName == item.strName)
+                                                {
+                                                    // Don't create a new/duplicate folder.
+                                                    bCreateCloudContainer = false;
+                                                    // Populate the url with this folder.
+                                                    strUrl = item.szContentUrl;
+                                                    break;
+                                                }
                                             }
                                         }
                                     }
@@ -3185,17 +3192,20 @@ namespace Mezeo
                                 if (nStatusCode == 200)
                                 {
                                     // Look through each item for a file with the same name.
-                                    foreach (ItemDetails item in itemDetailsfile)
+                                    if (itemDetailsfile != null)
                                     {
-                                        if ("FILE" == item.szItemType)
+                                        foreach (ItemDetails item in itemDetailsfile)
                                         {
-                                            if (fileName == item.strName)
+                                            if ("FILE" == item.szItemType)
                                             {
-                                                // Don't create a new/duplicate file.
-                                                buploadfileToCloud = false;
-                                                // Populate the url with this file.
-                                                strUrl = item.szContentUrl;
-                                                break;
+                                                if (fileName == item.strName)
+                                                {
+                                                    // Don't create a new/duplicate file.
+                                                    buploadfileToCloud = false;
+                                                    // Populate the url with this file.
+                                                    strUrl = item.szContentUrl;
+                                                    break;
+                                                }
                                             }
                                         }
                                     }
