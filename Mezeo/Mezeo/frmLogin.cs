@@ -511,27 +511,11 @@ namespace Mezeo
             bool isDirectoryExists = false;
             if (BasicInfo.SyncDirPath.Trim().Length != 0)
                 isDirectoryExists = System.IO.Directory.Exists(BasicInfo.SyncDirPath);
+            string dirName = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) + "\\" + AboutBox.AssemblyTitle;
 
+            //Modified code to fixed issue # 1417 Checking first is directory exists or not
             if (!isDirectoryExists)
             {
-                dbHandler.DeleteDb();
-            }
-
-            bool isDbCreateNew = dbHandler.OpenConnection();
-
-            if (!isDirectoryExists || isDbCreateNew)
-            {
-                //string userName = BasicInfo.UserName;
-
-                //int atIndex = userName.IndexOf('@');
-
-                //if (atIndex>0)
-                //{
-                //    userName = userName.Substring(0, atIndex-1);
-                //}
-
-                string dirName = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) + "\\" + AboutBox.AssemblyTitle;
-
                 if (showLogin == false && !isDirectoryExists)
                 {
                     DialogResult checkDir;
@@ -549,6 +533,8 @@ namespace Mezeo
                         System.IO.Directory.CreateDirectory(dirName);
                         BasicInfo.IsInitialSync = true;
                         BasicInfo.SyncDirPath = dirName;
+                        dbHandler.DeleteDb();
+                        dbHandler.OpenConnection();
                     }
                     else
                     {
@@ -557,7 +543,29 @@ namespace Mezeo
                 }
                 else
                 {
+                    bool isDbCreateNew = dbHandler.OpenConnection();
+                    //if user login first time in that case showlogin is true
+                    if (isDbCreateNew)
+                    {
+                        if (System.IO.Directory.Exists(dirName))
+                        {
+                            DateTime time = System.IO.Directory.GetCreationTime(dirName);
 
+                            System.IO.Directory.Move(dirName, dirName + time.ToString("M-d-yyyy-h-mm-ss"));
+                        }
+
+                        System.IO.Directory.CreateDirectory(dirName);
+                        BasicInfo.IsInitialSync = true;
+                        BasicInfo.SyncDirPath = dirName;
+                    }
+                }
+            }
+            else
+            {
+                //if directory exits checking whether we have new database or not 
+                bool isDbCreateNew = dbHandler.OpenConnection();
+                if (isDbCreateNew)
+                {
                     if (System.IO.Directory.Exists(dirName))
                     {
                         DateTime time = System.IO.Directory.GetCreationTime(dirName);
@@ -568,9 +576,8 @@ namespace Mezeo
                     System.IO.Directory.CreateDirectory(dirName);
                     BasicInfo.IsInitialSync = true;
                     BasicInfo.SyncDirPath = dirName;
-
-                    //mezeoFileCloud.GetOverlayRegisteration();
                 }
+
             }
 
             System.IO.Directory.SetCurrentDirectory(BasicInfo.SyncDirPath);
