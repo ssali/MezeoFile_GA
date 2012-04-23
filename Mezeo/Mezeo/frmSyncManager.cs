@@ -371,10 +371,13 @@ namespace Mezeo
                         }
                         else if (nStatusCode == ResponseCode.NQGETLENGTH)
                         {
-                            BasicInfo.AutoSync = true;
-                            EnableSyncManager();
-                            BasicInfo.AutoSync = true;
-                            InitializeSync();
+                            if (isSyncInProgress == false)
+                            {
+                                BasicInfo.AutoSync = true;
+                                EnableSyncManager();
+                                BasicInfo.AutoSync = true;
+                                InitializeSync();
+                            }
                         }
                     }
                     catch (Exception ex)
@@ -3161,6 +3164,7 @@ namespace Mezeo
                                                 bCreateCloudContainer = false;
                                                 // Populate the url with this folder.
                                                 strUrl = item.szContentUrl;
+                                                break;
                                             }
                                         }
                                     }
@@ -3179,9 +3183,36 @@ namespace Mezeo
 
                                 Debugger.Instance.logMessage("SyncManager - ProcessLocalEvents", "Start uploading file for " + lEvent.FullPath + ", at parent URI " + strParentURi);
 
-                                strUrl = cMezeoFileCloud.UploadingFile(lEvent.FullPath, strParentURi, ref nStatusCode);
-                                if(nStatusCode == 201)
-                                    strUrl += "/content"; 
+                                string fileName = lEvent.FullPath.Substring((lEvent.FullPath.LastIndexOf("\\") + 1));
+                                ItemDetails[] itemDetailsfile;
+                                bool buploadfileToCloud = true;
+                                // Grab a list of files for the parent.
+                                itemDetailsfile = cMezeoFileCloud.DownloadItemDetails(strParentURi, ref nStatusCode);
+                                if (nStatusCode == 200)
+                                {
+                                    // Look through each item for a file with the same name.
+                                    foreach (ItemDetails item in itemDetailsfile)
+                                    {
+                                        if ("FILE" == item.szItemType)
+                                        {
+                                            if (fileName == item.strName)
+                                            {
+                                                // Don't create a new/duplicate file.
+                                                buploadfileToCloud = false;
+                                                // Populate the url with this file.
+                                                strUrl = item.szContentUrl;
+                                                break;
+                                            }
+                                        }
+                                    }
+                                }
+
+                                if (buploadfileToCloud)
+                                {
+                                    strUrl = cMezeoFileCloud.UploadingFile(lEvent.FullPath, strParentURi, ref nStatusCode);
+                                    if (nStatusCode == 201)
+                                        strUrl += "/content";
+                                }
                             }
 
                             if (nStatusCode == ResponseCode.LOGINFAILED1 || nStatusCode == ResponseCode.LOGINFAILED2)
