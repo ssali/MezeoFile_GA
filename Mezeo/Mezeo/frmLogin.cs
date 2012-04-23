@@ -47,7 +47,6 @@ namespace Mezeo
             mezeoFileCloud = new CloudService();
 
             LoadResources();
-            
         }
 
         //void frmLogin_HandleDestroyed(object sender, EventArgs e)
@@ -134,7 +133,6 @@ namespace Mezeo
             //{
                 Login();
             //}
-
         }
 
 
@@ -163,7 +161,6 @@ namespace Mezeo
                 url = "https://" + url;
                 txtServerUrl.Text = url;
 	        }
-
 
             if (!url.Substring(url.Length-3,3).Equals("/v2"))
 	        {
@@ -227,7 +224,6 @@ namespace Mezeo
             int referenceCode = 0;
             loginDetails = mezeoFileCloud.Login(txtUserName.Text, txtPasswrod.Text,validateServiceUrl(txtServerUrl.Text), ref referenceCode);
             e.Result = referenceCode;
-           
         }
 
         private void ShowSyncManagerOfffline()
@@ -363,7 +359,6 @@ namespace Mezeo
                         ShowLoginError();
                 }
                 return;
-                
             }
             else if (loginDetails.nAccountType == 0)
             {
@@ -419,7 +414,6 @@ namespace Mezeo
                     syncManager.ProcessOfflineEvents();
                 }
             }
-
         }
 
         private void ShowLoginError()
@@ -498,15 +492,12 @@ namespace Mezeo
                         //mezeoFileCloud.NQDeleteValue(BasicInfo.ServiceUrl + loginDetails.szNQParentUri, queueName, nNQLength, ref nStatusCode);
                     }
                 }
-
-                
             }
         }
 
         private void CheckAndCreateSyncDirectory()
         {
             DbHandler dbHandler = new DbHandler();
-
 
             bool isDirectoryExists = false;
             if (BasicInfo.SyncDirPath.Trim().Length != 0)
@@ -556,8 +547,9 @@ namespace Mezeo
 
                         System.IO.Directory.CreateDirectory(dirName);
                         BasicInfo.IsInitialSync = true;
-                        BasicInfo.SyncDirPath = dirName;
                     }
+                    // Always set the BasicInfo.SyncDirPath value.
+                    BasicInfo.SyncDirPath = dirName;
                 }
             }
             else
@@ -575,9 +567,9 @@ namespace Mezeo
 
                     System.IO.Directory.CreateDirectory(dirName);
                     BasicInfo.IsInitialSync = true;
-                    BasicInfo.SyncDirPath = dirName;
                 }
-
+                // Always set the BasicInfo.SyncDirPath value.
+                BasicInfo.SyncDirPath = dirName;
             }
 
             System.IO.Directory.SetCurrentDirectory(BasicInfo.SyncDirPath);

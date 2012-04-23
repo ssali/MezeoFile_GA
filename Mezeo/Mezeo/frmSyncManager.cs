@@ -2004,12 +2004,6 @@ namespace Mezeo
             System.Diagnostics.Process.Start(argument);
         }
 
-        private bool ConnectedToInternet()
-        {
-            
-            return false;
-        }
-
         public void DisableSyncManager()
         {
             isDisabledByConnection = true;
