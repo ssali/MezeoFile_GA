@@ -448,7 +448,8 @@ namespace Mezeo
             }
         }
 
-        private void rbSyncOff_CheckedChanged(object sender, EventArgs e)
+
+        private void rbSyncOff_Click(object sender, EventArgs e)
         {
             if (BasicInfo.AutoSync)
             {
@@ -461,6 +462,21 @@ namespace Mezeo
                     ShowSyncMessage();
                 }
             }
+        }
+
+        private void rbSyncOff_CheckedChanged(object sender, EventArgs e)
+        {
+            //if (BasicInfo.AutoSync)
+            //{
+            //    BasicInfo.AutoSync = false;
+
+            //    //tmrNextSync.Enabled = false;
+
+            //    if (!isSyncInProgress && !isLocalEventInProgress && !isOfflineWorking)
+            //    {
+            //        ShowSyncMessage();
+            //    }
+            //}
         }
 
        

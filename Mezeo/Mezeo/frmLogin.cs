@@ -125,14 +125,16 @@ namespace Mezeo
 
         private void btnLogin_Click(object sender, EventArgs e)
         {
-            //if (isFromSyncMgrVerification)
-            //{
-            //    VerifyCredentialsAgainFromSyncMgr();
-            //}
-            //else
-            //{
+            /*Change done for: If login promt from syncMgr then on click 'Login' only verify login credentials and launch syncMgr. 
+                In this case we do not need to verify NQ , Sync directory or DB existence.*/
+            if (isFromSyncMgrVerification)
+            {
+                VerifyCredentialsAgainFromSyncMgr();
+            }
+            else
+            {
                 Login();
-            //}
+            }
         }
 
 
@@ -278,6 +280,16 @@ namespace Mezeo
                 return;
             }
 
+            string NQParentURI = mezeoFileCloud.NQParentUri(loginDetails.szManagementUri, ref referenceCode);
+            if (NQParentURI.Trim().Length != 0 && (referenceCode == 401 || referenceCode == 403))
+            {
+                this.UseWaitCursor = false;
+                ShowLoginAgainFromSyncMgr();
+                return;
+            }
+
+            loginDetails.szNQParentUri = NQParentURI;
+
             isLoginSuccess = true;
             this.UseWaitCursor = false;
             BasicInfo.Password = txtPasswrod.Text;
@@ -294,7 +306,7 @@ namespace Mezeo
 
             if (isLoginSuccess)
             {
-                syncManager.EnableSyncManager();
+                //syncManager.EnableSyncManager();
                 if (BasicInfo.IsInitialSync)
                 {
                     syncManager.InitializeSync();

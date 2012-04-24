@@ -49,6 +49,7 @@
             this.bwUpdateUsage = new System.ComponentModel.BackgroundWorker();
             this.shapeContainer1 = new Microsoft.VisualBasic.PowerPacks.ShapeContainer();
             this.lineShape1 = new Microsoft.VisualBasic.PowerPacks.LineShape();
+           // this.btnMoveFolder = new System.Windows.Forms.Button();
             this.lnkFolderPath = new System.Windows.Forms.LinkLabel();
             this.lblFolder = new System.Windows.Forms.Label();
             this.lblUsageDetails = new System.Windows.Forms.Label();
@@ -160,6 +161,7 @@
             this.rbSyncOff.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             this.rbSyncOff.UseVisualStyleBackColor = true;
             this.rbSyncOff.CheckedChanged += new System.EventHandler(this.rbSyncOff_CheckedChanged);
+            this.rbSyncOff.Click += new System.EventHandler(this.rbSyncOff_Click);
             // 
             // rbSyncOn
             // 
@@ -252,6 +254,18 @@
             this.lineShape1.Y1 = 109;
             this.lineShape1.Y2 = 109;
             // 
+            /* btnMoveFolder
+            //
+            this.btnMoveFolder.Location = new System.Drawing.Point(540, 136);
+            this.btnMoveFolder.Name = "btnMoveFolder";
+            this.btnMoveFolder.Size = new System.Drawing.Size(96, 23);
+            this.btnMoveFolder.TabIndex = 12;
+            this.btnMoveFolder.Text = "Move Folder";
+            this.btnMoveFolder.UseVisualStyleBackColor = true;
+            this.btnMoveFolder.Visible = false;
+            this.btnMoveFolder.Click += new System.EventHandler(this.btnMoveFolder_Click);
+            //
+ 		   */
             // lnkFolderPath
             // 
             this.lnkFolderPath.AutoEllipsis = true;
@@ -390,6 +404,7 @@
             this.Controls.Add(this.imgStatus);
             this.Controls.Add(this.lblUsageDetails);
             this.Controls.Add(this.lblUsage);
+            //this.Controls.Add(this.btnMoveFolder);
             this.Controls.Add(this.lnkFolderPath);
             this.Controls.Add(this.lblFolder);
             this.Controls.Add(this.lnkAbout);
