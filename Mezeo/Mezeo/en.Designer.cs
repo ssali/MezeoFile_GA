@@ -484,7 +484,7 @@ namespace Mezeo {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Folder.
+        ///   Looks up a localized string similar to Sync Folder.
         /// </summary>
         internal static string SyncManagerFolderLabel {
             get {

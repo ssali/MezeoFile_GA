@@ -242,7 +242,7 @@ namespace Mezeo
         #endregion
 
         #region Form Events
-
+/*
         private void btnMoveFolder_Click(object sender, EventArgs e)
         {
             FolderBrowserDialog browserDialog = new FolderBrowserDialog();
@@ -274,7 +274,8 @@ namespace Mezeo
 
             }
         }
-
+        */
+        
         private void WalkDirectoryTreeForMoveFolder(System.IO.DirectoryInfo root, string strMovePath)
         {
             System.IO.FileInfo[] files = null;
@@ -661,7 +662,8 @@ namespace Mezeo
 
             // lblStatusL2.Visible = false;
 
-            this.btnMoveFolder.Text = LanguageTranslator.GetValue("SyncManagerMoveFolderButtonText");
+           // this.btnMoveFolder.Text = LanguageTranslator.GetValue("SyncManagerMoveFolderButtonText");
+            //Commeted above line as move folder functinality disable 
             this.btnSyncNow.Text = LanguageTranslator.GetValue("SyncManagerSyncNowButtonText");
             this.btnIssuesFound.Text = LanguageTranslator.GetValue("SyncManagerIssueFoundButtonText");
             this.lnkAbout.Text = LanguageTranslator.GetValue("SyncManagerAboutLinkText");
@@ -768,7 +770,8 @@ namespace Mezeo
             isAnalysisCompleted = false;
             //tmrNextSync.Enabled = false;
             pbSyncProgress.Visible = true;
-            btnMoveFolder.Enabled = false;
+           // btnMoveFolder.Enabled = false;
+            //Commeted above line as move folder functinality disable 
         }
         public void StopSync()
         {
@@ -1988,9 +1991,9 @@ namespace Mezeo
 
             lblStatusL1.Text = "";
             lblStatusL3.Text = "";
-
             pbSyncProgress.Visible = false;
-            btnMoveFolder.Enabled = true;
+          //  btnMoveFolder.Enabled = true;
+            //Commeted above line as move folder functinality disable 
             ShowNextSyncLabel(true);
         }
 
@@ -2016,7 +2019,8 @@ namespace Mezeo
             pnlFileSyncOnOff.Enabled = false;
             rbSyncOff.Checked = true;
 
-            btnMoveFolder.Enabled = false;
+            //btnMoveFolder.Enabled = false;
+            //Commeted above line as move folder functinality disable 
             btnSyncNow.Enabled = false;
             //tmrNextSync.Enabled = false;
             //lnkFolderPath.Enabled = false;
@@ -2043,7 +2047,8 @@ namespace Mezeo
             }
 
             isDisabledByConnection = false;
-            btnMoveFolder.Enabled = true;
+            //btnMoveFolder.Enabled = true;
+            //Commeted above line as move folder functinality disable 
             btnSyncNow.Enabled = true;
             if(lockObject != null)
                 lockObject.StopThread = false;
@@ -4251,7 +4256,8 @@ namespace Mezeo
             pbSyncProgress.Value = 0;
             pbSyncProgress.Maximum = events.Count;
             fileDownloadCount = 1;
-            btnMoveFolder.Enabled = false;
+           // btnMoveFolder.Enabled = false;
+            //Commeted above line as move folder functinality disable 
         }
 
         public void ShowSyncManagerOffline()
@@ -4266,7 +4272,8 @@ namespace Mezeo
             lblStatusL1.Text = LanguageTranslator.GetValue("AppOfflineMenu");
             label1.Text = "";
             lblStatusL3.Text = lblStatusL3.Text = LanguageTranslator.GetValue("SyncManagerStatusLastSyncLabel") + " " + lastSync.ToString("MMM d, yyyy h:mm tt");
-            btnMoveFolder.Enabled = false;
+            //btnMoveFolder.Enabled = false;
+            //Commeted above line as move folder functinality disable 
             lblPercentDone.Text = "";
             pbSyncProgress.Visible = false;
         }

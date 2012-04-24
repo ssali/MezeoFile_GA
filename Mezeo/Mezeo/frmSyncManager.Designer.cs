@@ -49,7 +49,6 @@
             this.bwUpdateUsage = new System.ComponentModel.BackgroundWorker();
             this.shapeContainer1 = new Microsoft.VisualBasic.PowerPacks.ShapeContainer();
             this.lineShape1 = new Microsoft.VisualBasic.PowerPacks.LineShape();
-            this.btnMoveFolder = new System.Windows.Forms.Button();
             this.lnkFolderPath = new System.Windows.Forms.LinkLabel();
             this.lblFolder = new System.Windows.Forms.Label();
             this.lblUsageDetails = new System.Windows.Forms.Label();
@@ -253,16 +252,6 @@
             this.lineShape1.Y1 = 109;
             this.lineShape1.Y2 = 109;
             // 
-            // btnMoveFolder
-            // 
-            this.btnMoveFolder.Location = new System.Drawing.Point(540, 136);
-            this.btnMoveFolder.Name = "btnMoveFolder";
-            this.btnMoveFolder.Size = new System.Drawing.Size(96, 23);
-            this.btnMoveFolder.TabIndex = 12;
-            this.btnMoveFolder.Text = "Move Folder";
-            this.btnMoveFolder.UseVisualStyleBackColor = true;
-            this.btnMoveFolder.Click += new System.EventHandler(this.btnMoveFolder_Click);
-            // 
             // lnkFolderPath
             // 
             this.lnkFolderPath.AutoEllipsis = true;
@@ -277,13 +266,12 @@
             // 
             // lblFolder
             // 
-            this.lblFolder.AutoSize = true;
             this.lblFolder.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lblFolder.Location = new System.Drawing.Point(98, 141);
+            this.lblFolder.Location = new System.Drawing.Point(66, 141);
             this.lblFolder.Name = "lblFolder";
-            this.lblFolder.Size = new System.Drawing.Size(42, 13);
+            this.lblFolder.Size = new System.Drawing.Size(75, 14);
             this.lblFolder.TabIndex = 10;
-            this.lblFolder.Text = "Folder";
+            this.lblFolder.Text = "Sync Folder";
             // 
             // lblUsageDetails
             // 
@@ -306,7 +294,7 @@
             // 
             // btnIssuesFound
             // 
-            this.btnIssuesFound.Location = new System.Drawing.Point(37, 275);
+            this.btnIssuesFound.Location = new System.Drawing.Point(45, 275);
             this.btnIssuesFound.Name = "btnIssuesFound";
             this.btnIssuesFound.Size = new System.Drawing.Size(96, 23);
             this.btnIssuesFound.TabIndex = 24;
@@ -402,7 +390,6 @@
             this.Controls.Add(this.imgStatus);
             this.Controls.Add(this.lblUsageDetails);
             this.Controls.Add(this.lblUsage);
-            this.Controls.Add(this.btnMoveFolder);
             this.Controls.Add(this.lnkFolderPath);
             this.Controls.Add(this.lblFolder);
             this.Controls.Add(this.lnkAbout);
@@ -451,7 +438,7 @@
         private System.ComponentModel.BackgroundWorker bwLocalEvents;
         private System.ComponentModel.BackgroundWorker bwUpdateUsage;
         private System.Windows.Forms.RadioButton rbSyncOff;
-        private System.Windows.Forms.Button btnMoveFolder;
+       // private System.Windows.Forms.Button btnMoveFolder;
         private System.Windows.Forms.LinkLabel lnkFolderPath;
         private System.Windows.Forms.Label lblFolder;
         private Microsoft.VisualBasic.PowerPacks.ShapeContainer shapeContainer1;

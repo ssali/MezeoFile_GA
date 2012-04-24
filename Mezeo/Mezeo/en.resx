@@ -259,7 +259,7 @@
     <value>File Sync:</value>
   </data>
   <data name="SyncManagerFolderLabel" xml:space="preserve">
-    <value>Folder</value>
+    <value>Sync Folder</value>
   </data>
   <data name="SyncManagerHelpLinkText" xml:space="preserve">
     <value>Help</value>
