@@ -557,10 +557,17 @@ namespace Mezeo
                             System.IO.Directory.Move(dirName, dirName + time.ToString("M-d-yyyy-h-mm-ss"));
                         }
 
-                        System.IO.Directory.CreateDirectory(dirName);
-                        BasicInfo.IsInitialSync = true;
+                        //System.IO.Directory.CreateDirectory(dirName);
+                       // BasicInfo.IsInitialSync = true;
                     }
+                    /*else
+                    {
+                        System.IO.Directory.CreateDirectory(dirName);
+                    }
+                     */
                     // Always set the BasicInfo.SyncDirPath value.
+                    System.IO.Directory.CreateDirectory(dirName);
+                    BasicInfo.IsInitialSync = true;
                     BasicInfo.SyncDirPath = dirName;
                 }
             }
@@ -578,9 +585,11 @@ namespace Mezeo
                     }
 
                     System.IO.Directory.CreateDirectory(dirName);
-                    BasicInfo.IsInitialSync = true;
+                    //BasicInfo.IsInitialSync = true;
                 }
                 // Always set the BasicInfo.SyncDirPath value.
+                //BasicInfo.IsInitialSync = true;
+                BasicInfo.AutoSync = true;
                 BasicInfo.SyncDirPath = dirName;
             }
 

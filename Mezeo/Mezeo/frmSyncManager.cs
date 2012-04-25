@@ -3170,7 +3170,15 @@ namespace Mezeo
                                 bool bCreateCloudContainer = true;
                                 // Grab a list of files and containers for the parent.
                                 itemDetails = cMezeoFileCloud.DownloadItemDetails(strParentURi, ref nStatusCode);
-                                if (nStatusCode == 200)
+                                if (nStatusCode == ResponseCode.LOGINFAILED1 || nStatusCode == ResponseCode.LOGINFAILED2)
+                                {
+                                    return LOGIN_FAILED;
+                                }
+                                else if (nStatusCode != ResponseCode.DOWNLOADITEMDETAILS)
+                                {
+                                    return SERVER_INACCESSIBLE;
+                                }
+                                else if (nStatusCode == ResponseCode.DOWNLOADITEMDETAILS)
                                 {
                                     // Look through each item for a container with the same name.
                                     if (itemDetails != null)
@@ -3192,9 +3200,42 @@ namespace Mezeo
                                     }
                                 }
                                 if (bCreateCloudContainer)
+                                {
                                    strUrl = cMezeoFileCloud.NewContainer(folderName, strParentURi, ref nStatusCode);
-                                    if (nStatusCode == 201)
+                                    if (nStatusCode == ResponseCode.LOGINFAILED1 || nStatusCode == ResponseCode.LOGINFAILED2)
+                                    {
+                                        return LOGIN_FAILED;
+                                    }
+                                    else if (nStatusCode != ResponseCode.NEWCONTAINER)
+                                    {
+                                        return SERVER_INACCESSIBLE;
+                                    }
+                                    else if ((strUrl.Trim().Length != 0) && (nStatusCode == ResponseCode.NEWCONTAINER))
+                                    {
                                         strUrl += "/contents";
+                                        SuccessIndexes.Add(events.IndexOf(lEvent));
+                                        bRet = true;
+
+                                        string strParent = dbHandler.GetString(DbHandler.TABLE_NAME, DbHandler.PARENT_URL, new string[] { DbHandler.KEY }, new string[] { lEvent.FileName }, new DbType[] { DbType.String });
+                                        if (strParent.Trim().Length == 0)
+                                            dbHandler.Update(DbHandler.TABLE_NAME, DbHandler.PARENT_URL, strParentURi, DbHandler.KEY, lEvent.FileName);
+
+                                        MarkParentsStatus(lEvent.FullPath, DB_STATUS_SUCCESS);
+                                        UpdateDBForAddedSuccess(strUrl, lEvent);
+                                    }
+                                }
+                                else
+                                {
+                                    SuccessIndexes.Add(events.IndexOf(lEvent));
+                                    bRet = true;
+
+                                    string strParent = dbHandler.GetString(DbHandler.TABLE_NAME, DbHandler.PARENT_URL, new string[] { DbHandler.KEY }, new string[] { lEvent.FileName }, new DbType[] { DbType.String });
+                                    if (strParent.Trim().Length == 0)
+                                        dbHandler.Update(DbHandler.TABLE_NAME, DbHandler.PARENT_URL, strParentURi, DbHandler.KEY, lEvent.FileName);
+
+                                    MarkParentsStatus(lEvent.FullPath, DB_STATUS_SUCCESS);
+                                    UpdateDBForAddedSuccess(strUrl, lEvent);
+                                }
 
                                 Debugger.Instance.logMessage("SyncManager - ProcessLocalEvents", "Container URI for folder " + folderName + " is " + strUrl);
                             }
@@ -3210,7 +3251,15 @@ namespace Mezeo
                                 bool buploadfileToCloud = true;
                                 // Grab a list of files for the parent.
                                 itemDetailsfile = cMezeoFileCloud.DownloadItemDetails(strParentURi, ref nStatusCode);
-                                if (nStatusCode == 200)
+                                if (nStatusCode == ResponseCode.LOGINFAILED1 || nStatusCode == ResponseCode.LOGINFAILED2)
+                                {
+                                    return LOGIN_FAILED;
+                                }
+                                else if (nStatusCode != ResponseCode.DOWNLOADITEMDETAILS)
+                                {
+                                    return SERVER_INACCESSIBLE;
+                                }
+                                else if (nStatusCode == ResponseCode.DOWNLOADITEMDETAILS)
                                 {
                                     // Look through each item for a file with the same name.
                                     if (itemDetailsfile != null)
@@ -3235,11 +3284,6 @@ namespace Mezeo
                                 if (buploadfileToCloud)
                                 {
                                     strUrl = cMezeoFileCloud.UploadingFile(lEvent.FullPath, strParentURi, ref nStatusCode);
-                                    if (nStatusCode == 201)
-                                        strUrl += "/content";
-                                }
-                            }
-
                             if (nStatusCode == ResponseCode.LOGINFAILED1 || nStatusCode == ResponseCode.LOGINFAILED2)
                             {
                                 return LOGIN_FAILED;
@@ -3250,6 +3294,7 @@ namespace Mezeo
                             }
                             else if ((strUrl.Trim().Length != 0) && (nStatusCode == ResponseCode.UPLOADINGFILE))
                             {
+                                        strUrl += "/content";
                                 SuccessIndexes.Add(events.IndexOf(lEvent));
                                 bRet = true;  
 
@@ -3260,6 +3305,41 @@ namespace Mezeo
                                 MarkParentsStatus(lEvent.FullPath, DB_STATUS_SUCCESS);
                                 UpdateDBForAddedSuccess(strUrl, lEvent);
                             }
+                                }
+                                else
+                                {
+                                    SuccessIndexes.Add(events.IndexOf(lEvent));
+                                    bRet = true;
+
+                                    string strParent = dbHandler.GetString(DbHandler.TABLE_NAME, DbHandler.PARENT_URL, new string[] { DbHandler.KEY }, new string[] { lEvent.FileName }, new DbType[] { DbType.String });
+                                    if (strParent.Trim().Length == 0)
+                                        dbHandler.Update(DbHandler.TABLE_NAME, DbHandler.PARENT_URL, strParentURi, DbHandler.KEY, lEvent.FileName);
+
+                                    MarkParentsStatus(lEvent.FullPath, DB_STATUS_SUCCESS);
+                                    UpdateDBForAddedSuccess(strUrl, lEvent);
+                                }
+                            }
+
+                            //if (nStatusCode == ResponseCode.LOGINFAILED1 || nStatusCode == ResponseCode.LOGINFAILED2)
+                            //{
+                            //    return LOGIN_FAILED;
+                            //}
+                            //else if (nStatusCode != ResponseCode.UPLOADINGFILE)
+                            //{
+                            //    return SERVER_INACCESSIBLE;
+                            //}
+                            //else if ((strUrl.Trim().Length != 0) && (nStatusCode == ResponseCode.UPLOADINGFILE))
+                            //{
+                            //    SuccessIndexes.Add(events.IndexOf(lEvent));
+                            //    bRet = true;  
+
+                            //    string strParent = dbHandler.GetString(DbHandler.TABLE_NAME, DbHandler.PARENT_URL, new string[] { DbHandler.KEY }, new string[] { lEvent.FileName }, new DbType[] { DbType.String });
+                            //    if (strParent.Trim().Length == 0)
+                            //        dbHandler.Update(DbHandler.TABLE_NAME, DbHandler.PARENT_URL , strParentURi , DbHandler.KEY , lEvent.FileName);
+
+                            //    MarkParentsStatus(lEvent.FullPath, DB_STATUS_SUCCESS);
+                            //    UpdateDBForAddedSuccess(strUrl, lEvent);
+                            //}
                             //else if (nStatusCode != 201 && nStatusCode != 401 && nStatusCode != 403)
                             //{
                             //    bRet = false;
