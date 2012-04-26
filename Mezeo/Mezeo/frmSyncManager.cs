@@ -936,12 +936,14 @@ namespace Mezeo
             {
                 this.Hide();
                 frmParent.ShowLoginAgainFromSyncMgr();
+                SetIsSyncInProgress(false);
                 return -1;
             }
             else if (nStatusCode != ResponseCode.NQGETLENGTH)
             {
                 DisableSyncManager();
                 ShowSyncManagerOffline();
+                SetIsSyncInProgress(false);
                 return -2;
             }
 

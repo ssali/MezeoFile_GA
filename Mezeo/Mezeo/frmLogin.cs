@@ -228,6 +228,13 @@ namespace Mezeo
             e.Result = referenceCode;
         }
 
+        public int checkReferenceCode()
+        {
+                int referencecode = 0;
+                loginDetails = mezeoFileCloud.Login(BasicInfo.UserName, BasicInfo.Password, validateServiceUrl(BasicInfo.ServiceUrl), ref referencecode);
+                return referencecode; 
+        }
+
         private void ShowSyncManagerOfffline()
         {
             BasicInfo.UserName = txtUserName.Text;
@@ -252,8 +259,17 @@ namespace Mezeo
            // syncManager.DisableSyncManager();
            // syncManager.ShowOfflineAtStartUpSyncManager();
            // syncManager.ShowSyncManagerOffline();
-            syncManager.CheckServerStatus();
-
+            if (checkReferenceCode() > 0)
+            {
+                syncManager.CheckServerStatus();
+            }
+            else
+            {
+                 syncManager.DisableSyncManager();
+                 syncManager.ShowOfflineAtStartUpSyncManager();
+                 syncManager.ShowSyncManagerOffline();
+                 syncManager.SetIsSyncInProgress(false);
+            }
             notificationManager.NotificationHandler.ShowBalloonTip(1, LanguageTranslator.GetValue("TrayBalloonSyncStatusText"),
                                                                                 LanguageTranslator.GetValue("TrayAppOfflineText"), ToolTipIcon.None);
 
