@@ -4060,41 +4060,21 @@ namespace Mezeo
 
                 totalNQLength -= NQnumToRequest;
 
-                bool gotUpdadtedValueOfNq = false;
-
-                int nqRangeStartOriginal = nqRangeStart;
-                while (!gotUpdadtedValueOfNq)
+                nqLengthRange = cMezeoFileCloud.NQGetLength(BasicInfo.ServiceUrl + cLoginDetails.szNQParentUri, queueName, ref nStatusCode);
+                if (nStatusCode == ResponseCode.LOGINFAILED1 || nStatusCode == ResponseCode.LOGINFAILED2)
                 {
-                    nqLengthRange = cMezeoFileCloud.NQGetLength(BasicInfo.ServiceUrl + cLoginDetails.szNQParentUri, queueName, ref nStatusCode);
-                    if (nStatusCode == ResponseCode.LOGINFAILED1 || nStatusCode == ResponseCode.LOGINFAILED2)
-                    {
-                        e.Result = CancelReason.LOGIN_FAILED;
-                        isBreak = true;
-                        break;
-                    }
-                    else if (nStatusCode != ResponseCode.NQGETLENGTH)
-                    {
-                        e.Result = CancelReason.SERVER_INACCESSIBLE;
-                        isBreak = true;
-                        break;
-                    }
-                    nqRangeStart = nqLengthRange.nStart;
-                    nqRangeEnd = nqLengthRange.nEnd;
-
-                    if (nqRangeStart == -1)
-                    {
-                        break;
-                    }
-
-                    if (nqRangeStartOriginal + NQnumToRequest < nqRangeStart)
-                    {
-                        Thread.Sleep(3000);
-                    }
-                    else
-                    {
-                        gotUpdadtedValueOfNq = true;
-                    }
+                    e.Result = CancelReason.LOGIN_FAILED;
+                    isBreak = true;
+                    break;
                 }
+                else if (nStatusCode != ResponseCode.NQGETLENGTH)
+                {
+                    e.Result = CancelReason.SERVER_INACCESSIBLE;
+                    isBreak = true;
+                    break;
+                }
+                nqRangeStart = nqLengthRange.nStart;
+                nqRangeEnd = nqLengthRange.nEnd;
 
                 if (isBreak)
                     break;
@@ -4109,7 +4089,6 @@ namespace Mezeo
                 }
 
                 BasicInfo.NQRangeEnd = nqRangeEnd;
-
             }
 
             SetIsSyncInProgress(false);
