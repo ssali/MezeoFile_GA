@@ -348,7 +348,7 @@ namespace Mezeo
         {
             if (BasicInfo.AutoSync)
             {
-                if (!isLocalEventInProgress && !isSyncInProgress && !isOfflineWorking)
+                if (!isLocalEventInProgress && !IsSyncInProgress() && !isOfflineWorking)
                 {
                     IsCalledByNextSyncTmr = true;
                     tmrNextSync.Interval = FIVE_MINUTES;
@@ -376,7 +376,7 @@ namespace Mezeo
                         }
                         else if (nStatusCode == ResponseCode.NQGETLENGTH)
                         {
-                            if (isSyncInProgress == false)
+                            if (IsSyncInProgress() == false)
                             {
                                 BasicInfo.AutoSync = true;
                                 EnableSyncManager();
@@ -402,7 +402,15 @@ namespace Mezeo
             OpenFolder();
         }
 
-       
+        public bool IsSyncInProgress()
+        {
+            return isSyncInProgress;
+        }
+
+        public void SetIsSyncInProgress(bool syncInProgress)
+        {
+            isSyncInProgress = syncInProgress;
+        }
 
         private void frmSyncManager_FormClosing(object sender, FormClosingEventArgs e)
         {
@@ -440,8 +448,7 @@ namespace Mezeo
 
                 //tmrNextSync.Interval = FIVE_MINUTES;
                 //tmrNextSync.Enabled = true;
-
-                if (!isSyncInProgress && !isLocalEventInProgress && !isOfflineWorking)
+                if (!IsSyncInProgress() && !isLocalEventInProgress && !isOfflineWorking)
                 {
                    InitializeSync();
                 }
@@ -457,7 +464,7 @@ namespace Mezeo
 
                 //tmrNextSync.Enabled = false;
 
-                if (!isSyncInProgress && !isLocalEventInProgress && !isOfflineWorking)
+                if (!IsSyncInProgress() && !isLocalEventInProgress && !isOfflineWorking)
                 {
                     ShowSyncMessage();
                 }
@@ -488,7 +495,7 @@ namespace Mezeo
 
         void fileDownloder_fileDownloadCompleted()
         {
-            isSyncInProgress = false;
+            SetIsSyncInProgress(false);
             //if (BasicInfo.IsConnectedToInternet)
             //{
                 BasicInfo.IsInitialSync = false;
@@ -651,7 +658,7 @@ namespace Mezeo
                     System.Environment.Exit(0);
                 else
                 {
-                    isSyncInProgress = false;
+                    SetIsSyncInProgress(false);
                     ShowSyncMessage(true);
                     btnSyncNow.Enabled = true;
 
@@ -666,7 +673,6 @@ namespace Mezeo
                         //DisableSyncManager();
                         //ShowSyncManagerOffline();
                     }
-
                 }
             }
         }
@@ -759,7 +765,7 @@ namespace Mezeo
             //    return;
             //}
 
-            if (!isSyncInProgress)
+            if (!IsSyncInProgress())
             {
                 SetUpSync();
                 SyncNow();
@@ -786,7 +792,7 @@ namespace Mezeo
             btnSyncNow.Refresh();
             isAnalysingStructure = true;
             isDownloadingFile = true;
-            isSyncInProgress = true;
+            SetIsSyncInProgress(true);
             ShowNextSyncLabel(false);
             isAnalysisCompleted = false;
             //tmrNextSync.Enabled = false;
@@ -796,7 +802,7 @@ namespace Mezeo
         }
         public void StopSync()
         {
-            if (isSyncInProgress || isLocalEventInProgress || isOfflineWorking)
+            if (IsSyncInProgress() || isLocalEventInProgress || isOfflineWorking)
             {
                 tmrNextSync.Interval = FIVE_MINUTES;
                 isLocalEventInProgress = false;
@@ -1103,7 +1109,7 @@ namespace Mezeo
             {
                 Debugger.Instance.logMessage("frmSyncManager - UpdateNQ", "nNQLength 0");
 
-                isSyncInProgress = false;
+                SetIsSyncInProgress(false);
                 ShowSyncMessage();
 
                 //if (BasicInfo.AutoSync)
@@ -3893,7 +3899,7 @@ namespace Mezeo
 
         void watcher_WatchCompletedEvent()
         {
-            if (!isLocalEventInProgress && !isSyncInProgress && !isOfflineWorking /*&& BasicInfo.IsConnectedToInternet*/ && LocalEventList.Count != 0 && BasicInfo.AutoSync && !BasicInfo.IsInitialSync && !isDisabledByConnection)
+            if (!isLocalEventInProgress && !IsSyncInProgress() && !isOfflineWorking /*&& BasicInfo.IsConnectedToInternet*/ && LocalEventList.Count != 0 && BasicInfo.AutoSync && !BasicInfo.IsInitialSync && !isDisabledByConnection)
             {
                 lock (folderWatcherLockObject)
                 {
@@ -4104,49 +4110,7 @@ namespace Mezeo
 
             }
 
-            //int nNQLength = (int)e.Argument; //cMezeoFileCloud.NQGetLength(BasicInfo.ServiceUrl + cLoginDetails.szNQParentUri, queueName, ref nStatusCode);
-
-            //if (nNQLength > 0)
-            //    pNQDetails = cMezeoFileCloud.NQGetData(BasicInfo.ServiceUrl + cLoginDetails.szNQParentUri, queueName, nNQLength, ref nStatusCode);
-
-            //if (pNQDetails != null)
-            //{
-            //    nNQLength = pNQDetails.Length;
-
-            //    Debugger.Instance.logMessage("frmSyncManager - bwNQUpdate_DoWork", "nNQLength" + nNQLength.ToString());   
-
-            //    ((BackgroundWorker)sender).ReportProgress(INITIAL_NQ_SYNC, nNQLength);
-
-            //    for (int n = 0; n < nNQLength ; n++)
-            //    { 
-            //        if (bwNQUpdate.CancellationPending)
-            //        {
-            //            Debugger.Instance.logMessage("frmSyncManager - bwNQUpdate_DoWork", "bwNQUpdate.CancellationPending called"); 
-
-            //            e.Cancel = true;
-            //            bwNQUpdate.ReportProgress(UPDATE_NQ_CANCELED);
-            //            break;
-            //        }
-
-            //        Debugger.Instance.logMessage("frmSyncManager - bwNQUpdate_DoWork - ", pNQDetails[n].StrObjectName + " - Enter"); 
-
-            //        bool isSuccess = UpdateFromNQ(pNQDetails[n]);
-            //        if (isSuccess)
-            //        {
-            //            Debugger.Instance.logMessage("frmSyncManager - bwNQUpdate_DoWork - ", pNQDetails[n].StrObjectName + " - Delete From NQ"); 
-            //            cMezeoFileCloud.NQDeleteValue(BasicInfo.ServiceUrl + cLoginDetails.szNQParentUri, queueName, 1, ref nStatusCode);
-            //        }
-
-            //        Debugger.Instance.logMessage("frmSyncManager - bwNQUpdate_DoWork - ", pNQDetails[n].StrObjectName + " - Leave"); 
-
-            //        bwNQUpdate.ReportProgress(UPDATE_NQ_PROGRESS);
-            //        fileDownloadCount++;
-            //    }
-                
-            //    isSyncInProgress = false;
-            //}
-
-            isSyncInProgress = false;
+            SetIsSyncInProgress(false);
             Debugger.Instance.logMessage("frmSyncManager - bwNQUpdate_DoWork", "Leave");   
         }
 
@@ -4154,7 +4118,7 @@ namespace Mezeo
         {
             ShowSyncMessage(isEventCanceled);
             tmrNextSync.Interval = FIVE_MINUTES;
-            isSyncInProgress = false;
+            SetIsSyncInProgress(false);
             isEventCanceled = false;
             try
             {
@@ -4202,7 +4166,7 @@ namespace Mezeo
             }
             else if (e.ProgressPercentage == UPDATE_NQ_CANCELED)
             {
-                isSyncInProgress = false;
+                SetIsSyncInProgress(false);
                 if (isDisabledByConnection)
                 {
                    // DisableProgress();
