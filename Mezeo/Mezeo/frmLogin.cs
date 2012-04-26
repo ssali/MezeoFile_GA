@@ -101,14 +101,14 @@ namespace Mezeo
                 niSystemTray.Visible = false;
                 syncManager.ApplicationExit();
                 //Application.Exit();
-                Environment.Exit(Environment.ExitCode);
+                System.Environment.Exit(0);// Environment.Exit(Environment.ExitCode);
                // ShellNotifyIcon.RemoveNotifyIcon();
             }
             else
             {
                 niSystemTray.Visible = false;
                 //ShellNotifyIcon.RemoveNotifyIcon();
-                Application.Exit();
+                System.Environment.Exit(0);
             }
         }
 
@@ -557,14 +557,7 @@ namespace Mezeo
                             System.IO.Directory.Move(dirName, dirName + time.ToString("M-d-yyyy-h-mm-ss"));
                         }
 
-                        //System.IO.Directory.CreateDirectory(dirName);
-                       // BasicInfo.IsInitialSync = true;
                     }
-                    /*else
-                    {
-                        System.IO.Directory.CreateDirectory(dirName);
-                    }
-                     */
                     // Always set the BasicInfo.SyncDirPath value.
                     System.IO.Directory.CreateDirectory(dirName);
                     BasicInfo.IsInitialSync = true;
@@ -585,7 +578,6 @@ namespace Mezeo
                     }
 
                     System.IO.Directory.CreateDirectory(dirName);
-                    //BasicInfo.IsInitialSync = true;
                 }
                 // Always set the BasicInfo.SyncDirPath value.
                 //BasicInfo.IsInitialSync = true;

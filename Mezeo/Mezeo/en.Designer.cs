@@ -736,7 +736,7 @@ namespace Mezeo {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Intial Sync Started.
+        ///   Looks up a localized string similar to Initial Sync Started.
         /// </summary>
         internal static string TrayBalloonInitialSyncStartedTitleText {
             get {

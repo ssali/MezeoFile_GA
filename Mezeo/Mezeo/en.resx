@@ -343,7 +343,7 @@
     <value>Your sync folder is being updated with files from your account.</value>
   </data>
   <data name="TrayBalloonInitialSyncStartedTitleText" xml:space="preserve">
-    <value>Intial Sync Started</value>
+    <value>Initial Sync Started</value>
   </data>
   <data name="TrayBalloonInitialSyncText" xml:space="preserve">
     <value>Initial Sync Completed.</value>

@@ -569,6 +569,10 @@ namespace Mezeo
                 
                 isAnalysisCompleted = true;
                 fileDownloder.IsAnalysisCompleted = true;
+                lock (lockObject)
+                {
+                    Monitor.PulseAll(lockObject);
+                }
                 
                 if (stDownloader.TotalFileCount > 0)
                 {
@@ -644,7 +648,7 @@ namespace Mezeo
             {
                // queue.Clear();
                 if (lockObject.ExitApplication)
-                    Application.Exit();
+                    System.Environment.Exit(0);
                 else
                 {
                     isSyncInProgress = false;
@@ -1230,7 +1234,6 @@ namespace Mezeo
 
                         dbHandler.Update(DbHandler.TABLE_NAME, DbHandler.KEY , strKey , DbHandler.KEY , strDBKey );
                     }
-                    nStatus = 1;
                 }
                 else
                 {
@@ -1252,10 +1255,9 @@ namespace Mezeo
                             FileInfo fInfo = new FileInfo(strPath);
                             dbHandler.UpdateModifiedDate(fInfo.LastWriteTime, strKey);
                         }
-                        nStatus = 1;
                     }
                 }
-
+                        nStatus = 1;
                 Debugger.Instance.logMessage("frmSyncManager - UpdateFromNQ - ", nqDetail.StrEvent + "-" + strKey + "Leave"); 
             }
             else if (nqDetail.StrEvent == "cdmi_delete")
@@ -1402,9 +1404,8 @@ namespace Mezeo
                     if (fileFolderInfo.MimeType == null) { fileFolderInfo.MimeType = ""; }
 
                     dbHandler.Write(fileFolderInfo);
-                    nStatus = 1;
                 }
-
+                nStatus = 1;
                 Debugger.Instance.logMessage("frmSyncManager - UpdateFromNQ - ", nqDetail.StrEvent + "-" + strKey + "Leave"); 
             }
 
@@ -1658,7 +1659,7 @@ namespace Mezeo
                 if (bRet)
                 {
                     strEtag = cMezeoFileCloud.GetETag(iDetail.szContentUrl, ref refCode);
-                    if (refCode == ResponseCode.LOGINFAILED1 || nStatusCode == ResponseCode.LOGINFAILED2)
+                    if (refCode == ResponseCode.LOGINFAILED1 || refCode == ResponseCode.LOGINFAILED2)
                     {
                         return refCode;
                     }
@@ -1680,13 +1681,13 @@ namespace Mezeo
                 Directory.CreateDirectory(strPath);
 
                 strEtag = cMezeoFileCloud.GetETag(iDetail.szContentUrl, ref refCode);
-                if (nStatusCode == ResponseCode.LOGINFAILED1 || nStatusCode == ResponseCode.LOGINFAILED2)
+                if (refCode == ResponseCode.LOGINFAILED1 || refCode == ResponseCode.LOGINFAILED2)
                 {
-                    return nStatusCode;
+                    return refCode;
                 }
-                else if (nStatusCode != ResponseCode.GETETAG)
+                else if (refCode != ResponseCode.GETETAG)
                 {
-                    return nStatusCode;
+                    return refCode;
                 }
 
                 DirectoryInfo dInfo = new DirectoryInfo(strPath);

@@ -68,9 +68,22 @@ namespace Mezeo
 
                     if (queue.Count == 0)
                     {
+                        if (!IsAnalysisCompleted)
+                        {
                         Debugger.Instance.logMessage("FileDownloader - consume", "queue count ZERO, waiting on lockObject");
                         Monitor.Wait(lockObject);
                         continue;
+                        }
+                        else
+                        {
+                            if (fileDownloadCompletedEvent != null)
+                            {
+                                Debugger.Instance.logMessage("FileDownloader - consume", "calling fileDownloadCompletedEvent");
+                                done = true;
+                                fileDownloadCompletedEvent();
+                                break;
+                            }
+                        }
 
                     }
 
