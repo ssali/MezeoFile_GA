@@ -662,8 +662,9 @@ namespace Mezeo
                     }
                     else if (reason == CancelReason.SERVER_INACCESSIBLE)
                     {
-                        DisableSyncManager();
-                        ShowSyncManagerOffline();
+                        CheckServerStatus();
+                        //DisableSyncManager();
+                        //ShowSyncManagerOffline();
                     }
 
                 }
@@ -1074,8 +1075,9 @@ namespace Mezeo
             }
             else if (nStatusCode != ResponseCode.NQGETLENGTH)
             {
-                DisableSyncManager();
-                ShowSyncManagerOffline();
+                CheckServerStatus();
+                //DisableSyncManager();
+                //ShowSyncManagerOffline();
                 return;
             }
             else if (nqLengthRes == null)
@@ -4163,8 +4165,9 @@ namespace Mezeo
                 }
                 else if (e.Result != null && (CancelReason)e.Result == CancelReason.SERVER_INACCESSIBLE)
                 {
-                    DisableSyncManager();
-                    ShowSyncManagerOffline();
+                   // DisableSyncManager();
+                   // ShowSyncManagerOffline();
+                    CheckServerStatus();
                 }
                 else
                 {
@@ -4202,9 +4205,10 @@ namespace Mezeo
                 isSyncInProgress = false;
                 if (isDisabledByConnection)
                 {
-                    DisableProgress();
-                    ShowSyncDisabledMessage();
-                    ShowSyncManagerOffline();
+                   // DisableProgress();
+                   // ShowSyncDisabledMessage();
+                    //ShowSyncManagerOffline();
+                    CheckServerStatus();
                 }
                 else
                 {
@@ -4269,8 +4273,9 @@ namespace Mezeo
             else if ((int)e.Result == SERVER_INACCESSIBLE)
             {
                 ShowLocalEventsCompletedMessage();
-                DisableSyncManager();
-                ShowSyncManagerOffline();
+               // DisableSyncManager();
+               // ShowSyncManagerOffline();
+                CheckServerStatus();
             }        
          
         }
@@ -4318,9 +4323,10 @@ namespace Mezeo
                     lastSync = DateTime.Now;
                     BasicInfo.LastSyncAt = lastSync;
 
-                    DisableProgress();
-                    ShowSyncDisabledMessage();
-                    ShowSyncManagerOffline();
+                    CheckServerStatus();
+                   // DisableProgress();
+                   // ShowSyncDisabledMessage();
+                   // ShowSyncManagerOffline();
                 }
                 else
                 {
@@ -4464,8 +4470,9 @@ namespace Mezeo
             else if ((int)e.Result == SERVER_INACCESSIBLE)
             {
                 ShowLocalEventsCompletedMessage();
-                DisableSyncManager();
-                ShowSyncManagerOffline();
+                CheckServerStatus();
+                //DisableSyncManager();
+                //ShowSyncManagerOffline();
             }
             //else if (IsCalledByNextSyncTmr)
             //{

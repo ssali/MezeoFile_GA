@@ -249,9 +249,10 @@ namespace Mezeo
             syncManager.CreateControl();
             syncManager.ParentForm = this;
 
-            syncManager.DisableSyncManager();
-            syncManager.ShowOfflineAtStartUpSyncManager();
-            syncManager.ShowSyncManagerOffline();
+           // syncManager.DisableSyncManager();
+           // syncManager.ShowOfflineAtStartUpSyncManager();
+           // syncManager.ShowSyncManagerOffline();
+            syncManager.CheckServerStatus();
 
             notificationManager.NotificationHandler.ShowBalloonTip(1, LanguageTranslator.GetValue("TrayBalloonSyncStatusText"),
                                                                                 LanguageTranslator.GetValue("TrayAppOfflineText"), ToolTipIcon.None);
@@ -611,8 +612,9 @@ namespace Mezeo
             {
                 if (syncManager != null)
                 {
-                    syncManager.DisableSyncManager();
-                    syncManager.ShowSyncManagerOffline();
+                    //syncManager.DisableSyncManager();
+                    //syncManager.ShowSyncManagerOffline();
+                    syncManager.CheckServerStatus();
                     return null;
                 }
                 return null;
