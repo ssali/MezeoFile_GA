@@ -160,7 +160,6 @@
             this.rbSyncOff.Text = "Off";
             this.rbSyncOff.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             this.rbSyncOff.UseVisualStyleBackColor = true;
-            this.rbSyncOff.CheckedChanged += new System.EventHandler(this.rbSyncOff_CheckedChanged);
             this.rbSyncOff.Click += new System.EventHandler(this.rbSyncOff_Click);
             // 
             // rbSyncOn
