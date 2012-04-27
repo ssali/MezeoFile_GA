@@ -1102,6 +1102,13 @@ namespace Mezeo
                 return nStatus;
             }
 
+            if (nqDetail.StrObjectName == "csp_recyclebin")
+            {
+                Debugger.Instance.logMessage("frmSyncManager - UpdateFromNQ - skipping csp_recyclebin notification.", "csp_recyclebin notification skipped");
+                nStatus = 1;
+                return nStatus;
+            }
+
             string strPath = nqDetail.StrParentUri.Substring(cLoginDetails.szNQParentUri.Length +1);
             string strKey = strPath.Replace("/" , "\\");
             
