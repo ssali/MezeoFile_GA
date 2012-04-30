@@ -1984,8 +1984,7 @@ namespace Mezeo
                 DateTime ActualModTime = File.GetLastWriteTime(lEvent.FullPath);
                 ActualModTime = ActualModTime.AddMilliseconds(-ActualModTime.Millisecond);
                 TimeSpan diff = ActualModTime - DBModTime;
-
-                if (diff >= TimeSpan.FromSeconds(1))
+                if (diff >= TimeSpan.FromSeconds(1) || diff.CompareTo(TimeSpan.Zero) < 0)
                     return 1;
                 else
                     return 0;

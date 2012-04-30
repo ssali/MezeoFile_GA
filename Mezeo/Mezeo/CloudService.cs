@@ -13,6 +13,7 @@ namespace Mezeo
         public CloudService()
         {
             fileCloud = new MezeoFileSupport.MezeoFileCloud();
+            fileCloud.AddMineTypeDictionary();
         }
 
         public bool AppEventViewer(string StrLogName, string StrLogMsg, int nLevel)
