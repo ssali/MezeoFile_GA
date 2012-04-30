@@ -1685,7 +1685,13 @@ namespace Mezeo
             if (fileDownloadCount <= pbSyncProgress.Maximum)
                 pbSyncProgress.Value = fileDownloadCount;
 
-            lblPercentDone.Text = (int)progress + "%";
+            //Fixed Issue
+            //--------------
+            int nProgPer = (int)progress;
+            if(nProgPer <= 100)
+                lblPercentDone.Text = Convert.ToString(nProgPer) + "%";
+            //--------------
+
             lblStatusL1.Text = LanguageTranslator.GetValue("SyncManagerDownloading") + " " + (fileDownloadCount) + " " + LanguageTranslator.GetValue("SyncManagerUsageOfLabel") + " " + pbSyncProgress.Maximum;
         }
 
