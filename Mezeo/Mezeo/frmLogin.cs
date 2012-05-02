@@ -11,6 +11,8 @@ using System.Threading;
 using System.Globalization;
 using System.Resources;
 using MezeoFileSupport;
+using AppLimit.NetSparkle;
+
 
 namespace Mezeo
 {
@@ -27,11 +29,16 @@ namespace Mezeo
         public bool showLogin = false;
         public bool isFromSyncMgrVerification = false;
 
+        private Sparkle _sparkle;
+        //Adding for installer with upgread
        // static uint s_uTaskbarRestart;
 
         public frmLogin()
         {
             InitializeComponent();
+
+            _sparkle = new Sparkle(LanguageTranslator.GetValue("UpdreadRSSFeed"));
+            _sparkle.StartLoop(true);
 
             this.Icon = Properties.Resources.MezeoVault;
 

@@ -2859,6 +2859,20 @@ namespace Mezeo
             return "";
         }
 
+        //Adding function to put limit on file upload 25MB
+        private bool checkFileTooLarge(string filePath)
+        {
+            FileInfo iFileDetails = new FileInfo(filePath);
+            long fileSize;
+            if (File.Exists(filePath))
+            {
+                fileSize = iFileDetails.Length;
+                if (fileSize >= 25 * 1000 * 1000)
+                    return true;
+            }
+            return false;
+        }
+
         private int ProcessLocalEvents(BackgroundWorker caller)
         {
             Debugger.Instance.logMessage("SyncManager - ProcessLocalEvents", "Enter");
@@ -2980,9 +2994,12 @@ namespace Mezeo
                             {
                                 bRet = cMezeoFileCloud.ContainerMove(strContentURi, strName, mimeType, iDetails.bPublic, strParentUri, ref nStatusCode);
                             }
-                            else 
+                            else
                             {
-                                bRet = cMezeoFileCloud.FileMove(strContentURi, strName, mimeType, iDetails.bPublic, strParentUri, ref nStatusCode);
+                                if (!checkFileTooLarge(lEvent.FullPath))
+                                    bRet = cMezeoFileCloud.FileMove(strContentURi, strName, mimeType, iDetails.bPublic, strParentUri, ref nStatusCode);
+                                else
+                                    nStatusCode = 200;
                             }
 
                             if (nStatusCode == ResponseCode.LOGINFAILED1 || nStatusCode == ResponseCode.LOGINFAILED2)
@@ -3153,28 +3170,32 @@ namespace Mezeo
 
                                 if (buploadfileToCloud)
                                 {
-                                    strUrl = cMezeoFileCloud.UploadingFile(lEvent.FullPath, strParentURi, ref nStatusCode);
-                            if (nStatusCode == ResponseCode.LOGINFAILED1 || nStatusCode == ResponseCode.LOGINFAILED2)
-                            {
-                                return LOGIN_FAILED;
-                            }
-                            else if (nStatusCode != ResponseCode.UPLOADINGFILE)
-                            {
-                                return SERVER_INACCESSIBLE;
-                            }
-                            else if ((strUrl.Trim().Length != 0) && (nStatusCode == ResponseCode.UPLOADINGFILE))
-                            {
-                                        strUrl += "/content";
-                                SuccessIndexes.Add(events.IndexOf(lEvent));
-                                bRet = true;  
+                                    if (!checkFileTooLarge(lEvent.FullPath))
+                                        strUrl = cMezeoFileCloud.UploadingFile(lEvent.FullPath, strParentURi, ref nStatusCode);
+                                    else
+                                        nStatusCode = 201;
 
-                                string strParent = dbHandler.GetString(DbHandler.TABLE_NAME, DbHandler.PARENT_URL, new string[] { DbHandler.KEY }, new string[] { lEvent.FileName }, new DbType[] { DbType.String });
-                                if (strParent.Trim().Length == 0)
-                                    dbHandler.Update(DbHandler.TABLE_NAME, DbHandler.PARENT_URL , strParentURi , DbHandler.KEY , lEvent.FileName);
+                                    if (nStatusCode == ResponseCode.LOGINFAILED1 || nStatusCode == ResponseCode.LOGINFAILED2)
+                                    {
+                                        return LOGIN_FAILED;
+                                    }
+                                    else if (nStatusCode != ResponseCode.UPLOADINGFILE)
+                                    {
+                                        return SERVER_INACCESSIBLE;
+                                    }
+                                    else if ((strUrl.Trim().Length != 0) && (nStatusCode == ResponseCode.UPLOADINGFILE))
+                                    {
+                                                strUrl += "/content";
+                                        SuccessIndexes.Add(events.IndexOf(lEvent));
+                                        bRet = true;  
 
-                                MarkParentsStatus(lEvent.FullPath, DB_STATUS_SUCCESS);
-                                UpdateDBForAddedSuccess(strUrl, lEvent);
-                            }
+                                        string strParent = dbHandler.GetString(DbHandler.TABLE_NAME, DbHandler.PARENT_URL, new string[] { DbHandler.KEY }, new string[] { lEvent.FileName }, new DbType[] { DbType.String });
+                                        if (strParent.Trim().Length == 0)
+                                            dbHandler.Update(DbHandler.TABLE_NAME, DbHandler.PARENT_URL , strParentURi , DbHandler.KEY , lEvent.FileName);
+
+                                        MarkParentsStatus(lEvent.FullPath, DB_STATUS_SUCCESS);
+                                        UpdateDBForAddedSuccess(strUrl, lEvent);
+                                    }
                                 }
                                 else
                                 {
@@ -3190,36 +3211,11 @@ namespace Mezeo
                                 }
                             }
 
-                            //if (nStatusCode == ResponseCode.LOGINFAILED1 || nStatusCode == ResponseCode.LOGINFAILED2)
-                            //{
-                            //    return LOGIN_FAILED;
-                            //}
-                            //else if (nStatusCode != ResponseCode.UPLOADINGFILE)
-                            //{
-                            //    return SERVER_INACCESSIBLE;
-                            //}
-                            //else if ((strUrl.Trim().Length != 0) && (nStatusCode == ResponseCode.UPLOADINGFILE))
-                            //{
-                            //    SuccessIndexes.Add(events.IndexOf(lEvent));
-                            //    bRet = true;  
-
-                            //    string strParent = dbHandler.GetString(DbHandler.TABLE_NAME, DbHandler.PARENT_URL, new string[] { DbHandler.KEY }, new string[] { lEvent.FileName }, new DbType[] { DbType.String });
-                            //    if (strParent.Trim().Length == 0)
-                            //        dbHandler.Update(DbHandler.TABLE_NAME, DbHandler.PARENT_URL , strParentURi , DbHandler.KEY , lEvent.FileName);
-
-                            //    MarkParentsStatus(lEvent.FullPath, DB_STATUS_SUCCESS);
-                            //    UpdateDBForAddedSuccess(strUrl, lEvent);
-                            //}
-                            //else if (nStatusCode != 201 && nStatusCode != 401 && nStatusCode != 403)
-                            //{
-                            //    bRet = false;
-                            //    bOffline = true;
-                            //}
-
-                            Debugger.Instance.logMessage("SyncManager - ProcessLocalEvents", "FILE_ACTION_ADDED - Leave for file path " + lEvent.FullPath);
+                          Debugger.Instance.logMessage("SyncManager - ProcessLocalEvents", "FILE_ACTION_ADDED - Leave for file path " + lEvent.FullPath);
                         }
                         break;
-                    case LocalEvents.EventsType.FILE_ACTION_MODIFIED:
+                        
+                        case LocalEvents.EventsType.FILE_ACTION_MODIFIED:
                         {
                             Debugger.Instance.logMessage("SyncManager - ProcessLocalEvents", "FILE_ACTION_MODIFIED - Enter for file path " + lEvent.FullPath);
 
@@ -3238,7 +3234,11 @@ namespace Mezeo
                                 bRetConflicts = CheckForConflicts(lEvent, strContentURi);
                                 if (bRetConflicts)
                                 {
-                                    bRet = cMezeoFileCloud.OverWriteFile(lEvent.FullPath, strContentURi, ref nStatusCode);
+                                    if (!checkFileTooLarge(lEvent.FullPath))
+                                        bRet = cMezeoFileCloud.OverWriteFile(lEvent.FullPath, strContentURi, ref nStatusCode);
+                                    else
+                                        nStatusCode = 200;
+
                                     if (nStatusCode == ResponseCode.LOGINFAILED1 || nStatusCode == ResponseCode.LOGINFAILED2)
                                     {
                                         return LOGIN_FAILED;
@@ -3253,16 +3253,6 @@ namespace Mezeo
                                         MarkParentsStatus(lEvent.FullPath, DB_STATUS_SUCCESS);
                                         UpdateDBForModifiedSuccess(lEvent, strContentURi);
                                     }
-                                    //else if (nStatusCode != 204 && nStatusCode != 401 && nStatusCode != 403)
-                                    //{
-                                    //    bRet = false;
-                                    //    bOffline = true;
-                                    //}
-                                    //else
-                                    //{
-                                    //    ReportConflict(lEvent, IssueFound.ConflictType.CONFLICT_UPLOAD);
-                                    //    bRet = false;
-                                    //}
                                 }                               
                             }
 
@@ -3293,7 +3283,11 @@ namespace Mezeo
                                     strContentURi = strContentURi.Substring(0, strContentURi.LastIndexOf("/"));
                                 }
 
-                                bRet = cMezeoFileCloud.Delete(strContentURi, ref nStatusCode);
+                                if (!checkFileTooLarge(lEvent.FullPath))
+                                    bRet = cMezeoFileCloud.Delete(strContentURi, ref nStatusCode);
+                                else
+                                    nStatusCode = 200;
+
                                 if (nStatusCode == ResponseCode.LOGINFAILED1 || nStatusCode == ResponseCode.LOGINFAILED2)
                                 {
                                     return LOGIN_FAILED;
@@ -3402,7 +3396,12 @@ namespace Mezeo
                                     Debugger.Instance.logMessage("SyncManager - ProcessLocalEvents", "mime type " + mimeType);
 
                                     Debugger.Instance.logMessage("SyncManager - ProcessLocalEvents", "Calling cMezeoFileCloud.FileRename for content uri " + strContentURi + " with new name " + changedName);
-                                    bRet = cMezeoFileCloud.FileRename(strContentURi, changedName, mimeType, iDetails.bPublic, ref nStatusCode);
+                                    
+                                    if (!checkFileTooLarge(lEvent.FullPath))
+                                        bRet = cMezeoFileCloud.FileRename(strContentURi, changedName, mimeType, iDetails.bPublic, ref nStatusCode);
+                                    else
+                                        nStatusCode = 200;
+                                    
                                     if (nStatusCode == ResponseCode.LOGINFAILED1 || nStatusCode == ResponseCode.LOGINFAILED2)
                                     {
                                         return LOGIN_FAILED;
