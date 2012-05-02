@@ -2724,7 +2724,11 @@ namespace Mezeo
                     UpdateDBForStatus(levent, DB_STATUS_IN_PROGRESS);
 
                     int sepIndex = levent.FileName.LastIndexOf("\\");
-                    string newParentDir = levent.FileName.Substring(0, sepIndex);
+                    string newParentDir = "\\";
+                    if (sepIndex >= 0)
+                    {
+                        newParentDir = levent.FileName.Substring(0, sepIndex);
+                    }
 
                     sepIndex = newParentDir.LastIndexOf("\\");
                     newParentDir = newParentDir.Substring(sepIndex + 1);
