@@ -240,6 +240,5 @@ namespace Mezeo
             }
             Debugger.Instance.logMessage("StructureDownloader - CancelAndNotify", "Leave");
         }
-
     }
 }

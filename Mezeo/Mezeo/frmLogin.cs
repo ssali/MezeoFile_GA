@@ -37,9 +37,6 @@ namespace Mezeo
         {
             InitializeComponent();
 
-            _sparkle = new Sparkle(LanguageTranslator.GetValue("UpdreadRSSFeed"));
-            _sparkle.StartLoop(true);
-
             this.Icon = Properties.Resources.MezeoVault;
 
             //this.HandleCreated += new EventHandler(frmLogin_HandleCreated);
@@ -54,6 +51,13 @@ namespace Mezeo
             mezeoFileCloud = new CloudService();
 
             LoadResources();
+
+            //if (!BasicInfo.ServiceUrl.Length())
+            //{
+            //    String testStr = "blahblah";
+            //}
+            _sparkle = new Sparkle(LanguageTranslator.GetValue("UpdreadRSSFeed"));
+            _sparkle.StartLoop(true);
         }
 
         //void frmLogin_HandleDestroyed(object sender, EventArgs e)
@@ -213,17 +217,6 @@ namespace Mezeo
                     showLogin = false;
                 }
             }
-
-            //internetConnection = BasicInfo.IsConnectedToInternet;
-
-            //ShellNotifyIcon.SetNotifyIconHandle(Properties.Resources.MezeoVault.Handle);
-            //ShellNotifyIcon.AddNotifyIcon();
-            //ShellNotifyIcon.ConnectMyMenu(cmLogin.Handle);
-            //ShellNotifyIcon.ShowNotifyIcon(Properties.Resources.MezeoVault.Handle, "", "", "");
-            //if (!(BasicInfo.IsCredentialsAvailable && BasicInfo.IsConnectedToInternet))
-            //{
-            //    showLogin = true;
-            //}
         }
 
         private void bwLogin_DoWork(object sender, DoWorkEventArgs e)
@@ -577,7 +570,6 @@ namespace Mezeo
 
                     //        System.IO.Directory.Move(dirName, dirName + time.ToString("M-d-yyyy-h-mm-ss"));
                     //    }
-
                     //}
                     if (!isDirectoryExists)
                         System.IO.Directory.CreateDirectory(dirName);
@@ -591,17 +583,17 @@ namespace Mezeo
             {
                 //if directory exits checking whether we have new database or not 
                 bool isDbCreateNew = dbHandler.OpenConnection();
-                if (isDbCreateNew)
-                {
-                    if (System.IO.Directory.Exists(dirName))
-                    {
-                        DateTime time = System.IO.Directory.GetCreationTime(dirName);
+                //if (isDbCreateNew)
+                //{
+                //    if (System.IO.Directory.Exists(dirName))
+                //    {
+                //        DateTime time = System.IO.Directory.GetCreationTime(dirName);
 
-                        System.IO.Directory.Move(dirName, dirName + time.ToString("M-d-yyyy-h-mm-ss"));
-                    }
+                //        System.IO.Directory.Move(dirName, dirName + time.ToString("M-d-yyyy-h-mm-ss"));
+                //    }
 
-                    System.IO.Directory.CreateDirectory(dirName);
-                }
+                //    System.IO.Directory.CreateDirectory(dirName);
+                //}
                 // Always set the BasicInfo.SyncDirPath value.
                 //BasicInfo.IsInitialSync = true;
                 BasicInfo.AutoSync = true;

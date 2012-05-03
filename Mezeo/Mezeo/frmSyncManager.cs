@@ -3881,12 +3881,6 @@ namespace Mezeo
 
             int maxProgressValue = 0;
 
-            if (BasicInfo.NQRangeStart == -1)
-            {
-                BasicInfo.NQRangeStart = nqRangeStart;
-                BasicInfo.NQRangeEnd = nqRangeEnd;
-            }
-
             int totalNQLength = (nqRangeEnd - nqRangeStart) + 1;
             maxProgressValue = totalNQLength;
 
@@ -4000,22 +3994,22 @@ namespace Mezeo
                     isBreak = true;
                     break;
                 }
+
+                if (!isBreak)
+                {
+                    if (nqRangeEnd <= nqLengthRange.nEnd)
+                    {
+                        int diff = nqLengthRange.nEnd - nqRangeEnd;
+                        totalNQLength += diff;
+                        maxProgressValue += diff;
+                        ((BackgroundWorker)sender).ReportProgress(UPDATE_NQ_MAXIMUM, maxProgressValue);
+                    }
+                }
                 nqRangeStart = nqLengthRange.nStart;
                 nqRangeEnd = nqLengthRange.nEnd;
 
                 if (isBreak)
                     break;
-
-                BasicInfo.NQRangeStart = nqRangeStart;
-
-                if (BasicInfo.NQRangeEnd <= nqRangeEnd)
-                {
-                    totalNQLength += nqRangeEnd - BasicInfo.NQRangeEnd;
-                    maxProgressValue += nqRangeEnd - BasicInfo.NQRangeEnd;
-                    ((BackgroundWorker)sender).ReportProgress(UPDATE_NQ_MAXIMUM, maxProgressValue);
-                }
-
-                BasicInfo.NQRangeEnd = nqRangeEnd;
             }
 
             SetIsSyncInProgress(false);
