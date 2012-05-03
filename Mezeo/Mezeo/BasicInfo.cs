@@ -152,14 +152,6 @@ namespace Mezeo
             }
         }
 
-        //public static bool IsConnectedToInternet
-        //{
-        //    get
-        //    {
-        //        return ConnectedToInternet();
-        //    }
-        //}
-
         public static bool IsCredentialsAvailable
         {
             get
@@ -212,61 +204,5 @@ namespace Mezeo
             return macAddresses;
         }
 
-        //private static bool ConnectedToInternet()
-        //{
-        //    //int Desc = 0x1 | 0x2;
-        //    //return InternetGetConnectedState(out Desc, 0);
-        //    PingReply pReply;
-        //    try
-        //    {
-        //        string pingUrl = "";
-
-        //        if (serviceUrl.Contains("https://") || serviceUrl.Contains("http://"))
-        //        {
-        //            int sepIndex = serviceUrl.IndexOf("//") + 2;
-        //            pingUrl = serviceUrl.Substring(sepIndex);
-        //        }
-        //        else
-        //        {
-        //            pingUrl = serviceUrl;
-        //        }
-
-
-        //        if (pingUrl.Substring(pingUrl.Length - 3) == "/v2")
-        //        {
-        //            pingUrl = pingUrl.Substring(0, pingUrl.Length - 3);
-        //        }
-
-
-
-        //        System.Net.NetworkInformation.Ping ping = new Ping();
-        //        pReply = ping.Send(pingUrl);
-
-        //        int retryCount = 0;
-
-        //        while ((pReply.Status != IPStatus.Success) && retryCount < 3)
-        //        {
-        //            pReply = ping.Send(pingUrl);
-        //            retryCount++;
-        //        }
-
-        //        if (pReply.Status == IPStatus.Success)
-        //        {
-        //            ping.Dispose();
-        //            return true;
-        //        }
-        //    }
-        //    catch
-        //    {
-        //        string sUrl = ServiceUrl;
-        //        if (sUrl.Trim().Length == 0)
-        //        {
-        //            int Desc = 0x1 | 0x2;
-        //            return InternetGetConnectedState(out Desc, 0);
-        //        }
-        //    }
-
-        //    return false;
-        //}
     }
 }
