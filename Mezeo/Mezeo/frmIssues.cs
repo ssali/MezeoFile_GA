@@ -103,7 +103,10 @@ namespace Mezeo
             lblUpdateStatus.Text = issue.IssueTitle;
   
             lblDescription.Text = issue.IssueDescripation;
-            lnkFileInfo.Text = BasicInfo.ServiceUrl + "/#info/" + issue.ServerFileInfo;
+            /*As file placed in deep directory structure contains backslashes, we need to replace them in to forward slashes to open the file
+            in browser.*/
+            lnkFileInfo.Text = BasicInfo.ServiceUrl + "/#info/" + issue.ServerFileInfo.Replace('\\', '/');
+            
             lblFileSize.Text = issue.ServerSize;
             lblModified.Text = issue.ServerIssueDT.ToString("M/d/yyyy h:mm tt");
 
@@ -199,7 +202,9 @@ namespace Mezeo
                     int nLen = iFound.ServerFileUri.LastIndexOf("/");
                     string szSunUri = iFound.ServerFileUri.Substring(0, nLen);
 
-                    string argument = BasicInfo.ServiceUrl + "/#info" + iFound.ServerFileUri.Substring(szSunUri.LastIndexOf("/")); ;
+                    /*No need to add content, so removing that part*/
+                    string argument = BasicInfo.ServiceUrl + "/#info" + szSunUri.Substring(szSunUri.LastIndexOf("/")); ;
+
                     System.Diagnostics.Process.Start(argument);
                 }
             }

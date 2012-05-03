@@ -30,6 +30,7 @@ namespace Mezeo
         public bool isFromSyncMgrVerification = false;
         private Sparkle _sparkle;
 
+        //Adding for installer with upgread
        // static uint s_uTaskbarRestart;
 
         public frmLogin()

@@ -52,6 +52,9 @@
     <ApplicationIcon>Resources\MezeoVault.ico</ApplicationIcon>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="AppLimit.NetSparkle.Net40">
+      <HintPath>..\..\..\..\..\Softwares\NetSparkle-1.0.83\AppLimit.NetSparkle.Net40.dll</HintPath>
+    </Reference>
     <Reference Include="MezeoFileSupport, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\Dlls\MezeoFileSupport.dll</HintPath>

@@ -3066,7 +3066,7 @@ namespace Mezeo
                             {
                                 bRet = cMezeoFileCloud.ContainerMove(strContentURi, strName, mimeType, iDetails.bPublic, strParentUri, ref nStatusCode);
                             }
-                            else 
+                            else
                             {
                                 if (!checkFileTooLarge(lEvent.FullPath))
                                     bRet = cMezeoFileCloud.FileMove(strContentURi, strName, mimeType, iDetails.bPublic, strParentUri, ref nStatusCode);
@@ -3286,7 +3286,8 @@ namespace Mezeo
                             Debugger.Instance.logMessage("SyncManager - ProcessLocalEvents", "FILE_ACTION_ADDED - Leave for file path " + lEvent.FullPath);
                         }
                         break;
-                    case LocalEvents.EventsType.FILE_ACTION_MODIFIED:
+                        
+                        case LocalEvents.EventsType.FILE_ACTION_MODIFIED:
                         {
                             Debugger.Instance.logMessage("SyncManager - ProcessLocalEvents", "FILE_ACTION_MODIFIED - Enter for file path " + lEvent.FullPath);
 
