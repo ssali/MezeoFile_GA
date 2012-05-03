@@ -115,7 +115,6 @@ namespace Mezeo
 
                     collectedLocalEvent.Add(lEvent);
                 }
-
             }
 
             foreach (string key in dbKeys)
@@ -153,6 +152,5 @@ namespace Mezeo
 
             return collectedLocalEvent;
         }
-
     }
 }

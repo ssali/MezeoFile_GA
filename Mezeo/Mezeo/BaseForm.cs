@@ -12,8 +12,8 @@ namespace Mezeo
 {
     public partial class BaseForm : Form
     {
-        private ShellNotify shellNotify;//=new ShellNotify(IntPtr.Zero);
-        static uint s_uTaskbarRestart;
+        //private ShellNotify shellNotify;//=new ShellNotify(IntPtr.Zero);
+        //static uint s_uTaskbarRestart;
 
         private const int WM_LBUTTONDOWN = 0x201;
         private const int WM_RBUTTONDOWN = 0x204;

@@ -15,7 +15,7 @@ namespace Mezeo
         private static string DB_STATUS_IN_PROGRESS = "INPROGRESS";
 
         private static int INSUFFICIENT_STORAGE_AVAILABLE = -5;
-        private static int FILE_DOWNLOAD_SUCCESS = 200;
+        //private static int FILE_DOWNLOAD_SUCCESS = 200;
 
         Queue<LocalItemDetails> queue;
         ThreadLockObject lockObject;

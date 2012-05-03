@@ -808,6 +808,15 @@ namespace Mezeo {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to http://www.slesa.de/download/updates/HelloSparkle/versioninfo.xml.
+        /// </summary>
+        internal static string UpdreadRSSFeed {
+            get {
+                return ResourceManager.GetString("UpdreadRSSFeed", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Not Available.
         /// </summary>
         internal static string UsageNotAvailable {

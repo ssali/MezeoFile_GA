@@ -366,6 +366,9 @@
   <data name="TrayHoverSyncProgressText" xml:space="preserve">
     <value> Sync in progress...</value>
   </data>
+  <data name="UpdreadRSSFeed" xml:space="preserve">
+    <value>http://www.slesa.de/download/updates/HelloSparkle/versioninfo.xml</value>
+  </data>
   <data name="UsageNotAvailable" xml:space="preserve">
     <value>Not Available</value>
   </data>

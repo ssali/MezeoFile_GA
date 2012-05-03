@@ -106,6 +106,7 @@ namespace Mezeo
             }
             catch (Exception ex)
             {
+                Debugger.Instance.logMessage("DbHandler - ExecuteNonQuery", "Caught exception: " + ex.Message);
                 return false;
             }
         }
@@ -162,14 +163,12 @@ namespace Mezeo
                 sqlCommand.Parameters["@ParentDir"].Value = fileFolderInfo.ParentDir;
                 sqlCommand.Parameters["@ETag"].Value = fileFolderInfo.ETag;
 
-
-
-
                 sqlCommand.ExecuteNonQuery();
                 return true;
             }
             catch (Exception ex)
             {
+                Debugger.Instance.logMessage("DbHandler - ExecuteNonQuery", "Caught exception: " + ex.Message);
                 return false;
             }
         }
