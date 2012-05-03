@@ -11,6 +11,8 @@ using System.Threading;
 using System.Globalization;
 using System.Resources;
 using MezeoFileSupport;
+using AppLimit.NetSparkle;
+
 
 namespace Mezeo
 {
@@ -26,12 +28,16 @@ namespace Mezeo
         public bool isLoginSuccess = false;
         public bool showLogin = false;
         public bool isFromSyncMgrVerification = false;
+        private Sparkle _sparkle;
 
        // static uint s_uTaskbarRestart;
 
         public frmLogin()
         {
             InitializeComponent();
+
+            _sparkle = new Sparkle(LanguageTranslator.GetValue("UpdreadRSSFeed"));
+            _sparkle.StartLoop(true);
 
             this.Icon = Properties.Resources.MezeoVault;
 
@@ -112,7 +118,6 @@ namespace Mezeo
             }
         }
 
-
         private void niSystemTray_MouseClick(object sender, MouseEventArgs e)
         {
             if (e.Button == System.Windows.Forms.MouseButtons.Left)
@@ -136,7 +141,6 @@ namespace Mezeo
                 Login();
             }
         }
-
 
         public void Login()
         {
@@ -456,6 +460,7 @@ namespace Mezeo
 
             isLoginSuccess = false;
         }
+
         private void ShowGuestLoginError()
         {
             this.labelError.Text = LanguageTranslator.GetValue("LoginGuestAccMsgText");
@@ -468,10 +473,8 @@ namespace Mezeo
             isLoginSuccess = false;
         }
 
-
         private void frmLogin_Load(object sender, EventArgs e)
         {
-            
         }
 
         public void showSyncManager()
@@ -496,7 +499,7 @@ namespace Mezeo
             if (NQParentURI.Trim().Length != 0)
             {
                 loginDetails.szNQParentUri = NQParentURI;
-                NQDetails[] pNQDetails = null;
+                //NQDetails[] pNQDetails = null;
                 string queueName = BasicInfo.GetMacAddress + "-" + BasicInfo.UserName;
 
                 //int nNQLength = mezeoFileCloud.NQGetLength(BasicInfo.ServiceUrl + loginDetails.szNQParentUri, queueName, ref nStatusCode);
@@ -565,19 +568,21 @@ namespace Mezeo
                 {
                     bool isDbCreateNew = dbHandler.OpenConnection();
                     //if user login first time in that case showlogin is true
-                    if (isDbCreateNew)
-                    {
-                        if (System.IO.Directory.Exists(dirName))
-                        {
-                            DateTime time = System.IO.Directory.GetCreationTime(dirName);
+                    //if (isDbCreateNew)
+                    //{
+                    //    if (System.IO.Directory.Exists(dirName))
+                    //    {
+                    //        DateTime time = System.IO.Directory.GetCreationTime(dirName);
 
-                            System.IO.Directory.Move(dirName, dirName + time.ToString("M-d-yyyy-h-mm-ss"));
-                        }
+                    //        System.IO.Directory.Move(dirName, dirName + time.ToString("M-d-yyyy-h-mm-ss"));
+                    //    }
 
-                    }
-                    // Always set the BasicInfo.SyncDirPath value.
-                    System.IO.Directory.CreateDirectory(dirName);
+                    //}
+                    if (!isDirectoryExists)
+                        System.IO.Directory.CreateDirectory(dirName);
+
                     BasicInfo.IsInitialSync = true;
+                    // Always set the BasicInfo.SyncDirPath value.
                     BasicInfo.SyncDirPath = dirName;
                 }
             }
@@ -607,7 +612,6 @@ namespace Mezeo
 
         private void txtPasswrod_TextChanged(object sender, EventArgs e)
         {
-
         }
 
         public LoginDetails loginFromSyncManager()
@@ -736,12 +740,10 @@ namespace Mezeo
 
         private void txtUserName_TextChanged(object sender, EventArgs e)
         {
-
         }
 
         private void txtServerUrl_TextChanged(object sender, EventArgs e)
         {
-
         }
 
         private void txtServerUrl_Leave(object sender, EventArgs e)
@@ -754,7 +756,6 @@ namespace Mezeo
 
         private void menuItem7_Click(object sender, EventArgs e)
         {
-
         }
 
         private void toolStripMenuItem2_Paint(object sender, PaintEventArgs e)
@@ -800,7 +801,6 @@ namespace Mezeo
             {
                 this.Show();
                 this.WindowState = FormWindowState.Normal;
-                
             }
         }
 
@@ -817,6 +817,5 @@ namespace Mezeo
         //            break;
         //    }
         //}
-
     }
 }
