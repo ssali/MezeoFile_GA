@@ -8,7 +8,9 @@ namespace Mezeo
 {
     public class CloudService
     {
-       public MezeoFileSupport.MezeoFileCloud fileCloud;
+        public static int NUMBER_OF_RETRIES = 2;
+
+        public MezeoFileSupport.MezeoFileCloud fileCloud;
 
         public CloudService()
         {
@@ -31,7 +33,7 @@ namespace Mezeo
             bool bRet = fileCloud.ContainerMove(strPath, strNewName, strMineType, bPublic, StrParent, ref nStatusCode);
             if (nStatusCode != ResponseCode.CONTAINERMOVE)
             {
-                for (int n = 0; n < 2; n++)
+                for (int n = 0; n < CloudService.NUMBER_OF_RETRIES; n++)
                 {
                     bRet = fileCloud.ContainerMove(strPath, strNewName, strMineType, bPublic, StrParent, ref nStatusCode);
                     if (nStatusCode == ResponseCode.CONTAINERMOVE)
@@ -46,7 +48,7 @@ namespace Mezeo
             bool bRet = fileCloud.ContainerRename(strPath, strNewName, ref nStatusCode);
             if (nStatusCode != ResponseCode.CONTAINERRENAME)
             {
-                for (int n = 0; n < 2; n++)
+                for (int n = 0; n < CloudService.NUMBER_OF_RETRIES; n++)
                 {
                     bRet = fileCloud.ContainerRename(strPath, strNewName, ref nStatusCode);
                     if (nStatusCode == ResponseCode.CONTAINERRENAME)
@@ -67,7 +69,7 @@ namespace Mezeo
             bool bRet = fileCloud.Delete(strPath, ref nStatusCode);
             if (nStatusCode != ResponseCode.DELETE)
             {
-                for (int n = 0; n < 2; n++)
+                for (int n = 0; n < CloudService.NUMBER_OF_RETRIES; n++)
                 {
                     bRet = fileCloud.Delete(strPath, ref nStatusCode);
                     if (nStatusCode == ResponseCode.DELETE)
@@ -82,7 +84,7 @@ namespace Mezeo
             bool bRet = fileCloud.DownloadFile(strSource, strDestination, dblFileSizeInBytes, ref nStatusCode);
             if (nStatusCode != ResponseCode.DOWNLOADFILE)
             {
-                for (int n = 0; n < 2; n++)
+                for (int n = 0; n < CloudService.NUMBER_OF_RETRIES; n++)
                 {
                     bRet = fileCloud.DownloadFile(strSource, strDestination, dblFileSizeInBytes, ref nStatusCode);
                     if (nStatusCode == ResponseCode.DOWNLOADFILE)
@@ -97,7 +99,7 @@ namespace Mezeo
             ItemDetails[] itemDetails = fileCloud.DownloadItemDetails(strContainer, ref nStatusCode);
             if (nStatusCode != ResponseCode.DOWNLOADITEMDETAILS)
             {
-                for (int n = 0; n < 2; n++)
+                for (int n = 0; n < CloudService.NUMBER_OF_RETRIES; n++)
                 {
                     itemDetails = fileCloud.DownloadItemDetails(strContainer, ref nStatusCode);
                     if (nStatusCode == ResponseCode.DOWNLOADITEMDETAILS)
@@ -117,7 +119,7 @@ namespace Mezeo
             bool bRet = fileCloud.FileMove(strPath, strNewName, strMineType, bPublic, StrParent, ref nStatusCode);
             if (nStatusCode != ResponseCode.FILEMOVE)
             {
-                for (int n = 0; n < 2; n++)
+                for (int n = 0; n < CloudService.NUMBER_OF_RETRIES; n++)
                 {
                     bRet = fileCloud.FileMove(strPath, strNewName, strMineType, bPublic, StrParent, ref nStatusCode);
                     if (nStatusCode == ResponseCode.FILEMOVE)
@@ -132,7 +134,7 @@ namespace Mezeo
             bool bRet = fileCloud.FileRename(strPath, strNewName, strMineType, bPublic, ref nStatusCode);
             if (nStatusCode != ResponseCode.FILERENAME)
             {
-                for (int n = 0; n < 2; n++)
+                for (int n = 0; n < CloudService.NUMBER_OF_RETRIES; n++)
                 {
                     bRet = fileCloud.FileRename(strPath, strNewName, strMineType, bPublic, ref nStatusCode);
                     if (nStatusCode == ResponseCode.FILERENAME)
@@ -147,7 +149,7 @@ namespace Mezeo
             ItemDetails itemDetails = fileCloud.GetContinerResult(strContainUrl, ref nStatusCode);
             if (nStatusCode != ResponseCode.GETCONTINERRESULT)
             {
-                for (int n = 0; n < 2; n++)
+                for (int n = 0; n < CloudService.NUMBER_OF_RETRIES; n++)
                 {
                     itemDetails = fileCloud.GetContinerResult(strContainUrl, ref nStatusCode); ;
                     if (nStatusCode == ResponseCode.GETCONTINERRESULT)
@@ -167,7 +169,7 @@ namespace Mezeo
             string strEtag = fileCloud.GetETag(strContainUrl, ref nStatusCode);
             if (nStatusCode != ResponseCode.GETETAG)
             {
-                for (int n = 0; n < 2; n++)
+                for (int n = 0; n < CloudService.NUMBER_OF_RETRIES; n++)
                 {
                     strEtag = fileCloud.GetETag(strContainUrl, ref nStatusCode);
                     if (nStatusCode == ResponseCode.GETETAG)
@@ -187,7 +189,7 @@ namespace Mezeo
             NSResult nsResult = fileCloud.GetNamespaceResult(StrUri, StrObjectType, ref nStatusCode);
             if (nStatusCode != ResponseCode.GETNAMESPACERESULT)
             {
-                for (int n = 0; n < 2; n++)
+                for (int n = 0; n < CloudService.NUMBER_OF_RETRIES; n++)
                 {
                     nsResult = fileCloud.GetNamespaceResult(StrUri, StrObjectType, ref nStatusCode);
                     if (nStatusCode == ResponseCode.GETNAMESPACERESULT)
@@ -212,7 +214,7 @@ namespace Mezeo
             double dblSize = fileCloud.GetStorageUsed(strUrl, ref nStatusCode);
             if (nStatusCode != ResponseCode.GETSTORAGEUSED)
             {
-                for (int n = 0; n < 2; n++)
+                for (int n = 0; n < CloudService.NUMBER_OF_RETRIES; n++)
                 {
                     dblSize = fileCloud.GetStorageUsed(strUrl, ref nStatusCode);
                     if (nStatusCode == ResponseCode.GETSTORAGEUSED)
@@ -237,7 +239,7 @@ namespace Mezeo
             string strUrl = fileCloud.NewContainer(strNewContainer, strContentsResource, ref nStatusCode);
             if (nStatusCode != ResponseCode.NEWCONTAINER)
             {
-                for (int n = 0; n < 2; n++)
+                for (int n = 0; n < CloudService.NUMBER_OF_RETRIES; n++)
                 {
                     strUrl = fileCloud.NewContainer(strNewContainer, strContentsResource, ref nStatusCode);
                     if (nStatusCode == ResponseCode.NEWCONTAINER)
@@ -252,7 +254,7 @@ namespace Mezeo
             bool bRet = fileCloud.NQCreate(StrUri, StrQueueName, StrStarts, ref nStatusCode);
             if (nStatusCode != ResponseCode.NQCREATE)
             {
-                for (int n = 0; n < 2; n++)
+                for (int n = 0; n < CloudService.NUMBER_OF_RETRIES; n++)
                 {
                     bRet = fileCloud.NQCreate(StrUri, StrQueueName, StrStarts, ref nStatusCode);
                     if (nStatusCode == ResponseCode.NQCREATE)
@@ -267,7 +269,7 @@ namespace Mezeo
             bool bRet = fileCloud.NQDelete(StrUri, StrQueueName, ref nStatusCode);
             if (nStatusCode != ResponseCode.NQDELETE)
             {
-                for (int n = 0; n < 2; n++)
+                for (int n = 0; n < CloudService.NUMBER_OF_RETRIES; n++)
                 {
                     bRet = fileCloud.NQDelete(StrUri, StrQueueName, ref nStatusCode);
                     if (nStatusCode == ResponseCode.NQDELETE)
@@ -282,7 +284,7 @@ namespace Mezeo
             bool bRet = fileCloud.NQDeleteValue(StrUri, StrQueueName, nCountValue, ref nStatusCode);
             if (nStatusCode != ResponseCode.NQDELETEVALUE)
             {
-                for (int n = 0; n < 2; n++)
+                for (int n = 0; n < CloudService.NUMBER_OF_RETRIES; n++)
                 {
                     bRet = fileCloud.NQDeleteValue(StrUri, StrQueueName, nCountValue, ref nStatusCode);
                     if (nStatusCode == ResponseCode.NQDELETEVALUE)
@@ -297,7 +299,7 @@ namespace Mezeo
             NQDetails[] nqDetails = fileCloud.NQGetData(StrUri, StrQueueName, nCountValue, ref nStatusCode);
             if (nStatusCode != ResponseCode.NQGETDATA)
             {
-                for (int n = 0; n < 2; n++)
+                for (int n = 0; n < CloudService.NUMBER_OF_RETRIES; n++)
                 {
                     nqDetails = fileCloud.NQGetData(StrUri, StrQueueName, nCountValue, ref nStatusCode);
                     if (nStatusCode == ResponseCode.NQGETDATA)
@@ -312,7 +314,7 @@ namespace Mezeo
             NQLengthResult nqLengthResult = fileCloud.NQGetLength(StrUri, StrQueueName, ref nStatusCode);
             if (nStatusCode != ResponseCode.NQGETLENGTH)
             {
-                for (int n = 0; n < 2; n++)
+                for (int n = 0; n < CloudService.NUMBER_OF_RETRIES; n++)
                 {
                     nqLengthResult = fileCloud.NQGetLength(StrUri, StrQueueName, ref nStatusCode);
                     if (nStatusCode == ResponseCode.NQGETLENGTH)
@@ -327,7 +329,7 @@ namespace Mezeo
             string nqParentUri = fileCloud.NQParentUri(StrUri, ref nStatusCode);
             if (nStatusCode != ResponseCode.NQPARENTURI)
             {
-                for (int n = 0; n < 2; n++)
+                for (int n = 0; n < CloudService.NUMBER_OF_RETRIES; n++)
                 {
                     nqParentUri = fileCloud.NQParentUri(StrUri, ref nStatusCode);
                     if (nStatusCode == ResponseCode.NQPARENTURI)
@@ -342,7 +344,7 @@ namespace Mezeo
             bool bRet = fileCloud.OverWriteFile(strSource, strDestination, ref nStatusCode);
             if (nStatusCode != ResponseCode.OVERWRITEFILE)
             {
-                for (int n = 0; n < 2; n++)
+                for (int n = 0; n < CloudService.NUMBER_OF_RETRIES; n++)
                 {
                     bRet = fileCloud.OverWriteFile(strSource, strDestination, ref nStatusCode);
                     if (nStatusCode == ResponseCode.OVERWRITEFILE)
@@ -377,7 +379,7 @@ namespace Mezeo
             string strUrl = fileCloud.UploadingFile(strSource, strDestination, ref nStatusCode);
             if (nStatusCode != ResponseCode.UPLOADINGFILE)
             {
-                for (int n = 0; n < 2; n++)
+                for (int n = 0; n < CloudService.NUMBER_OF_RETRIES; n++)
                 {
                     strUrl = fileCloud.UploadingFile(strSource, strDestination, ref nStatusCode);
                     if (nStatusCode == ResponseCode.UPLOADINGFILE)
