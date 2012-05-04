@@ -82,6 +82,14 @@ namespace Mezeo
                 CancelAndNotify(CancelReason.LOGIN_FAILED);
                 return;
             }
+            else if (refCode == -1)
+            {
+                // The socket timed out or something else occured.  Let the normal timer
+                // handle the online/offline mode stuff and just return as if normal
+                // processing occured.  Otherwise, the sync will never progress past
+                // this point.
+                return;
+            }
             else if (refCode != ResponseCode.DOWNLOADITEMDETAILS)
             {
                 lockObject.StopThread = true;
@@ -173,6 +181,14 @@ namespace Mezeo
             {
                 lockObject.StopThread = true;
                 CancelAndNotify(CancelReason.LOGIN_FAILED);
+                return;
+            }
+            else if (refCode == -1)
+            {
+                // The socket timed out or something else occured.  Let the normal timer
+                // handle the online/offline mode stuff and just return as if normal
+                // processing occured.  Otherwise, the sync will never progress past
+                // this point.
                 return;
             }
             else if (refCode != ResponseCode.DOWNLOADITEMDETAILS)
