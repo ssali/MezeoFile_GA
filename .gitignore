@@ -1,0 +1,11 @@
+*.suo
+*.ncb
+*.user
+*.ccscc
+*.cache
+*/*/bin/
+*/*/obj/
+*/*/Obj/
+*/*/Generated_Code
+*~
+Thumbs.db
