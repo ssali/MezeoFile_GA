@@ -5,7 +5,7 @@ using System.Text;
 
 namespace Mezeo
 {
-    class LocalEvents
+    public class LocalEvents
     {
         public string FileName { get; set; }
 

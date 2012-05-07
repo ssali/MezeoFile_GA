@@ -241,39 +241,6 @@ namespace Mezeo
         #endregion
 
         #region Form Events
-/*
-        private void btnMoveFolder_Click(object sender, EventArgs e)
-        {
-            FolderBrowserDialog browserDialog = new FolderBrowserDialog();
-            browserDialog.Description = LanguageTranslator.GetValue("SyncManagerMoveFolderDesc");
-            
-            if (browserDialog.ShowDialog() == System.Windows.Forms.DialogResult.OK)
-            {
-                string exePath = System.IO.Path.GetDirectoryName(Application.ExecutablePath);
-                System.IO.Directory.SetCurrentDirectory(exePath);
-                watcher.StopMonitor();
-
-                int index = BasicInfo.SyncDirPath.LastIndexOf("\\");
-                string folderName = BasicInfo.SyncDirPath.Substring(index + 1);
-
-               // Directory.Move(BasicInfo.SyncDirPath, browserDialog.SelectedPath + "\\" + folderName);
-                Directory.CreateDirectory(browserDialog.SelectedPath + "\\" + folderName);
-                DirectoryInfo rootDir = new DirectoryInfo(BasicInfo.SyncDirPath);
-                WalkDirectoryTreeForMoveFolder(rootDir, browserDialog.SelectedPath + "\\" + folderName);
-                Directory.Delete(BasicInfo.SyncDirPath);
-
-                BasicInfo.SyncDirPath = browserDialog.SelectedPath + "\\" + folderName;
-
-                lnkFolderPath.Text = BasicInfo.SyncDirPath;
-
-                watcher = new Watcher(LocalEventList, lockObject, BasicInfo.SyncDirPath);
-                watcher.WatchCompletedEvent += new Watcher.WatchCompleted(watcher_WatchCompletedEvent);
-                watcher.StartMonitor();
-                System.IO.Directory.SetCurrentDirectory(BasicInfo.SyncDirPath);
-
-            }
-        }
-        */
 
         public bool IsSyncInProgress()
         {
