@@ -127,21 +127,22 @@ namespace Mezeo
 
         private void Enqueue(LocalEvents path)
         {
+            EventQueue.Add(path);
             //lock (lockObject)
-            {
-                bool bAdd = true;
-                foreach (LocalEvents id in LocalEventList)
-                {
-                    if (id.FileName == path.FileName)
-                    {
-                        bAdd = false;
-                        break;
-                    }
-                }
+            //{
+            //    bool bAdd = true;
+            //    foreach (LocalEvents id in LocalEventList)
+            //    {
+            //        if (id.FileName == path.FileName)
+            //        {
+            //            bAdd = false;
+            //            break;
+            //        }
+            //    }
 
-                if (bAdd)
-                    LocalEventList.Add(path);                
-            }
+            //    if (bAdd)
+            //        LocalEventList.Add(path);                
+            //}
         }
     }
 }
