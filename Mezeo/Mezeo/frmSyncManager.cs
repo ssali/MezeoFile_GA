@@ -958,9 +958,11 @@ namespace Mezeo
             }
             else
             {
-                if ((events != null && events.Count > 0) || (LocalEventList != null && LocalEventList.Count > 0))
+                //if ((events != null && events.Count > 0) || (LocalEventList != null && LocalEventList.Count > 0))
+                if (EventQueue.QueueNotEmpty() || (LocalEventList != null && LocalEventList.Count > 0))
                 {
-                    if ((events != null && events.Count > 0))
+                    //if ((events != null && events.Count > 0))
+                    if (EventQueue.QueueNotEmpty())
                     {
                         ShowNextSyncLabel(false);
                         if (!bwLocalEvents.IsBusy)
@@ -993,7 +995,8 @@ namespace Mezeo
         {
             List<LocalEvents> offileEvents = offlineWatcher.PrepareStructureList();
 
-            if (offileEvents.Count > 0)
+            //if (offileEvents.Count > 0)
+            if (EventQueue.QueueNotEmpty())
             {
                 if (events == null)
                     events = new List<LocalEvents>();
@@ -2500,16 +2503,13 @@ namespace Mezeo
             SetIsLocalEventInProgress(true);
 
             List<int> RemoveIndexes = new List<int>();
-
             List<LocalEvents> eModified = new List<LocalEvents>();
-
             List<LocalEvents> eMove = new List<LocalEvents>();
-
             List<LocalEvents> eAddEvents = new List<LocalEvents>();
 
-            LocalEvents lEvent = EventQueue.Pop();
-            //foreach (LocalEvents lEvent in events)
-            while (lEvent != null)
+            List<LocalEvents> events = EventQueue.GetCurrentQueue();
+
+            foreach (LocalEvents lEvent in events)
             {
                 if (caller.CancellationPending)
                 {
@@ -2585,7 +2585,6 @@ namespace Mezeo
                     {
                         DateTime dtCreate = lEvent.EventTimeStamp.AddMilliseconds(-id.EventTimeStamp.Millisecond);
                         TimeSpan Diff = dtCreate - id.EventTimeStamp;
-                       // dtCreate = dtCreate.AddMilliseconds(-dtCreate.Millisecond);
                         if (Diff <= TimeSpan.FromSeconds(1) && id.EventType == LocalEvents.EventsType.FILE_ACTION_REMOVED)
                         {
                             string strNameComp = id.FileName.Substring(id.FileName.LastIndexOf("\\") + 1);
@@ -2713,12 +2712,10 @@ namespace Mezeo
                     if(!RemoveIndexes.Contains(events.IndexOf(lEvent)))
                         RemoveIndexes.Add(events.IndexOf(lEvent));
                 }
-
-                lEvent = EventQueue.Pop();
             }
 
             RemoveIndexes.Sort();
-            for(int n = RemoveIndexes.Count-1 ; n >=0 ; n--)
+            for (int n = RemoveIndexes.Count - 1; n >= 0; n--)
             {
                 events.RemoveAt(RemoveIndexes[n]);
             }
@@ -2819,7 +2816,7 @@ namespace Mezeo
 
             Debugger.Instance.logMessage("frmSyncManager - HandleEvents", " ProcessLocalEvents Going");
 
-            returnCode = ProcessLocalEvents(caller);
+            returnCode = ProcessLocalEvents(caller, ref events);
 
             Debugger.Instance.logMessage("frmSyncManager - HandleEvents", " ProcessLocalEvents Exit");
 
@@ -2903,7 +2900,7 @@ namespace Mezeo
             return false;
         }
 
-        private int ProcessLocalEvents(BackgroundWorker caller)
+        private int ProcessLocalEvents(BackgroundWorker caller, ref List<LocalEvents> events)
         {
             Debugger.Instance.logMessage("SyncManager - ProcessLocalEvents", "Enter");
             string strUrl = "";
@@ -2912,7 +2909,8 @@ namespace Mezeo
             if (caller != null)
             {
                 Debugger.Instance.logMessage("SyncManager - ProcessLocalEvents", "Calling ReportProgress with PROCESS_LOCAL_EVENTS_STARTED");
-                caller.ReportProgress(PROCESS_LOCAL_EVENTS_STARTED,events.Count);
+                //caller.ReportProgress(PROCESS_LOCAL_EVENTS_STARTED, events.Count);
+                caller.ReportProgress(PROCESS_LOCAL_EVENTS_STARTED, EventQueue.QueueCount());
             }
 
             fileDownloadCount = 1;
@@ -3467,8 +3465,9 @@ namespace Mezeo
             }
 
             Debugger.Instance.logMessage("SyncManager - ProcessLocalEvents", "clear events");
-            if (events.Count == SuccessIndexes.Count)
-                events.Clear();
+            //if (events.Count == SuccessIndexes.Count)
+            if (EventQueue.QueueCount() == SuccessIndexes.Count)
+                    events.Clear();
             else
             {
                 SuccessIndexes.Sort();
@@ -3873,53 +3872,56 @@ namespace Mezeo
                     break;
                 }
 
-                foreach (NQDetails nq in pNQDetails)
+                if (pNQDetails != null)
                 {
-                    if (bwNQUpdate.CancellationPending)
+                    foreach (NQDetails nq in pNQDetails)
                     {
-                        Debugger.Instance.logMessage("frmSyncManager - bwNQUpdate_DoWork", "bwNQUpdate.CancellationPending called inner");
+                        if (bwNQUpdate.CancellationPending)
+                        {
+                            Debugger.Instance.logMessage("frmSyncManager - bwNQUpdate_DoWork", "bwNQUpdate.CancellationPending called inner");
 
-                        //e.Cancel = true;
-                        //bwNQUpdate.ReportProgress(UPDATE_NQ_CANCELED);
-                        break;
-                    }
+                            //e.Cancel = true;
+                            //bwNQUpdate.ReportProgress(UPDATE_NQ_CANCELED);
+                            break;
+                        }
 
-                    int nStatus = UpdateFromNQ(nq);
-                    if (nStatus == ResponseCode.LOGINFAILED1 || nStatus == ResponseCode.LOGINFAILED2)
-                    {
-                        e.Result = CancelReason.LOGIN_FAILED;
-                        isBreak = true;
-                        break;
-                    }
-                    else if (nStatus != ResponseCode.GETETAG && nStatus != ResponseCode.DOWNLOADFILE && nStatus != ResponseCode.DOWNLOADITEMDETAILS && nStatus != 1)
-                    {
-                        e.Result = CancelReason.SERVER_INACCESSIBLE;
-                        isBreak = true;
-                        break;
-                    }
-                    if (nStatus == 1)
-                    {
-                        Debugger.Instance.logMessage("frmSyncManager - bwNQUpdate_DoWork - ", nq.StrObjectName + " - Delete From NQ");
-                        cMezeoFileCloud.NQDeleteValue(BasicInfo.ServiceUrl + cLoginDetails.szNQParentUri, queueName, 1, ref nStatusCode);
-                        if (nStatusCode == ResponseCode.LOGINFAILED1 || nStatusCode == ResponseCode.LOGINFAILED2)
+                        int nStatus = UpdateFromNQ(nq);
+                        if (nStatus == ResponseCode.LOGINFAILED1 || nStatus == ResponseCode.LOGINFAILED2)
                         {
                             e.Result = CancelReason.LOGIN_FAILED;
                             isBreak = true;
                             break;
                         }
-                        else if (nStatusCode != ResponseCode.NQDELETEVALUE)
+                        else if (nStatus != ResponseCode.GETETAG && nStatus != ResponseCode.DOWNLOADFILE && nStatus != ResponseCode.DOWNLOADITEMDETAILS && nStatus != 1)
                         {
                             e.Result = CancelReason.SERVER_INACCESSIBLE;
                             isBreak = true;
                             break;
                         }
-                    }
+                        if (nStatus == 1)
+                        {
+                            Debugger.Instance.logMessage("frmSyncManager - bwNQUpdate_DoWork - ", nq.StrObjectName + " - Delete From NQ");
+                            cMezeoFileCloud.NQDeleteValue(BasicInfo.ServiceUrl + cLoginDetails.szNQParentUri, queueName, 1, ref nStatusCode);
+                            if (nStatusCode == ResponseCode.LOGINFAILED1 || nStatusCode == ResponseCode.LOGINFAILED2)
+                            {
+                                e.Result = CancelReason.LOGIN_FAILED;
+                                isBreak = true;
+                                break;
+                            }
+                            else if (nStatusCode != ResponseCode.NQDELETEVALUE)
+                            {
+                                e.Result = CancelReason.SERVER_INACCESSIBLE;
+                                isBreak = true;
+                                break;
+                            }
+                        }
 
-                    nTempCount++;
-                    if (nTempCount < pNQDetails.Length)
-                    {
-                        bwNQUpdate.ReportProgress(UPDATE_NQ_PROGRESS);
-                        fileDownloadCount++;
+                        nTempCount++;
+                        if (nTempCount < pNQDetails.Length)
+                        {
+                            bwNQUpdate.ReportProgress(UPDATE_NQ_PROGRESS);
+                            fileDownloadCount++;
+                        }
                     }
                 }
                 
@@ -4085,7 +4087,7 @@ namespace Mezeo
             }
             else if ((int)e.Result == USER_CANCELLED)
             {
-                ShowSyncMessage(events.Count > 0);
+                ShowSyncMessage(EventQueue.QueueNotEmpty());
             }
             else if ((int)e.Result == LOGIN_FAILED)
             {
@@ -4156,7 +4158,7 @@ namespace Mezeo
             }
             else if (e.ProgressPercentage == LOCAL_EVENTS_STOPPED)
             {
-                ShowSyncMessage(events.Count > 0);
+                ShowSyncMessage(EventQueue.QueueNotEmpty());
             }
             
             //Application.DoEvents();
@@ -4177,7 +4179,8 @@ namespace Mezeo
             ShowNextSyncLabel(false);
             pbSyncProgress.Visible = true;
             pbSyncProgress.Value = 0;
-            pbSyncProgress.Maximum = events.Count;
+            //pbSyncProgress.Maximum = events.Count;
+            pbSyncProgress.Maximum = EventQueue.QueueCount();
             fileDownloadCount = 1;
            // btnMoveFolder.Enabled = false;
             //Commeted above line as move folder functinality disable 
@@ -4204,7 +4207,8 @@ namespace Mezeo
         private void ShowLocalEventsCompletedMessage()
         {
             //btnSyncNow.Text = LanguageTranslator.GetValue("SyncManagerSyncStopButtonText");
-            ShowSyncMessage(events.Count > 0);
+            //ShowSyncMessage(events.Count > 0);
+            ShowSyncMessage(EventQueue.QueueNotEmpty());
             //btnSyncNow.Text = LanguageTranslator.GetValue("SyncManagerSyncNowButtonText");
 
             if (frmIssuesFound != null && frmIssuesFound.GetItemsInList() > 0)
@@ -4278,7 +4282,8 @@ namespace Mezeo
             }
             else if ((int)e.Result == USER_CANCELLED)
             {
-                ShowSyncMessage(events.Count > 0);
+                //ShowSyncMessage(events.Count > 0);
+                ShowSyncMessage(EventQueue.QueueNotEmpty());
             }
             else if ((int)e.Result == LOGIN_FAILED)
             {

@@ -16,6 +16,21 @@ namespace Mezeo
             return (eventList.Count() > 0);
         }
 
+        public static int QueueCount()
+        {
+            return eventList.Count();
+        }
+
+        public static List<LocalEvents> GetCurrentQueue()
+        {
+            lock (thisLock)
+            {
+                List<LocalEvents> currentList = eventList;
+                eventList = new List<LocalEvents>();
+                return currentList;
+            }
+        }
+
         public static void Add(LocalEvents newEvent)
         {
             Debugger.Instance.logMessage("EventQueue - Add", "Adding event: (" + newEvent.EventType + ") " + newEvent.FullPath);
@@ -44,8 +59,10 @@ namespace Mezeo
             lock (thisLock)
             {
                 if (eventList.Count() > 0)
+                {
                     localEvent = eventList[0];
                     eventList.RemoveAt(0);
+                }
             }
             return localEvent;
         }
