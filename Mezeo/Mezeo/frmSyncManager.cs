@@ -128,7 +128,6 @@ namespace Mezeo
         {
             InitializeComponent();
             LoadResources();
-
         }
         public frmSyncManager(CloudService mezeoFileCloud, LoginDetails loginDetails, NotificationManager notificationManager)
         {
@@ -2508,7 +2507,9 @@ namespace Mezeo
 
             List<LocalEvents> eAddEvents = new List<LocalEvents>();
 
-            foreach (LocalEvents lEvent in events)
+            LocalEvents lEvent = EventQueue.Pop();
+            //foreach (LocalEvents lEvent in events)
+            while (lEvent != null)
             {
                 if (caller.CancellationPending)
                 {
@@ -2712,6 +2713,8 @@ namespace Mezeo
                     if(!RemoveIndexes.Contains(events.IndexOf(lEvent)))
                         RemoveIndexes.Add(events.IndexOf(lEvent));
                 }
+
+                lEvent = EventQueue.Pop();
             }
 
             RemoveIndexes.Sort();
@@ -2777,7 +2780,6 @@ namespace Mezeo
                         WalkDirectoryTreeForMove(new DirectoryInfo(levent.FullPath), levent.OldFullPath);
 
                     }
-
                 }
                 events.AddRange(eMove);
                 eMove.Clear();
@@ -2787,7 +2789,6 @@ namespace Mezeo
             int returnCode = 1;
             if (events.Count == 0)
             {
-               
                 Debugger.Instance.logMessage("frmSyncManager - HandleEvents" ," Events Count NUll");
 
                 SetIsLocalEventInProgress(false);
@@ -2807,7 +2808,6 @@ namespace Mezeo
                     }
 
                     returnCode = HandleEvents(caller);
-
                 }
                 return returnCode;
             }
@@ -2824,15 +2824,6 @@ namespace Mezeo
             Debugger.Instance.logMessage("frmSyncManager - HandleEvents", " ProcessLocalEvents Exit");
 
             SetIsLocalEventInProgress(false);
-
-            //if (caller != null && returnCode != 0)
-            //{
-            //    caller.ReportProgress(LOCAL_EVENTS_COMPLETED);
-            //}
-            //else if (returnCode == 0)
-            //{
-            //    caller.ReportProgress(LOCAL_EVENTS_STOPPED);
-            //}
             
             Debugger.Instance.logMessage("frmSyncManager - HandleEvents", "Leave");
             return returnCode;
