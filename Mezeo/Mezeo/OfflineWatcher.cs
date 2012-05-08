@@ -10,8 +10,9 @@ namespace Mezeo
     class OfflineWatcher
     {
         List<string> currentStructure = new List<string>();
-        List<LocalEvents> collectedLocalEvent = new List<LocalEvents>();
+       // List<LocalEvents> collectedLocalEvent = new List<LocalEvents>();
         DbHandler dbHandler;
+     
 
         public OfflineWatcher(DbHandler dbHandler)
         {
@@ -97,7 +98,10 @@ namespace Mezeo
                         lEvent.OldFullPath = "";
                         lEvent.EventType = LocalEvents.EventsType.FILE_ACTION_MODIFIED;
 
-                        collectedLocalEvent.Add(lEvent);
+                        //collectedLocalEvent.Add(lEvent);
+                        EventQueue.Add(lEvent);
+                        
+                       
                     }
                 }
                 else
@@ -113,7 +117,8 @@ namespace Mezeo
                     lEvent.OldFullPath = "";
                     lEvent.EventType = LocalEvents.EventsType.FILE_ACTION_ADDED;
 
-                    collectedLocalEvent.Add(lEvent);
+                    //collectedLocalEvent.Add(lEvent);
+                    EventQueue.Add(lEvent);
                 }
             }
 
@@ -146,11 +151,13 @@ namespace Mezeo
                     lEvent.OldFullPath = "";
                     lEvent.EventType = LocalEvents.EventsType.FILE_ACTION_REMOVED;
 
-                    collectedLocalEvent.Add(lEvent);
+                    //collectedLocalEvent.Add(lEvent);
+                    EventQueue.Add(lEvent);
+
                 }
             }
 
-            return collectedLocalEvent;
+            return new List<LocalEvents>();
         }
     }
 }
