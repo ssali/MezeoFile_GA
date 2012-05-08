@@ -9,20 +9,17 @@ namespace Mezeo
 {
     class Watcher
     {
-        List<LocalEvents> LocalEventList;
         Object lockObject;
         FileSystemWatcher fileWatcher;
         string folderToWatch;
         DateTime eventTime;
-       // bool started = false;
         System.Timers.Timer timer;
 
         public delegate void WatchCompleted();
         public event WatchCompleted WatchCompletedEvent;
 
-        public Watcher(List<LocalEvents> queue, Object lockObject, string folder)
+        public Watcher(Object lockObject, string folder)
         {
-            this.LocalEventList = queue;
             this.lockObject = lockObject;
             this.folderToWatch = folder;
             fileWatcher = new FileSystemWatcher(folderToWatch);
@@ -47,7 +44,7 @@ namespace Mezeo
         {
             if (WatchCompletedEvent != null)
             {
-                if (LocalEventList.Count != 0)
+                if (EventQueue.QueueNotEmpty())
                     WatchCompletedEvent();
             }
         }

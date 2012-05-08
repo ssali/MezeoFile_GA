@@ -97,10 +97,10 @@ namespace Mezeo
         Queue<LocalItemDetails> queue;
         frmIssues frmIssuesFound;
         Watcher watcher;
-        List<LocalEvents> LocalEventList;
+        //List<LocalEvents> LocalEventList;
         Object folderWatcherLockObject;
 
-        List<LocalEvents> events;
+        //List<LocalEvents> events;
 
         Thread analyseThread;
         Thread downloadingThread;
@@ -144,10 +144,7 @@ namespace Mezeo
 
             LoadResources();
 
-            LocalEventList = new List<LocalEvents>();
-            folderWatcherLockObject = new Object();
-
-            watcher = new Watcher(LocalEventList, lockObject, BasicInfo.SyncDirPath);
+            watcher = new Watcher(lockObject, BasicInfo.SyncDirPath);
             watcher.WatchCompletedEvent += new Watcher.WatchCompleted(watcher_WatchCompletedEvent);
             CheckForIllegalCrossThreadCalls = false;
 
@@ -520,7 +517,7 @@ namespace Mezeo
             cnotificationManager.HoverText = AboutBox.AssemblyTitle + "\n" + LanguageTranslator.GetValue("TrayHoverInitialSyncUpToDateText");
             frmParent.toolStripMenuItem4.Text = LanguageTranslator.GetValue("TrayHoverInitialSyncUpToDateText");
 
-            if (LocalEventList.Count > 0)
+            //if (LocalEventList.Count > 0)
             {
                 watcher_WatchCompletedEvent();
             }
@@ -958,29 +955,12 @@ namespace Mezeo
             }
             else
             {
-                //if ((events != null && events.Count > 0) || (LocalEventList != null && LocalEventList.Count > 0))
-                if (EventQueue.QueueNotEmpty() || (LocalEventList != null && LocalEventList.Count > 0))
+                if (EventQueue.QueueNotEmpty())
                 {
-                    //if ((events != null && events.Count > 0))
                     if (EventQueue.QueueNotEmpty())
                     {
                         ShowNextSyncLabel(false);
                         if (!bwLocalEvents.IsBusy)
-                            bwLocalEvents.RunWorkerAsync();
-                    }
-                    else if ((LocalEventList != null && LocalEventList.Count > 0))
-                    {
-                        lock (folderWatcherLockObject)
-                        {
-                            if (events == null)
-                                events = new List<LocalEvents>();
-
-                            events.AddRange(LocalEventList);
-
-                            LocalEventList.Clear();
-                        }
-
-                        if(!bwLocalEvents.IsBusy)
                             bwLocalEvents.RunWorkerAsync();
                     }
                 }
@@ -993,17 +973,11 @@ namespace Mezeo
 
         public void ProcessOfflineEvents()
         {
-            List<LocalEvents> offileEvents = offlineWatcher.PrepareStructureList();
+            // See if there are any offline events since the last time we ran.
+            offlineWatcher.PrepareStructureList();
 
-            //if (offileEvents.Count > 0)
             if (EventQueue.QueueNotEmpty())
             {
-                if (events == null)
-                    events = new List<LocalEvents>();
-
-                events.AddRange(offileEvents);
-                offileEvents.Clear();
-
                 if (!bwOfflineEvent.IsBusy)
                     bwOfflineEvent.RunWorkerAsync();
             }
@@ -2195,7 +2169,7 @@ namespace Mezeo
             }
         }
 
-        private void WalkDirectoryTreeforAddFolder(System.IO.DirectoryInfo root, string lEventOldPath, ref List<LocalEvents> addEvents)
+        private void WalkDirectoryTreeforAddFolder(System.IO.DirectoryInfo root, string lEventOldPath, ref List<LocalEvents> addEvents, ref List<LocalEvents> events)
         {
             System.IO.FileInfo[] files = null;
             System.IO.DirectoryInfo[] subDirs = null;
@@ -2266,7 +2240,7 @@ namespace Mezeo
                         addEvents.Add(lEvent);
                     }
 
-                    WalkDirectoryTreeforAddFolder(dirInfo, lEventOldPath + "\\" + dirInfo.Name , ref addEvents);
+                    WalkDirectoryTreeforAddFolder(dirInfo, lEventOldPath + "\\" + dirInfo.Name, ref addEvents, ref events);
                 }
             }
         }
@@ -2396,66 +2370,6 @@ namespace Mezeo
             UpdateDBForStatus(lEvent, DB_STATUS_SUCCESS);
         }
 
-       private bool CheckModifiedEvent(string str, LocalEvents lEventMod, List<LocalEvents> eMoveList)
-       {
-           bool bRet = false;
-           int nRet = 0;
-           bool bIsMove = false;
-           bool bIsBreak = false;
-
-           while (!bIsBreak)
-           {
-               foreach (LocalEvents id in events)
-               {
-                   if (id.FileName == str && id.EventType == LocalEvents.EventsType.FILE_ACTION_ADDED)
-                   {
-                       foreach (LocalEvents eMove in eMoveList)
-                       {
-                           if (eMove.FileName == str)
-                               bIsMove = true;
-                       }
-
-                       if (!bIsMove)
-                       {
-                           lEventMod.EventType = LocalEvents.EventsType.FILE_ACTION_ADDED;
-                           bRet = false;
-                           bIsBreak = true;
-                       }
-                       else
-                           bRet = false;
-
-                       break;
-                   }
-                   else
-                       bRet = false;
-               }
-
-               if (!bRet)
-               {
-                   nRet = str.LastIndexOf("\\");
-                   if (nRet == -1)
-                   {
-                       bIsBreak = true;
-                   }
-                   else
-                   {
-                       //LocalEvents lEvent = new LocalEvents();
-                       //lEvent.EventType = LocalEvents.EventsType.FILE_ACTION_ADDED;
-                       //lEvent.FileName = str;
-                       //lEvent.FullPath = BasicInfo.SyncDirPath + "\\" + str;
-
-                       //events.Add(lEvent);
-                       str = str.Substring(0, nRet);
-                   }
-               }
-           }
-
-           if (bRet)
-               return true;
-           else
-               return false;
-       }
-
        protected virtual bool IsFileLocked(FileInfo file)
        {
            FileStream stream = null;
@@ -2540,7 +2454,6 @@ namespace Mezeo
                     }
                 }
 
-
                 if (lEvent.EventType == LocalEvents.EventsType.FILE_ACTION_MODIFIED)
                 {
                     Debugger.Instance.logMessage("frmSyncManager - HandleEvents - lEvent - ", lEvent.FullPath + "-" + lEvent.EventType.ToString() + "Enter");
@@ -2617,7 +2530,7 @@ namespace Mezeo
 
                         if (!bIsMove)
                         {
-                            WalkDirectoryTreeforAddFolder(new DirectoryInfo(lEvent.FullPath), lEvent.FileName, ref eAddEvents);
+                            WalkDirectoryTreeforAddFolder(new DirectoryInfo(lEvent.FullPath), lEvent.FileName, ref eAddEvents, ref events);
                         }
                     }
 
@@ -2657,7 +2570,7 @@ namespace Mezeo
                                 lEvent.EventType = LocalEvents.EventsType.FILE_ACTION_ADDED;
                                 if ((attr & FileAttributes.Directory) == FileAttributes.Directory)
                                 {
-                                    WalkDirectoryTreeforAddFolder(new DirectoryInfo(lEvent.FullPath), lEvent.FileName, ref eAddEvents);
+                                    WalkDirectoryTreeforAddFolder(new DirectoryInfo(lEvent.FullPath), lEvent.FileName, ref eAddEvents, ref events);
                                 }
                                 //eAddEvents.Add(lNewEvent);
                                 //bRet = false;
@@ -2784,30 +2697,30 @@ namespace Mezeo
                 Debugger.Instance.logMessage("frmSyncManager - HandleEvents eMoveList -", eMove.Count.ToString() + " Leave");
             }
             int returnCode = 1;
-            if (events.Count == 0)
-            {
-                Debugger.Instance.logMessage("frmSyncManager - HandleEvents" ," Events Count NUll");
+            //if (events.Count == 0)
+            //{
+            //    Debugger.Instance.logMessage("frmSyncManager - HandleEvents" ," Events Count NUll");
 
-                SetIsLocalEventInProgress(false);
-                if (LocalEventList.Count != 0)
-                {
-                    lock (folderWatcherLockObject)
-                    {
-                        if (LocalEventList.Count != 0)
-                        {
-                            if (events == null)
-                                events = new List<LocalEvents>();
+            //    SetIsLocalEventInProgress(false);
+            //    if (LocalEventList.Count != 0)
+            //    {
+            //        lock (folderWatcherLockObject)
+            //        {
+            //            if (LocalEventList.Count != 0)
+            //            {
+            //                if (events == null)
+            //                    events = new List<LocalEvents>();
 
-                            events.AddRange(LocalEventList);
+            //                events.AddRange(LocalEventList);
 
-                            LocalEventList.Clear();
-                        }
-                    }
+            //                LocalEventList.Clear();
+            //            }
+            //        }
 
-                    returnCode = HandleEvents(caller);
-                }
-                return returnCode;
-            }
+            //        returnCode = HandleEvents(caller);
+            //    }
+            //    return returnCode;
+            //}
 
             if (caller != null)
             {
@@ -3483,36 +3396,33 @@ namespace Mezeo
             //    return -2;
             //}
             int returnCode = 1;
-            if (LocalEventList.Count != 0)
-            {
-                Debugger.Instance.logMessage("SyncManager - ProcessLocalEvents", "LocalEventList.Count NOT ZERO, locking folderWatcherLockObject");
-                lock (folderWatcherLockObject)
-                {
-                    if (LocalEventList.Count != 0)
-                    {
-                        if (events == null)
-                            events = new List<LocalEvents>();
+            //if (LocalEventList.Count != 0)
+            //{
+            //    Debugger.Instance.logMessage("SyncManager - ProcessLocalEvents", "LocalEventList.Count NOT ZERO, locking folderWatcherLockObject");
+            //    lock (folderWatcherLockObject)
+            //    {
+            //        if (LocalEventList.Count != 0)
+            //        {
+            //            if (events == null)
+            //                events = new List<LocalEvents>();
 
-                        Debugger.Instance.logMessage("SyncManager - ProcessLocalEvents", "adding LocalEventList to events");
-                        events.AddRange(LocalEventList);
-                        Debugger.Instance.logMessage("SyncManager - ProcessLocalEvents", "clear LocalEventList");
-                        LocalEventList.Clear();
-                    }
-                }
+            //            Debugger.Instance.logMessage("SyncManager - ProcessLocalEvents", "adding LocalEventList to events");
+            //            events.AddRange(LocalEventList);
+            //            Debugger.Instance.logMessage("SyncManager - ProcessLocalEvents", "clear LocalEventList");
+            //            LocalEventList.Clear();
+            //        }
+            //    }
 
-                Debugger.Instance.logMessage("SyncManager - ProcessLocalEvents", "Calling HandleEvents");
+            //    Debugger.Instance.logMessage("SyncManager - ProcessLocalEvents", "Calling HandleEvents");
 
-                returnCode = HandleEvents(caller);
-            }
+            //    returnCode = HandleEvents(caller);
+            //}
 
             SetIsLocalEventInProgress(false);
 
             Debugger.Instance.logMessage("SyncManager - ProcessLocalEvents", "Leave");
 
             return returnCode;
-
-            //if (LocalEventList.Count != 0)
-            //    watcher_WatchCompletedEvent();
         }
 
         private void SetIssueFound(bool bIsIssueFound)
@@ -3786,25 +3696,10 @@ namespace Mezeo
 
         void watcher_WatchCompletedEvent()
         {
-            if (IsInIdleState() /*&& BasicInfo.IsConnectedToInternet*/ && LocalEventList.Count != 0 && BasicInfo.AutoSync && !BasicInfo.IsInitialSync && !IsDisabledByConnection())
+            if (IsInIdleState() && EventQueue.QueueNotEmpty() && BasicInfo.AutoSync && !BasicInfo.IsInitialSync && !IsDisabledByConnection())
             {
-                lock (folderWatcherLockObject)
-                {
-                    if (LocalEventList.Count != 0)
-                    {
-                        if (events == null)
-                            events = new List<LocalEvents>();
-
-                        events.AddRange(LocalEventList);
-
-                        LocalEventList.Clear();
-                    }
-                }
-
                 if (!bwLocalEvents.IsBusy)
-                {
                     bwLocalEvents.RunWorkerAsync();
-                }
             }
         }
             
@@ -3997,10 +3892,10 @@ namespace Mezeo
                 }
                 else
                 {
-                    if (LocalEventList.Count > 0)
-                    {
+                    //if (LocalEventList.Count > 0)
+                    //{
                         watcher_WatchCompletedEvent();
-                    }
+                    //}
                 }
             }
             catch(Exception ex)
