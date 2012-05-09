@@ -18,32 +18,7 @@ namespace Mezeo
 {
     public partial class frmSyncManager : Form
     {
-        //[DllImport("shell32.dll", CharSet = CharSet.Auto)]
-        //static extern int SHFileOperation(ref SHFILEOPSTRUCT FileOp);
-        //const int FO_DELETE = 3;
-        //const int FOF_ALLOWUNDO = 0x40;
-        //const int FOF_NOCONFIRMATION = 0x10;    //Don't prompt the user.; 
-        //const int FOF_NOERRORUI = 0x0400;    //Don't prompt the user.; 
-
-        //[DllImport("kernel32.dll", CharSet = CharSet.Auto)]
-        //public static extern int GetLastError();
-
-        //[StructLayout(LayoutKind.Sequential, CharSet = CharSet.Auto, Pack = 1)]
-        //public struct SHFILEOPSTRUCT
-        //{
-        //    public IntPtr hwnd;
-        //    [MarshalAs(UnmanagedType.U4)]
-        //    public int wFunc;
-        //    public string pFrom;
-        //    public string pTo;
-        //    public short fFlags;
-        //    [MarshalAs(UnmanagedType.Bool)]
-        //    public bool fAnyOperationsAborted;
-        //    public IntPtr hNameMappings;
-        //    public string lpszProgressTitle;
-        //}
-
-        //private static int NONE = -1;
+        
         private static int SYNC_STARTED = 1;
         private static int PROCESS_LOCAL_EVENTS_STARTED = SYNC_STARTED + 1;
         private static int PROGRESS_CHANGED_WITH_FILE_NAME = PROCESS_LOCAL_EVENTS_STARTED + 1;
@@ -74,7 +49,6 @@ namespace Mezeo
 
         #region Private Members
 
-        //private MezeoFileCloud cMezeoFileCloud;
         private CloudService cMezeoFileCloud;
         private LoginDetails cLoginDetails;
         private frmLogin frmParent;
@@ -97,9 +71,9 @@ namespace Mezeo
         Queue<LocalItemDetails> queue;
         frmIssues frmIssuesFound;
         Watcher watcher;
-        //List<LocalEvents> LocalEventList;
-        Object folderWatcherLockObject;
 
+        //List<LocalEvents> LocalEventList;
+        //Object folderWatcherLockObject;
         //List<LocalEvents> events;
 
         Thread analyseThread;
@@ -246,10 +220,6 @@ namespace Mezeo
         public void SetIsSyncInProgress(bool syncInProgress)
         {
             isSyncInProgress = syncInProgress;
-            //if (isSyncInProgress)
-            //    pbSyncProgress.Show();
-            //else
-            //    pbSyncProgress.Hide();
         }
 
         public bool IsOfflineWorking()
@@ -357,28 +327,13 @@ namespace Mezeo
 
         private void btnSyncNow_Click(object sender, EventArgs e)
         {
-            //if (!BasicInfo.IsConnectedToInternet)
-            //{
-            //    frmParent.HandleConnectionState();
-            //    return;
-            //}
-
             SetIsEventCanceled(false);
             if (!IsLocalEventInProgress())
             {
                 InitializeSync();
             }
             else
-            {
                 StopSync();
-                //btnSyncNow.Enabled = false;
-                //SetIsLocalEventInProgress(false);
-                //SetIsEventCanceled(true);
-                //bwLocalEvents.CancelAsync();
-
-                //SetIsOfflineWorking(false);
-                //bwOfflineEvent.CancelAsync();
-            }
         }
 
         private void tmrNextSync_Tick(object sender, EventArgs e)
@@ -474,12 +429,8 @@ namespace Mezeo
             {
                 BasicInfo.AutoSync = true;
 
-                //tmrNextSync.Interval = FIVE_MINUTES;
-                //tmrNextSync.Enabled = true;
                 if (IsInIdleState())
-                {
-                   InitializeSync();
-                }
+                    InitializeSync();     
             }
         }
 
@@ -490,12 +441,8 @@ namespace Mezeo
             {
                 BasicInfo.AutoSync = false;
 
-                //tmrNextSync.Enabled = false;
-
                 if (IsInIdleState())
-                {
                     ShowSyncMessage();
-                }
             }
         }
 
@@ -510,17 +457,17 @@ namespace Mezeo
             BasicInfo.IsInitialSync = false;
             ShowSyncMessage();
 
-            cnotificationManager.NotificationHandler.Icon = Properties.Resources.MezeoVault;
-            cnotificationManager.NotificationHandler.ShowBalloonTip(1, LanguageTranslator.GetValue("TrayBalloonSyncStatusText"),
-                                                                        LanguageTranslator.GetValue("TrayBalloonInitialSyncText") + "\n" + LanguageTranslator.GetValue("TrayBalloonInitialSyncFilesUpToDateText"),
-                                                                    ToolTipIcon.None);
-            cnotificationManager.HoverText = AboutBox.AssemblyTitle + "\n" + LanguageTranslator.GetValue("TrayHoverInitialSyncUpToDateText");
-            frmParent.toolStripMenuItem4.Text = LanguageTranslator.GetValue("TrayHoverInitialSyncUpToDateText");
+            InitialSyncUptodateMessage();
+            //cnotificationManager.NotificationHandler.Icon = Properties.Resources.MezeoVault;
+            //cnotificationManager.NotificationHandler.ShowBalloonTip(1, LanguageTranslator.GetValue("TrayBalloonSyncStatusText"),
+            //                                                            LanguageTranslator.GetValue("TrayBalloonInitialSyncText") + "\n" + LanguageTranslator.GetValue("TrayBalloonInitialSyncFilesUpToDateText"),
+            //                                                        ToolTipIcon.None);
+            //cnotificationManager.HoverText = AboutBox.AssemblyTitle + "\n" + LanguageTranslator.GetValue("TrayHoverInitialSyncUpToDateText");
+            //frmParent.toolStripMenuItem4.Text = LanguageTranslator.GetValue("TrayHoverInitialSyncUpToDateText");
 
             //if (LocalEventList.Count > 0)
-            {
-                watcher_WatchCompletedEvent();
-            }
+            
+             watcher_WatchCompletedEvent();
         }
 
         void ShowNextSyncLabel(bool bIsShow)
@@ -591,15 +538,7 @@ namespace Mezeo
             }
         }
 
-        void ShowInsufficientStorageMessage()
-        {
-            lblStatusL1.Text = LanguageTranslator.GetValue("InsufficientStorageMessage");
-            cnotificationManager.NotificationHandler.ShowBalloonTip(1, LanguageTranslator.GetValue("TrayBalloonSyncStatusText"),
-                                                                         LanguageTranslator.GetValue("InsufficientStorageMessage"),
-                                                                        ToolTipIcon.None);
-            cnotificationManager.HoverText = AboutBox.AssemblyTitle + "\n" + LanguageTranslator.GetValue("InsufficientStorageMessage");
-            frmParent.toolStripMenuItem4.Text = LanguageTranslator.GetValue("TrayBalloonSyncStopText");
-        }
+      
 
         void stDownloader_cancelDownloadEvent(CancelReason reason)
         {
@@ -647,7 +586,7 @@ namespace Mezeo
 
         private void LoadResources()
         {
-            this.Text = AboutBox.AssemblyTitle; //LanguageTranslator.GetValue("SyncManagerTitle");
+            this.Text = AboutBox.AssemblyTitle; 
             this.lblFileSync.Text = LanguageTranslator.GetValue("SyncManagerFileSyncLabel");
             this.rbSyncOff.Text = LanguageTranslator.GetValue("SyncManagerOffButtonText");
             this.rbSyncOn.Text = LanguageTranslator.GetValue("SyncManagerOnButtonText");
@@ -656,7 +595,7 @@ namespace Mezeo
             this.lblUsage.Text = LanguageTranslator.GetValue("SyncManagerUsageLabel");
 
             // this.btnMoveFolder.Text = LanguageTranslator.GetValue("SyncManagerMoveFolderButtonText");
-            //Commeted above line as move folder functinality disable 
+            // Commeted above line as move folder functinality disable 
             this.btnSyncNow.Text = LanguageTranslator.GetValue("SyncManagerSyncNowButtonText");
             this.btnIssuesFound.Text = LanguageTranslator.GetValue("SyncManagerIssueFoundButtonText");
             this.lnkAbout.Text = LanguageTranslator.GetValue("SyncManagerAboutLinkText");
@@ -708,8 +647,6 @@ namespace Mezeo
             {
                 if (!bwUpdateUsage.IsBusy)
                     bwUpdateUsage.RunWorkerAsync();
-
-                //this.lblUsageDetails.Text = GetUsageString();
             }
             else
             {
@@ -719,12 +656,6 @@ namespace Mezeo
 
         public void InitializeSync()
         {
-            //if (!BasicInfo.IsConnectedToInternet)
-            //{
-            //    frmParent.HandleConnectionState();
-            //    return;
-            //}
-
             if (!IsSyncInProgress())
             {
                 SetUpSync();
@@ -739,7 +670,6 @@ namespace Mezeo
 
         public void SetUpSync()
         {
-            //ShowNextSyncLabel(false);
             lblPercentDone.Visible = true;
             lblPercentDone.Text = "";
             pbSyncProgress.Value = 0;
@@ -755,10 +685,10 @@ namespace Mezeo
             SetIsSyncInProgress(true);
             ShowNextSyncLabel(false);
             isAnalysisCompleted = false;
-            //tmrNextSync.Enabled = false;
+            // tmrNextSync.Enabled = false;
             pbSyncProgress.Visible = true;
             // btnMoveFolder.Enabled = false;
-            //Commeted above line as move folder functinality disable 
+            // Commeted above line as move folder functinality disable 
         }
 
         public void StopSync()
@@ -772,8 +702,6 @@ namespace Mezeo
                 bwLocalEvents.CancelAsync();
                 bwNQUpdate.CancelAsync();
                 bwOfflineEvent.CancelAsync();
-                //lblPercentDone.Text = "";
-                //pbSyncProgress.Visible = false;
                 ShowNextSyncLabel(true);
                 btnSyncNow.Enabled = false;
                 if (lockObject != null)
@@ -781,16 +709,7 @@ namespace Mezeo
 
                 if (frmIssuesFound != null && frmIssuesFound.GetItemsInList() > 0)
                 {
-                    SetIssueFound(true);
-                    cnotificationManager.NotificationHandler.Icon = Properties.Resources.app_icon_warning;
-
-                    cnotificationManager.NotificationHandler.ShowBalloonTip(1, LanguageTranslator.GetValue("TrayBalloonSyncStatusText"),
-                                                                          LanguageTranslator.GetValue("SyncIssueFoundText"),
-                                                                         ToolTipIcon.None);
-
-                    cnotificationManager.HoverText = AboutBox.AssemblyTitle + "\n" + LanguageTranslator.GetValue("SyncIssueFoundText");
-
-                    frmParent.toolStripMenuItem4.Text = LanguageTranslator.GetValue("SyncManagerMenuIssueFoundText");
+                    IssueFoundBalloonMessage();
                 }
                 else
                 {
@@ -799,15 +718,17 @@ namespace Mezeo
                     else
                         cnotificationManager.NotificationHandler.Icon = Properties.Resources.app_icon_disabled;
 
-                    cnotificationManager.NotificationHandler.ShowBalloonTip(1, LanguageTranslator.GetValue("TrayBalloonSyncStatusText"),
-                                                                             LanguageTranslator.GetValue("TrayBalloonSyncStopText"),
-                                                                            ToolTipIcon.None);
-                    cnotificationManager.HoverText = AboutBox.AssemblyTitle + "\n" + LanguageTranslator.GetValue("TrayBalloonSyncStopText");
-                    frmParent.toolStripMenuItem4.Text = LanguageTranslator.GetValue("TrayBalloonSyncStopText");
+                    SyncStoppedBalloonMessage();
+                    //cnotificationManager.NotificationHandler.ShowBalloonTip(1, LanguageTranslator.GetValue("TrayBalloonSyncStatusText"),
+                    //                                                         LanguageTranslator.GetValue("TrayBalloonSyncStopText"),
+                    //                                                        ToolTipIcon.None);
+                    //cnotificationManager.HoverText = AboutBox.AssemblyTitle + "\n" + LanguageTranslator.GetValue("TrayBalloonSyncStopText");
+                    //frmParent.toolStripMenuItem4.Text = LanguageTranslator.GetValue("TrayBalloonSyncStopText");
                 }
                 cMezeoFileCloud.StopSyncProcess();
             }
         }
+
 
         private void DeleteCurrentIncompleteFile(string fileName)
         {
@@ -835,15 +756,7 @@ namespace Mezeo
 
             if (frmIssuesFound != null && frmIssuesFound.GetItemsInList() > 0)
             {
-                SetIssueFound(true);
-                cnotificationManager.NotificationHandler.Icon = Properties.Resources.app_icon_warning;
-                cnotificationManager.NotificationHandler.ShowBalloonTip(1, LanguageTranslator.GetValue("TrayBalloonSyncStatusText"),
-                                                                          LanguageTranslator.GetValue("SyncIssueFoundText"),
-                                                                         ToolTipIcon.None);
-
-                cnotificationManager.HoverText = AboutBox.AssemblyTitle + "\n" + LanguageTranslator.GetValue("SyncIssueFoundText");
-
-                frmParent.toolStripMenuItem4.Text = LanguageTranslator.GetValue("SyncManagerMenuIssueFoundText");
+                IssueFoundBalloonMessage();
             }
             else
             {
@@ -852,24 +765,13 @@ namespace Mezeo
                 else
                     cnotificationManager.NotificationHandler.Icon = Properties.Resources.app_icon_disabled;
 
-                cnotificationManager.NotificationHandler.ShowBalloonTip(1, LanguageTranslator.GetValue("TrayBalloonSyncStatusText"),
-                                                                         LanguageTranslator.GetValue("TrayBalloonSyncStopText"),
-                                                                        ToolTipIcon.None);
-                cnotificationManager.HoverText = AboutBox.AssemblyTitle + "\n" + LanguageTranslator.GetValue("TrayBalloonSyncStopText");
-                frmParent.toolStripMenuItem4.Text = LanguageTranslator.GetValue("TrayBalloonSyncStopText");
+                SyncStoppedBalloonMessage();
+                //cnotificationManager.NotificationHandler.ShowBalloonTip(1, LanguageTranslator.GetValue("TrayBalloonSyncStatusText"),
+                //                                                         LanguageTranslator.GetValue("TrayBalloonSyncStopText"),
+                //                                                        ToolTipIcon.None);
+                //cnotificationManager.HoverText = AboutBox.AssemblyTitle + "\n" + LanguageTranslator.GetValue("TrayBalloonSyncStopText");
+                //frmParent.toolStripMenuItem4.Text = LanguageTranslator.GetValue("TrayBalloonSyncStopText");
             }
-
-            //frmParent.menuItem7.Text = LanguageTranslator.GetValue("TrayBalloonSyncStopText");
-            //frmParent.ShellNotifyIcon.SetNotifyIconHandle(Properties.Resources.MezeoVault.Handle);
-            //frmParent.ShellNotifyIcon.SetNotifyIconBalloonText(LanguageTranslator.GetValue("TrayBalloonSyncStopText"), LanguageTranslator.GetValue("TrayBalloonSyncStatusText"));
-            //frmParent.ShellNotifyIcon.SetNotifyIconToolTip(LanguageTranslator.GetValue("TrayBalloonSyncStopText"));
-        }
-
-        public void SetUpSyncNowNotification()
-        {
-            cnotificationManager.NotificationHandler.Icon = Properties.Resources.mezeosyncstatus_syncing;
-            cnotificationManager.HoverText = AboutBox.AssemblyTitle + "\n" + LanguageTranslator.GetValue("TrayHoverSyncProgressText") + (int)0 + LanguageTranslator.GetValue("TrayHoverSyncProgressInitialText");
-            frmParent.toolStripMenuItem4.Text = LanguageTranslator.GetValue("TrayHoverSyncProgressText");
         }
 
         public int CheckServerStatus()
@@ -915,13 +817,7 @@ namespace Mezeo
             }
 
             SetUpSyncNowNotification();
-
-            //frmParent.menuItem7.Text = LanguageTranslator.GetValue("TrayHoverSyncProgressText");
-            //frmParent.ShellNotifyIcon.SetNotifyIconHandle(Properties.Resources.mezeosyncstatus_syncing.Handle);
-            //frmParent.ShellNotifyIcon.SetNotifyIconToolTip(AboutBox.AssemblyTitle + "\n" + LanguageTranslator.GetValue("TrayHoverSyncProgressText") + (int)0 + LanguageTranslator.GetValue("TrayHoverSyncProgressInitialText"));
             
-            //frmParent.ShellNotifyIcon.UpdateNotifyIcon();
-
             if (BasicInfo.IsInitialSync)
             {
                 ShowNextSyncLabel(false);
@@ -929,9 +825,6 @@ namespace Mezeo
                 cnotificationManager.NotificationHandler.ShowBalloonTip(1, LanguageTranslator.GetValue("TrayBalloonInitialSyncStartedTitleText"),
                                                                         LanguageTranslator.GetValue("TrayBalloonInitialSyncStartedText"),
                                                                         ToolTipIcon.None);
-
-                //frmParent.ShellNotifyIcon.SetNotifyIconBalloonText(LanguageTranslator.GetValue("TrayBalloonInitialSyncStartedText"), LanguageTranslator.GetValue("TrayBalloonInitialSyncStartedTitleText"));
-                //frmParent.ShellNotifyIcon.UpdateNotifyIcon();
 
                 queue = new Queue<LocalItemDetails>();
                 lockObject = new ThreadLockObject();
@@ -1048,15 +941,7 @@ namespace Mezeo
 
                 if (frmIssuesFound != null && frmIssuesFound.GetItemsInList() > 0)
                 {
-                    SetIssueFound(true);
-                    cnotificationManager.NotificationHandler.Icon = Properties.Resources.app_icon_warning;
-                    cnotificationManager.NotificationHandler.ShowBalloonTip(1, LanguageTranslator.GetValue("TrayBalloonSyncStatusText"),
-                                                                          LanguageTranslator.GetValue("SyncIssueFoundText"),
-                                                                         ToolTipIcon.None);
-
-                    cnotificationManager.HoverText = AboutBox.AssemblyTitle + "\n" + LanguageTranslator.GetValue("SyncIssueFoundText");
-
-                    frmParent.toolStripMenuItem4.Text = LanguageTranslator.GetValue("SyncManagerMenuIssueFoundText");
+                    IssueFoundBalloonMessage();
                 }
                 else
                 {
@@ -1065,12 +950,13 @@ namespace Mezeo
                     else
                         cnotificationManager.NotificationHandler.Icon = Properties.Resources.app_icon_disabled;
 
-                    cnotificationManager.NotificationHandler.ShowBalloonTip(1, LanguageTranslator.GetValue("TrayBalloonSyncStatusText"),
-                                                                                 LanguageTranslator.GetValue("TrayBalloonSyncFolderUpToDate"),
-                                                                                ToolTipIcon.None);
+                    SyncFolderUpToDateMessage();
+                    //cnotificationManager.NotificationHandler.ShowBalloonTip(1, LanguageTranslator.GetValue("TrayBalloonSyncStatusText"),
+                    //                                                             LanguageTranslator.GetValue("TrayBalloonSyncFolderUpToDate"),
+                    //                                                            ToolTipIcon.None);
 
-                    cnotificationManager.HoverText = AboutBox.AssemblyTitle + "\n" + LanguageTranslator.GetValue("TrayBalloonSyncFolderUpToDate");
-                    frmParent.toolStripMenuItem4.Text = LanguageTranslator.GetValue("TrayHoverInitialSyncUpToDateText");
+                    //cnotificationManager.HoverText = AboutBox.AssemblyTitle + "\n" + LanguageTranslator.GetValue("TrayBalloonSyncFolderUpToDate");
+                    //frmParent.toolStripMenuItem4.Text = LanguageTranslator.GetValue("TrayHoverInitialSyncUpToDateText");
                 }
             }
 
@@ -1801,55 +1687,107 @@ namespace Mezeo
             }
         }
 
+        #region Ballon message functions
+
+        private void IssueFoundBalloonMessage()
+        {
+            SetIssueFound(true);
+            cnotificationManager.NotificationHandler.Icon = Properties.Resources.app_icon_warning;
+            cnotificationManager.NotificationHandler.ShowBalloonTip(1, LanguageTranslator.GetValue("TrayBalloonSyncStatusText"),
+                                                                      LanguageTranslator.GetValue("SyncIssueFoundText"),
+                                                                     ToolTipIcon.None);
+
+            cnotificationManager.HoverText = AboutBox.AssemblyTitle + "\n" + LanguageTranslator.GetValue("SyncIssueFoundText");
+
+            frmParent.toolStripMenuItem4.Text = LanguageTranslator.GetValue("SyncManagerMenuIssueFoundText");
+ 
+        }
+
+
+        private void SyncStoppedBalloonMessage()
+        {
+            cnotificationManager.NotificationHandler.ShowBalloonTip(1, LanguageTranslator.GetValue("TrayBalloonSyncStatusText"),
+                                                                           LanguageTranslator.GetValue("TrayBalloonSyncStopText"),
+                                                                          ToolTipIcon.None);
+            cnotificationManager.HoverText = AboutBox.AssemblyTitle + "\n" + LanguageTranslator.GetValue("TrayBalloonSyncStopText");
+            frmParent.toolStripMenuItem4.Text = LanguageTranslator.GetValue("TrayBalloonSyncStopText");
+        }
+
+        private void InitialSyncBalloonMessage()
+        {
+            lblStatusL1.Text = LanguageTranslator.GetValue("SyncManagerStatusAllFilesInSyncLabel");
+            cnotificationManager.NotificationHandler.Icon = Properties.Resources.MezeoVault;
+            cnotificationManager.HoverText = AboutBox.AssemblyTitle + "\n" + LanguageTranslator.GetValue("TrayBalloonInitialSyncFilesUpToDateText");
+            frmParent.toolStripMenuItem4.Text = LanguageTranslator.GetValue("TrayBalloonInitialSyncFilesUpToDateText");
+        }
+
+        void ShowInsufficientStorageMessage()
+        {
+            lblStatusL1.Text = LanguageTranslator.GetValue("InsufficientStorageMessage");
+            cnotificationManager.NotificationHandler.ShowBalloonTip(1, LanguageTranslator.GetValue("TrayBalloonSyncStatusText"),
+                                                                         LanguageTranslator.GetValue("InsufficientStorageMessage"),
+                                                                        ToolTipIcon.None);
+            cnotificationManager.HoverText = AboutBox.AssemblyTitle + "\n" + LanguageTranslator.GetValue("InsufficientStorageMessage");
+            frmParent.toolStripMenuItem4.Text = LanguageTranslator.GetValue("TrayBalloonSyncStopText");
+        }
+
+        private void InitialSyncUptodateMessage()
+        {
+            cnotificationManager.NotificationHandler.Icon = Properties.Resources.MezeoVault;
+            cnotificationManager.NotificationHandler.ShowBalloonTip(1, LanguageTranslator.GetValue("TrayBalloonSyncStatusText"),
+                                                                        LanguageTranslator.GetValue("TrayBalloonInitialSyncText") + "\n" + LanguageTranslator.GetValue("TrayBalloonInitialSyncFilesUpToDateText"),
+                                                                    ToolTipIcon.None);
+            cnotificationManager.HoverText = AboutBox.AssemblyTitle + "\n" + LanguageTranslator.GetValue("TrayHoverInitialSyncUpToDateText");
+            frmParent.toolStripMenuItem4.Text = LanguageTranslator.GetValue("TrayHoverInitialSyncUpToDateText");
+        }
+
+        public void SetUpSyncNowNotification()
+        {
+            cnotificationManager.NotificationHandler.Icon = Properties.Resources.mezeosyncstatus_syncing;
+            cnotificationManager.HoverText = AboutBox.AssemblyTitle + "\n" + LanguageTranslator.GetValue("TrayHoverSyncProgressText") + (int)0 + LanguageTranslator.GetValue("TrayHoverSyncProgressInitialText");
+            frmParent.toolStripMenuItem4.Text = LanguageTranslator.GetValue("TrayHoverSyncProgressText");
+        }
+
+        private void SyncFolderUpToDateMessage()
+        {
+            cnotificationManager.NotificationHandler.ShowBalloonTip(1, LanguageTranslator.GetValue("TrayBalloonSyncStatusText"),
+                                                                                    LanguageTranslator.GetValue("TrayBalloonSyncFolderUpToDate"),
+                                                                                   ToolTipIcon.None);
+
+            cnotificationManager.HoverText = AboutBox.AssemblyTitle + "\n" + LanguageTranslator.GetValue("TrayBalloonSyncFolderUpToDate");
+            frmParent.toolStripMenuItem4.Text = LanguageTranslator.GetValue("TrayHoverInitialSyncUpToDateText");
+        }
+
+        
+        private void ShowInitialSyncMessage()
+        {
+            btnSyncNow.Text = LanguageTranslator.GetValue("SyncManagerSyncStopButtonText");
+            cnotificationManager.NotificationHandler.Icon = Properties.Resources.mezeosyncstatus_syncing;
+            cnotificationManager.HoverText = AboutBox.AssemblyTitle + "\n" + LanguageTranslator.GetValue("TrayHoverSyncProgressText") +
+                                            (int)0 + LanguageTranslator.GetValue("TrayHoverSyncProgressInitialText");
+            frmParent.toolStripMenuItem4.Text = LanguageTranslator.GetValue("TrayHoverSyncProgressText");
+        }
+
+        #endregion
+
         private void ShowAutoSyncMessage(bool IsStopped)
         {
             if (IsStopped)
             {
-                //cnotificationManager.NotificationHandler.Icon = Properties.Resources.MezeoVault;
                 if (frmIssuesFound != null && frmIssuesFound.GetItemsInList() > 0)
-                {
-                    SetIssueFound(true);
-                    cnotificationManager.NotificationHandler.Icon = Properties.Resources.app_icon_warning;
-                    cnotificationManager.NotificationHandler.ShowBalloonTip(1, LanguageTranslator.GetValue("TrayBalloonSyncStatusText"),
-                                                                              LanguageTranslator.GetValue("SyncIssueFoundText"),
-                                                                             ToolTipIcon.None);
-
-                    cnotificationManager.HoverText = AboutBox.AssemblyTitle + "\n" + LanguageTranslator.GetValue("SyncIssueFoundText");
-
-                    frmParent.toolStripMenuItem4.Text = LanguageTranslator.GetValue("SyncManagerMenuIssueFoundText");
-                }
+                    IssueFoundBalloonMessage();
                 else
                 {
-                    cnotificationManager.NotificationHandler.ShowBalloonTip(1, LanguageTranslator.GetValue("TrayBalloonSyncStatusText"),
-                                                                             LanguageTranslator.GetValue("TrayBalloonSyncStopText"),
-                                                                            ToolTipIcon.None);
-                    cnotificationManager.HoverText = AboutBox.AssemblyTitle + "\n" + LanguageTranslator.GetValue("TrayBalloonSyncStopText");
-                    frmParent.toolStripMenuItem4.Text = LanguageTranslator.GetValue("TrayBalloonSyncStopText");
-
+                    SyncStoppedBalloonMessage();
                     lblStatusL1.Text = LanguageTranslator.GetValue("TrayBalloonSyncStopText");
                 }
             }
             else
             {
                 if (frmIssuesFound != null && frmIssuesFound.GetItemsInList() > 0)
-                {
-                    SetIssueFound(true);
-                    cnotificationManager.NotificationHandler.Icon = Properties.Resources.app_icon_warning;
-                    cnotificationManager.NotificationHandler.ShowBalloonTip(1, LanguageTranslator.GetValue("TrayBalloonSyncStatusText"),
-                                                                              LanguageTranslator.GetValue("SyncIssueFoundText"),
-                                                                             ToolTipIcon.None);
-
-                    cnotificationManager.HoverText = AboutBox.AssemblyTitle + "\n" + LanguageTranslator.GetValue("SyncIssueFoundText");
-
-                    frmParent.toolStripMenuItem4.Text = LanguageTranslator.GetValue("SyncManagerMenuIssueFoundText");
-                }
+                    IssueFoundBalloonMessage();
                 else
-                {
-                    lblStatusL1.Text = LanguageTranslator.GetValue("SyncManagerStatusAllFilesInSyncLabel");
-                    cnotificationManager.NotificationHandler.Icon = Properties.Resources.MezeoVault;
-                    cnotificationManager.HoverText = AboutBox.AssemblyTitle + "\n" + LanguageTranslator.GetValue("TrayBalloonInitialSyncFilesUpToDateText");
-                    frmParent.toolStripMenuItem4.Text = LanguageTranslator.GetValue("TrayBalloonInitialSyncFilesUpToDateText");
-                }
+                    InitialSyncBalloonMessage();
             }
 
             lblStatusL3.Text = LanguageTranslator.GetValue("SyncManagerStatusLastSyncLabel") + " " + lastSync.ToString("MMM d, yyyy h:mm tt");
@@ -1892,8 +1830,8 @@ namespace Mezeo
             lblStatusL1.Text = "";
             lblStatusL3.Text = "";
             pbSyncProgress.Visible = false;
-          //  btnMoveFolder.Enabled = true;
-            //Commeted above line as move folder functinality disable 
+           // btnMoveFolder.Enabled = true;
+          // Commeted above line as move folder functinality disable 
             ShowNextSyncLabel(true);
         }
 
@@ -1915,10 +1853,8 @@ namespace Mezeo
         {
             SetIsDisabledByConnection(true);
             StopSync();
-
             pnlFileSyncOnOff.Enabled = false;
             rbSyncOff.Checked = true;
-
             //btnMoveFolder.Enabled = false;
             //Commeted above line as move folder functinality disable 
             btnSyncNow.Enabled = false;
@@ -1961,8 +1897,7 @@ namespace Mezeo
                 return cLoginDetails.szContainerContentsUri;
 
             strPath = strPath.Substring(0, (strPath.LastIndexOf("\\")));
-
-            return GetContentURI(strPath);//dbHandler.GetString(DbHandler.TABLE_NAME, DbHandler.PARENT_URL, DbHandler.KEY + " = '" + strPath + "'");
+            return GetContentURI(strPath);
         }
 
         public string GetContentURI(string strPath)
@@ -1993,6 +1928,8 @@ namespace Mezeo
                     return 0;
             }
         }
+
+        # region DB methods 
 
         private void AddInDBForAdded(LocalEvents lEvent)
         {
@@ -2103,6 +2040,23 @@ namespace Mezeo
                 WalkDirectoryTree(rootDir,lEvent.OldFullPath);
             }
         }
+
+        private void UpdateDBForModifiedSuccess(LocalEvents lEvent, string strContentURi)
+        {
+            int nStatusCode = 0;
+            string strEtag = cMezeoFileCloud.GetETag(strContentURi, ref nStatusCode);
+            dbHandler.Update(DbHandler.TABLE_NAME, DbHandler.E_TAG, strEtag, DbHandler.KEY, lEvent.FileName);
+
+            FileInfo fileInfo = new FileInfo(lEvent.FullPath);
+
+            dbHandler.UpdateModifiedDate(fileInfo.LastWriteTime, lEvent.FileName);
+
+            UpdateDBForStatus(lEvent, DB_STATUS_SUCCESS);
+        }
+
+        #endregion
+
+        # region Walk directory
 
         private void WalkDirectoryTreeForDelete(System.IO.DirectoryInfo root)
         {
@@ -2357,20 +2311,9 @@ namespace Mezeo
             }
         }
 
-        private void UpdateDBForModifiedSuccess(LocalEvents lEvent, string strContentURi)
-        {
-            int nStatusCode = 0;
-            string strEtag = cMezeoFileCloud.GetETag(strContentURi, ref nStatusCode);
-            dbHandler.Update(DbHandler.TABLE_NAME, DbHandler.E_TAG , strEtag , DbHandler.KEY , lEvent.FileName );
+        # endregion
 
-            FileInfo fileInfo = new FileInfo(lEvent.FullPath);
-
-            dbHandler.UpdateModifiedDate(fileInfo.LastWriteTime, lEvent.FileName);
-
-            UpdateDBForStatus(lEvent, DB_STATUS_SUCCESS);
-        }
-
-       protected virtual bool IsFileLocked(FileInfo file)
+        protected virtual bool IsFileLocked(FileInfo file)
        {
            FileStream stream = null;
 
@@ -2406,13 +2349,6 @@ namespace Mezeo
         private int HandleEvents(BackgroundWorker caller)
         {
             Debugger.Instance.logMessage("frmSyncManager - HandleEvents", "Enter");
-
-            //if (!BasicInfo.IsConnectedToInternet)
-            //{
-            //    //frmParent.HandleConnectionState();
-            //    Debugger.Instance.logMessage("frmSyncManager - HandleEvents", "return with -2");
-            //    return -2;
-            //}
 
             SetIsLocalEventInProgress(true);
 
@@ -3587,7 +3523,7 @@ namespace Mezeo
                             return false;
                         }
                     }
-                    break;
+                   // break;
                 case LocalEvents.EventsType.FILE_ACTION_REMOVED:
                     {
                         strEtag = cMezeoFileCloud.GetETag(strContentUrl, ref nStatusCode);
@@ -3635,7 +3571,7 @@ namespace Mezeo
                             return false;
                         }
                     }
-                    break;
+                  //  break;
                 case LocalEvents.EventsType.FILE_ACTION_RENAMED:
                     {
                         strEtag = cMezeoFileCloud.GetETag(strContentUrl, ref nStatusCode);
@@ -3687,7 +3623,7 @@ namespace Mezeo
                             return true;
                         }
                     }
-                    break;
+                 //   break;
             }
             
             Debugger.Instance.logMessage("SyncManager - CheckForConflicts", "Leave");
@@ -4059,15 +3995,6 @@ namespace Mezeo
             //Application.DoEvents();
         }
 
-        private void ShowInitialSyncMessage()
-        {
-            btnSyncNow.Text = LanguageTranslator.GetValue("SyncManagerSyncStopButtonText");
-            cnotificationManager.NotificationHandler.Icon = Properties.Resources.mezeosyncstatus_syncing;
-            cnotificationManager.HoverText = AboutBox.AssemblyTitle + "\n" + LanguageTranslator.GetValue("TrayHoverSyncProgressText") +
-                                            (int)0 + LanguageTranslator.GetValue("TrayHoverSyncProgressInitialText");
-            frmParent.toolStripMenuItem4.Text = LanguageTranslator.GetValue("TrayHoverSyncProgressText");
-        }
-
         private void InitializeLocalEventsProcess()
         {
             SetIssueFound(false);
@@ -4108,16 +4035,7 @@ namespace Mezeo
 
             if (frmIssuesFound != null && frmIssuesFound.GetItemsInList() > 0)
             {
-                SetIssueFound(true);
-                cnotificationManager.NotificationHandler.Icon = Properties.Resources.app_icon_warning;
-
-                cnotificationManager.NotificationHandler.ShowBalloonTip(1, LanguageTranslator.GetValue("TrayBalloonSyncStatusText"),
-                                                                          LanguageTranslator.GetValue("SyncIssueFoundText"),
-                                                                         ToolTipIcon.None);
-
-                cnotificationManager.HoverText = AboutBox.AssemblyTitle + "\n" + LanguageTranslator.GetValue("SyncIssueFoundText");
-
-                frmParent.toolStripMenuItem4.Text = LanguageTranslator.GetValue("SyncManagerMenuIssueFoundText");
+                IssueFoundBalloonMessage();
             }
             else
             {
@@ -4125,13 +4043,8 @@ namespace Mezeo
                     cnotificationManager.NotificationHandler.Icon = Properties.Resources.MezeoVault;
                 else
                     cnotificationManager.NotificationHandler.Icon = Properties.Resources.app_icon_disabled;
-
-                cnotificationManager.NotificationHandler.ShowBalloonTip(1, LanguageTranslator.GetValue("TrayBalloonSyncStatusText"),
-                                                                             LanguageTranslator.GetValue("TrayBalloonSyncFolderUpToDate"),
-                                                                            ToolTipIcon.None);
-
-                cnotificationManager.HoverText = AboutBox.AssemblyTitle + "\n" + LanguageTranslator.GetValue("TrayBalloonSyncFolderUpToDate");
-                frmParent.toolStripMenuItem4.Text = LanguageTranslator.GetValue("TrayHoverInitialSyncUpToDateText");
+               
+                SyncFolderUpToDateMessage();
             }
         }
 
@@ -4147,23 +4060,6 @@ namespace Mezeo
 
         private void bwLocalEvents_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
         {
-            //if ((int)e.Result == -2)
-            //{
-            //    if (this.InvokeRequired)
-            //    {
-            //        this.Invoke((MethodInvoker)delegate
-            //        {
-            //            frmParent.HandleConnectionState();
-            //        });
-
-            //    }
-            //    else
-            //    {
-            //        frmParent.HandleConnectionState();
-            //    }
-                
-            //}
-
             if ((int)e.Result == 1)
             {
                 ShowLocalEventsCompletedMessage();
@@ -4192,19 +4088,6 @@ namespace Mezeo
                 //DisableSyncManager();
                 //ShowSyncManagerOffline();
             }
-            //else if (IsCalledByNextSyncTmr())
-            //{
-            //    SetIsCalledByNextSyncTmr(false);
-
-            //    if (!IsEventCanceled())
-            //        UpdateNQ();
-            //}
-          
-            //else
-            //{
-            //    tmrNextSync.Interval = FIVE_MINUTES;
-            //    tmrNextSync.Enabled = true;
-            //}
         }
 
         private void SendToRecycleBin(string strPath, bool isFile)
