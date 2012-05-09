@@ -751,6 +751,7 @@ namespace Mezeo
         {
             lblPercentDone.Text = "";
             pbSyncProgress.Visible = false;
+            pbSyncProgress.Hide();
             ShowNextSyncLabel(true);
             btnSyncNow.Enabled = true;
 
@@ -1581,6 +1582,8 @@ namespace Mezeo
                 lblPercentDone.Text = Convert.ToString(nProgPer) + "%";
             //--------------
 
+            pbSyncProgress.Visible = true;
+            pbSyncProgress.Show();
             lblStatusL1.Text = LanguageTranslator.GetValue("SyncManagerDownloading") + " " + (fileDownloadCount) + " " + LanguageTranslator.GetValue("SyncManagerUsageOfLabel") + " " + pbSyncProgress.Maximum;
         }
 
@@ -2758,8 +2761,7 @@ namespace Mezeo
             if (caller != null)
             {
                 Debugger.Instance.logMessage("SyncManager - ProcessLocalEvents", "Calling ReportProgress with PROCESS_LOCAL_EVENTS_STARTED");
-                //caller.ReportProgress(PROCESS_LOCAL_EVENTS_STARTED, events.Count);
-                caller.ReportProgress(PROCESS_LOCAL_EVENTS_STARTED, EventQueue.QueueCount());
+                caller.ReportProgress(PROCESS_LOCAL_EVENTS_STARTED, events.Count());
             }
 
             fileDownloadCount = 1;
@@ -3850,6 +3852,7 @@ namespace Mezeo
                 if (!pbSyncProgress.Visible)
                 {
                     pbSyncProgress.Visible = true;
+                    pbSyncProgress.Show();
                     Application.DoEvents();
                 }
             }
@@ -3961,9 +3964,9 @@ namespace Mezeo
             }
             else if (e.ProgressPercentage == PROCESS_LOCAL_EVENTS_STARTED)
             {
-                pbSyncProgress.Maximum = (int)e.UserState;
+                //pbSyncProgress.Maximum = (int)e.UserState;
                 //pbSyncProgress.Visible = true;
-                InitializeLocalEventsProcess();
+                InitializeLocalEventsProcess((int)e.UserState);
             }
             else if (e.ProgressPercentage == PROGRESS_CHANGED_WITH_FILE_NAME)
             {
@@ -3995,15 +3998,15 @@ namespace Mezeo
             //Application.DoEvents();
         }
 
-        private void InitializeLocalEventsProcess()
+        private void InitializeLocalEventsProcess(int progressMax)
         {
+            pbSyncProgress.Value = 0;
+            pbSyncProgress.Maximum = progressMax;
+            fileDownloadCount = 1;
+
             SetIssueFound(false);
             ShowNextSyncLabel(false);
             pbSyncProgress.Visible = true;
-            pbSyncProgress.Value = 0;
-            //pbSyncProgress.Maximum = events.Count;
-            pbSyncProgress.Maximum = EventQueue.QueueCount();
-            fileDownloadCount = 1;
            // btnMoveFolder.Enabled = false;
             //Commeted above line as move folder functinality disable 
         }
@@ -4024,6 +4027,7 @@ namespace Mezeo
             //Commeted above line as move folder functinality disable 
             lblPercentDone.Text = "";
             pbSyncProgress.Visible = false;
+            pbSyncProgress.Hide();
         }
 
         private void ShowLocalEventsCompletedMessage()
