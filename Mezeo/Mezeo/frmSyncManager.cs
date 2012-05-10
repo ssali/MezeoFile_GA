@@ -17,8 +17,7 @@ using Mezeo;
 namespace Mezeo
 {
     public partial class frmSyncManager : Form
-    {
-        
+    {        
         private static int SYNC_STARTED = 1;
         private static int PROCESS_LOCAL_EVENTS_STARTED = SYNC_STARTED + 1;
         private static int PROGRESS_CHANGED_WITH_FILE_NAME = PROCESS_LOCAL_EVENTS_STARTED + 1;
@@ -67,6 +66,7 @@ namespace Mezeo
         private DateTime lastSync;
         private OfflineWatcher offlineWatcher;
         private bool isDisabledByConnection = false;
+        private int transferCount = 0;
 
         Queue<LocalItemDetails> queue;
         frmIssues frmIssuesFound;
@@ -277,6 +277,21 @@ namespace Mezeo
             if (!IsSyncInProgress() && !IsLocalEventInProgress() && !IsOfflineWorking())
                 return true;
             return false;
+        }
+
+        public bool WereItemsSynced()
+        {
+            return (transferCount > 0);
+        }
+
+        private void InitTransferCount()
+        {
+            transferCount = 0;
+        }
+
+        private void IncrementTransferCount()
+        {
+            transferCount++;
         }
 
         private void WalkDirectoryTreeForMoveFolder(System.IO.DirectoryInfo root, string strMovePath)
@@ -492,7 +507,7 @@ namespace Mezeo
             {
                 showProgress();
             }
-            fileDownloadCount++ ;
+            fileDownloadCount++;
         }
 
         void stDownloader_downloadEvent(object sender, StructureDownloaderEvent e)
@@ -808,6 +823,8 @@ namespace Mezeo
 
         public void SyncNow()
         {
+            InitTransferCount();
+
             int nServerStatus = CheckServerStatus();
             if (nServerStatus != 1)
                 return;
@@ -1753,12 +1770,15 @@ namespace Mezeo
 
         private void SyncFolderUpToDateMessage()
         {
-            cnotificationManager.NotificationHandler.ShowBalloonTip(1, LanguageTranslator.GetValue("TrayBalloonSyncStatusText"),
-                                                                                    LanguageTranslator.GetValue("TrayBalloonSyncFolderUpToDate"),
-                                                                                   ToolTipIcon.None);
+            if (WereItemsSynced())
+            {
+                cnotificationManager.NotificationHandler.ShowBalloonTip(1, LanguageTranslator.GetValue("TrayBalloonSyncStatusText"),
+                                                                                        LanguageTranslator.GetValue("TrayBalloonSyncFolderUpToDate"),
+                                                                                       ToolTipIcon.None);
 
-            cnotificationManager.HoverText = AboutBox.AssemblyTitle + "\n" + LanguageTranslator.GetValue("TrayBalloonSyncFolderUpToDate");
-            frmParent.toolStripMenuItem4.Text = LanguageTranslator.GetValue("TrayHoverInitialSyncUpToDateText");
+                cnotificationManager.HoverText = AboutBox.AssemblyTitle + "\n" + LanguageTranslator.GetValue("TrayBalloonSyncFolderUpToDate");
+                frmParent.toolStripMenuItem4.Text = LanguageTranslator.GetValue("TrayHoverInitialSyncUpToDateText");
+            }
         }
 
         
@@ -2771,6 +2791,7 @@ namespace Mezeo
 
             foreach (LocalEvents lEvent in events)
             {
+                IncrementTransferCount();
                 if (caller.CancellationPending)
                 {
                     Debugger.Instance.logMessage("SyncManager - ProcessLocalEvents", "Canceled Called");
@@ -3680,6 +3701,7 @@ namespace Mezeo
 
             while (totalNQLength > 0)
             {
+                IncrementTransferCount();
                 int NQnumToRequest = 0;
 
                 if (totalNQLength >= 10)
