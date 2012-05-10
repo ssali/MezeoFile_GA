@@ -1221,7 +1221,7 @@ namespace MezeoFileSupport
             StrJSON += "\"cdmi_notification_events\":[\"cdmi_create_complete\",\"cdmi_modify_complete\",\"cdmi_delete\",";
             StrJSON += "\"cdmi_rename\",\"cdmi_copy\"],\"cdmi_scope_specification\":[{\"parentURI\":\"starts ";
             StrJSON += StrStarts;
-            StrJSON += "\"}],\"cdmi_results_specification\":{\"cdmi_event\":\"\",\"cdmi_event_result\":\"\",";
+            StrJSON += "/\"}],\"cdmi_results_specification\":{\"cdmi_event\":\"\",\"cdmi_event_result\":\"\",";
             StrJSON += "\"cdmi_event_time\":\"\",\"cdmi_event_user\":\"\",\"objectName\":\"\",\"objectID\":\"\",\"objectType\":\"\",\"parentURI\":\"\",";
             StrJSON += "\"parentID\":\"\",\"domainURI\":\"\",\"metadata\":{\"mezeo_exported_path\":\"\",\"cdmi_size\":\"\",\"cdmi_hash\":\"\"}}}}";
             
