@@ -593,7 +593,7 @@ namespace Mezeo
                     }
                     else if (reason == CancelReason.SERVER_INACCESSIBLE)
                     {
-                        CheckServerStatus();
+                        // CheckServerStatus();TODO:check for offline (Modified for server status thread)
                     }
                 }
             }
@@ -825,14 +825,15 @@ namespace Mezeo
         {
             InitTransferCount();
 
-            int nServerStatus = CheckServerStatus();
-            if (nServerStatus != 1)
-                return;
-            else
-            {
+            // int nServerStatus = CheckServerStatus(); TODO:check for offline (Modified for server status thread)
+           // if (nServerStatus != 1) 
+           //if server status still offline return immediately  
+           //     return;
+           // else
+           // {
                 if (IsDisabledByConnection())
                     EnableSyncManager();
-            }
+           // }
 
             SetUpSyncNowNotification();
             
@@ -920,7 +921,7 @@ namespace Mezeo
             }
             else if (nStatusCode != ResponseCode.NQGETLENGTH)
             {
-                CheckServerStatus();
+                //CheckServerStatus(); TODO:check for offline (Modified for server status thread)
                 //DisableSyncManager();
                 //ShowSyncManagerOffline();
                 return;
@@ -1791,6 +1792,16 @@ namespace Mezeo
             frmParent.toolStripMenuItem4.Text = LanguageTranslator.GetValue("TrayHoverSyncProgressText");
         }
 
+        private void SyncOfflineMessage()
+        {
+            cnotificationManager.NotificationHandler.ShowBalloonTip(1, LanguageTranslator.GetValue("TrayBalloonSyncStatusText"),
+                                                                                    LanguageTranslator.GetValue("TrayAppOfflineText"), ToolTipIcon.None);
+
+            cnotificationManager.HoverText = LanguageTranslator.GetValue("TrayAppOfflineText");
+            cnotificationManager.NotifyIcon = Properties.Resources.app_offline;
+            frmParent.toolStripMenuItem4.Text = LanguageTranslator.GetValue("AppOfflineMenu");
+
+        }
         #endregion
 
         private void ShowAutoSyncMessage(bool IsStopped)
@@ -3848,7 +3859,7 @@ namespace Mezeo
                 {
                    // DisableSyncManager();
                    // ShowSyncManagerOffline();
-                    CheckServerStatus();
+                   // CheckServerStatus(); TODO:check for offline (Modified for server status thread)
                 }
                 else
                 {
@@ -3890,7 +3901,7 @@ namespace Mezeo
                    // DisableProgress();
                    // ShowSyncDisabledMessage();
                     //ShowSyncManagerOffline();
-                    CheckServerStatus();
+                    // CheckServerStatus(); TODO:check for offline (Modified for server status thread)
                 }
                 else
                 {
@@ -3955,7 +3966,7 @@ namespace Mezeo
                 ShowLocalEventsCompletedMessage();
                // DisableSyncManager();
                // ShowSyncManagerOffline();
-                CheckServerStatus();
+                //  CheckServerStatus(); TODO:check for offline (Modified for server status thread)
             }        
         }
 
@@ -4002,7 +4013,7 @@ namespace Mezeo
                     lastSync = DateTime.Now;
                     BasicInfo.LastSyncAt = lastSync;
 
-                    CheckServerStatus();
+                    //  CheckServerStatus(); *** TODO:check for offline (Modified for server status thread)
                    // DisableProgress();
                    // ShowSyncDisabledMessage();
                    // ShowSyncManagerOffline();
@@ -4035,13 +4046,13 @@ namespace Mezeo
 
         public void ShowSyncManagerOffline()
         {
-            cnotificationManager.NotificationHandler.ShowBalloonTip(1, LanguageTranslator.GetValue("TrayBalloonSyncStatusText"),
-                                                                                LanguageTranslator.GetValue("TrayAppOfflineText"), ToolTipIcon.None);
+            //cnotificationManager.NotificationHandler.ShowBalloonTip(1, LanguageTranslator.GetValue("TrayBalloonSyncStatusText"),
+            //                                                                    LanguageTranslator.GetValue("TrayAppOfflineText"), ToolTipIcon.None);
 
-            cnotificationManager.HoverText = LanguageTranslator.GetValue("TrayAppOfflineText");
-            cnotificationManager.NotifyIcon = Properties.Resources.app_offline;
-            frmParent.toolStripMenuItem4.Text = LanguageTranslator.GetValue("AppOfflineMenu");
-
+            //cnotificationManager.HoverText = LanguageTranslator.GetValue("TrayAppOfflineText");
+            //cnotificationManager.NotifyIcon = Properties.Resources.app_offline;
+            //frmParent.toolStripMenuItem4.Text = LanguageTranslator.GetValue("AppOfflineMenu");
+            SyncOfflineMessage();
             lblStatusL1.Text = LanguageTranslator.GetValue("AppOfflineMenu");
             label1.Text = "";
             lblStatusL3.Text = lblStatusL3.Text = LanguageTranslator.GetValue("SyncManagerStatusLastSyncLabel") + " " + lastSync.ToString("MMM d, yyyy h:mm tt");
@@ -4110,7 +4121,7 @@ namespace Mezeo
             else if ((int)e.Result == SERVER_INACCESSIBLE)
             {
                 ShowLocalEventsCompletedMessage();
-                CheckServerStatus();
+                // CheckServerStatus(); TODO:check for offline (Modified for server status thread)
                 //DisableSyncManager();
                 //ShowSyncManagerOffline();
             }

@@ -63,6 +63,7 @@
             this.txtServerUrl = new Mezeo.CueTextBox();
             this.txtPasswrod = new Mezeo.CueTextBox();
             this.txtUserName = new Mezeo.CueTextBox();
+            this.bwCheckServerStatus = new System.ComponentModel.BackgroundWorker();
             this.cmSystemTrayLogin.SuspendLayout();
             this.cmSystemTraySyncMgr.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pbLogo)).BeginInit();
@@ -114,6 +115,11 @@
             // 
             this.bwLogin.DoWork += new System.ComponentModel.DoWorkEventHandler(this.bwLogin_DoWork);
             this.bwLogin.RunWorkerCompleted += new System.ComponentModel.RunWorkerCompletedEventHandler(this.bwLogin_RunWorkerCompleted);
+            // 
+            // bwCheckServerStatus
+            // 
+            this.bwCheckServerStatus.DoWork += new System.ComponentModel.DoWorkEventHandler(this.bwCheckServerStatus_DoWork);
+            //this.bwLogin.RunWorkerCompleted += new System.ComponentModel.RunWorkerCompletedEventHandler(this.bwLogin_RunWorkerCompleted);
             // 
             // cmSystemTraySyncMgr
             // 
@@ -343,6 +349,7 @@
         private System.Windows.Forms.NotifyIcon niSystemTray;
         public System.Windows.Forms.ToolStripMenuItem toolStripMenuItem4;
         private System.Windows.Forms.ToolStripMenuItem toolStripMenuItem6;
+        private System.ComponentModel.BackgroundWorker bwCheckServerStatus;
 
     }
 }

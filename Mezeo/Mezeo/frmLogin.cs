@@ -32,11 +32,12 @@ namespace Mezeo
 
         //Adding for installer with upgread
        // static uint s_uTaskbarRestart;
-
+        public static AutoResetEvent _Appexit = new AutoResetEvent(false);
+       
         public frmLogin()
         {
             InitializeComponent();
-
+          
             this.Icon = Properties.Resources.MezeoVault;
 
             //this.HandleCreated += new EventHandler(frmLogin_HandleCreated);
@@ -103,24 +104,19 @@ namespace Mezeo
 
         private void exitToolStripMenuItem_Click(object sender, EventArgs e)
         {
+          
             if (syncManager != null && (syncManager.isSyncInProgress || syncManager.isLocalEventInProgress || syncManager.isOfflineWorking))
             {
                 DialogResult dResult = MessageBox.Show(LanguageTranslator.GetValue("MezeoExitString1") + "\n" + LanguageTranslator.GetValue("MezeoExitString2"), AboutBox.AssemblyTitle, MessageBoxButtons.OKCancel);
                 if (dResult == DialogResult.Cancel)
                     return;
-
-                niSystemTray.Visible = false;
+                    
                 syncManager.ApplicationExit();
-                //Application.Exit();
-                System.Environment.Exit(0);// Environment.Exit(Environment.ExitCode);
-               // ShellNotifyIcon.RemoveNotifyIcon();
+              
             }
-            else
-            {
                 niSystemTray.Visible = false;
-                //ShellNotifyIcon.RemoveNotifyIcon();
+                _Appexit.Set();
                 System.Environment.Exit(0);
-            }
         }
 
         private void niSystemTray_MouseClick(object sender, MouseEventArgs e)
@@ -161,6 +157,14 @@ namespace Mezeo
 
             bwLogin.RunWorkerAsync();
         }
+
+        public void bwCheckServerStatus_DoWork(object sender, DoWorkEventArgs e)
+        {
+            TimeSpan time = new TimeSpan(0,5,0);
+            while(!_Appexit.WaitOne(time))
+                syncManager.CheckServerStatus();
+        }
+
 
         private string validateServiceUrl(string url)
         {
@@ -321,6 +325,7 @@ namespace Mezeo
 
             if (isLoginSuccess)
             {
+                bwCheckServerStatus.RunWorkerAsync();
                 //syncManager.EnableSyncManager();
                 if (BasicInfo.IsInitialSync)
                 {
@@ -430,6 +435,7 @@ namespace Mezeo
 
             if (isLoginSuccess)
             {
+                bwCheckServerStatus.RunWorkerAsync();
                 if (BasicInfo.IsInitialSync)
                 {
                     syncManager.InitializeSync();
