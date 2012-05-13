@@ -287,10 +287,10 @@ namespace MezeoFileSupport
                         
 				        while ((bytesRead = fileStream.Read(buffer, 0, buffer.Length)) != 0)
 				        {
-					        writeStream.Write(buffer, 0, bytesRead);
-
                             if (IncProgress != null)
                                 IncProgress(bytesRead);
+
+                            writeStream.Write(buffer, 0, bytesRead);
 
                             if (m_bStop)
                             {
@@ -302,11 +302,11 @@ namespace MezeoFileSupport
 				        fileStream.Close();
 			        }
 			        bytes = Encoding.UTF8.GetBytes(strFinalBoundary);
-			        writeStream.Write(bytes, 0, bytes.Length);
-                    
                     if (IncProgress != null)
                         IncProgress(bytes.Length);
-		        }
+
+                    writeStream.Write(bytes, 0, bytes.Length);
+  		        }
 		        writeStream.Close();
 	        }
             return bStatus;
@@ -331,7 +331,10 @@ namespace MezeoFileSupport
 	
 	        while ((bytes_read = responseStream.Read(buffer, 0, buffer.Length)) > 0)
 	        {
-		        fstPersons.Write(buffer, 0, bytes_read);
+                if (IncProgress != null)
+                    IncProgress(bytes_read);
+
+                fstPersons.Write(buffer, 0, bytes_read);
 		        if(m_bStop)
 		        {
 			        m_bStop = false;
@@ -343,8 +346,7 @@ namespace MezeoFileSupport
 			        bStatus = false;
                     break;
                 }
-                if(IncProgress != null) 
-                    IncProgress(bytes_read);
+              
 	        }
 
 	        responseStream.Close();
@@ -440,9 +442,10 @@ namespace MezeoFileSupport
 
 			        while ((bytesRead = fileStream.Read(buffer, 0, buffer.Length)) != 0)
 			        {
-				        writeStream.Write(buffer, 0, bytesRead);
                         if (IncProgress != null)
                             IncProgress(bytesRead);
+
+				        writeStream.Write(buffer, 0, bytesRead);
 			        }
 			        fileStream.Close();
 		        }
@@ -508,40 +511,12 @@ namespace MezeoFileSupport
                     nStatusCode = -4;
                 }
 
-                /*nodeXml = m_xmlDocument.SelectSingleNode("/cloud/rootContainer");
-                pLoginDetails.szContainerContentsUri = nodeXml.Attributes["xlink:href"].Value;
-                nodeXml.RemoveAll();
-
-                nodeXml = m_xmlDocument.SelectSingleNode("/cloud/locations");
-                String StrModXml = "";
-                for (int nNodePos = 0; nNodePos < nodeXml.ChildNodes.Count; nNodePos++)
-                {
-                    m_xmlDocument.RemoveAll();
-                    StrModXml = "<cloud xmlns:xlink=\"http://www.w3.org/1999/xlink\">";
-                    StrModXml += nodeXml.ChildNodes[nNodePos].InnerXml + "</cloud>";
-
-                    m_xmlDocument.LoadXml(StrModXml);
-
-                    nodeChildXml = m_xmlDocument.SelectSingleNode("/cloud/rootContainer");
-                    if(pLoginDetails.szContainerContentsUri == nodeChildXml.Attributes["xlink:href"].Value)
-                    {
-                        pLoginDetails.szContainerContentsUri += "/contents";
-                        nodeChildXml.RemoveAll();
-                        nodeChildXml = m_xmlDocument.SelectSingleNode("/cloud/management");
-                        if (nodeXml != null)
-                        {
-                            pLoginDetails.szManagementUri = nodeChildXml.Attributes["xlink:href"].Value;
-                            nodeChildXml.RemoveAll();
-                        }
-                        break;
-                    } 
-                }*/
-
                 m_xmlDocument.RemoveAll();
                 response.Close();
 
-                //--------Account information----------------------
-                OnGetRequest(ref webRequest, strUrl + "/account", "application/vnd.csp.account-info2+xml", "", "GET");   //--- Account Information
+                //--------Account information----------------------//
+                OnGetRequest(ref webRequest, strUrl + "/account", "application/vnd.csp.account-info2+xml", "", "GET");   
+                //--- Account Information ---------//
                 
                 response = (HttpWebResponse)webRequest.GetResponse();
 
@@ -610,7 +585,7 @@ namespace MezeoFileSupport
                 nodeXml.RemoveAll();
                 response.Close();
 		        
-                //--------------namespace URI---------------------------------
+                //--------------namespace URI---------------------------------//
                 OnGetRequest(ref webRequest, strUrl + "/namespaces", "", "", "GET");                                        //--- NameSpaces URI
 
                 response = (HttpWebResponse)webRequest.GetResponse();
@@ -1125,20 +1100,6 @@ namespace MezeoFileSupport
                     pNQLengthResult.nStart = -1;
                     pNQLengthResult.nEnd = -1;
                 }
-
-                /*if (nRet > -1)
-                {
-                    StrRev = pGetNQQueueValue.queueValues.Substring(0, nRet);
-                    nRet++;
-                    if (nRet < pGetNQQueueValue.queueValues.Length)
-                    {
-                        nRet = Convert.ToInt32(pGetNQQueueValue.queueValues.Substring(nRet, pGetNQQueueValue.queueValues.Length - nRet));
-                        nRet -= Convert.ToInt32(StrRev);
-                        nRet += 1;
-                    }
-                    else
-                        nRet = 0;
-                }*/
             }
             catch (WebException wEx)
             {
@@ -1157,13 +1118,6 @@ namespace MezeoFileSupport
         {
             nStatusCode = 0;
             StrUri += "/" + StrQueueName +"?values:" + Convert.ToString(nCountValue);
-            //StrUri += "/" + StrQueueName;
-            //StrUri += "/" + StrQueueName + "?queueValues";
-            //StrUri += "/sync.queue";
-            //StrUri += "/sync.queue?values:01";
-            //StrUri += "/sync.queue?queueValues&valuerange&mimetype&valuetransferencoding&value:0-1";  //blank
-            //StrUri += "/sync.queue?mimetype;valuerange;values:20";
-
             String StrRev;
             NQDetails[] pNQDetails = null;
             try
@@ -1927,16 +1881,6 @@ namespace MezeoFileSupport
 
         public bool GetOverlayRegisteration()
         {
-            /*try
-            {
-                Process.Start("taskkill.exe", "/f /im explorer.exe");
-                Thread.Sleep(2000);
-                Process.Start(Environment.SystemDirectory + "\\..\\explorer.exe");      
-            }
-            catch
-            {
-                return false;
-            }*/
             return true;
         }
 

@@ -476,13 +476,7 @@ namespace Mezeo
             ShowSyncMessage();
 
             InitialSyncUptodateMessage();
-            //cnotificationManager.NotificationHandler.Icon = Properties.Resources.MezeoVault;
-            //cnotificationManager.NotificationHandler.ShowBalloonTip(1, LanguageTranslator.GetValue("TrayBalloonSyncStatusText"),
-            //                                                            LanguageTranslator.GetValue("TrayBalloonInitialSyncText") + "\n" + LanguageTranslator.GetValue("TrayBalloonInitialSyncFilesUpToDateText"),
-            //                                                        ToolTipIcon.None);
-            //cnotificationManager.HoverText = AboutBox.AssemblyTitle + "\n" + LanguageTranslator.GetValue("TrayHoverInitialSyncUpToDateText");
-            //frmParent.toolStripMenuItem4.Text = LanguageTranslator.GetValue("TrayHoverInitialSyncUpToDateText");
-
+          
             //if (LocalEventList.Count > 0)
             
              watcher_WatchCompletedEvent();
@@ -738,11 +732,6 @@ namespace Mezeo
                         cnotificationManager.NotificationHandler.Icon = Properties.Resources.app_icon_disabled;
 
                     SyncStoppedBalloonMessage();
-                    //cnotificationManager.NotificationHandler.ShowBalloonTip(1, LanguageTranslator.GetValue("TrayBalloonSyncStatusText"),
-                    //                                                         LanguageTranslator.GetValue("TrayBalloonSyncStopText"),
-                    //                                                        ToolTipIcon.None);
-                    //cnotificationManager.HoverText = AboutBox.AssemblyTitle + "\n" + LanguageTranslator.GetValue("TrayBalloonSyncStopText");
-                    //frmParent.toolStripMenuItem4.Text = LanguageTranslator.GetValue("TrayBalloonSyncStopText");
                 }
                 cMezeoFileCloud.StopSyncProcess();
             }
@@ -786,12 +775,7 @@ namespace Mezeo
                     cnotificationManager.NotificationHandler.Icon = Properties.Resources.app_icon_disabled;
 
                 SyncStoppedBalloonMessage();
-                //cnotificationManager.NotificationHandler.ShowBalloonTip(1, LanguageTranslator.GetValue("TrayBalloonSyncStatusText"),
-                //                                                         LanguageTranslator.GetValue("TrayBalloonSyncStopText"),
-                //                                                        ToolTipIcon.None);
-                //cnotificationManager.HoverText = AboutBox.AssemblyTitle + "\n" + LanguageTranslator.GetValue("TrayBalloonSyncStopText");
-                //frmParent.toolStripMenuItem4.Text = LanguageTranslator.GetValue("TrayBalloonSyncStopText");
-            }
+             }
         }
 
         public int CheckServerStatus()
@@ -974,12 +958,6 @@ namespace Mezeo
                         cnotificationManager.NotificationHandler.Icon = Properties.Resources.app_icon_disabled;
 
                     SyncFolderUpToDateMessage();
-                    //cnotificationManager.NotificationHandler.ShowBalloonTip(1, LanguageTranslator.GetValue("TrayBalloonSyncStatusText"),
-                    //                                                             LanguageTranslator.GetValue("TrayBalloonSyncFolderUpToDate"),
-                    //                                                            ToolTipIcon.None);
-
-                    //cnotificationManager.HoverText = AboutBox.AssemblyTitle + "\n" + LanguageTranslator.GetValue("TrayBalloonSyncFolderUpToDate");
-                    //frmParent.toolStripMenuItem4.Text = LanguageTranslator.GetValue("TrayHoverInitialSyncUpToDateText");
                 }
             }
 
@@ -4039,6 +4017,24 @@ namespace Mezeo
         {
             pbSyncProgress.Maximum = (int)fileSize;
             pbSyncProgress.Value = 0;
+            
+            if (pbSyncProgress.Style != ProgressBarStyle.Continuous)
+                pbSyncProgress.Style = ProgressBarStyle.Continuous;
+
+            pbSyncProgress.Visible = true;
+            pbSyncProgress.Show();
+            lblPercentDone.Visible = true;
+            lblPercentDone.Show();
+         
+        }
+
+        public void ShowOtherProgressBar()
+        {
+            pbSyncProgress.Value = 0;
+
+             if (pbSyncProgress.Style != ProgressBarStyle.Marquee)
+                    pbSyncProgress.Style = ProgressBarStyle.Marquee;
+            
             pbSyncProgress.Visible = true;
             pbSyncProgress.Show();
             lblPercentDone.Visible = true;
