@@ -59,17 +59,9 @@ namespace Mezeo
             //}
             _sparkle = new Sparkle(LanguageTranslator.GetValue("UpdreadRSSFeed"));
             _sparkle.StartLoop(true);
+
+            EventQueue.InitEventQueue();
         }
-
-        //void frmLogin_HandleDestroyed(object sender, EventArgs e)
-        //{
-        //    MessageBox.Show("Handle Destroyed");
-        //}
-
-        //void frmLogin_HandleCreated(object sender, EventArgs e)
-        //{
-        //    MessageBox.Show("Handle Created " + this.Handle);
-        //}
 
         private void frmLogin_FormClosing(object sender, FormClosingEventArgs e)
         {
@@ -164,7 +156,6 @@ namespace Mezeo
             while(!_Appexit.WaitOne(time))
                 syncManager.CheckServerStatus();
         }
-
 
         private string validateServiceUrl(string url)
         {
@@ -262,12 +253,9 @@ namespace Mezeo
                 syncManager.ParentForm = this;
             }
 
-           // syncManager.DisableSyncManager();
-           // syncManager.ShowOfflineAtStartUpSyncManager();
-           // syncManager.ShowSyncManagerOffline();
             if (checkReferenceCode() > 0)
             {
-                syncManager.CheckServerStatus();
+                //syncManager.CheckServerStatus();
             }
             else
             {
@@ -643,7 +631,7 @@ namespace Mezeo
                 {
                     //syncManager.DisableSyncManager();
                     //syncManager.ShowSyncManagerOffline();
-                    syncManager.CheckServerStatus();
+                    //syncManager.CheckServerStatus();
                     return null;
                 }
                 return null;

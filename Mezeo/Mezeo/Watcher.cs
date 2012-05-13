@@ -67,7 +67,6 @@ namespace Mezeo
             timer.Start();
         }
 
-
         void fileWatcher_Renamed(object sender, RenamedEventArgs e)
         {
             StampTime();
@@ -118,28 +117,7 @@ namespace Mezeo
                 lEvent.EventTimeStamp = eventTime;
             }
 
-            Enqueue(lEvent);
-            
-        }
-
-        private void Enqueue(LocalEvents path)
-        {
-            EventQueue.Add(path);
-            //lock (lockObject)
-            //{
-            //    bool bAdd = true;
-            //    foreach (LocalEvents id in LocalEventList)
-            //    {
-            //        if (id.FileName == path.FileName)
-            //        {
-            //            bAdd = false;
-            //            break;
-            //        }
-            //    }
-
-            //    if (bAdd)
-            //        LocalEventList.Add(path);                
-            //}
+            EventQueue.Add(lEvent);
         }
     }
 }

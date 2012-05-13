@@ -2773,14 +2773,14 @@ namespace Mezeo
         //Adding function to put limit on file upload 25MB
         private bool checkFileTooLarge(string filePath)
         {
-            FileInfo iFileDetails = new FileInfo(filePath);
-            long fileSize;
-            if (File.Exists(filePath))
-            {
-                fileSize = iFileDetails.Length;
-                if (fileSize >= 25 * 1000 * 1000)
-                    return true;
-            }
+            //FileInfo iFileDetails = new FileInfo(filePath);
+            //long fileSize;
+            //if (File.Exists(filePath))
+            //{
+            //    fileSize = iFileDetails.Length;
+            //    if (fileSize >= 25 * 1000 * 1000)
+            //        return true;
+            //}
             return false;
         }
 
@@ -4037,8 +4037,8 @@ namespace Mezeo
         {
             pbSyncProgress.Maximum = (int)fileSize;
             pbSyncProgress.Value = 0;
-            pbSyncProgress.Show();
             pbSyncProgress.Visible = true;
+            pbSyncProgress.Show();
             lblPercentDone.Visible = true;
             lblPercentDone.Show();
         }
