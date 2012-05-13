@@ -2606,6 +2606,8 @@ namespace Mezeo
 
             RemoveIndexes.Clear();
 
+            messageMax = events.Count;
+
             if (eModified.Count != 0)
             {
                 Debugger.Instance.logMessage("frmSyncManager - HandleEvents eModifiedList -", eModified.Count.ToString() + " Enter");
@@ -3882,7 +3884,7 @@ namespace Mezeo
             {
                 SetUpControlForSync();
                 //pbSyncProgress.Maximum = (int)e.UserState;
-                messageMax = (int)e.UserState;
+                //messageMax = (int)e.UserState;
                 showProgress();
                 if (!pbSyncProgress.Visible)
                 {
@@ -3912,7 +3914,7 @@ namespace Mezeo
             }
             else if (e.ProgressPercentage == UPDATE_NQ_MAXIMUM)
             {
-               messageMax = (int)e.UserState;
+               //messageMax = (int)e.UserState;
                 showProgress();
             }
         }
@@ -4072,7 +4074,7 @@ namespace Mezeo
             messageValue = 0;
             //pbSyncProgress.Maximum = progressMax;
             //pbSyncProgress.Maximum = 100;
-            messageMax = 100;
+            //messageMax = 100;
             fileDownloadCount = 1;
 
             SetIssueFound(false);
