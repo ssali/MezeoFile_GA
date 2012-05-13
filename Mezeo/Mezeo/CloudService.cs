@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using MezeoFileSupport;
+using System.IO;
 
 namespace Mezeo
 {
@@ -11,11 +12,18 @@ namespace Mezeo
         public static int NUMBER_OF_RETRIES = 2;
 
         public MezeoFileSupport.MezeoFileCloud fileCloud;
+        
+        frmSyncManager syncManager;
 
         public CloudService()
         {
             fileCloud = new MezeoFileSupport.MezeoFileCloud();
             fileCloud.AddMineTypeDictionary();
+        }
+
+        public void SetSynManager(ref frmSyncManager Manager)
+        {
+            syncManager = Manager;
         }
 
         public bool AppEventViewer(string StrLogName, string StrLogMsg, int nLevel)
@@ -81,16 +89,22 @@ namespace Mezeo
 
         public bool DownloadFile(string strSource, string strDestination, double dblFileSizeInBytes, ref int nStatusCode)
         {
-            bool bRet = fileCloud.DownloadFile(strSource, strDestination, dblFileSizeInBytes, ref nStatusCode);
+           // MezeoFileSupport.CallbackIncrementProgress myDelegate = new MezeoFileSupport.CallbackIncrementProgress(syncManager.CallbackSyncProgress);
+            
+            syncManager.SetMaxProgress(dblFileSizeInBytes);
+
+            bool bRet = fileCloud.DownloadFile(strSource, strDestination, dblFileSizeInBytes, ref nStatusCode, syncManager.myDelegate);
+
+
             if (nStatusCode != ResponseCode.DOWNLOADFILE)
             {
                 for (int n = 0; n < CloudService.NUMBER_OF_RETRIES; n++)
                 {
-                    bRet = fileCloud.DownloadFile(strSource, strDestination, dblFileSizeInBytes, ref nStatusCode);
+                    bRet = fileCloud.DownloadFile(strSource, strDestination, dblFileSizeInBytes, ref nStatusCode, syncManager.myDelegate);
                     if (nStatusCode == ResponseCode.DOWNLOADFILE)
                         return bRet;
                 }
-            }
+            }   
             return bRet;
         }
 
@@ -341,12 +355,17 @@ namespace Mezeo
 
         public bool OverWriteFile(string strSource, string strDestination, ref int nStatusCode)
         {
-            bool bRet = fileCloud.OverWriteFile(strSource, strDestination, ref nStatusCode);
+            var fileinfo = new FileInfo(strSource);
+
+            syncManager.SetMaxProgress(fileinfo.Length);
+
+            bool bRet = fileCloud.OverWriteFile(strSource, strDestination, ref nStatusCode, syncManager.myDelegate);
+            
             if (nStatusCode != ResponseCode.OVERWRITEFILE)
             {
                 for (int n = 0; n < CloudService.NUMBER_OF_RETRIES; n++)
                 {
-                    bRet = fileCloud.OverWriteFile(strSource, strDestination, ref nStatusCode);
+                    bRet = fileCloud.OverWriteFile(strSource, strDestination, ref nStatusCode, syncManager.myDelegate);
                     if (nStatusCode == ResponseCode.OVERWRITEFILE)
                         return bRet;
                 }
@@ -376,12 +395,16 @@ namespace Mezeo
 
         public string UploadingFile(string strSource, string strDestination, ref int nStatusCode)
         {
-            string strUrl = fileCloud.UploadingFile(strSource, strDestination, ref nStatusCode);
+            var fileinfo = new FileInfo(strSource);
+
+            syncManager.SetMaxProgress(fileinfo.Length);
+
+            string strUrl = fileCloud.UploadingFile(strSource, strDestination, ref nStatusCode, syncManager.myDelegate);
             if (nStatusCode != ResponseCode.UPLOADINGFILE)
             {
                 for (int n = 0; n < CloudService.NUMBER_OF_RETRIES; n++)
                 {
-                    strUrl = fileCloud.UploadingFile(strSource, strDestination, ref nStatusCode);
+                    strUrl = fileCloud.UploadingFile(strSource, strDestination, ref nStatusCode, syncManager.myDelegate);
                     if (nStatusCode == ResponseCode.UPLOADINGFILE)
                         return strUrl;
                 }

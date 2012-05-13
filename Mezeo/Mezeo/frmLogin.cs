@@ -253,10 +253,14 @@ namespace Mezeo
             mezeoFileCloud.AppEventViewer(AboutBox.AssemblyTitle, LanguageTranslator.GetValue("TrayAppOfflineText"), 3);
             niSystemTray.ContextMenuStrip = cmSystemTraySyncMgr;
 
-            syncManager = new frmSyncManager(mezeoFileCloud, loginDetails, notificationManager);
+            if (syncManager == null)
+            {
+                syncManager = new frmSyncManager(mezeoFileCloud, loginDetails, notificationManager);
 
-            syncManager.CreateControl();
-            syncManager.ParentForm = this;
+                mezeoFileCloud.SetSynManager(ref syncManager);
+                syncManager.CreateControl();
+                syncManager.ParentForm = this;
+            }
 
            // syncManager.DisableSyncManager();
            // syncManager.ShowOfflineAtStartUpSyncManager();
@@ -429,9 +433,15 @@ namespace Mezeo
 
             CheckAndCreateSyncDirectory();
             CheckAndCreateNotificationQueue();
-            syncManager = new frmSyncManager(mezeoFileCloud, loginDetails, notificationManager);
-            syncManager.CreateControl();
-            syncManager.ParentForm = this;
+            if (syncManager == null)
+            {
+                syncManager = new frmSyncManager(mezeoFileCloud, loginDetails, notificationManager);
+
+                //Set Sync Manager for Progress bar
+                mezeoFileCloud.SetSynManager(ref syncManager);
+                syncManager.CreateControl();
+                syncManager.ParentForm = this;
+            }
 
             if (isLoginSuccess)
             {

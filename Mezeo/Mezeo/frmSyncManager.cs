@@ -46,6 +46,8 @@ namespace Mezeo
 
         NotificationManager cnotificationManager;
 
+        public MezeoFileSupport.CallbackIncrementProgress myDelegate;
+
         #region Private Members
 
         private CloudService cMezeoFileCloud;
@@ -67,14 +69,13 @@ namespace Mezeo
         private OfflineWatcher offlineWatcher;
         private bool isDisabledByConnection = false;
         private int transferCount = 0;
-
+        private int messageMax;
+        private int messageValue;
+        
+        
         Queue<LocalItemDetails> queue;
         frmIssues frmIssuesFound;
         Watcher watcher;
-
-        //List<LocalEvents> LocalEventList;
-        //Object folderWatcherLockObject;
-        //List<LocalEvents> events;
 
         Thread analyseThread;
         Thread downloadingThread;
@@ -128,6 +129,8 @@ namespace Mezeo
 
             frmIssuesFound = new frmIssues(mezeoFileCloud);
             offlineWatcher = new OfflineWatcher(dbHandler);
+            
+            myDelegate = new MezeoFileSupport.CallbackIncrementProgress(this.CallbackSyncProgress);
         }
 
         void cMezeoFileCloud_uploadStoppedEvent(string szSourceFileName, string szContantURI)
@@ -526,7 +529,7 @@ namespace Mezeo
 
                 if (stDownloader.TotalFileCount > 0)
                 {
-                    pbSyncProgress.Maximum = stDownloader.TotalFileCount - (fileDownloadCount -1);
+                   messageMax = stDownloader.TotalFileCount - (fileDownloadCount -1);
                 }
 
                 if (pbSyncProgress.Maximum > 0)
@@ -687,7 +690,8 @@ namespace Mezeo
         {
             lblPercentDone.Visible = true;
             lblPercentDone.Text = "";
-            pbSyncProgress.Value = 0;
+           // pbSyncProgress.Value = 0;
+            messageValue = 0;
         }
 
         private void SetUpControlForSync()
@@ -701,7 +705,7 @@ namespace Mezeo
             ShowNextSyncLabel(false);
             isAnalysisCompleted = false;
             // tmrNextSync.Enabled = false;
-            pbSyncProgress.Visible = true;
+           // pbSyncProgress.Visible = true;
             // btnMoveFolder.Enabled = false;
             // Commeted above line as move folder functinality disable 
         }
@@ -1586,23 +1590,20 @@ namespace Mezeo
 
         private void showProgress()
         {
-            double progress = ((double)fileDownloadCount / pbSyncProgress.Maximum) * 100.0;
-
+            //double progress = ((double)fileDownloadCount / pbSyncProgress.Maximum) * 100.0;
+            double progress = ((double)pbSyncProgress.Value / pbSyncProgress.Maximum) * 100.0;
             cnotificationManager.HoverText = AboutBox.AssemblyTitle + "\n" + LanguageTranslator.GetValue("TrayHoverSyncProgressText") + (int)progress + LanguageTranslator.GetValue("TrayHoverSyncProgressInitialText");
 
-            if (fileDownloadCount <= pbSyncProgress.Maximum)
-                pbSyncProgress.Value = fileDownloadCount;
+            //if (fileDownloadCount <= pbSyncProgress.Maximum)
+            //pbSyncProgress.Value = fileDownloadCount;
+            
+            if(fileDownloadCount <= messageMax)  
+                messageValue = fileDownloadCount;
+            
 
-            //Fixed Issue
-            //--------------
-            int nProgPer = (int)progress;
-            if(nProgPer <= 100)
-                lblPercentDone.Text = Convert.ToString(nProgPer) + "%";
-            //--------------
-
-            pbSyncProgress.Visible = true;
-            pbSyncProgress.Show();
-            lblStatusL1.Text = LanguageTranslator.GetValue("SyncManagerDownloading") + " " + (fileDownloadCount) + " " + LanguageTranslator.GetValue("SyncManagerUsageOfLabel") + " " + pbSyncProgress.Maximum;
+           // pbSyncProgress.Visible = true;
+           // pbSyncProgress.Show();
+            lblStatusL1.Text = LanguageTranslator.GetValue("SyncManagerDownloading") + " " + (fileDownloadCount) + " " + LanguageTranslator.GetValue("SyncManagerUsageOfLabel") + " " + messageMax;//pbSyncProgress.Maximum;
         }
 
         private void setUpControls()
@@ -1615,7 +1616,7 @@ namespace Mezeo
 
             tmrSwapStatusMessage.Enabled = true;
  
-            pbSyncProgress.Visible = true;
+           // pbSyncProgress.Visible = true;
         }
 
         private string FormatSizeString(double dblSize)
@@ -1871,8 +1872,8 @@ namespace Mezeo
 
         private void EnableProgress()
         {
-            lblPercentDone.Visible = true;
-            pbSyncProgress.Visible = true;
+           // lblPercentDone.Visible = true;
+          //  pbSyncProgress.Visible = true;
             ShowNextSyncLabel(false);
             Application.DoEvents();
         }
@@ -3880,12 +3881,13 @@ namespace Mezeo
             if (e.ProgressPercentage == INITIAL_NQ_SYNC)
             {
                 SetUpControlForSync();
-                pbSyncProgress.Maximum = (int)e.UserState;
+                //pbSyncProgress.Maximum = (int)e.UserState;
+                messageMax = (int)e.UserState;
                 showProgress();
                 if (!pbSyncProgress.Visible)
                 {
-                    pbSyncProgress.Visible = true;
-                    pbSyncProgress.Show();
+                   // pbSyncProgress.Visible = true;
+                   // pbSyncProgress.Show();
                     Application.DoEvents();
                 }
             }
@@ -3910,7 +3912,7 @@ namespace Mezeo
             }
             else if (e.ProgressPercentage == UPDATE_NQ_MAXIMUM)
             {
-                pbSyncProgress.Maximum = (int)e.UserState;
+               messageMax = (int)e.UserState;
                 showProgress();
             }
         }
@@ -3979,15 +3981,15 @@ namespace Mezeo
 
         private void bwLocalEvents_ProgressChanged(object sender, ProgressChangedEventArgs e)
         {
-            pbSyncProgress.Visible = true;
+          //  pbSyncProgress.Visible = true;
             label1.Visible = false;
             pbSyncProgress.Refresh();
 
             if (!lblPercentDone.Visible)
             {
                 lblPercentDone.Text = "";
-                lblPercentDone.Visible = true;
-                pbSyncProgress.Visible = true;
+               // lblPercentDone.Visible = true;
+               // pbSyncProgress.Visible = true;
                 Application.DoEvents();
             }
 
@@ -4031,15 +4033,51 @@ namespace Mezeo
             //Application.DoEvents();
         }
 
+        public void SetMaxProgress(double fileSize)
+        {
+            pbSyncProgress.Maximum = (int)fileSize;
+            pbSyncProgress.Value = 0;
+            pbSyncProgress.Show();
+            pbSyncProgress.Visible = true;
+            lblPercentDone.Visible = true;
+            lblPercentDone.Show();
+        }
+
+        //To increment progress bar this is a call back function 
+        public void CallbackSyncProgress(double filesize)
+        {
+            try
+            {
+                if (pbSyncProgress.Value + filesize > pbSyncProgress.Maximum)
+                    pbSyncProgress.Value = pbSyncProgress.Maximum;
+                else
+                    pbSyncProgress.Value += (int)filesize;
+
+                //Fixed Issue
+                //--------------
+                double progress = ((double)pbSyncProgress.Value / pbSyncProgress.Maximum) * 100.0;
+                lblPercentDone.Text = Convert.ToString((int)progress) + "%";
+                //--------------
+            }
+            catch(Exception ex)
+            {
+                Debugger.Instance.logMessage("frmSyncManager - CallBackSyncProgress", "Caught exception: " + ex.Message);
+                Debugger.Instance.logMessage("frmSyncManager - CallBackSyncProgress", "Caught exception Maximum and actual value is: " + pbSyncProgress.Maximum + " , " + pbSyncProgress.Value);
+            }
+        }
+
         private void InitializeLocalEventsProcess(int progressMax)
         {
-            pbSyncProgress.Value = 0;
-            pbSyncProgress.Maximum = progressMax;
+            //pbSyncProgress.Value = 0;
+            messageValue = 0;
+            //pbSyncProgress.Maximum = progressMax;
+            //pbSyncProgress.Maximum = 100;
+            messageMax = 100;
             fileDownloadCount = 1;
 
             SetIssueFound(false);
             ShowNextSyncLabel(false);
-            pbSyncProgress.Visible = true;
+           // pbSyncProgress.Visible = true;
            // btnMoveFolder.Enabled = false;
             //Commeted above line as move folder functinality disable 
         }

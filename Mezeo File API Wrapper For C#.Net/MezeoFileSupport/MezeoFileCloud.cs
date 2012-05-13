@@ -16,6 +16,8 @@ using System.Runtime.InteropServices;
 
 namespace MezeoFileSupport
 {
+    public delegate void CallbackIncrementProgress(double fileSize);
+
     public class LoginDetails
     {
         public String szUserName;
@@ -254,7 +256,7 @@ namespace MezeoFileSupport
             webRequest.Timeout = nTimeout;
         }
 
-        private bool OnPostAndPutRequest(ref HttpWebRequest webRequest, String strRequestURL, String strSource, String strContentType, String strLoadHeader, String strFinalBoundary, String StrMethod, String strDest)
+        private bool OnPostAndPutRequest(ref HttpWebRequest webRequest, String strRequestURL, String strSource, String strContentType, String strLoadHeader, String strFinalBoundary, String StrMethod, String strDest, CallbackIncrementProgress IncProgress)
         {
             bool bStatus = true;
 	        webRequest = (HttpWebRequest)WebRequest.Create( strRequestURL );
@@ -286,7 +288,10 @@ namespace MezeoFileSupport
 				        while ((bytesRead = fileStream.Read(buffer, 0, buffer.Length)) != 0)
 				        {
 					        writeStream.Write(buffer, 0, bytesRead);
-                            
+
+                            if (IncProgress != null)
+                                IncProgress(bytesRead);
+
                             if (m_bStop)
                             {
                                 m_bStop = false;
@@ -298,6 +303,9 @@ namespace MezeoFileSupport
 			        }
 			        bytes = Encoding.UTF8.GetBytes(strFinalBoundary);
 			        writeStream.Write(bytes, 0, bytes.Length);
+                    
+                    if (IncProgress != null)
+                        IncProgress(bytes.Length);
 		        }
 		        writeStream.Close();
 	        }
@@ -305,7 +313,7 @@ namespace MezeoFileSupport
         }
 
         //save on the local drive
-        private bool OnSaveResponseFile(Stream responseStream, String strSaveInFile, long lFrom)
+        private bool OnSaveResponseFile(Stream responseStream, String strSaveInFile, long lFrom, CallbackIncrementProgress IncProgress)
         {
 	        byte[] buffer = new byte[4096];
 	        int bytes_read = 0;
@@ -335,7 +343,10 @@ namespace MezeoFileSupport
 			        bStatus = false;
                     break;
                 }
+                if(IncProgress != null) 
+                    IncProgress(bytes_read);
 	        }
+
 	        responseStream.Close();
 	        fstPersons.Close();
 
@@ -408,7 +419,7 @@ namespace MezeoFileSupport
 	        return -1;
         }
 
-        private void OnPutRequest(ref HttpWebRequest webRequest, String strRequestURL, String strSource)
+        private void OnPutRequest(ref HttpWebRequest webRequest, String strRequestURL, String strSource, CallbackIncrementProgress IncProgress)
         {
 	        webRequest = (HttpWebRequest)WebRequest.Create( strRequestURL );
 	        webRequest.Credentials = new NetworkCredential(m_strLoginName, m_strPassword);
@@ -430,6 +441,8 @@ namespace MezeoFileSupport
 			        while ((bytesRead = fileStream.Read(buffer, 0, buffer.Length)) != 0)
 			        {
 				        writeStream.Write(buffer, 0, bytesRead);
+                        if (IncProgress != null)
+                            IncProgress(bytesRead);
 			        }
 			        fileStream.Close();
 		        }
@@ -772,7 +785,7 @@ namespace MezeoFileSupport
 	        return pItemDetails;
         }
 
-        public bool DownloadFile(String strSource, String strDestination, double dblFileSizeInBytes, ref int nStatusCode)
+        public bool DownloadFile(String strSource, String strDestination, double dblFileSizeInBytes, ref int nStatusCode, CallbackIncrementProgress IncProgress)
         {
             bool bStatus = true;
             nStatusCode = 0;
@@ -797,7 +810,7 @@ namespace MezeoFileSupport
 
 		        HttpWebResponse response = (HttpWebResponse)webRequest.GetResponse();
 		        nStatusCode = 200;
-                if (!OnSaveResponseFile(response.GetResponseStream(), strDestination, 0))
+                if (!OnSaveResponseFile(response.GetResponseStream(), strDestination, 0, IncProgress))
                 {
                     nStatusCode = -4;
                     bStatus = false;
@@ -1374,7 +1387,7 @@ namespace MezeoFileSupport
 	        try
 	        {
 		        HttpWebRequest webRequest = null;
-		        OnPostAndPutRequest(ref webRequest, strContentsResource, "", "application/vnd.csp.container-info+xml", strXML, "", "POST", "");
+		        OnPostAndPutRequest(ref webRequest, strContentsResource, "", "application/vnd.csp.container-info+xml", strXML, "", "POST", "", null);
 
 		        HttpWebResponse response = (HttpWebResponse)webRequest.GetResponse();
 		        nStatusCode = 201;
@@ -1398,7 +1411,7 @@ namespace MezeoFileSupport
 	        return StrRef;
         }
 
-        public String UploadingFile(String strSource, String strDestination, ref int nStatusCode)
+        public String UploadingFile(String strSource, String strDestination, ref int nStatusCode, CallbackIncrementProgress IncProcess)
         {
             nStatusCode = 0;
             String StrRet = "";
@@ -1420,7 +1433,7 @@ namespace MezeoFileSupport
             try
             {
                 HttpWebRequest webRequest = null;
-                bool bStatus = OnPostAndPutRequest(ref webRequest, strDestination, strSource, "multipart/form-data; boundary=" + strBoundary, strLoadHeader, "\r\n--" + strBoundary + "--\r\n", "POST", "");
+                bool bStatus = OnPostAndPutRequest(ref webRequest, strDestination, strSource, "multipart/form-data; boundary=" + strBoundary, strLoadHeader, "\r\n--" + strBoundary + "--\r\n", "POST", "", IncProcess);
 
                 HttpWebResponse response = (HttpWebResponse)webRequest.GetResponse();
                 nStatusCode = 201;
@@ -1451,13 +1464,13 @@ namespace MezeoFileSupport
             return StrRet;
         }
 
-        public bool OverWriteFile(String strSource, String strDestination, ref int nStatusCode)
+        public bool OverWriteFile(String strSource, String strDestination, ref int nStatusCode, CallbackIncrementProgress IncProgress)
         {
             nStatusCode = 0;
 	        try
 	        {
 		        HttpWebRequest webRequest = null;
-		        OnPutRequest(ref webRequest, strDestination, strSource);
+		        OnPutRequest(ref webRequest, strDestination, strSource, IncProgress);
 
 		        HttpWebResponse response = (HttpWebResponse)webRequest.GetResponse();
 		        nStatusCode = 204;
@@ -1589,7 +1602,7 @@ namespace MezeoFileSupport
 	        try
 	        {
 		        HttpWebRequest webRequest = null;
-		        OnPostAndPutRequest(ref webRequest, strPath, "", "application/vnd.csp.file-info+xml", strXML, "", "PUT", "");
+		        OnPostAndPutRequest(ref webRequest, strPath, "", "application/vnd.csp.file-info+xml", strXML, "", "PUT", "", null);
 
 		        HttpWebResponse response = (HttpWebResponse)webRequest.GetResponse();
 		        nStatusCode = 204;
@@ -1624,7 +1637,7 @@ namespace MezeoFileSupport
 	        try
 	        {
 		        HttpWebRequest webRequest = null;
-		        OnPostAndPutRequest(ref webRequest, strPath, "", "application/vnd.csp.container-info+xml", strXML, "", "PUT", "");
+		        OnPostAndPutRequest(ref webRequest, strPath, "", "application/vnd.csp.container-info+xml", strXML, "", "PUT", "", null);
 
 		        HttpWebResponse response = (HttpWebResponse)webRequest.GetResponse();
 		        nStatusCode = 204;
@@ -1694,7 +1707,7 @@ namespace MezeoFileSupport
             try
             {
                 HttpWebRequest webRequest = null;
-                OnPostAndPutRequest(ref webRequest, strPath, "", "application/vnd.csp.file-info+xml", strXML, "", "PUT", "");
+                OnPostAndPutRequest(ref webRequest, strPath, "", "application/vnd.csp.file-info+xml", strXML, "", "PUT", "", null);
 
                 HttpWebResponse response = (HttpWebResponse)webRequest.GetResponse();
                 nStatusCode = 204;
@@ -1736,7 +1749,7 @@ namespace MezeoFileSupport
             try
             {
                 HttpWebRequest webRequest = null;
-                OnPostAndPutRequest(ref webRequest, strPath, "", "application/vnd.csp.container-info+xml", strXML, "", "PUT", "");
+                OnPostAndPutRequest(ref webRequest, strPath, "", "application/vnd.csp.container-info+xml", strXML, "", "PUT", "", null);
 
                 HttpWebResponse response = (HttpWebResponse)webRequest.GetResponse();
                 nStatusCode = 204;
@@ -1778,7 +1791,7 @@ namespace MezeoFileSupport
             try
             {
                 HttpWebRequest webRequest = null;
-                OnPostAndPutRequest(ref webRequest, strSource, "", "application/vnd.csp.file-info+xml", strXML, "", "POST", StrDestination);
+                OnPostAndPutRequest(ref webRequest, strSource, "", "application/vnd.csp.file-info+xml", strXML, "", "POST", StrDestination, null);
 
                 HttpWebResponse response = (HttpWebResponse)webRequest.GetResponse();
 
@@ -2047,7 +2060,7 @@ namespace MezeoFileSupport
 	        return true;
         }
 
-        public bool DownloadResumeFile(String strSource, String strDestination, long lFrom, long lTo, ref int nStatusCode)
+        public bool DownloadResumeFile(String strSource, String strDestination, long lFrom, long lTo, ref int nStatusCode, CallbackIncrementProgress IncProgress)
         {
             nStatusCode = 0;
 	        try
@@ -2059,7 +2072,7 @@ namespace MezeoFileSupport
 
 		        HttpWebResponse response = (HttpWebResponse)webRequest.GetResponse();
 		        nStatusCode = 200;
-		        if(!OnSaveResponseFile(response.GetResponseStream(), strDestination, lFrom))
+		        if(!OnSaveResponseFile(response.GetResponseStream(), strDestination, lFrom, IncProgress))
 		        {
 			        webRequest.Abort();
 			        response.Close();
