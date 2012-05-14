@@ -15,6 +15,7 @@ namespace Mezeo
         private static string serviceUrl="";
         private static DateTime lastSync;
         private static bool autoSync=true;
+        private static bool loggingEnabled = true;
         private static string syncDirPath="";
         private static bool isInitailSync = true;
 
@@ -67,6 +68,15 @@ namespace Mezeo
             { 
                 autoSync = value;
                 regHandler.Write("Basic6", autoSync, Microsoft.Win32.RegistryValueKind.Binary, false);
+            }
+        }
+        public static bool LoggingEnabled
+        {
+            get { return loggingEnabled; }
+            set 
+            {
+                loggingEnabled = value;
+                regHandler.Write("Basic8", loggingEnabled, Microsoft.Win32.RegistryValueKind.Binary, false);
             }
         }
 
@@ -132,6 +142,16 @@ namespace Mezeo
             lastSync = DateTime.Parse(regHandler.Read("Basic5", Microsoft.Win32.RegistryValueKind.Binary, false));
             autoSync = Convert.ToBoolean(regHandler.Read("Basic6", Microsoft.Win32.RegistryValueKind.Binary, false));
             isInitailSync = Convert.ToBoolean(regHandler.Read("Basic7", Microsoft.Win32.RegistryValueKind.Binary, false));
+            try
+            {
+                string regValue = regHandler.Read("Basic8", Microsoft.Win32.RegistryValueKind.Binary, false);
+                if (null != regValue)
+                    loggingEnabled = Convert.ToBoolean(regValue);
+            }
+            catch (Exception ex)
+            {
+                LogWrapper.LogMessage("BasicInfo - ReadRegValue", "Caught exception: " + ex.Message);
+            }
         }
 
         private static void WriteRegValue()
@@ -143,6 +163,7 @@ namespace Mezeo
             regHandler.Write("Basic5", lastSync, Microsoft.Win32.RegistryValueKind.Binary, false);
             regHandler.Write("Basic6", autoSync, Microsoft.Win32.RegistryValueKind.Binary, false);
             regHandler.Write("Basic7", isInitailSync, Microsoft.Win32.RegistryValueKind.Binary, false);
+            regHandler.Write("Basic8", loggingEnabled, Microsoft.Win32.RegistryValueKind.Binary, false);
         }
 
         private static string GetNinMacAddress()
@@ -158,6 +179,15 @@ namespace Mezeo
                 }
             }
             return macAddresses;
+        }
+    }
+
+    public static class LogWrapper
+    {
+        public static void LogMessage(string tag, string message)
+        {
+            if (BasicInfo.LoggingEnabled)
+                Debugger.Instance.logMessage(tag, message);
         }
     }
 }

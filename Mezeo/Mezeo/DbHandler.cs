@@ -106,7 +106,7 @@ namespace Mezeo
             }
             catch (Exception ex)
             {
-                Debugger.Instance.logMessage("DbHandler - ExecuteNonQuery", "Caught exception: " + ex.Message);
+                LogWrapper.LogMessage("DbHandler - ExecuteNonQuery", "Caught exception: " + ex.Message);
                 return false;
             }
         }
@@ -168,7 +168,7 @@ namespace Mezeo
             }
             catch (Exception ex)
             {
-                Debugger.Instance.logMessage("DbHandler - ExecuteNonQuery", "Caught exception: " + ex.Message);
+                LogWrapper.LogMessage("DbHandler - ExecuteNonQuery", "Caught exception: " + ex.Message);
                 return false;
             }
         }

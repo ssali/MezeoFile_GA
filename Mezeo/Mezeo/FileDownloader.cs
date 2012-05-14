@@ -34,21 +34,21 @@ namespace Mezeo
 
         public FileDownloader(Queue<LocalItemDetails> queue, ThreadLockObject lockObject, CloudService fileCloud, bool analysisCompleted)
         {
-            Debugger.Instance.logMessage("FileDownloader - Constructor", "Enter");
-            Debugger.Instance.logMessage("FileDownloader - Constructor", "Setting queue with count: " + queue.Count);
+            LogWrapper.LogMessage("FileDownloader - Constructor", "Enter");
+            LogWrapper.LogMessage("FileDownloader - Constructor", "Setting queue with count: " + queue.Count);
             this.queue = queue;
             this.lockObject = lockObject;
             cFileCloud = fileCloud;
             IsAnalysisCompleted = analysisCompleted;
-            Debugger.Instance.logMessage("FileDownloader - Constructor", "Opening DB connection");
+            LogWrapper.LogMessage("FileDownloader - Constructor", "Opening DB connection");
             dbhandler.OpenConnection();
-            Debugger.Instance.logMessage("FileDownloader - Constructor", "Leave");
+            LogWrapper.LogMessage("FileDownloader - Constructor", "Leave");
             
         }
 
         public void consume()
         {
-            Debugger.Instance.logMessage("FileDownloader - consume", "Enter");
+            LogWrapper.LogMessage("FileDownloader - consume", "Enter");
             LocalItemDetails itemDetail;
             bool done = false;
 
@@ -56,12 +56,12 @@ namespace Mezeo
             {
                 lock (lockObject)
                 {
-                    Debugger.Instance.logMessage("FileDownloader - consume", "lockObject - locked");
+                    LogWrapper.LogMessage("FileDownloader - consume", "lockObject - locked");
                     if (lockObject.StopThread)
                     {
-                        Debugger.Instance.logMessage("FileDownloader - consume", "Stop requested");
+                        LogWrapper.LogMessage("FileDownloader - consume", "Stop requested");
                         done = true;
-                        Debugger.Instance.logMessage("FileDownloader - consume", "calling CancelAndNotify with reason USER_CANCEL");
+                        LogWrapper.LogMessage("FileDownloader - consume", "calling CancelAndNotify with reason USER_CANCEL");
                         CancelAndNotify(CancelReason.USER_CANCEL);
                         break;
                     }
@@ -70,7 +70,7 @@ namespace Mezeo
                     {
                         if (!IsAnalysisCompleted)
                         {
-                        Debugger.Instance.logMessage("FileDownloader - consume", "queue count ZERO, waiting on lockObject");
+                            LogWrapper.LogMessage("FileDownloader - consume", "queue count ZERO, waiting on lockObject");
                         Monitor.Wait(lockObject);
                         continue;
                         }
@@ -78,7 +78,7 @@ namespace Mezeo
                         {
                             if (fileDownloadCompletedEvent != null)
                             {
-                                Debugger.Instance.logMessage("FileDownloader - consume", "calling fileDownloadCompletedEvent");
+                                LogWrapper.LogMessage("FileDownloader - consume", "calling fileDownloadCompletedEvent");
                                 done = true;
                                 fileDownloadCompletedEvent();
                                 break;
@@ -87,14 +87,14 @@ namespace Mezeo
 
                     }
 
-                    Debugger.Instance.logMessage("FileDownloader - consume", "dequeue item from queue");
+                    LogWrapper.LogMessage("FileDownloader - consume", "dequeue item from queue");
                     itemDetail = queue.Dequeue();
-                    Debugger.Instance.logMessage("FileDownloader - consume", "lockObject - unlocked");
+                    LogWrapper.LogMessage("FileDownloader - consume", "lockObject - unlocked");
                 }
 
                 if (itemDetail == null || itemDetail.ItemDetails == null)
                 {
-                    Debugger.Instance.logMessage("FileDownloader - consume", "itemDetail null, continue loop");
+                    LogWrapper.LogMessage("FileDownloader - consume", "itemDetail null, continue loop");
                     continue;
                 }
 
@@ -103,14 +103,14 @@ namespace Mezeo
                 {
                     if (lockObject.StopThread)
                     {
-                        Debugger.Instance.logMessage("FileDownloader - consume", "Stop requested");
+                        LogWrapper.LogMessage("FileDownloader - consume", "Stop requested");
                         done = true;
-                        Debugger.Instance.logMessage("FileDownloader - consume", "calling CancelAndNotify with reason USER_CANCEL");
+                        LogWrapper.LogMessage("FileDownloader - consume", "calling CancelAndNotify with reason USER_CANCEL");
                         CancelAndNotify(CancelReason.USER_CANCEL);
                         break;
                     }
 
-                    Debugger.Instance.logMessage("FileDownloader - consume", "creating file folder info for " + id.strName);
+                    LogWrapper.LogMessage("FileDownloader - consume", "creating file folder info for " + id.strName);
 
                     FileFolderInfo fileFolderInfo = new FileFolderInfo();
 
@@ -149,27 +149,27 @@ namespace Mezeo
                         if (fileFolderInfo.ETag == null) { fileFolderInfo.ETag = ""; }
                         if (fileFolderInfo.MimeType == null) { fileFolderInfo.MimeType = ""; }
 
-                        Debugger.Instance.logMessage("FileDownloader - consume", "writing file folder info for " + id.strName + " in DB");
+                        LogWrapper.LogMessage("FileDownloader - consume", "writing file folder info for " + id.strName + " in DB");
                         dbhandler.Write(fileFolderInfo);
 
                         string downloadObjectName = BasicInfo.SyncDirPath + "\\";
                         downloadObjectName += itemDetail.Path;
 
-                        Debugger.Instance.logMessage("FileDownloader - consume", "download object " + downloadObjectName);
+                        LogWrapper.LogMessage("FileDownloader - consume", "download object " + downloadObjectName);
 
-                        Debugger.Instance.logMessage("FileDownloader - consume", "setting parent folders status DB_STATUS_IN_PROGRESS, bRet FALSE");
+                        LogWrapper.LogMessage("FileDownloader - consume", "setting parent folders status DB_STATUS_IN_PROGRESS, bRet FALSE");
                         MarkParentsStatus(downloadObjectName, DB_STATUS_IN_PROGRESS);
                         bool bRet = false;
                         int refCode = 0;
 
                         if (id.szItemType == "DIRECTORY")
                         {
-                            Debugger.Instance.logMessage("FileDownloader - consume", id.strName + " is DIRECTORY");
+                            LogWrapper.LogMessage("FileDownloader - consume", id.strName + " is DIRECTORY");
                             System.IO.Directory.CreateDirectory(downloadObjectName);
 
                             if (id.strETag.Trim().Length == 0)
                             {
-                                Debugger.Instance.logMessage("FileDownloader - consume", "Getting eTag for " + id.strName );
+                                LogWrapper.LogMessage("FileDownloader - consume", "Getting eTag for " + id.strName);
                                 id.strETag = cFileCloud.GetETag(id.szContentUrl, ref refCode);
                                 if (refCode == ResponseCode.LOGINFAILED1 || refCode == ResponseCode.LOGINFAILED2)
                                 {
@@ -185,14 +185,14 @@ namespace Mezeo
                                     CancelAndNotify(CancelReason.SERVER_INACCESSIBLE);
                                     break;
                                 }
-                            }                           
-                            
-                            Debugger.Instance.logMessage("FileDownloader - consume", "eTag for " + id.strName + ": " + id.strETag + ", bRet TRUE");
+                            }
+
+                            LogWrapper.LogMessage("FileDownloader - consume", "eTag for " + id.strName + ": " + id.strETag + ", bRet TRUE");
                             bRet = true;
                         }
                         else
                         {
-                            Debugger.Instance.logMessage("FileDownloader - consume", id.strName + " is NOT DIRECTORY");
+                            LogWrapper.LogMessage("FileDownloader - consume", id.strName + " is NOT DIRECTORY");
                             bRet = cFileCloud.DownloadFile(id.szContentUrl + '/' + id.strName,
                                                     downloadObjectName, id.dblSizeInBytes, ref refCode);
                            
@@ -211,16 +211,16 @@ namespace Mezeo
                                 break;
                             }
 
-                            Debugger.Instance.logMessage("FileDownloader - consume", "bRet for " + id.strName + " is " + bRet.ToString());
+                            LogWrapper.LogMessage("FileDownloader - consume", "bRet for " + id.strName + " is " + bRet.ToString());
                             if (refCode == INSUFFICIENT_STORAGE_AVAILABLE)
                             {
-                                Debugger.Instance.logMessage("FileDownloader - consume", "INSUFFICIENT_STORAGE_AVAILABLE, calling CancelAndNotify with reason INSUFFICIENT_STORAGE");
+                                LogWrapper.LogMessage("FileDownloader - consume", "INSUFFICIENT_STORAGE_AVAILABLE, calling CancelAndNotify with reason INSUFFICIENT_STORAGE");
                                 done = true;
                                 CancelAndNotify(CancelReason.INSUFFICIENT_STORAGE);
                                 break;
                             }
-                            
-                            Debugger.Instance.logMessage("FileDownloader - consume", "Getting eTag for " + id.strName);
+
+                            LogWrapper.LogMessage("FileDownloader - consume", "Getting eTag for " + id.strName);
                             id.strETag = cFileCloud.GetETag(id.szContentUrl, ref refCode);
                             
                             if (refCode == ResponseCode.LOGINFAILED1 || refCode == ResponseCode.LOGINFAILED2)
@@ -237,12 +237,12 @@ namespace Mezeo
                                 CancelAndNotify(CancelReason.SERVER_INACCESSIBLE);
                                 break;
                             }
-                            Debugger.Instance.logMessage("FileDownloader - consume", "eTag for " + id.strName + ": " + id.strETag );
+                            LogWrapper.LogMessage("FileDownloader - consume", "eTag for " + id.strName + ": " + id.strETag);
                         }
 
                         if (!bRet)
                         {
-                            Debugger.Instance.logMessage("FileDownloader - consume", "bRet FALSE, writing to cFileCloud.AppEventViewer");
+                            LogWrapper.LogMessage("FileDownloader - consume", "bRet FALSE, writing to cFileCloud.AppEventViewer");
                             string Description = AboutBox.AssemblyTitle;
 
                             Description += LanguageTranslator.GetValue("ErrorBlurbDownload1");
@@ -253,12 +253,12 @@ namespace Mezeo
                         }
                         else
                         {
-                            Debugger.Instance.logMessage("FileDownloader - consume", "setting parent folders status to DB_STATUS_SUCCESS for " + downloadObjectName);
+                            LogWrapper.LogMessage("FileDownloader - consume", "setting parent folders status to DB_STATUS_SUCCESS for " + downloadObjectName);
                             MarkParentsStatus(downloadObjectName, DB_STATUS_SUCCESS);
                             //fileFolderInfo.ETag = id.strETag;
                             if (id.szItemType == "DIRECTORY")
                             {
-                                Debugger.Instance.logMessage("FileDownloader - consume", "updating DB for folder " + downloadObjectName);
+                                LogWrapper.LogMessage("FileDownloader - consume", "updating DB for folder " + downloadObjectName);
                                 DirectoryInfo dInfo = new DirectoryInfo(downloadObjectName);
                                 dbhandler.UpdateModifiedDate(dInfo.LastWriteTime, fileFolderInfo.Key);
                                 dbhandler.Update(DbHandler.TABLE_NAME, DbHandler.E_TAG , id.strETag , DbHandler.KEY , fileFolderInfo.Key );
@@ -266,7 +266,7 @@ namespace Mezeo
                             }
                             else
                             {
-                                Debugger.Instance.logMessage("FileDownloader - consume", "updating DB for file " + downloadObjectName);
+                                LogWrapper.LogMessage("FileDownloader - consume", "updating DB for file " + downloadObjectName);
                                 FileInfo fInfo = new FileInfo(downloadObjectName);
                                 dbhandler.UpdateModifiedDate(fInfo.LastWriteTime, fileFolderInfo.Key);
                                 dbhandler.Update(DbHandler.TABLE_NAME, DbHandler.E_TAG , id.strETag , DbHandler.KEY , fileFolderInfo.Key);
@@ -275,7 +275,7 @@ namespace Mezeo
 
                             if (downloadEvent != null)
                             {
-                                Debugger.Instance.logMessage("FileDownloader - consume", "calling  downloadEvent with " + downloadObjectName);
+                                LogWrapper.LogMessage("FileDownloader - consume", "calling  downloadEvent with " + downloadObjectName);
                                 downloadEvent(this, new FileDownloaderEvents(downloadObjectName, 0));
                             }
                         }
@@ -291,10 +291,10 @@ namespace Mezeo
 
                 if (IsAnalysisCompleted && queue.Count == 0)
                 {
-                    Debugger.Instance.logMessage("FileDownloader - consume", "Analysis completed and queue lenth is ZERO");
+                    LogWrapper.LogMessage("FileDownloader - consume", "Analysis completed and queue lenth is ZERO");
                     if (fileDownloadCompletedEvent != null)
                     {
-                        Debugger.Instance.logMessage("FileDownloader - consume", "calling fileDownloadCompletedEvent");
+                        LogWrapper.LogMessage("FileDownloader - consume", "calling fileDownloadCompletedEvent");
                         done = true;
                         fileDownloadCompletedEvent();
                     }
@@ -302,47 +302,47 @@ namespace Mezeo
                 
             }
 
-            Debugger.Instance.logMessage("FileDownloader - consume", "Leave");
+            LogWrapper.LogMessage("FileDownloader - consume", "Leave");
         }
 
         private void MarkParentsStatus(string path, string status)
         {
-            Debugger.Instance.logMessage("FileDownloader - MarkParentsStatus", "MarkParentsStatus for path " + path + " with status " + status);
+            LogWrapper.LogMessage("FileDownloader - MarkParentsStatus", "MarkParentsStatus for path " + path + " with status " + status);
             string syncPath = path.Substring(BasicInfo.SyncDirPath.Length + 1);
             ChangeParentStatus(syncPath, status);
         }
 
         private void ChangeParentStatus(string syncPath, string status)
         {
-            Debugger.Instance.logMessage("FileDownloader - ChangeParentStatus", "ChangeParentStatus for path " + syncPath + " with status " + status);
+            LogWrapper.LogMessage("FileDownloader - ChangeParentStatus", "ChangeParentStatus for path " + syncPath + " with status " + status);
             int sepIndex = syncPath.LastIndexOf("\\");
 
             if (sepIndex > 0)
             {
                 string parentKey = syncPath.Substring(0, sepIndex);
-                Debugger.Instance.logMessage("FileDownloader - ChangeParentStatus", "updating DB for key " + parentKey + " with status " + status);
+                LogWrapper.LogMessage("FileDownloader - ChangeParentStatus", "updating DB for key " + parentKey + " with status " + status);
                 dbhandler.Update(DbHandler.TABLE_NAME, DbHandler.STATUS , status , DbHandler.KEY , parentKey );
-                Debugger.Instance.logMessage("FileDownloader - ChangeParentStatus", "DB update DONE");
+                LogWrapper.LogMessage("FileDownloader - ChangeParentStatus", "DB update DONE");
                 ChangeParentStatus(parentKey, status);
             }
         }
 
         public void ForceComplete()
         {
-            Debugger.Instance.logMessage("FileDownloader - ForceComplete", "Called ForceComplete");
+            LogWrapper.LogMessage("FileDownloader - ForceComplete", "Called ForceComplete");
             if (fileDownloadCompletedEvent != null)
             {
-                Debugger.Instance.logMessage("FileDownloader - ForceComplete", "calling fileDownloadCompletedEvent");
+                LogWrapper.LogMessage("FileDownloader - ForceComplete", "calling fileDownloadCompletedEvent");
                 fileDownloadCompletedEvent();
             }
         }
 
         private void CancelAndNotify(CancelReason reason)
         {
-            Debugger.Instance.logMessage("FileDownloader - CancelAndNotify", "called CancelAndNotify");
+            LogWrapper.LogMessage("FileDownloader - CancelAndNotify", "called CancelAndNotify");
             if (cancelDownloadEvent != null)
             {
-                Debugger.Instance.logMessage("FileDownloader - CancelAndNotify", "calling CancelAndNotify");
+                LogWrapper.LogMessage("FileDownloader - CancelAndNotify", "calling CancelAndNotify");
                 cancelDownloadEvent(reason);
             }
         }

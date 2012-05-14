@@ -105,7 +105,7 @@ namespace Mezeo
 
         public static void Add(LocalEvents newEvent)
         {
-            Debugger.Instance.logMessage("EventQueue - Add", "Adding event: (" + newEvent.EventType + ") " + newEvent.FullPath);
+            LogWrapper.LogMessage("EventQueue - Add", "Adding event: (" + newEvent.EventType + ") " + newEvent.FullPath);
             lock (thisLock)
             {
                 bool bAdd = true;
@@ -114,7 +114,7 @@ namespace Mezeo
                 {
                     if (id.FileName == newEvent.FileName)
                     {
-                        Debugger.Instance.logMessage("EventQueue - Add", "Local event already exists for: " + newEvent.FullPath);
+                        LogWrapper.LogMessage("EventQueue - Add", "Local event already exists for: " + newEvent.FullPath);
                         id.EventTimeStamp = newEvent.EventTimeStamp;
                         bAdd = false;
                         break;
@@ -131,7 +131,7 @@ namespace Mezeo
 
         public static LocalEvents Pop()
         {
-            Debugger.Instance.logMessage("EventQueue - Pop", "Popping event.");
+            LogWrapper.LogMessage("EventQueue - Pop", "Popping event.");
             LocalEvents localEvent = null;
             lock (thisLock)
             {
