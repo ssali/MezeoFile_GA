@@ -37,7 +37,11 @@ namespace Mezeo
         public frmLogin()
         {
             InitializeComponent();
-          
+
+            string osVersion32 = "32";
+            string osVersion64 = "64";
+            string RSSFeed = "";
+
             this.Icon = Properties.Resources.MezeoVault;
 
             //this.HandleCreated += new EventHandler(frmLogin_HandleCreated);
@@ -53,12 +57,22 @@ namespace Mezeo
 
             LoadResources();
 
-            //if (!BasicInfo.ServiceUrl.Length())
-            //{
-            //    String testStr = "blahblah";
-            //}
-            _sparkle = new Sparkle(LanguageTranslator.GetValue("UpdreadRSSFeed"));
-            _sparkle.StartLoop(true);
+            #if MEZEO32
+                //32 bit
+                RSSFeed = string.Format("{0}/update/sync/win/{1}/versioninfo.xml", BasicInfo.ServiceUrl, osVersion32);
+           
+            #else
+            // 64 bit
+            RSSFeed = string.Format("{0}/update/sync/win/{1}/versioninfo.xml", BasicInfo.ServiceUrl, osVersion64);
+
+            #endif
+
+
+            if (RSSFeed.Length != 0)
+            {
+                _sparkle = new Sparkle(RSSFeed);
+                _sparkle.StartLoop(true);
+            }
 
             EventQueue.InitEventQueue();
         }
@@ -565,16 +579,6 @@ namespace Mezeo
                 else
                 {
                     bool isDbCreateNew = dbHandler.OpenConnection();
-                    //if user login first time in that case showlogin is true
-                    //if (isDbCreateNew)
-                    //{
-                    //    if (System.IO.Directory.Exists(dirName))
-                    //    {
-                    //        DateTime time = System.IO.Directory.GetCreationTime(dirName);
-
-                    //        System.IO.Directory.Move(dirName, dirName + time.ToString("M-d-yyyy-h-mm-ss"));
-                    //    }
-                    //}
                     if (!isDirectoryExists)
                         System.IO.Directory.CreateDirectory(dirName);
 
@@ -587,19 +591,6 @@ namespace Mezeo
             {
                 //if directory exits checking whether we have new database or not 
                 bool isDbCreateNew = dbHandler.OpenConnection();
-                //if (isDbCreateNew)
-                //{
-                //    if (System.IO.Directory.Exists(dirName))
-                //    {
-                //        DateTime time = System.IO.Directory.GetCreationTime(dirName);
-
-                //        System.IO.Directory.Move(dirName, dirName + time.ToString("M-d-yyyy-h-mm-ss"));
-                //    }
-
-                //    System.IO.Directory.CreateDirectory(dirName);
-                //}
-                // Always set the BasicInfo.SyncDirPath value.
-                //BasicInfo.IsInitialSync = true;
                 BasicInfo.AutoSync = true;
                 BasicInfo.SyncDirPath = dirName;
             }

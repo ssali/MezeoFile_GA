@@ -44,7 +44,7 @@
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
     <OutputPath>bin\Release\</OutputPath>
-    <DefineConstants>TRACE</DefineConstants>
+    <DefineConstants>TRACE;DEBUG; MEZEO32</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
@@ -156,7 +156,6 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="RegistryHandler.cs" />
     <Compile Include="ResponseCode.cs" />
-    <Compile Include="ShellNotify.cs" />
     <Compile Include="StructureDownloader.cs" />
     <Compile Include="StructureDownloaderEvent.cs" />
     <Compile Include="ThreadLockObject.cs" />

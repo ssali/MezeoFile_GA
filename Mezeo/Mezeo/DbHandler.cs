@@ -4,6 +4,14 @@ using System.Linq;
 using System.Text;
 using Finisar.SQLite;
 
+#if MEZEO32
+using Finisar.SQLite;
+#elif MEZEO64
+using System.Data.SQLite;
+#else
+using Finisar.SQLite;
+#endif
+
 namespace Mezeo
 {
     class DbHandler
@@ -319,6 +327,19 @@ namespace Mezeo
             sqlCommand.Connection = sqlConnection;
             sqlDataReader = sqlCommand.ExecuteReader();
             sqlDataReader.Read();
+
+            #if MEZEO32
+                result = sqlDataReader.GetString(0);
+            #elif MEZEO64
+                if (sqlDataReader.HasRows)
+                        result = sqlDataReader.GetString(0);
+                    else
+                        result = "";
+            #else
+
+                result = sqlDataReader.GetString(0);
+
+            #endif
 
             result = sqlDataReader.GetString(0);
 
