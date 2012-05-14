@@ -61,14 +61,14 @@ namespace Mezeo
                 if(strCheck.Trim().Length != 0)
                 {
                     DateTime dbModDate = dbHandler.GetDateTime(DbHandler.TABLE_NAME, DbHandler.MODIFIED_DATE , DbHandler.KEY , localKeys);
-                    
+
                     bool isModified = false;
 
                     if (IsFile)
-                    {                        
+                    {
                         DateTime lastWriteTime = fInfo.LastWriteTime;
                         lastWriteTime = lastWriteTime.AddMilliseconds(-lastWriteTime.Millisecond);
-                        
+
                         TimeSpan diff = lastWriteTime - dbModDate;
 
                         if (diff >= TimeSpan.FromSeconds(1))
@@ -83,7 +83,6 @@ namespace Mezeo
                     //        isModified = true;
                     //    }
                     //}
-
 
                     if (isModified)
                     {
@@ -100,8 +99,6 @@ namespace Mezeo
 
                         //collectedLocalEvent.Add(lEvent);
                         EventQueue.Add(lEvent);
-                        
-                       
                     }
                 }
                 else
@@ -153,7 +150,6 @@ namespace Mezeo
 
                     //collectedLocalEvent.Add(lEvent);
                     EventQueue.Add(lEvent);
-
                 }
             }
 

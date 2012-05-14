@@ -49,6 +49,7 @@ namespace Mezeo
                     {
                         LocalEvents lEvent = new LocalEvents();
                         lEvent = id;
+                        lEvent.EventTimeStamp = id.EventTimeStamp;
                         eventList.Add(lEvent);
                         eventsToRemove.Add(id);
                         //bNewEventExists = true;
