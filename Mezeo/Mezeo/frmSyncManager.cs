@@ -120,7 +120,7 @@ namespace Mezeo
             LoadResources();
 
             watcher = new Watcher(lockObject, BasicInfo.SyncDirPath);
-            watcher.WatchCompletedEvent += new Watcher.WatchCompleted(watcher_WatchCompletedEvent);
+            EventQueue.WatchCompletedEvent += new EventQueue.WatchCompleted(queue_WatchCompletedEvent);
             CheckForIllegalCrossThreadCalls = false;
 
             watcher.StartMonitor();
@@ -474,10 +474,8 @@ namespace Mezeo
             ShowSyncMessage();
 
             InitialSyncUptodateMessage();
-          
-            //if (LocalEventList.Count > 0)
-            
-             watcher_WatchCompletedEvent();
+
+            queue_WatchCompletedEvent();
         }
 
         void ShowNextSyncLabel(bool bIsShow)
@@ -497,7 +495,6 @@ namespace Mezeo
 
         void fileDownloder_downloadEvent(object sender, FileDownloaderEvents e)
         {
-            lblStatusL3.Text = e.FileName;
             if (isAnalysisCompleted)
             {
                 showProgress();
@@ -893,7 +890,6 @@ namespace Mezeo
             Application.DoEvents();
             int nStatusCode = 0;
             string queueName = BasicInfo.GetMacAddress + "-" + BasicInfo.UserName;
-            //int nNQLength = cMezeoFileCloud.NQGetLength(BasicInfo.ServiceUrl + cLoginDetails.szNQParentUri, queueName, ref nStatusCode);
 
             NQLengthResult nqLengthRes = cMezeoFileCloud.NQGetLength(BasicInfo.ServiceUrl + cLoginDetails.szNQParentUri, queueName, ref nStatusCode);
             if (nStatusCode == ResponseCode.LOGINFAILED1 || nStatusCode == ResponseCode.LOGINFAILED2)
@@ -3601,7 +3597,7 @@ namespace Mezeo
             return true;
         }
 
-        void watcher_WatchCompletedEvent()
+        void queue_WatchCompletedEvent()
         {
             if (IsInIdleState() && EventQueue.QueueNotEmpty() && BasicInfo.AutoSync && !BasicInfo.IsInitialSync && !IsDisabledByConnection())
             {
@@ -3645,6 +3641,11 @@ namespace Mezeo
 
             int nTempCount = 0;
 
+            if (totalNQLength > 0)
+            {
+                ShowOtherProgressBar("");
+            }
+
             while (totalNQLength > 0)
             {
                 IncrementTransferCount();
@@ -3677,6 +3678,8 @@ namespace Mezeo
                 {
                     foreach (NQDetails nq in pNQDetails)
                     {
+                        ShowOtherProgressBar(nq.StrObjectName);
+
                         if (bwNQUpdate.CancellationPending)
                         {
                             LogWrapper.LogMessage("frmSyncManager - bwNQUpdate_DoWork", "bwNQUpdate.CancellationPending called inner");
@@ -3798,7 +3801,7 @@ namespace Mezeo
                 }
                 else
                 {
-                    watcher_WatchCompletedEvent();
+                    queue_WatchCompletedEvent();
                 }
             }
             catch(Exception ex)
@@ -3954,8 +3957,10 @@ namespace Mezeo
             //Application.DoEvents();
         }
 
-        public void SetMaxProgress(double fileSize)
+        public void SetMaxProgress(double fileSize, string fileName)
         {
+            lblStatusL3.Text = fileName;
+
             pbSyncProgress.Maximum = (int)fileSize;
             pbSyncProgress.Value = 0;
             
@@ -3968,15 +3973,23 @@ namespace Mezeo
             lblPercentDone.Show();
         }
 
-        public void ShowOtherProgressBar()
+        public void ShowOtherProgressBar(string fileName)
         {
+            lblStatusL3.Text = fileName;
             pbSyncProgress.Value = 0;
 
             if (pbSyncProgress.Style != ProgressBarStyle.Marquee)
+            {
                 pbSyncProgress.Style = ProgressBarStyle.Marquee;
+                pbSyncProgress.MarqueeAnimationSpeed = 500;
+            }
 
-            pbSyncProgress.Visible = true;
-            pbSyncProgress.Show();
+            if (false == pbSyncProgress.Visible)
+            {
+                pbSyncProgress.Visible = true;
+                pbSyncProgress.Show();
+            }
+            pbSyncProgress.Refresh();
             lblPercentDone.Visible = true;
             lblPercentDone.Show();
         }
@@ -3990,6 +4003,7 @@ namespace Mezeo
                     pbSyncProgress.Value = pbSyncProgress.Maximum;
                 else
                     pbSyncProgress.Value += (int)filesize;
+                pbSyncProgress.Refresh();
 
                 if (pbSyncProgress.Maximum > 0)
                 {

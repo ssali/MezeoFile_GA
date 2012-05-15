@@ -38,7 +38,7 @@ namespace Mezeo
 
         public bool ContainerMove(string strPath, string strNewName, string strMineType, bool bPublic, string StrParent, ref int nStatusCode)
         {
-            syncManager.ShowOtherProgressBar();
+            syncManager.ShowOtherProgressBar(strPath);
             bool bRet = fileCloud.ContainerMove(strPath, strNewName, strMineType, bPublic, StrParent, ref nStatusCode);
             if (nStatusCode != ResponseCode.CONTAINERMOVE)
             {
@@ -54,7 +54,7 @@ namespace Mezeo
 
         public bool ContainerRename(string strPath, string strNewName, ref int nStatusCode)
         {
-            syncManager.ShowOtherProgressBar();
+            syncManager.ShowOtherProgressBar(strPath);
             bool bRet = fileCloud.ContainerRename(strPath, strNewName, ref nStatusCode);
             if (nStatusCode != ResponseCode.CONTAINERRENAME)
             {
@@ -76,7 +76,7 @@ namespace Mezeo
         
         public bool Delete(string strPath, ref int nStatusCode)
         {
-            syncManager.ShowOtherProgressBar();
+            syncManager.ShowOtherProgressBar(strPath);
             bool bRet = fileCloud.Delete(strPath, ref nStatusCode);
             if (nStatusCode != ResponseCode.DELETE)
             {
@@ -93,8 +93,8 @@ namespace Mezeo
         public bool DownloadFile(string strSource, string strDestination, double dblFileSizeInBytes, ref int nStatusCode)
         {
            // MezeoFileSupport.CallbackIncrementProgress myDelegate = new MezeoFileSupport.CallbackIncrementProgress(syncManager.CallbackSyncProgress);
-            
-            syncManager.SetMaxProgress(dblFileSizeInBytes);
+
+            syncManager.SetMaxProgress(dblFileSizeInBytes, strDestination);
 
             bool bRet = fileCloud.DownloadFile(strSource, strDestination, dblFileSizeInBytes, ref nStatusCode, syncManager.myDelegate);
 
@@ -133,7 +133,7 @@ namespace Mezeo
 
         public bool FileMove(string strPath, string strNewName, string strMineType, bool bPublic, string StrParent, ref int nStatusCode)
         {
-            syncManager.ShowOtherProgressBar();
+            syncManager.ShowOtherProgressBar(strPath);
             bool bRet = fileCloud.FileMove(strPath, strNewName, strMineType, bPublic, StrParent, ref nStatusCode);
             if (nStatusCode != ResponseCode.FILEMOVE)
             {
@@ -149,7 +149,7 @@ namespace Mezeo
 
         public bool FileRename(string strPath, string strNewName, string strMineType, bool bPublic, ref int nStatusCode)
         {
-            syncManager.ShowOtherProgressBar();
+            syncManager.ShowOtherProgressBar(strPath);
             bool bRet = fileCloud.FileRename(strPath, strNewName, strMineType, bPublic, ref nStatusCode);
             if (nStatusCode != ResponseCode.FILERENAME)
             {
@@ -255,7 +255,7 @@ namespace Mezeo
 
         public string NewContainer(string strNewContainer, string strContentsResource, ref int nStatusCode)
         {
-            syncManager.ShowOtherProgressBar();
+            syncManager.ShowOtherProgressBar(strNewContainer);
             string strUrl = fileCloud.NewContainer(strNewContainer, strContentsResource, ref nStatusCode);
             if (nStatusCode != ResponseCode.NEWCONTAINER)
             {
@@ -363,7 +363,7 @@ namespace Mezeo
         {
             var fileinfo = new FileInfo(strSource);
 
-            syncManager.SetMaxProgress(fileinfo.Length);
+            syncManager.SetMaxProgress(fileinfo.Length, strDestination);
 
             bool bRet = fileCloud.OverWriteFile(strSource, strDestination, ref nStatusCode, syncManager.myDelegate);
             
@@ -403,7 +403,7 @@ namespace Mezeo
         {
             var fileinfo = new FileInfo(strSource);
 
-            syncManager.SetMaxProgress(fileinfo.Length);
+            syncManager.SetMaxProgress(fileinfo.Length, strDestination);
 
             string strUrl = fileCloud.UploadingFile(strSource, strDestination, ref nStatusCode, syncManager.myDelegate);
             if (nStatusCode != ResponseCode.UPLOADINGFILE)

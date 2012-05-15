@@ -21,6 +21,8 @@ namespace Mezeo
 
         private static Object thisLock = new Object();
         private static System.Timers.Timer timer;
+        public delegate void WatchCompleted();
+        public static event WatchCompleted WatchCompletedEvent;
 
         public static void InitEventQueue()
         {
@@ -33,7 +35,7 @@ namespace Mezeo
 
         public static void timer_Elapsed(object sender, System.Timers.ElapsedEventArgs e)
         {
-            //bool bNewEventExists = false;
+            bool bNewEventExists = false;
             DateTime currTime = DateTime.Now;
             List<LocalEvents> eventsToRemove = new List<LocalEvents>();
 
@@ -52,7 +54,7 @@ namespace Mezeo
                         lEvent.EventTimeStamp = id.EventTimeStamp;
                         eventList.Add(lEvent);
                         eventsToRemove.Add(id);
-                        //bNewEventExists = true;
+                        bNewEventExists = true;
                     }
                 }
 
@@ -67,11 +69,14 @@ namespace Mezeo
             }
 
             // If something was added to the list, trigger the event.
-            //if (bNewEventExists)
-            //{
-            //    if (EventQueue.QueueNotEmpty())
-            //        WatchCompletedEvent();
-            //}
+            if (bNewEventExists)
+            {
+                if (WatchCompletedEvent != null)
+                {
+                    if (EventQueue.QueueNotEmpty())
+                        WatchCompletedEvent();
+                }
+            }
         }
 
         public static bool QueueNotEmpty()

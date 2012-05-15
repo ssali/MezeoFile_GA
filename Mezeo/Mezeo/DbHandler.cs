@@ -428,7 +428,6 @@ namespace Mezeo
             return result;
         }
 
-
         public List<string> GetStringList(string tableName, string fieldName, string WhereField, string whereValue)
         {
             string query = "select " + fieldName + " from " + tableName + " where " + WhereField + "=@whereValue"; 

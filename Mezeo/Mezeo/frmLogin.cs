@@ -38,8 +38,11 @@ namespace Mezeo
         {
             InitializeComponent();
 
-            string osVersion32 = "32";
-            string osVersion64 = "64";
+#if MEZEO32
+            string osVersion = "32";
+#else
+            string osVersion = "64";
+#endif
             string RSSFeed = "";
 
             this.Icon = Properties.Resources.MezeoVault;
@@ -57,16 +60,7 @@ namespace Mezeo
 
             LoadResources();
 
-            #if MEZEO32
-                //32 bit
-                RSSFeed = string.Format("{0}/update/sync/win/{1}/versioninfo.xml", BasicInfo.ServiceUrl, osVersion32);
-           
-            #else
-            // 64 bit
-            RSSFeed = string.Format("{0}/update/sync/win/{1}/versioninfo.xml", BasicInfo.ServiceUrl, osVersion64);
-
-            #endif
-
+            RSSFeed = string.Format("{0}/update/sync/win/{1}/versioninfo.xml", BasicInfo.ServiceUrl, osVersion);
 
             if (RSSFeed.Length != 0)
             {
