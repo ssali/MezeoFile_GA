@@ -232,7 +232,7 @@ namespace MezeoFileSupport
         private String OnGetResponseString(Stream responseStream)
         {
 	        StringBuilder responseString = new StringBuilder();
-	        byte[] buffer = new byte[4096];
+	        byte[] buffer = new byte[1024*64];
 	        int bytes_read = 0;
 	        while ((bytes_read = responseStream.Read(buffer, 0, buffer.Length)) > 0)
 	        {
@@ -282,7 +282,7 @@ namespace MezeoFileSupport
                     FileStream fileStream = new FileStream(strSource, FileMode.Open, FileAccess.Read, FileShare.ReadWrite);
 			        if( fileStream != null)
 			        {
-				        byte[] buffer = new byte[4096];
+                        byte[] buffer = new byte[1024 * 64];
 				        int bytesRead = 0;
                         
 				        while ((bytesRead = fileStream.Read(buffer, 0, buffer.Length)) != 0)
@@ -315,7 +315,7 @@ namespace MezeoFileSupport
         //save on the local drive
         private bool OnSaveResponseFile(Stream responseStream, String strSaveInFile, long lFrom, CallbackIncrementProgress IncProgress)
         {
-	        byte[] buffer = new byte[4096];
+            byte[] buffer = new byte[1024 * 64];
 	        int bytes_read = 0;
 	        FileStream fstPersons;
             bool bStatus = true;
@@ -437,7 +437,7 @@ namespace MezeoFileSupport
                 FileStream fileStream = new FileStream(strSource, FileMode.Open, FileAccess.Read, FileShare.ReadWrite);
 		        if(fileStream != null)
 		        {
-			        byte[] buffer = new byte[4096];
+                    byte[] buffer = new byte[1024 * 64];
 			        int bytesRead = 0;
 
 			        while ((bytesRead = fileStream.Read(buffer, 0, buffer.Length)) != 0)
