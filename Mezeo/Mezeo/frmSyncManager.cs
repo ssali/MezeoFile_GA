@@ -3407,15 +3407,9 @@ namespace Mezeo
 
              frmIssuesFound.AddIssueToList(iFound);
 
-             //cnotificationManager.NotificationHandler.ShowBalloonTip(1, LanguageTranslator.GetValue("TrayBalloonSyncStatusText"),
-             //                                                             LanguageTranslator.GetValue("SyncIssueFoundText"),
-             //                                                            ToolTipIcon.None);
-
-             //cnotificationManager.HoverText = AboutBox.AssemblyTitle + "\n" + LanguageTranslator.GetValue("SyncIssueFoundText");
-
-             //frmParent.toolStripMenuItem4.Text = LanguageTranslator.GetValue("SyncManagerMenuIssueFoundText");
-
-             //SetIssueFound(true);
+            // Issue Fix for Conflicts 
+             IssueFoundBalloonMessage();
+            
              LogWrapper.LogMessage("SyncManager - ReportConflict", "Leave");
         }
 
@@ -4031,12 +4025,6 @@ namespace Mezeo
 
         public void ShowSyncManagerOffline()
         {
-            //cnotificationManager.NotificationHandler.ShowBalloonTip(1, LanguageTranslator.GetValue("TrayBalloonSyncStatusText"),
-            //                                                                    LanguageTranslator.GetValue("TrayAppOfflineText"), ToolTipIcon.None);
-
-            //cnotificationManager.HoverText = LanguageTranslator.GetValue("TrayAppOfflineText");
-            //cnotificationManager.NotifyIcon = Properties.Resources.app_offline;
-            //frmParent.toolStripMenuItem4.Text = LanguageTranslator.GetValue("AppOfflineMenu");
             SyncOfflineMessage();
             lblStatusL1.Text = LanguageTranslator.GetValue("AppOfflineMenu");
             label1.Text = "";
