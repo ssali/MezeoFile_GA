@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using Finisar.SQLite;
+//using Finisar.SQLite;
 
 #if MEZEO32
 using Finisar.SQLite;
