@@ -143,7 +143,7 @@ namespace Mezeo
             if (szContantURI.Trim().Length != 0)
             {
                 int nStatusCode = 0;
-                bool bRet = cMezeoFileCloud.Delete(szContantURI, ref nStatusCode);
+                bool bRet = cMezeoFileCloud.Delete(szContantURI, ref nStatusCode, "");
             }
         }
 
@@ -913,6 +913,8 @@ namespace Mezeo
                 nNQLength = 0;
             else
                 nNQLength = (nqLengthRes.nEnd + 1) - nqLengthRes.nStart;
+
+            messageMax = nNQLength;
 
             if (nNQLength > 0)
             {
@@ -2437,26 +2439,29 @@ namespace Mezeo
                     string strNameAdd = lEvent.FileName.Substring(lEvent.FileName.LastIndexOf("\\") + 1);
                     foreach (LocalEvents id in events)
                     {
-                        DateTime dtCreate = lEvent.EventTimeStamp.AddMilliseconds(-id.EventTimeStamp.Millisecond);
-                        TimeSpan Diff = dtCreate - id.EventTimeStamp;
-                        if (Diff <= TimeSpan.FromSeconds(1) && id.EventType == LocalEvents.EventsType.FILE_ACTION_REMOVED)
+                        if (id.EventType == LocalEvents.EventsType.FILE_ACTION_REMOVED)
                         {
-                            string strNameComp = id.FileName.Substring(id.FileName.LastIndexOf("\\") + 1);
-                            if (strNameComp == strNameAdd)
+                            DateTime dtCreate = lEvent.EventTimeStamp.AddMilliseconds(-id.EventTimeStamp.Millisecond);
+                            TimeSpan Diff = dtCreate - id.EventTimeStamp;
+                            if (Diff <= TimeSpan.FromSeconds(1))
                             {
-                                if (!RemoveIndexes.Contains(events.IndexOf(id)))
-                                    RemoveIndexes.Add(events.IndexOf(id));
+                                string strNameComp = id.FileName.Substring(id.FileName.LastIndexOf("\\") + 1);
+                                if (strNameComp == strNameAdd)
+                                {
+                                    if (!RemoveIndexes.Contains(events.IndexOf(id)))
+                                        RemoveIndexes.Add(events.IndexOf(id));
 
-                                bRet = false;
+                                    bRet = false;
 
-                                LocalEvents levent = new LocalEvents();
-                                levent.FileName = lEvent.FileName;
-                                levent.FullPath = lEvent.FullPath;
-                                levent.OldFileName = id.FileName;
-                                levent.OldFullPath = id.FullPath;
-                                levent.EventType = LocalEvents.EventsType.FILE_ACTION_MOVE;
+                                    LocalEvents levent = new LocalEvents();
+                                    levent.FileName = lEvent.FileName;
+                                    levent.FullPath = lEvent.FullPath;
+                                    levent.OldFileName = id.FileName;
+                                    levent.OldFullPath = id.FullPath;
+                                    levent.EventType = LocalEvents.EventsType.FILE_ACTION_MOVE;
 
-                                eMove.Add(levent);
+                                    eMove.Add(levent);
+                                }
                             }
                         }
                     }
@@ -3129,7 +3134,7 @@ namespace Mezeo
                                 }
 
                                 if (!checkFileTooLarge(lEvent.FullPath))
-                                    bRet = cMezeoFileCloud.Delete(strContentURi, ref nStatusCode);
+                                    bRet = cMezeoFileCloud.Delete(strContentURi, ref nStatusCode, lEvent.FullPath);
                                 else
                                     nStatusCode = 200;
 
@@ -3760,6 +3765,7 @@ namespace Mezeo
                         int diff = nqLengthRange.nEnd - nqRangeEnd;
                         totalNQLength += diff;
                         maxProgressValue += diff;
+                        messageMax += diff;
                         ((BackgroundWorker)sender).ReportProgress(UPDATE_NQ_MAXIMUM, maxProgressValue);
                     }
                 }
@@ -3975,7 +3981,7 @@ namespace Mezeo
             if (pbSyncProgress.Style != ProgressBarStyle.Marquee)
             {
                 pbSyncProgress.Style = ProgressBarStyle.Marquee;
-                pbSyncProgress.MarqueeAnimationSpeed = 500;
+                pbSyncProgress.MarqueeAnimationSpeed = 200;
             }
 
             if (false == pbSyncProgress.Visible)

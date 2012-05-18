@@ -38,7 +38,7 @@ namespace Mezeo
 
         public bool ContainerMove(string strPath, string strNewName, string strMineType, bool bPublic, string StrParent, ref int nStatusCode)
         {
-            syncManager.ShowOtherProgressBar(strPath);
+            syncManager.ShowOtherProgressBar(strNewName);
             bool bRet = fileCloud.ContainerMove(strPath, strNewName, strMineType, bPublic, StrParent, ref nStatusCode);
             if (nStatusCode != ResponseCode.CONTAINERMOVE)
             {
@@ -54,7 +54,7 @@ namespace Mezeo
 
         public bool ContainerRename(string strPath, string strNewName, ref int nStatusCode)
         {
-            syncManager.ShowOtherProgressBar(strPath);
+            syncManager.ShowOtherProgressBar(strNewName);
             bool bRet = fileCloud.ContainerRename(strPath, strNewName, ref nStatusCode);
             if (nStatusCode != ResponseCode.CONTAINERRENAME)
             {
@@ -74,9 +74,9 @@ namespace Mezeo
         }
 
         
-        public bool Delete(string strPath, ref int nStatusCode)
+        public bool Delete(string strPath, ref int nStatusCode, string strDisplayName)
         {
-            syncManager.ShowOtherProgressBar(strPath);
+            syncManager.ShowOtherProgressBar(strDisplayName);
             bool bRet = fileCloud.Delete(strPath, ref nStatusCode);
             if (nStatusCode != ResponseCode.DELETE)
             {
@@ -133,7 +133,7 @@ namespace Mezeo
 
         public bool FileMove(string strPath, string strNewName, string strMineType, bool bPublic, string StrParent, ref int nStatusCode)
         {
-            syncManager.ShowOtherProgressBar(strPath);
+            syncManager.ShowOtherProgressBar(strNewName);
             bool bRet = fileCloud.FileMove(strPath, strNewName, strMineType, bPublic, StrParent, ref nStatusCode);
             if (nStatusCode != ResponseCode.FILEMOVE)
             {
@@ -149,7 +149,7 @@ namespace Mezeo
 
         public bool FileRename(string strPath, string strNewName, string strMineType, bool bPublic, ref int nStatusCode)
         {
-            syncManager.ShowOtherProgressBar(strPath);
+            syncManager.ShowOtherProgressBar(strNewName);
             bool bRet = fileCloud.FileRename(strPath, strNewName, strMineType, bPublic, ref nStatusCode);
             if (nStatusCode != ResponseCode.FILERENAME)
             {
