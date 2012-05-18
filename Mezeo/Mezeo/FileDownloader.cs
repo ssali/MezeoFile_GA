@@ -71,8 +71,8 @@ namespace Mezeo
                         if (!IsAnalysisCompleted)
                         {
                             LogWrapper.LogMessage("FileDownloader - consume", "queue count ZERO, waiting on lockObject");
-                        Monitor.Wait(lockObject);
-                        continue;
+                            Monitor.Wait(lockObject);
+                            continue;
                         }
                         else
                         {

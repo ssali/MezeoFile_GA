@@ -37,7 +37,6 @@ namespace Mezeo
 
         bool isRootContainer = false;
 
-        //static int seq = 0;
         public StructureDownloader(Queue<LocalItemDetails> queue, ThreadLockObject lockObject, string rootContainerUrl, CloudService fileCloud)
         {
             LogWrapper.LogMessage("StructureDownloader - Constructor", "Enter");
