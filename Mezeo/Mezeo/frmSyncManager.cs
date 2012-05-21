@@ -424,14 +424,31 @@ namespace Mezeo
 
         private void tmrSwapStatusMessage_Tick(object sender, EventArgs e)
         {
-            statusMessageCounter++;
-
-            if (statusMessageCounter >= statusMessages.Length)
+            if (this.InvokeRequired)
             {
-                statusMessageCounter = 0;
-            }
+                this.Invoke((MethodInvoker)delegate
+                {
+                    statusMessageCounter++;
 
-            lblStatusL1.Text = statusMessages[statusMessageCounter];
+                    if (statusMessageCounter >= statusMessages.Length)
+                    {
+                        statusMessageCounter = 0;
+                    }
+
+                    lblStatusL1.Text = statusMessages[statusMessageCounter];
+                });
+            }
+            else
+            {
+                statusMessageCounter++;
+
+                if (statusMessageCounter >= statusMessages.Length)
+                {
+                    statusMessageCounter = 0;
+                }
+
+                lblStatusL1.Text = statusMessages[statusMessageCounter];
+            }
         }
 
         private void frmSyncManager_Load(object sender, EventArgs e)
@@ -468,14 +485,31 @@ namespace Mezeo
 
         void fileDownloder_fileDownloadCompleted()
         {
-            SetIsSyncInProgress(false);
+            if (this.InvokeRequired)
+            {
+                this.Invoke((MethodInvoker)delegate
+                {
+                    SetIsSyncInProgress(false);
 
-            BasicInfo.IsInitialSync = false;
-            ShowSyncMessage();
+                    BasicInfo.IsInitialSync = false;
+                    ShowSyncMessage();
 
-            InitialSyncUptodateMessage();
+                    InitialSyncUptodateMessage();
 
-            queue_WatchCompletedEvent();
+                    queue_WatchCompletedEvent();
+                });
+            }
+            else
+            {
+                SetIsSyncInProgress(false);
+
+                BasicInfo.IsInitialSync = false;
+                ShowSyncMessage();
+
+                InitialSyncUptodateMessage();
+
+                queue_WatchCompletedEvent();
+            }
         }
 
         void ShowNextSyncLabel(bool bIsShow)
@@ -756,7 +790,7 @@ namespace Mezeo
 
             if (frmIssuesFound != null && frmIssuesFound.GetItemsInList() > 0)
             {
-               IssueFoundBalloonMessage();
+                IssueFoundBalloonMessage();
             }
             else
             {
@@ -851,7 +885,7 @@ namespace Mezeo
                 {
                     ShowNextSyncLabel(false);
                     if (!bwLocalEvents.IsBusy)
-                    bwLocalEvents.RunWorkerAsync();                 
+                        bwLocalEvents.RunWorkerAsync();                 
                 }
                 else
                 {
@@ -1813,11 +1847,11 @@ namespace Mezeo
             {
                 if (frmIssuesFound != null && frmIssuesFound.GetItemsInList() > 0)
                 {
-                      IssueFoundBalloonMessage();
+                    IssueFoundBalloonMessage();
                 }
                 else
                 {
-                      InitialSyncBalloonMessage();
+                    InitialSyncBalloonMessage();
                 }
             }
 
@@ -2674,7 +2708,6 @@ namespace Mezeo
                     if (Directory.Exists(levent.FullPath))
                     {
                         WalkDirectoryTreeForMove(new DirectoryInfo(levent.FullPath), levent.OldFullPath);
-
                     }
                 }
                 events.AddRange(eMove);
@@ -3893,12 +3926,8 @@ namespace Mezeo
 
         private void btnIssuesFound_Click(object sender, EventArgs e)
         {
-            ShowIssesFound();
-        }
-
-        private void ShowIssesFound()
-        {
-            frmIssuesFound.Show();            
+            frmIssuesFound.Show();
+            frmIssuesFound.BringToFront();
         }
 
         private void lnkHelp_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
@@ -4012,80 +4041,172 @@ namespace Mezeo
 
         public void SetMaxProgress(double fileSize, string fileName)
         {
-            LogWrapper.LogMessage("frmSyncManager - SetMaxProgress", "enter");
-            lblStatusL3.Text = fileName;
+            if (this.InvokeRequired)
+            {
+                this.Invoke((MethodInvoker)delegate
+                {
+                    LogWrapper.LogMessage("frmSyncManager - SetMaxProgress", "enter");
+                    lblStatusL3.Text = fileName;
 
-            pbSyncProgress.Maximum = (int)fileSize;
-            pbSyncProgress.Value = 0;
-            
-            if (pbSyncProgress.Style != ProgressBarStyle.Continuous)
-                pbSyncProgress.Style = ProgressBarStyle.Continuous;
+                    pbSyncProgress.Maximum = (int)fileSize;
+                    pbSyncProgress.Value = 0;
 
-            pbSyncProgress.Visible = true;
-            pbSyncProgress.Show();
-            lblPercentDone.Visible = true;
-            lblPercentDone.Show();
-            LogWrapper.LogMessage("frmSyncManager - SetMaxProgress", "leave");
+                    if (pbSyncProgress.Style != ProgressBarStyle.Continuous)
+                        pbSyncProgress.Style = ProgressBarStyle.Continuous;
+
+                    pbSyncProgress.Visible = true;
+                    pbSyncProgress.Show();
+                    lblPercentDone.Visible = true;
+                    lblPercentDone.Show();
+                    LogWrapper.LogMessage("frmSyncManager - SetMaxProgress", "leave");
+                });
+            }
+            else
+            {
+                LogWrapper.LogMessage("frmSyncManager - SetMaxProgress", "enter");
+                lblStatusL3.Text = fileName;
+
+                pbSyncProgress.Maximum = (int)fileSize;
+                pbSyncProgress.Value = 0;
+
+                if (pbSyncProgress.Style != ProgressBarStyle.Continuous)
+                    pbSyncProgress.Style = ProgressBarStyle.Continuous;
+
+                pbSyncProgress.Visible = true;
+                pbSyncProgress.Show();
+                lblPercentDone.Visible = true;
+                lblPercentDone.Show();
+                LogWrapper.LogMessage("frmSyncManager - SetMaxProgress", "leave");
+            }
         }
 
         public void ShowOtherProgressBar(string fileName)
         {
-            LogWrapper.LogMessage("frmSyncManager - ShowOtherProgressBar", "enter");
-            lblStatusL3.Text = fileName;
-            pbSyncProgress.Maximum = 0;
-            pbSyncProgress.Value = 0;
-
-            if (pbSyncProgress.Style != ProgressBarStyle.Marquee)
+            if (this.InvokeRequired)
             {
-                pbSyncProgress.Style = ProgressBarStyle.Marquee;
-                pbSyncProgress.MarqueeAnimationSpeed = 200;
-            }
+                this.Invoke((MethodInvoker)delegate
+                {
+                    LogWrapper.LogMessage("frmSyncManager - ShowOtherProgressBar", "enter");
+                    lblStatusL3.Text = fileName;
+                    pbSyncProgress.Maximum = 0;
+                    pbSyncProgress.Value = 0;
 
-            if (false == pbSyncProgress.Visible)
-            {
-                pbSyncProgress.Visible = true;
-                pbSyncProgress.Show();
+                    if (pbSyncProgress.Style != ProgressBarStyle.Marquee)
+                    {
+                        pbSyncProgress.Style = ProgressBarStyle.Marquee;
+                        pbSyncProgress.MarqueeAnimationSpeed = 200;
+                    }
+
+                    if (false == pbSyncProgress.Visible)
+                    {
+                        pbSyncProgress.Visible = true;
+                        pbSyncProgress.Show();
+                    }
+                    pbSyncProgress.Refresh();
+                    lblPercentDone.Visible = true;
+                    lblPercentDone.Show();
+                    LogWrapper.LogMessage("frmSyncManager - ShowOtherProgressBar", "leave");
+                });
             }
-            pbSyncProgress.Refresh();
-            lblPercentDone.Visible = true;
-            lblPercentDone.Show();
-            LogWrapper.LogMessage("frmSyncManager - ShowOtherProgressBar", "leave");
+            else
+            {
+                LogWrapper.LogMessage("frmSyncManager - ShowOtherProgressBar", "enter");
+                lblStatusL3.Text = fileName;
+                pbSyncProgress.Maximum = 0;
+                pbSyncProgress.Value = 0;
+
+                if (pbSyncProgress.Style != ProgressBarStyle.Marquee)
+                {
+                    pbSyncProgress.Style = ProgressBarStyle.Marquee;
+                    pbSyncProgress.MarqueeAnimationSpeed = 200;
+                }
+
+                if (false == pbSyncProgress.Visible)
+                {
+                    pbSyncProgress.Visible = true;
+                    pbSyncProgress.Show();
+                }
+                pbSyncProgress.Refresh();
+                lblPercentDone.Visible = true;
+                lblPercentDone.Show();
+                LogWrapper.LogMessage("frmSyncManager - ShowOtherProgressBar", "leave");
+            }
         }
 
         //To increment progress bar this is a call back function 
         public void CallbackSyncProgress(double filesize)
         {
-            LogWrapper.LogMessage("frmSyncManager - CallbackSyncProgress", "enter");
-            try
+            if (this.InvokeRequired)
             {
-                if (pbSyncProgress.Value + filesize > pbSyncProgress.Maximum)
-                    pbSyncProgress.Value = pbSyncProgress.Maximum;
-                else
-                    pbSyncProgress.Value += (int)filesize;
-                if (0 == pbSyncProgress.Maximum)
+                this.Invoke((MethodInvoker)delegate
                 {
-                    // For 0 byte transfers and operations such as delete, copy, move, etc....
-                    pbSyncProgress.Maximum = 1;
-                    pbSyncProgress.Value = 1;
-                }
-                pbSyncProgress.Refresh();
+                    LogWrapper.LogMessage("frmSyncManager - CallbackSyncProgress", "enter");
+                    try
+                    {
+                        if (pbSyncProgress.Value + filesize > pbSyncProgress.Maximum)
+                            pbSyncProgress.Value = pbSyncProgress.Maximum;
+                        else
+                            pbSyncProgress.Value += (int)filesize;
+                        if (0 == pbSyncProgress.Maximum)
+                        {
+                            // For 0 byte transfers and operations such as delete, copy, move, etc....
+                            pbSyncProgress.Maximum = 1;
+                            pbSyncProgress.Value = 1;
+                        }
+                        pbSyncProgress.Refresh();
 
-                if (pbSyncProgress.Maximum > 0)
-                {
-                    double progress = ((double)pbSyncProgress.Value / pbSyncProgress.Maximum) * 100.0;
-                    lblPercentDone.Text = Convert.ToString((int)progress) + "%";
-                }
-                else
-                {
-                    lblPercentDone.Text = "100%";
-                }
+                        if (pbSyncProgress.Maximum > 0)
+                        {
+                            double progress = ((double)pbSyncProgress.Value / pbSyncProgress.Maximum) * 100.0;
+                            lblPercentDone.Text = Convert.ToString((int)progress) + "%";
+                        }
+                        else
+                        {
+                            lblPercentDone.Text = "100%";
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        LogWrapper.LogMessage("frmSyncManager - CallBackSyncProgress", "Caught exception: " + ex.Message);
+                        LogWrapper.LogMessage("frmSyncManager - CallBackSyncProgress", "Caught exception Maximum and actual value is: " + pbSyncProgress.Maximum + " , " + pbSyncProgress.Value);
+                    }
+                    LogWrapper.LogMessage("frmSyncManager - CallbackSyncProgress", "leave");
+                });
             }
-            catch(Exception ex)
+            else
             {
-                LogWrapper.LogMessage("frmSyncManager - CallBackSyncProgress", "Caught exception: " + ex.Message);
-                LogWrapper.LogMessage("frmSyncManager - CallBackSyncProgress", "Caught exception Maximum and actual value is: " + pbSyncProgress.Maximum + " , " + pbSyncProgress.Value);
+                LogWrapper.LogMessage("frmSyncManager - CallbackSyncProgress", "enter");
+                try
+                {
+                    if (pbSyncProgress.Value + filesize > pbSyncProgress.Maximum)
+                        pbSyncProgress.Value = pbSyncProgress.Maximum;
+                    else
+                        pbSyncProgress.Value += (int)filesize;
+                    if (0 == pbSyncProgress.Maximum)
+                    {
+                        // For 0 byte transfers and operations such as delete, copy, move, etc....
+                        pbSyncProgress.Maximum = 1;
+                        pbSyncProgress.Value = 1;
+                    }
+                    pbSyncProgress.Refresh();
+
+                    if (pbSyncProgress.Maximum > 0)
+                    {
+                        double progress = ((double)pbSyncProgress.Value / pbSyncProgress.Maximum) * 100.0;
+                        lblPercentDone.Text = Convert.ToString((int)progress) + "%";
+                    }
+                    else
+                    {
+                        lblPercentDone.Text = "100%";
+                    }
+                }
+                catch (Exception ex)
+                {
+                    LogWrapper.LogMessage("frmSyncManager - CallBackSyncProgress", "Caught exception: " + ex.Message);
+                    LogWrapper.LogMessage("frmSyncManager - CallBackSyncProgress", "Caught exception Maximum and actual value is: " + pbSyncProgress.Maximum + " , " + pbSyncProgress.Value);
+                }
+                LogWrapper.LogMessage("frmSyncManager - CallbackSyncProgress", "leave");
             }
-            LogWrapper.LogMessage("frmSyncManager - CallbackSyncProgress", "leave");
         }
 
         private void InitializeLocalEventsProcess(int progressMax)
