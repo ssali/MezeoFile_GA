@@ -925,6 +925,22 @@ namespace Mezeo
             int nStatusCode = 0;
             string queueName = BasicInfo.GetMacAddress + "-" + BasicInfo.UserName;
 
+            // Added Code to fix issue [ 1680: Crash detecting internet connection ] 
+            if (cLoginDetails == null && (frmParent.checkReferenceCode() > 0))
+            {
+                cLoginDetails = frmParent.loginFromSyncManager();
+            }
+            else
+            {
+                DisableSyncManager();
+                ShowOfflineAtStartUpSyncManager();
+                ShowSyncManagerOffline();
+                SetIsSyncInProgress(false);
+                SyncOfflineMessage();
+                return;
+            }
+            
+
             NQLengthResult nqLengthRes = cMezeoFileCloud.NQGetLength(BasicInfo.ServiceUrl + cLoginDetails.szNQParentUri, queueName, ref nStatusCode);
             if (nStatusCode == ResponseCode.LOGINFAILED1 || nStatusCode == ResponseCode.LOGINFAILED2)
             {
