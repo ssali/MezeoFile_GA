@@ -363,7 +363,7 @@ namespace Mezeo
         {
             var fileinfo = new FileInfo(strSource);
 
-            syncManager.SetMaxProgress(fileinfo.Length, strDestination);
+            syncManager.SetMaxProgress(fileinfo.Length, strSource);
 
             bool bRet = fileCloud.OverWriteFile(strSource, strDestination, ref nStatusCode, syncManager.myDelegate);
             
@@ -403,7 +403,7 @@ namespace Mezeo
         {
             var fileinfo = new FileInfo(strSource);
 
-            syncManager.SetMaxProgress(fileinfo.Length, strDestination);
+            syncManager.SetMaxProgress(fileinfo.Length, strSource);
 
             string strUrl = fileCloud.UploadingFile(strSource, strDestination, ref nStatusCode, syncManager.myDelegate);
             if (nStatusCode != ResponseCode.UPLOADINGFILE)
