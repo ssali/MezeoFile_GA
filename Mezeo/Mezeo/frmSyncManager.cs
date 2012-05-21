@@ -928,9 +928,10 @@ namespace Mezeo
             string queueName = BasicInfo.GetMacAddress + "-" + BasicInfo.UserName;
 
             // Added Code to fix issue [ 1680: Crash detecting internet connection ] 
-            if (cLoginDetails == null && (frmParent.checkReferenceCode() > 0))
+            if (frmParent.checkReferenceCode() > 0)
             {
-                cLoginDetails = frmParent.loginFromSyncManager();
+                if(cLoginDetails == null)
+                    cLoginDetails = frmParent.loginFromSyncManager();
             }
             else
             {
