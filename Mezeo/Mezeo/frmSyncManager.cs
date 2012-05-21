@@ -1036,7 +1036,7 @@ namespace Mezeo
                 strKey += nsResult.StrName;
 
             strPath = BasicInfo.SyncDirPath + "\\" + strKey;
-            lblStatusL3.Text = strPath;
+            //lblStatusL3.Text = strPath;
 
             if (nqDetail.StrEvent == "cdmi_create_complete")
             {
@@ -4054,6 +4054,7 @@ namespace Mezeo
                     if (pbSyncProgress.Style != ProgressBarStyle.Continuous)
                         pbSyncProgress.Style = ProgressBarStyle.Continuous;
 
+                    pbSyncProgress.BringToFront();
                     pbSyncProgress.Visible = true;
                     pbSyncProgress.Show();
                     lblPercentDone.Visible = true;
@@ -4072,6 +4073,7 @@ namespace Mezeo
                 if (pbSyncProgress.Style != ProgressBarStyle.Continuous)
                     pbSyncProgress.Style = ProgressBarStyle.Continuous;
 
+                pbSyncProgress.BringToFront();
                 pbSyncProgress.Visible = true;
                 pbSyncProgress.Show();
                 lblPercentDone.Visible = true;
@@ -4088,21 +4090,23 @@ namespace Mezeo
                 {
                     LogWrapper.LogMessage("frmSyncManager - ShowOtherProgressBar", "enter");
                     lblStatusL3.Text = fileName;
-                    pbSyncProgress.Maximum = 0;
-                    pbSyncProgress.Value = 0;
+                    pbSyncProgress.Maximum = 1;
+                    pbSyncProgress.Value = 1;
 
-                    if (pbSyncProgress.Style != ProgressBarStyle.Marquee)
-                    {
-                        pbSyncProgress.Style = ProgressBarStyle.Marquee;
-                        pbSyncProgress.MarqueeAnimationSpeed = 200;
-                    }
+                    //if (pbSyncProgress.Style != ProgressBarStyle.Marquee)
+                    //{
+                    //    pbSyncProgress.Style = ProgressBarStyle.Marquee;
+                    //    pbSyncProgress.MarqueeAnimationSpeed = 200;
+                    //}
 
                     if (false == pbSyncProgress.Visible)
                     {
                         pbSyncProgress.Visible = true;
                         pbSyncProgress.Show();
                     }
+                    pbSyncProgress.BringToFront();
                     pbSyncProgress.Refresh();
+                    lblPercentDone.Text = "100%";
                     lblPercentDone.Visible = true;
                     lblPercentDone.Show();
                     LogWrapper.LogMessage("frmSyncManager - ShowOtherProgressBar", "leave");
@@ -4112,21 +4116,23 @@ namespace Mezeo
             {
                 LogWrapper.LogMessage("frmSyncManager - ShowOtherProgressBar", "enter");
                 lblStatusL3.Text = fileName;
-                pbSyncProgress.Maximum = 0;
-                pbSyncProgress.Value = 0;
+                pbSyncProgress.Maximum = 1;
+                pbSyncProgress.Value = 1;
 
-                if (pbSyncProgress.Style != ProgressBarStyle.Marquee)
-                {
-                    pbSyncProgress.Style = ProgressBarStyle.Marquee;
-                    pbSyncProgress.MarqueeAnimationSpeed = 200;
-                }
+                //if (pbSyncProgress.Style != ProgressBarStyle.Marquee)
+                //{
+                //    pbSyncProgress.Style = ProgressBarStyle.Marquee;
+                //    pbSyncProgress.MarqueeAnimationSpeed = 200;
+                //}
 
                 if (false == pbSyncProgress.Visible)
                 {
                     pbSyncProgress.Visible = true;
                     pbSyncProgress.Show();
                 }
+                pbSyncProgress.BringToFront();
                 pbSyncProgress.Refresh();
+                lblPercentDone.Text = "100%";
                 lblPercentDone.Visible = true;
                 lblPercentDone.Show();
                 LogWrapper.LogMessage("frmSyncManager - ShowOtherProgressBar", "leave");
