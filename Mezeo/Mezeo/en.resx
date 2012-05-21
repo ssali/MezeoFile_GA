@@ -132,6 +132,9 @@
   <data name="ConflictDetectedModified" xml:space="preserve">
     <value>Conflict Detected</value>
   </data>
+  <data name="ConflictResolveText" xml:space="preserve">
+    <value>Everything is great!    All your files are in sync and there are no conflicts or errors to report at this time.</value>
+  </data>
   <data name="ErrorBlurbConflict1" xml:space="preserve">
     <value> detected a conflict while updating the file. This typically happens when you make a change to a file in your sync folder and the corresponding file in your </value>
   </data>

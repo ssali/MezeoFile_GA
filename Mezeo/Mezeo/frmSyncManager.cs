@@ -756,7 +756,7 @@ namespace Mezeo
 
             if (frmIssuesFound != null && frmIssuesFound.GetItemsInList() > 0)
             {
-                IssueFoundBalloonMessage();
+               IssueFoundBalloonMessage();
             }
             else
             {
@@ -849,12 +849,9 @@ namespace Mezeo
             {
                 if (EventQueue.QueueNotEmpty())
                 {
-                    if (EventQueue.QueueNotEmpty())
-                    {
-                        ShowNextSyncLabel(false);
-                        if (!bwLocalEvents.IsBusy)
-                            bwLocalEvents.RunWorkerAsync();
-                    }
+                    ShowNextSyncLabel(false);
+                    if (!bwLocalEvents.IsBusy)
+                    bwLocalEvents.RunWorkerAsync();                 
                 }
                 else
                 {
@@ -1714,7 +1711,7 @@ namespace Mezeo
             cnotificationManager.HoverText = AboutBox.AssemblyTitle + "\n" + LanguageTranslator.GetValue("SyncIssueFoundText");
 
             frmParent.toolStripMenuItem4.Text = LanguageTranslator.GetValue("SyncManagerMenuIssueFoundText");
- 
+
         }
 
 
@@ -1775,7 +1772,7 @@ namespace Mezeo
             }
         }
 
-        
+
         private void ShowInitialSyncMessage()
         {
             btnSyncNow.Text = LanguageTranslator.GetValue("SyncManagerSyncStopButtonText");
@@ -1803,7 +1800,9 @@ namespace Mezeo
             if (IsStopped)
             {
                 if (frmIssuesFound != null && frmIssuesFound.GetItemsInList() > 0)
+                {
                     IssueFoundBalloonMessage();
+                }
                 else
                 {
                     SyncStoppedBalloonMessage();
@@ -1813,9 +1812,13 @@ namespace Mezeo
             else
             {
                 if (frmIssuesFound != null && frmIssuesFound.GetItemsInList() > 0)
-                    IssueFoundBalloonMessage();
+                {
+                      IssueFoundBalloonMessage();
+                }
                 else
-                    InitialSyncBalloonMessage();
+                {
+                      InitialSyncBalloonMessage();
+                }
             }
 
             lblStatusL3.Text = LanguageTranslator.GetValue("SyncManagerStatusLastSyncLabel") + " " + lastSync.ToString("MMM d, yyyy h:mm tt");

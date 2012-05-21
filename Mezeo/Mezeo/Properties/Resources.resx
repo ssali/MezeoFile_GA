@@ -121,9 +121,9 @@
   <data name="mezeosyncstatus_syncing" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\mezeosyncstatus-syncing.ico;System.Drawing.Icon, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="ic_usage" type="System.Resources.ResXFileRef, System.Windows.Forms">
+  <!--<data name="ic_usage" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\ic_usage.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
+  </data>-->
   <data name="ic_logo" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\ic_logo.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
@@ -142,9 +142,9 @@
   <data name="logo_small_light" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\logo_small_light.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="app_disabled" type="System.Resources.ResXFileRef, System.Windows.Forms">
+  <!--<data name="app_disabled" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\app_disabled.ico;System.Drawing.Icon, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
+  </data>-->
   <data name="app_offline" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\app_offline.ico;System.Drawing.Icon, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
@@ -154,18 +154,18 @@
   <data name="ic_clock" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\ic_clock.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="patch_yellow" type="System.Resources.ResXFileRef, System.Windows.Forms">
+  <!--<data name="patch_yellow" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\patch_yellow.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
+  </data>-->
   <data name="horizontal_seperator" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\horizontal_seperator.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="horizontal_seperator1" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\horizontal_seperator1.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="logo_horizontal_right_click" type="System.Resources.ResXFileRef, System.Windows.Forms">
+  <!--<data name="logo_horizontal_right_click" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\logo_horizontal_right_click.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
+  </data>-->
   <data name="mezeo_menu_logo_large" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\mezeo_menu_logo_large.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
