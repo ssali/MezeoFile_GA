@@ -519,11 +519,13 @@ namespace Mezeo
                 this.Invoke((MethodInvoker)delegate
                 {
                     label1.Visible = bIsShow;
+                    label1.BringToFront();
                 });
             }
             else
             {
                 label1.Visible = bIsShow;
+                label1.BringToFront();
             }
         }
 
@@ -1873,6 +1875,9 @@ namespace Mezeo
 
             lblStatusL3.Text = LanguageTranslator.GetValue("SyncManagerStatusLastSyncLabel") + " " + lastSync.ToString("MMM d, yyyy h:mm tt");
             label1.Text = LanguageTranslator.GetValue("SyncManagerStatusNextSyncAtLabel") + " " + lastSync.AddMinutes(5).ToString("h:mm tt");
+            label1.BringToFront();
+            label1.Visible = true;
+            label1.Show();
             LogWrapper.LogMessage("frmSyncManager - ShowAutoSyncMessage", "leave");
         }
 
