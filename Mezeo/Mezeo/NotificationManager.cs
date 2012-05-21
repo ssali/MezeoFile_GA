@@ -9,7 +9,10 @@ namespace Mezeo
 {
     public class NotificationManager
     {
-        private const int BALLON_TIME_OUT = 100; // time in milli seconds
+        // The OS sets a range (typically from 10-30 seconds).  Anything outside of
+        // the range will be forced into the range.
+        // http://msdn.microsoft.com/en-us/library/ms160064.aspx
+        private const int BALLON_TIME_OUT = 10000; // time in milli seconds
 
         private NotifyIcon cNotifyIcon;
         private string hoverText = "";
