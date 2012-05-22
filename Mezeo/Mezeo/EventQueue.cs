@@ -116,21 +116,24 @@ namespace Mezeo
             {
                 bool bAdd = true;
                 foreach (LocalEvents id in eventListCandidates)
-                //foreach (LocalEvents id in eventList)
                 {
                     if (id.FileName == newEvent.FileName)
                     {
-                        LogWrapper.LogMessage("EventQueue - Add", "Local event already exists for: " + newEvent.FullPath);
-                        id.EventTimeStamp = newEvent.EventTimeStamp;
-                        bAdd = false;
-                        break;
+                        // If a event type is added, removed, renamed, or moved, then go ahead and accept the event.
+                        // If the event is MODIFIED, then update the timestamp of the existing event, but don't add it to the list.
+                        if (newEvent.EventType == LocalEvents.EventsType.FILE_ACTION_MODIFIED)
+                        {
+                            LogWrapper.LogMessage("EventQueue - Add", "Local event already exists for: " + newEvent.FullPath);
+                            id.EventTimeStamp = newEvent.EventTimeStamp;
+                            bAdd = false;
+                            break;
+                        }
                     }
                 }
 
                 if (bAdd)
                 {
                     eventListCandidates.Add(newEvent);
-                    //eventList.Add(newEvent);
                 }
             }
         }
