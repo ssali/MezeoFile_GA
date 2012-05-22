@@ -1059,7 +1059,7 @@ namespace Mezeo
 
             if (nqDetail.StrEvent == "cdmi_create_complete")
             {
-                LogWrapper.LogMessage("frmSyncManager - UpdateFromNQ - ", nqDetail.StrEvent + "-" + strKey + "Enter"); 
+                LogWrapper.LogMessage("frmSyncManager - UpdateFromNQ - ", nqDetail.StrEvent + " - " + strKey + " - Enter"); 
 
                 string strDBKey = dbHandler.GetString(DbHandler.TABLE_NAME, DbHandler.KEY, new string[] { DbHandler.CONTENT_URL }, new string[] { nsResult.StrContentsUri }, new DbType[] { DbType.String });
                 if (strDBKey.Trim().Length == 0)
@@ -1077,11 +1077,11 @@ namespace Mezeo
                 else
                     nStatus = 1;
 
-                LogWrapper.LogMessage("frmSyncManager - UpdateFromNQ - ", nqDetail.StrEvent + "-" + strKey + "Leave"); 
+                LogWrapper.LogMessage("frmSyncManager - UpdateFromNQ - ", nqDetail.StrEvent + " - " + strKey + " - Leave"); 
             }
             else if (nqDetail.StrEvent == "cdmi_modify_complete")
             {
-                LogWrapper.LogMessage("frmSyncManager - UpdateFromNQ - ", nqDetail.StrEvent + "-" + strKey + "Enter"); 
+                LogWrapper.LogMessage("frmSyncManager - UpdateFromNQ - ", nqDetail.StrEvent + " - " + strKey + " - Enter"); 
 
                 string strDBKey = dbHandler.GetString(DbHandler.TABLE_NAME, DbHandler.KEY, new string[] { DbHandler.CONTENT_URL }, new string[] { nsResult.StrContentsUri }, new DbType[] { DbType.String });
                 string strDBEtag = dbHandler.GetString(DbHandler.TABLE_NAME, DbHandler.E_TAG, new string[] { DbHandler.KEY }, new string[] { strDBKey }, new DbType[] { DbType.String });
@@ -1134,21 +1134,21 @@ namespace Mezeo
                     }
                 }
                 nStatus = 1;
-                LogWrapper.LogMessage("frmSyncManager - UpdateFromNQ - ", nqDetail.StrEvent + "-" + strKey + "Leave"); 
+                LogWrapper.LogMessage("frmSyncManager - UpdateFromNQ - ", nqDetail.StrEvent + " - " + strKey + " - Leave"); 
             }
             else if (nqDetail.StrEvent == "cdmi_delete")
             {
-                LogWrapper.LogMessage("frmSyncManager - UpdateFromNQ - ", nqDetail.StrEvent + "-" + strKey + "Enter");
+                LogWrapper.LogMessage("frmSyncManager - UpdateFromNQ - ", nqDetail.StrEvent + " - " + strKey + " - Enter");
 
                 nqEventCdmiDelete(strPath, strKey);
 
                 nStatus = 1;
 
-                LogWrapper.LogMessage("frmSyncManager - UpdateFromNQ - ", nqDetail.StrEvent + "-" + strKey + "Leave"); 
+                LogWrapper.LogMessage("frmSyncManager - UpdateFromNQ - ", nqDetail.StrEvent + " - " + strKey + " - Leave"); 
             }
             else if (nqDetail.StrEvent == "cdmi_rename")
             {
-                LogWrapper.LogMessage("frmSyncManager - UpdateFromNQ - ", nqDetail.StrEvent + "-" + strKey + "Enter"); 
+                LogWrapper.LogMessage("frmSyncManager - UpdateFromNQ - ", nqDetail.StrEvent + " - " + strKey + " - Enter"); 
 
                 string strDBKey = dbHandler.GetString(DbHandler.TABLE_NAME, DbHandler.KEY, new string[] { DbHandler.CONTENT_URL }, new string[] { nsResult.StrContentsUri }, new DbType[] { DbType.String });
                 if (strDBKey.Trim().Length != 0 && strDBKey != strKey)
@@ -1179,11 +1179,11 @@ namespace Mezeo
                     }
                 }
                 nStatus = 1;
-                LogWrapper.LogMessage("frmSyncManager - UpdateFromNQ - ", nqDetail.StrEvent + "-" + strKey + "Leave"); 
+                LogWrapper.LogMessage("frmSyncManager - UpdateFromNQ - ", nqDetail.StrEvent + " - " + strKey + " - Leave"); 
             }
             else if (nqDetail.StrEvent == "cdmi_copy")
             {
-                LogWrapper.LogMessage("frmSyncManager - UpdateFromNQ - ", nqDetail.StrEvent + "-" + strKey + "Enter"); 
+                LogWrapper.LogMessage("frmSyncManager - UpdateFromNQ - ", nqDetail.StrEvent + " - " + strKey + " - Enter"); 
 
                 if (strKey.LastIndexOf("\\") != -1)
                     CheckAndCreateForParentDir(strKey.Substring(0, strKey.LastIndexOf("\\")));
@@ -1293,7 +1293,7 @@ namespace Mezeo
                     dbHandler.Write(fileFolderInfo);
                 }
                 nStatus = 1;
-                LogWrapper.LogMessage("frmSyncManager - UpdateFromNQ - ", nqDetail.StrEvent + "-" + strKey + "Leave"); 
+                LogWrapper.LogMessage("frmSyncManager - UpdateFromNQ - ", nqDetail.StrEvent + " - " + strKey + " - Leave"); 
             }
 
             LogWrapper.LogMessage("frmSyncManager - UpdateFromNQ - ", "Leave");
@@ -1824,7 +1824,6 @@ namespace Mezeo
                 frmParent.toolStripMenuItem4.Text = LanguageTranslator.GetValue("TrayHoverInitialSyncUpToDateText");
             }
         }
-
 
         private void ShowInitialSyncMessage()
         {
@@ -2492,7 +2491,7 @@ namespace Mezeo
 
                 if (lEvent.EventType == LocalEvents.EventsType.FILE_ACTION_MODIFIED)
                 {
-                    LogWrapper.LogMessage("frmSyncManager - HandleEvents - lEvent - ", lEvent.FullPath + "-" + lEvent.EventType.ToString() + "Enter");
+                    LogWrapper.LogMessage("frmSyncManager - HandleEvents - lEvent - ", lEvent.FullPath + " - " + lEvent.EventType.ToString() + " - Enter");
 
                     if ((attr & FileAttributes.Directory) == FileAttributes.Directory)
                             bRet = false;
@@ -2508,12 +2507,12 @@ namespace Mezeo
                             bRet = false;
                         }
                     }
-                    LogWrapper.LogMessage("frmSyncManager - HandleEvents - lEvent - ", lEvent.FullPath + "-" + lEvent.EventType.ToString() + "Leave");
+                    LogWrapper.LogMessage("frmSyncManager - HandleEvents - lEvent - ", lEvent.FullPath + " - " + lEvent.EventType.ToString() + " - Leave");
                 }
 
                 if (lEvent.EventType == LocalEvents.EventsType.FILE_ACTION_ADDED || lEvent.EventType == LocalEvents.EventsType.FILE_ACTION_RENAMED)
                 {
-                    LogWrapper.LogMessage("frmSyncManager - HandleEvents - lEvent - ", lEvent.FullPath + "-" + lEvent.EventType.ToString() + "Enter");
+                    LogWrapper.LogMessage("frmSyncManager - HandleEvents - lEvent - ", lEvent.FullPath + " - " + lEvent.EventType.ToString() + " - Enter");
                     //string strCheck = dbHandler.GetString(DbHandler.TABLE_NAME, DbHandler.CONTENT_URL, DbHandler.KEY + " = '" + lEvent.FileName + "' and " + DbHandler.STATUS + "='SUCCESS'");
 
                     string strCheck = dbHandler.GetString(DbHandler.TABLE_NAME, DbHandler.CONTENT_URL, new string[] { DbHandler.KEY, DbHandler.STATUS }, new string[] { lEvent.FileName, DB_STATUS_SUCCESS }, new DbType[] { DbType.String, DbType.String });
@@ -2523,7 +2522,7 @@ namespace Mezeo
                     else
                         bRet = false;
 
-                    LogWrapper.LogMessage("frmSyncManager - HandleEvents - lEvent - ", lEvent.FullPath + "-" + lEvent.EventType.ToString() + "Leave");
+                    LogWrapper.LogMessage("frmSyncManager - HandleEvents - lEvent - ", lEvent.FullPath + " - " + lEvent.EventType.ToString() + " - Leave");
                 }
 
                 if (lEvent.EventType == LocalEvents.EventsType.FILE_ACTION_ADDED && bRet)
@@ -2579,7 +2578,7 @@ namespace Mezeo
 
                 if (lEvent.EventType == LocalEvents.EventsType.FILE_ACTION_RENAMED)
                 {
-                    LogWrapper.LogMessage("frmSyncManager - HandleEvents - lEvent - ", lEvent.FullPath + "-" + lEvent.EventType.ToString() + "Enter");
+                    LogWrapper.LogMessage("frmSyncManager - HandleEvents - lEvent - ", lEvent.FullPath + " - " + lEvent.EventType.ToString() + " - Enter");
 
                     string strCheck = dbHandler.GetString(DbHandler.TABLE_NAME, DbHandler.CONTENT_URL, new string[] { DbHandler.KEY }, new string[] { lEvent.OldFileName }, new DbType[] { DbType.String });
                     if (strCheck.Trim().Length == 0)
@@ -2618,12 +2617,12 @@ namespace Mezeo
                         }
                     }
 
-                    LogWrapper.LogMessage("frmSyncManager - HandleEvents - lEvent - ", lEvent.FullPath + "-" + lEvent.EventType.ToString() + "Leave");
+                    LogWrapper.LogMessage("frmSyncManager - HandleEvents - lEvent - ", lEvent.FullPath + " - " + lEvent.EventType.ToString() + " - Leave");
                 }
 
                 if (lEvent.EventType == LocalEvents.EventsType.FILE_ACTION_REMOVED)
                 {
-                    LogWrapper.LogMessage("frmSyncManager - HandleEvents - lEvent - ", lEvent.FullPath + "-" + lEvent.EventType.ToString() + "Enter");
+                    LogWrapper.LogMessage("frmSyncManager - HandleEvents - lEvent - ", lEvent.FullPath + " - " + lEvent.EventType.ToString() + " - Enter");
 
                     string strCheck = dbHandler.GetString(DbHandler.TABLE_NAME, DbHandler.CONTENT_URL, new string[] { DbHandler.KEY }, new string[] { lEvent.FileName }, new DbType[] { DbType.String });
                     if (strCheck.Trim().Length == 0)
@@ -2631,7 +2630,7 @@ namespace Mezeo
                     else
                         bRet = true;
 
-                    LogWrapper.LogMessage("frmSyncManager - HandleEvents - lEvent - ", lEvent.FullPath + "-" + lEvent.EventType.ToString() + "Leave");
+                    LogWrapper.LogMessage("frmSyncManager - HandleEvents - lEvent - ", lEvent.FullPath + " - " + lEvent.EventType.ToString() + " - Leave");
                 }
 
                // if (lEvent.EventType != LocalEvents.EventsType.FILE_ACTION_REMOVED)
@@ -2642,7 +2641,7 @@ namespace Mezeo
 
                 if (bRet)
                 {
-                    LogWrapper.LogMessage("frmSyncManager - HandleEvents - lEvent - ", lEvent.FullPath + "AddinDB Enter");
+                    LogWrapper.LogMessage("frmSyncManager - HandleEvents - lEvent - ", lEvent.FullPath + " - AddinDB Enter");
 
                     if (lEvent.EventType == LocalEvents.EventsType.FILE_ACTION_MODIFIED)
                     {
@@ -2657,7 +2656,7 @@ namespace Mezeo
                         AddInDBForRename(lEvent);
                     }
 
-                    LogWrapper.LogMessage("frmSyncManager - HandleEvents - lEvent - ", lEvent.FullPath + "AddinDB Leave");
+                    LogWrapper.LogMessage("frmSyncManager - HandleEvents - lEvent - ", lEvent.FullPath + " - AddinDB Leave");
                 }
               
                 if (!bRet)
@@ -2679,7 +2678,7 @@ namespace Mezeo
 
             if (eModified.Count != 0)
             {
-                LogWrapper.LogMessage("frmSyncManager - HandleEvents eModifiedList -", eModified.Count.ToString() + " Enter");
+                LogWrapper.LogMessage("frmSyncManager - HandleEvents eModifiedList - ", eModified.Count.ToString() + " - Enter");
 
                 foreach (LocalEvents levent in eModified)
                 {
@@ -2688,12 +2687,12 @@ namespace Mezeo
                 events.AddRange(eModified);
                 eModified.Clear();
 
-                LogWrapper.LogMessage("frmSyncManager - HandleEvents eModifiedList -", eModified.Count.ToString() + " Leave");
+                LogWrapper.LogMessage("frmSyncManager - HandleEvents eModifiedList - ", eModified.Count.ToString() + " - Leave");
             }
 
             if (eAddEvents.Count != 0)
             {
-                LogWrapper.LogMessage("frmSyncManager - HandleEvents eAddEventsList -", eAddEvents.Count.ToString() + " Enter");
+                LogWrapper.LogMessage("frmSyncManager - HandleEvents eAddEventsList - ", eAddEvents.Count.ToString() + " - Enter");
 
                 foreach (LocalEvents levent in eAddEvents)
                 {
@@ -2702,12 +2701,12 @@ namespace Mezeo
                 events.AddRange(eAddEvents);
                 eAddEvents.Clear();
 
-                LogWrapper.LogMessage("frmSyncManager - HandleEvents eAddEventsList -", eAddEvents.Count.ToString() + " Leave");
+                LogWrapper.LogMessage("frmSyncManager - HandleEvents eAddEventsList - ", eAddEvents.Count.ToString() + " - Leave");
             }
 
             if (eMove.Count != 0)
             {
-                LogWrapper.LogMessage("frmSyncManager - HandleEvents eMoveList -", eMove.Count.ToString() + " Enter");
+                LogWrapper.LogMessage("frmSyncManager - HandleEvents eMoveList - ", eMove.Count.ToString() + " - Enter");
                 foreach (LocalEvents levent in eMove)
                 {
                     UpdateKeyInDb(levent.OldFileName, levent.FileName);
@@ -2735,7 +2734,7 @@ namespace Mezeo
                 events.AddRange(eMove);
                 eMove.Clear();
 
-                LogWrapper.LogMessage("frmSyncManager - HandleEvents eMoveList -", eMove.Count.ToString() + " Leave");
+                LogWrapper.LogMessage("frmSyncManager - HandleEvents eMoveList - ", eMove.Count.ToString() + " - Leave");
             }
             int returnCode = 1;
 
@@ -4113,7 +4112,7 @@ namespace Mezeo
                     LogWrapper.LogMessage("frmSyncManager - ShowOtherProgressBar", "enter");
                     lblStatusL3.Text = fileName;
                     pbSyncProgress.Maximum = 1;
-                    pbSyncProgress.Value = 1;
+                    pbSyncProgress.Value = 0;
 
                     //if (pbSyncProgress.Style != ProgressBarStyle.Marquee)
                     //{
@@ -4187,10 +4186,12 @@ namespace Mezeo
                         {
                             double progress = ((double)pbSyncProgress.Value / pbSyncProgress.Maximum) * 100.0;
                             lblPercentDone.Text = Convert.ToString((int)progress) + "%";
+                            cnotificationManager.HoverText = AboutBox.AssemblyTitle + "\n" + LanguageTranslator.GetValue("TrayHoverSyncProgressText") + (int)progress + LanguageTranslator.GetValue("TrayHoverSyncProgressInitialText");
                         }
                         else
                         {
                             lblPercentDone.Text = "100%";
+                            cnotificationManager.HoverText = AboutBox.AssemblyTitle + "\n" + LanguageTranslator.GetValue("TrayHoverSyncProgressText") + 100 + LanguageTranslator.GetValue("TrayHoverSyncProgressInitialText");
                         }
                     }
                     catch (Exception ex)
@@ -4222,10 +4223,12 @@ namespace Mezeo
                     {
                         double progress = ((double)pbSyncProgress.Value / pbSyncProgress.Maximum) * 100.0;
                         lblPercentDone.Text = Convert.ToString((int)progress) + "%";
+                        cnotificationManager.HoverText = AboutBox.AssemblyTitle + "\n" + LanguageTranslator.GetValue("TrayHoverSyncProgressText") + (int)progress + LanguageTranslator.GetValue("TrayHoverSyncProgressInitialText");
                     }
                     else
                     {
                         lblPercentDone.Text = "100%";
+                        cnotificationManager.HoverText = AboutBox.AssemblyTitle + "\n" + LanguageTranslator.GetValue("TrayHoverSyncProgressText") + 100 + LanguageTranslator.GetValue("TrayHoverSyncProgressInitialText");
                     }
                 }
                 catch (Exception ex)
