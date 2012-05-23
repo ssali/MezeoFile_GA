@@ -1748,6 +1748,7 @@ namespace Mezeo
             {
                 ShowSyncDisabledMessage();
             }
+           
             LogWrapper.LogMessage("frmSyncManager - ShowSyncMessage", "leave");
         }
 
@@ -4236,6 +4237,7 @@ namespace Mezeo
                     LogWrapper.LogMessage("frmSyncManager - CallBackSyncProgress", "Caught exception: " + ex.Message);
                     LogWrapper.LogMessage("frmSyncManager - CallBackSyncProgress", "Caught exception Maximum and actual value is: " + pbSyncProgress.Maximum + " , " + pbSyncProgress.Value);
                 }
+
                 LogWrapper.LogMessage("frmSyncManager - CallbackSyncProgress", "leave");
             }
         }
@@ -4258,6 +4260,8 @@ namespace Mezeo
             lblStatusL1.Text = LanguageTranslator.GetValue("AppOfflineMenu");
             label1.Text = "";
             lblStatusL3.Text = lblStatusL3.Text = LanguageTranslator.GetValue("SyncManagerStatusLastSyncLabel") + " " + lastSync.ToString("MMM d, yyyy h:mm tt");
+            //Adding following line for fogbugzid: 1489
+            //lblStatusL3.Text = "";
             //btnMoveFolder.Enabled = false;
             //Commeted above line as move folder functinality disable 
             lblPercentDone.Text = "";
@@ -4328,7 +4332,22 @@ namespace Mezeo
             }
             else if ((int)e.Result == SERVER_INACCESSIBLE)
             {
-                ShowLocalEventsCompletedMessage();
+
+                 if (frmParent.checkReferenceCode() > 0)
+                 {
+                     ShowLocalEventsCompletedMessage();
+
+                 }
+                 else
+                 {
+                     DisableSyncManager();
+                     ShowOfflineAtStartUpSyncManager();
+                     ShowSyncManagerOffline();
+                     SetIsSyncInProgress(false);
+                     SyncOfflineMessage();
+                     return;
+                 }
+                
                 // CheckServerStatus(); TODO:check for offline (Modified for server status thread)
                 //DisableSyncManager();
                 //ShowSyncManagerOffline();
