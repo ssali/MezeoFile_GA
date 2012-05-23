@@ -46,9 +46,16 @@ namespace Mezeo
                 {
                     bRet = fileCloud.ContainerMove(strPath, strNewName, strMineType, bPublic, StrParent, ref nStatusCode);
                     if (nStatusCode == ResponseCode.CONTAINERMOVE)
+                    {
+                        if (syncManager.myDelegate != null)
+                            syncManager.myDelegate(1);
+
                         return bRet;
+                    }
                 }
             }
+            if (syncManager.myDelegate != null)
+                syncManager.myDelegate(1);
             return bRet;            
         }
 
@@ -62,9 +69,15 @@ namespace Mezeo
                 {
                     bRet = fileCloud.ContainerRename(strPath, strNewName, ref nStatusCode);
                     if (nStatusCode == ResponseCode.CONTAINERRENAME)
+                    {
+                        if (syncManager.myDelegate != null)
+                            syncManager.myDelegate(1);
                         return bRet;
+                    }
                 }
             }
+            if (syncManager.myDelegate != null)
+                syncManager.myDelegate(1);
             return bRet;
         }
 
@@ -72,7 +85,6 @@ namespace Mezeo
         {
             return fileCloud.Copy(strSource, StrDestination, StrType, ref nStatusCode);
         }
-
         
         public bool Delete(string strPath, ref int nStatusCode, string strDisplayName)
         {
@@ -84,20 +96,23 @@ namespace Mezeo
                 {
                     bRet = fileCloud.Delete(strPath, ref nStatusCode);
                     if (nStatusCode == ResponseCode.DELETE)
+                    {
+                        if (syncManager.myDelegate != null)
+                            syncManager.myDelegate(1);
                         return bRet;
+                    }
                 }
             }
+            if (syncManager.myDelegate != null)
+                syncManager.myDelegate(1);
             return bRet;
         }
 
         public bool DownloadFile(string strSource, string strDestination, double dblFileSizeInBytes, ref int nStatusCode)
         {
-           // MezeoFileSupport.CallbackIncrementProgress myDelegate = new MezeoFileSupport.CallbackIncrementProgress(syncManager.CallbackSyncProgress);
-
             syncManager.SetMaxProgress(dblFileSizeInBytes, strDestination);
 
             bool bRet = fileCloud.DownloadFile(strSource, strDestination, dblFileSizeInBytes, ref nStatusCode, syncManager.myDelegate);
-
 
             if (nStatusCode != ResponseCode.DOWNLOADFILE)
             {
@@ -141,9 +156,15 @@ namespace Mezeo
                 {
                     bRet = fileCloud.FileMove(strPath, strNewName, strMineType, bPublic, StrParent, ref nStatusCode);
                     if (nStatusCode == ResponseCode.FILEMOVE)
+                    {
+                        if (syncManager.myDelegate != null)
+                            syncManager.myDelegate(1);
                         return bRet;
+                    }
                 }
             }
+            if (syncManager.myDelegate != null)
+                syncManager.myDelegate(1);
             return bRet;
         }
 
@@ -157,9 +178,15 @@ namespace Mezeo
                 {
                     bRet = fileCloud.FileRename(strPath, strNewName, strMineType, bPublic, ref nStatusCode);
                     if (nStatusCode == ResponseCode.FILERENAME)
+                    {
+                        if (syncManager.myDelegate != null)
+                            syncManager.myDelegate(1);
                         return bRet;
+                    }
                 }
             }
+            if (syncManager.myDelegate != null)
+                syncManager.myDelegate(1);
             return bRet;
         }
 
@@ -263,9 +290,15 @@ namespace Mezeo
                 {
                     strUrl = fileCloud.NewContainer(strNewContainer, strContentsResource, ref nStatusCode);
                     if (nStatusCode == ResponseCode.NEWCONTAINER)
+                    {
+                        if (syncManager.myDelegate != null)
+                            syncManager.myDelegate(1);
                         return strUrl;
+                    }
                 }
             }
+            if (syncManager.myDelegate != null)
+                syncManager.myDelegate(1);
             return strUrl;
         }
 
