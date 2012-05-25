@@ -70,6 +70,7 @@ namespace Mezeo
                 regHandler.Write("Basic6", autoSync, Microsoft.Win32.RegistryValueKind.Binary, false);
             }
         }
+
         public static bool LoggingEnabled
         {
             get { return loggingEnabled; }
@@ -117,7 +118,7 @@ namespace Mezeo
             }
         }
 
-        public static string GetMacAddress
+        public static string MacAddress
         {
             get
             {
@@ -135,7 +136,7 @@ namespace Mezeo
 
         private static void ReadRegValue()
         {
-            userName = regHandler.Read("Basic1", Microsoft.Win32.RegistryValueKind.Binary,true);
+            userName = regHandler.Read("Basic1", Microsoft.Win32.RegistryValueKind.Binary, true);
             password = regHandler.Read("Basic2", Microsoft.Win32.RegistryValueKind.Binary, true);
             serviceUrl = regHandler.Read("Basic3", Microsoft.Win32.RegistryValueKind.Binary,false);
             syncDirPath = regHandler.Read("Basic4", Microsoft.Win32.RegistryValueKind.String, false);
@@ -179,6 +180,11 @@ namespace Mezeo
                 }
             }
             return macAddresses;
+        }
+
+        public static string GetQueueName()
+        {
+            return MacAddress + "-" + UserName;
         }
     }
 

@@ -39,16 +39,16 @@ namespace Mezeo
                     string argument = BasicInfo.SyncDirPath;
                     System.Diagnostics.Process.Start(argument);
                 }
-         
+
                 return; 
             }
 
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
-            
+
             frmLogin loginForm = new frmLogin();
             bool showLogin = loginForm.showLogin;
-            
+
             if (showLogin)
             {
                 Application.Run(loginForm);
@@ -58,14 +58,12 @@ namespace Mezeo
                 loginForm.Login();
                 Application.Run();
             }
-
         }
 
         static void CurrentDomain_UnhandledException(object sender, UnhandledExceptionEventArgs e)
         {
-            
             Debugger.Instance.logMessage("APP DOMAIN CRASH ", e.ToString());
-            
+
             StackTrace trace = new StackTrace(true);
 
             for (int i = 0; i < trace.FrameCount; i++)
@@ -74,8 +72,6 @@ namespace Mezeo
                 Debugger.Instance.logMessage("High up the call stack, Method: ",  sf.GetMethod().ToString());
                 Debugger.Instance.logMessage("High up the call stack, Method: ", sf.GetFileLineNumber().ToString());
             }
-
-            
         }
     }
 }

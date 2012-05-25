@@ -372,10 +372,9 @@ namespace Mezeo
                 if (IsDisabledByConnection())
                 {
                     int nStatusCode = 0;
-                    string queueName = BasicInfo.GetMacAddress + "-" + BasicInfo.UserName;
                     try
                     {
-                        NQLengthResult nqLengthRes = cMezeoFileCloud.NQGetLength(BasicInfo.ServiceUrl + cLoginDetails.szNQParentUri, queueName, ref nStatusCode);
+                        NQLengthResult nqLengthRes = cMezeoFileCloud.NQGetLength(BasicInfo.ServiceUrl + cLoginDetails.szNQParentUri, BasicInfo.GetQueueName(), ref nStatusCode);
                         if (nStatusCode == ResponseCode.LOGINFAILED1 || nStatusCode == ResponseCode.LOGINFAILED2)
                         {
                             this.Hide();
@@ -814,8 +813,7 @@ namespace Mezeo
                     return -1;
             }
 
-            string queueName = BasicInfo.GetMacAddress + "-" + BasicInfo.UserName;
-            NQLengthResult nqLengthRes = cMezeoFileCloud.NQGetLength(BasicInfo.ServiceUrl + cLoginDetails.szNQParentUri, queueName, ref nStatusCode);
+            NQLengthResult nqLengthRes = cMezeoFileCloud.NQGetLength(BasicInfo.ServiceUrl + cLoginDetails.szNQParentUri, BasicInfo.GetQueueName(), ref nStatusCode);
             if (nStatusCode == ResponseCode.LOGINFAILED1 || nStatusCode == ResponseCode.LOGINFAILED2)
             {
                 this.Hide();
@@ -923,7 +921,6 @@ namespace Mezeo
             SetUpControlForSync();
             Application.DoEvents();
             int nStatusCode = 0;
-            string queueName = BasicInfo.GetMacAddress + "-" + BasicInfo.UserName;
 
             // Added Code to fix issue [ 1680: Crash detecting internet connection ] 
             if (frmParent.checkReferenceCode() > 0)
@@ -940,9 +937,9 @@ namespace Mezeo
                 SyncOfflineMessage();
                 return;
             }
-            
 
-            NQLengthResult nqLengthRes = cMezeoFileCloud.NQGetLength(BasicInfo.ServiceUrl + cLoginDetails.szNQParentUri, queueName, ref nStatusCode);
+
+            NQLengthResult nqLengthRes = cMezeoFileCloud.NQGetLength(BasicInfo.ServiceUrl + cLoginDetails.szNQParentUri, BasicInfo.GetQueueName(), ref nStatusCode);
             if (nStatusCode == ResponseCode.LOGINFAILED1 || nStatusCode == ResponseCode.LOGINFAILED2)
             {
                 this.Hide();
@@ -1044,7 +1041,8 @@ namespace Mezeo
                 return nStatus;
             }
 
-            string strPath = nqDetail.StrParentUri.Substring(cLoginDetails.szNQParentUri.Length +1);
+            int startIndex = Math.Min(cLoginDetails.szNQParentUri.Length + 1, nqDetail.StrParentUri.Length);
+            string strPath = nqDetail.StrParentUri.Substring(startIndex);
             string strKey = strPath.Replace("/" , "\\");
             
             if(nsResult == null)
@@ -1995,20 +1993,28 @@ namespace Mezeo
             LogWrapper.LogMessage("frmSyncManager - CheckForModifyEvent", "enter");
             string strCheck = dbHandler.GetString(DbHandler.TABLE_NAME, DbHandler.CONTENT_URL, new string[] { DbHandler.KEY }, new string[] { lEvent.FileName }, new DbType[] { DbType.String });
             if (strCheck.Trim().Length == 0)
+            {
+                LogWrapper.LogMessage("frmSyncManager - CheckForModifyEvent", "leave");
                 return 2;
+            }
             else
             {
-                DateTime DBModTime = dbHandler.GetDateTime(DbHandler.TABLE_NAME, DbHandler.MODIFIED_DATE, DbHandler.KEY ,lEvent.FileName);
+                DateTime DBModTime = dbHandler.GetDateTime(DbHandler.TABLE_NAME, DbHandler.MODIFIED_DATE, DbHandler.KEY, lEvent.FileName);
 
                 DateTime ActualModTime = File.GetLastWriteTime(lEvent.FullPath);
                 ActualModTime = ActualModTime.AddMilliseconds(-ActualModTime.Millisecond);
                 TimeSpan diff = ActualModTime - DBModTime;
                 if (diff >= TimeSpan.FromSeconds(1) || diff.CompareTo(TimeSpan.Zero) < 0)
+                {
+                    LogWrapper.LogMessage("frmSyncManager - CheckForModifyEvent", "leave");
                     return 1;
+                }
                 else
+                {
+                    LogWrapper.LogMessage("frmSyncManager - CheckForModifyEvent", "leave");
                     return 0;
+                }
             }
-            LogWrapper.LogMessage("frmSyncManager - CheckForModifyEvent", "leave");
         }
 
         # region DB methods 
@@ -3639,9 +3645,8 @@ namespace Mezeo
 
             int nStatusCode = 0;
             NQDetails[] pNQDetails = null;
-            string queueName = BasicInfo.GetMacAddress + "-" + BasicInfo.UserName;
 
-            NQLengthResult nqLengthRange = cMezeoFileCloud.NQGetLength(BasicInfo.ServiceUrl + cLoginDetails.szNQParentUri, queueName, ref nStatusCode);
+            NQLengthResult nqLengthRange = cMezeoFileCloud.NQGetLength(BasicInfo.ServiceUrl + cLoginDetails.szNQParentUri, BasicInfo.GetQueueName(), ref nStatusCode);
             if (nStatusCode == ResponseCode.LOGINFAILED1 || nStatusCode == ResponseCode.LOGINFAILED2)
             {
                 e.Result = CancelReason.LOGIN_FAILED;
@@ -3685,7 +3690,7 @@ namespace Mezeo
                     NQnumToRequest = totalNQLength;
                 }
 
-                pNQDetails = cMezeoFileCloud.NQGetData(BasicInfo.ServiceUrl + cLoginDetails.szNQParentUri, queueName, NQnumToRequest, ref nStatusCode);
+                pNQDetails = cMezeoFileCloud.NQGetData(BasicInfo.ServiceUrl + cLoginDetails.szNQParentUri, BasicInfo.GetQueueName(), NQnumToRequest, ref nStatusCode);
                 if (nStatusCode == ResponseCode.LOGINFAILED1 || nStatusCode == ResponseCode.LOGINFAILED2)
                 {
                     e.Result = CancelReason.LOGIN_FAILED;
@@ -3730,7 +3735,7 @@ namespace Mezeo
                         if (nStatus == 1)
                         {
                             LogWrapper.LogMessage("frmSyncManager - bwNQUpdate_DoWork - ", nq.StrObjectName + " - Delete From NQ");
-                            cMezeoFileCloud.NQDeleteValue(BasicInfo.ServiceUrl + cLoginDetails.szNQParentUri, queueName, 1, ref nStatusCode);
+                            cMezeoFileCloud.NQDeleteValue(BasicInfo.ServiceUrl + cLoginDetails.szNQParentUri, BasicInfo.GetQueueName(), 1, ref nStatusCode);
                             if (nStatusCode == ResponseCode.LOGINFAILED1 || nStatusCode == ResponseCode.LOGINFAILED2)
                             {
                                 e.Result = CancelReason.LOGIN_FAILED;
@@ -3770,7 +3775,7 @@ namespace Mezeo
 
                 totalNQLength -= NQnumToRequest;
 
-                nqLengthRange = cMezeoFileCloud.NQGetLength(BasicInfo.ServiceUrl + cLoginDetails.szNQParentUri, queueName, ref nStatusCode);
+                nqLengthRange = cMezeoFileCloud.NQGetLength(BasicInfo.ServiceUrl + cLoginDetails.szNQParentUri, BasicInfo.GetQueueName(), ref nStatusCode);
                 if (nStatusCode == ResponseCode.LOGINFAILED1 || nStatusCode == ResponseCode.LOGINFAILED2)
                 {
                     e.Result = CancelReason.LOGIN_FAILED;
