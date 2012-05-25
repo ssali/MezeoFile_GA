@@ -110,6 +110,8 @@ namespace Mezeo
 
         public static void Add(LocalEvents newEvent)
         {
+            int indexToRemove = -1;
+
             LogWrapper.LogMessage("EventQueue - Add", "Adding event: (" + newEvent.EventType + ") " + newEvent.FullPath);
             if (newEvent.EventType == LocalEvents.EventsType.FILE_ACTION_RENAMED)
             {
@@ -117,50 +119,90 @@ namespace Mezeo
                 LogWrapper.LogMessage("EventQueue - Add", "              (" + newEvent.EventType + ") new path:" + newEvent.FullPath);
             }
 
-            bool isFile = true;
-            try
-            {
-                var fileInfo = new FileInfo(newEvent.FullPath);
-                if ((fileInfo.Attributes & FileAttributes.Directory) == FileAttributes.Directory)
-                    isFile = false;
-            }
-            catch (Exception ex)
-            {
-                LogWrapper.LogMessage("EventQueue - Add", "Caught exception: " + ex.Message);
-            }
-
             lock (thisLock)
             {
                 bool bAdd = true;
-                foreach (LocalEvents id in eventListCandidates)
+
+                // Only FILE_ACTION_MODIFIED events are possibly ignored, so they are the only ones that
+                // we should spend the effort/time to loop through the list for.
+                if (newEvent.EventType == LocalEvents.EventsType.FILE_ACTION_MODIFIED)
                 {
-                    if (id.FileName == newEvent.FileName)
+                    bool isFile = File.Exists(newEvent.FullPath);
+
+                    foreach (LocalEvents id in eventListCandidates)
                     {
-                        if (isFile)
+                        if (id.FileName == newEvent.FileName)
                         {
-                            // If a event type is added, removed, renamed, or moved, then go ahead and accept the event.
-                            // If the new event is MODIFIED and the existing is ADDED, then update the timestamp of the
-                            // existing event, but don't add it to the list.
-                            if ((id.EventType == LocalEvents.EventsType.FILE_ACTION_ADDED) &&
-                                (newEvent.EventType == LocalEvents.EventsType.FILE_ACTION_MODIFIED))
+                            if (isFile)
                             {
-                                LogWrapper.LogMessage("EventQueue - Add", "Local event already exists for: " + newEvent.FullPath);
-                                id.EventTimeStamp = newEvent.EventTimeStamp;
-                                bAdd = false;
-                                break;
+                                // If a event type is added, removed, renamed, or moved, then go ahead and accept the event.
+                                // If the new event is MODIFIED and the existing is ADDED, then update the timestamp of the
+                                // existing event, but don't add it to the list.
+                                if ((id.EventType == LocalEvents.EventsType.FILE_ACTION_ADDED) ||
+                                    (id.EventType == LocalEvents.EventsType.FILE_ACTION_MODIFIED))
+                                {
+                                    LogWrapper.LogMessage("EventQueue - Add", "Local event already exists for: " + newEvent.FullPath);
+                                    id.EventTimeStamp = newEvent.EventTimeStamp;
+                                    bAdd = false;
+                                    break;
+                                }
                             }
-                        }
-                        else
-                        {
-                            // For directories, ignore any FILE_ACTION_MODIFIED events.  They should not reset the time either.
-                            if (LocalEvents.EventsType.FILE_ACTION_MODIFIED == newEvent.EventType)
+                            else
                             {
+                                // For directories, ignore any FILE_ACTION_MODIFIED events.  They should not reset the time either.
                                 LogWrapper.LogMessage("EventQueue - Add", "Local event already exists for: " + newEvent.FullPath);
                                 bAdd = false;
                                 break;
                             }
                         }
                     }
+                }
+                else if (newEvent.EventType == LocalEvents.EventsType.FILE_ACTION_RENAMED)
+                {
+                    bool isFile = File.Exists(newEvent.FullPath);
+                    if (isFile)
+                    {
+                        // If something locally has been renamed, then look through the existing events
+                        // and see if there is a 'created' event for the old path.  If so, then the
+                        // existing event MUST be changed so the path reflects the new path.  Otherwise
+                        // no file will be uploaded (the local file has been renamed) and the rename
+                        // won't occur on the server since the file wasn't uploaded.
+                        bool foundAddEvent = false;
+                        foreach (LocalEvents id in eventListCandidates)
+                        {
+                            if ((id.FileName == newEvent.OldFileName) && (id.EventType == LocalEvents.EventsType.FILE_ACTION_ADDED))
+                            {
+                                // Set the path to the new path so the correct folder is created or file is uploaded.
+                                // Set the event to FILE_ACTION_MODIFIED so that a new version of the file is uploaded.
+                                LogWrapper.LogMessage("EventQueue - Add", "Local ADDED event already exists for: " + newEvent.FullPath);
+                                LogWrapper.LogMessage("EventQueue - Add", "Changing existing path from " + id.FullPath + " to " + newEvent.FullPath);
+                                LogWrapper.LogMessage("EventQueue - Add", "Changing existing event from " + id.EventType + " to FILE_ACTION_MODIFIED");
+                                id.FullPath = newEvent.FullPath;
+                                id.FileName = newEvent.FileName;
+                                id.EventType = LocalEvents.EventsType.FILE_ACTION_MODIFIED;
+                                bAdd = false;
+                                foundAddEvent = true;
+                            }
+                            if (foundAddEvent)
+                            {
+                                // If a FILE_ACTION_ADDED event was modified, then we keep looking for a FILE_ACTION_REMOVED
+                                // action as well and remove/change it to something else.
+                                if ((id.FileName == newEvent.FileName) && (id.EventType == LocalEvents.EventsType.FILE_ACTION_REMOVED))
+                                {
+                                    // The delete action for the file should be deleted since it would delete the file
+                                    // that will now be uploaded.
+                                    indexToRemove = eventListCandidates.IndexOf(id);
+                                    LogWrapper.LogMessage("EventQueue - Add", "Removing delete action for: " + newEvent.FullPath);
+                                    break;
+                                }
+                            }
+                        }
+                    }
+                }
+
+                if (-1 != indexToRemove)
+                {
+                    eventListCandidates.RemoveAt(indexToRemove);
                 }
 
                 if (bAdd)
