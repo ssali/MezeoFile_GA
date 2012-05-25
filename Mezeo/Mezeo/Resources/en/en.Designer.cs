@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace Mezeo {
+namespace Mezeo.Resources.en {
     using System;
     
     
@@ -39,7 +39,7 @@ namespace Mezeo {
         internal static global::System.Resources.ResourceManager ResourceManager {
             get {
                 if (object.ReferenceEquals(resourceMan, null)) {
-                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("Mezeo.en", typeof(en).Assembly);
+                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("Mezeo.Resources.en.en", typeof(en).Assembly);
                     resourceMan = temp;
                 }
                 return resourceMan;
@@ -66,6 +66,87 @@ namespace Mezeo {
         internal static string AppOfflineMenu {
             get {
                 return ResourceManager.GetString("AppOfflineMenu", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Mezeo Software.
+        /// </summary>
+        internal static string BrAssemblyCompany {
+            get {
+                return ResourceManager.GetString("BrAssemblyCompany", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Copyright © 2009 - 2012.
+        /// </summary>
+        internal static string BrAssemblyCopyright {
+            get {
+                return ResourceManager.GetString("BrAssemblyCopyright", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to MezeoFile for Windows.
+        /// </summary>
+        internal static string BrAssemblyProduct {
+            get {
+                return ResourceManager.GetString("BrAssemblyProduct", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to MezeoFile Setup.
+        /// </summary>
+        internal static string BrCaptionFileMissingDialog {
+            get {
+                return ResourceManager.GetString("BrCaptionFileMissingDialog", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Your MezeoFile folder was not found in its expected location:.
+        /// </summary>
+        internal static string BrExpectedLocation {
+            get {
+                return ResourceManager.GetString("BrExpectedLocation", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Cancel sync and close MezeoFile now?.
+        /// </summary>
+        internal static string BrMezeoExitString2 {
+            get {
+                return ResourceManager.GetString("BrMezeoExitString2", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to https://demo.mezeofile.com.
+        /// </summary>
+        internal static string BrServerUrlCueText {
+            get {
+                return ResourceManager.GetString("BrServerUrlCueText", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Select the desired location for the MezeoFile folder:.
+        /// </summary>
+        internal static string BrSyncManagerMoveFolderDesc {
+            get {
+                return ResourceManager.GetString("BrSyncManagerMoveFolderDesc", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to MezeoFile.
+        /// </summary>
+        internal static string BrSyncManagerTitle {
+            get {
+                return ResourceManager.GetString("BrSyncManagerTitle", resourceCulture);
             }
         }
         
@@ -210,15 +291,6 @@ namespace Mezeo {
         internal static string ErrorBlurbUpload3 {
             get {
                 return ResourceManager.GetString("ErrorBlurbUpload3", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Your MezeoFile folder was not found in its expected location:.
-        /// </summary>
-        internal static string ExpectedLocation {
-            get {
-                return ResourceManager.GetString("ExpectedLocation", resourceCulture);
             }
         }
         
@@ -394,15 +466,6 @@ namespace Mezeo {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Cancel sync and close MezeoFile now?.
-        /// </summary>
-        internal static string MezeoExitString2 {
-            get {
-                return ResourceManager.GetString("MezeoExitString2", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Password.
         /// </summary>
         internal static string PasswordCueText {
@@ -412,11 +475,11 @@ namespace Mezeo {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to https://demo.mezeofile.com.
+        ///   Looks up a localized string similar to 100%.
         /// </summary>
-        internal static string ServerUrlCueText {
+        internal static string ProgressBarComplete {
             get {
-                return ResourceManager.GetString("ServerUrlCueText", resourceCulture);
+                return ResourceManager.GetString("ProgressBarComplete", resourceCulture);
             }
         }
         
@@ -547,15 +610,6 @@ namespace Mezeo {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Select the desired location for the MezeoFile folder:.
-        /// </summary>
-        internal static string SyncManagerMoveFolderDesc {
-            get {
-                return ResourceManager.GetString("SyncManagerMoveFolderDesc", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Off.
         /// </summary>
         internal static string SyncManagerOffButtonText {
@@ -651,15 +705,6 @@ namespace Mezeo {
         internal static string SyncManagerSyncStopButtonText {
             get {
                 return ResourceManager.GetString("SyncManagerSyncStopButtonText", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to MezeoFile.
-        /// </summary>
-        internal static string SyncManagerTitle {
-            get {
-                return ResourceManager.GetString("SyncManagerTitle", resourceCulture);
             }
         }
         
@@ -813,15 +858,6 @@ namespace Mezeo {
         internal static string TrayHoverSyncProgressText {
             get {
                 return ResourceManager.GetString("TrayHoverSyncProgressText", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to http://www.slesa.de/download/updates/HelloSparkle/versioninfo.xml.
-        /// </summary>
-        internal static string UpdreadRSSFeed {
-            get {
-                return ResourceManager.GetString("UpdreadRSSFeed", resourceCulture);
             }
         }
         

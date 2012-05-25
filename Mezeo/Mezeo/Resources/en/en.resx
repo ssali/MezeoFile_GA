@@ -120,6 +120,33 @@
   <data name="AppOfflineMenu" xml:space="preserve">
     <value>Sync is offline</value>
   </data>
+  <data name="BrAssemblyCompany" xml:space="preserve">
+    <value>Mezeo Software</value>
+  </data>
+  <data name="BrAssemblyCopyright" xml:space="preserve">
+    <value>Copyright © 2009 - 2012</value>
+  </data>
+  <data name="BrAssemblyProduct" xml:space="preserve">
+    <value>MezeoFile for Windows</value>
+  </data>
+  <data name="BrCaptionFileMissingDialog" xml:space="preserve">
+    <value>MezeoFile Setup</value>
+  </data>
+  <data name="BrExpectedLocation" xml:space="preserve">
+    <value>Your MezeoFile folder was not found in its expected location:</value>
+  </data>
+  <data name="BrMezeoExitString2" xml:space="preserve">
+    <value>Cancel sync and close MezeoFile now?</value>
+  </data>
+  <data name="BrServerUrlCueText" xml:space="preserve">
+    <value>https://demo.mezeofile.com</value>
+  </data>
+  <data name="BrSyncManagerMoveFolderDesc" xml:space="preserve">
+    <value>Select the desired location for the MezeoFile folder:</value>
+  </data>
+  <data name="BrSyncManagerTitle" xml:space="preserve">
+    <value>MezeoFile</value>
+  </data>
   <data name="ClickNoExit" xml:space="preserve">
     <value>Click "No" to exit the application and then re-run the application after you have returned the folder to its expected location.  The application will resume automatic syncing with your online account.</value>
   </data>
@@ -167,9 +194,6 @@
   </data>
   <data name="ErrorBlurbUpload3" xml:space="preserve">
     <value>This is typically caused by internet or service interruptions and is usually resolved automatically.  Another upload attempt will be made during the next sync cycle.</value>
-  </data>
-  <data name="ExpectedLocation" xml:space="preserve">
-    <value>Your MezeoFile folder was not found in its expected location:</value>
   </data>
   <data name="FolderMoved" xml:space="preserve">
     <value>The folder may have been moved, renamed, or deleted.</value>
@@ -228,14 +252,11 @@
   <data name="MezeoExitString1" xml:space="preserve">
     <value>A sync is currently in progress.</value>
   </data>
-  <data name="MezeoExitString2" xml:space="preserve">
-    <value>Cancel sync and close MezeoFile now?</value>
-  </data>
   <data name="PasswordCueText" xml:space="preserve">
     <value>Password</value>
   </data>
-  <data name="ServerUrlCueText" xml:space="preserve">
-    <value>https://demo.mezeofile.com</value>
+  <data name="ProgressBarComplete" xml:space="preserve">
+    <value>100%</value>
   </data>
   <data name="SyncIssueFoundText" xml:space="preserve">
     <value>Issues found. Launch Sync Manager to review.</value>
@@ -279,9 +300,6 @@
   <data name="SyncManagerMoveFolderButtonText" xml:space="preserve">
     <value>Move Folder</value>
   </data>
-  <data name="SyncManagerMoveFolderDesc" xml:space="preserve">
-    <value>Select the desired location for the MezeoFile folder:</value>
-  </data>
   <data name="SyncManagerOffButtonText" xml:space="preserve">
     <value>Off</value>
   </data>
@@ -314,9 +332,6 @@
   </data>
   <data name="SyncManagerSyncStopButtonText" xml:space="preserve">
     <value>Stop Sync</value>
-  </data>
-  <data name="SyncManagerTitle" xml:space="preserve">
-    <value>MezeoFile</value>
   </data>
   <data name="SyncManagerTrayEnableOnText" xml:space="preserve">
     <value>Enable (click ON) from Sync Manager.</value>
@@ -368,9 +383,6 @@
   </data>
   <data name="TrayHoverSyncProgressText" xml:space="preserve">
     <value> Sync in progress...</value>
-  </data>
-  <data name="UpdreadRSSFeed" xml:space="preserve">
-    <value>http://www.slesa.de/download/updates/HelloSparkle/versioninfo.xml</value>
   </data>
   <data name="UsageNotAvailable" xml:space="preserve">
     <value>Not Available</value>

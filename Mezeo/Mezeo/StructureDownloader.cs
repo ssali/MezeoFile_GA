@@ -33,7 +33,7 @@ namespace Mezeo
         Queue<LocalItemDetails> queue;
         ThreadLockObject lockObject;
         string cRootContainerUrl;
-        CloudService cFileCloud;//=new MezeoFileCloud();
+        CloudService cFileCloud;
 
         bool isRootContainer = false;
 
@@ -48,7 +48,6 @@ namespace Mezeo
 
             LogWrapper.LogMessage("StructureDownloader - Constructor Call", "Content Url: " + rootContainerUrl);
             LogWrapper.LogMessage("StructureDownloader - Constructor", "Leave");
-           // Debugger.Instance.Instance.ShowLogger();
         }
 
         public void PrepareStructure(LocalItemDetails lItemdDetails)

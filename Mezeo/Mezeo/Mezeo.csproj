@@ -44,7 +44,7 @@
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
     <OutputPath>bin\Release\</OutputPath>
-    <DefineConstants>TRACE;DEBUG; MEZEO32</DefineConstants>
+    <DefineConstants>TRACE;DEBUG</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
@@ -75,9 +75,9 @@
       <HintPath>..\..\NetSparkle-1.0.83\AppLimit.NetSparkle.Net40.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="MezeoFileSupport, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+    <Reference Include="MezeoFileSupport, Version=2.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\Dlls\MezeoFileSupport.dll</HintPath>
+      <HintPath>bin\Release\MezeoFileSupport.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.VisualBasic, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
@@ -118,7 +118,7 @@
     <Compile Include="DbHandler.cs" />
     <Compile Include="DbKeyModDate.cs" />
     <Compile Include="Debugger.cs" />
-    <Compile Include="en.Designer.cs">
+    <Compile Include="Resources\en\en.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
       <DependentUpon>en.resx</DependentUpon>
@@ -183,7 +183,7 @@
       <DependentUpon>Resources.resx</DependentUpon>
       <DesignTime>True</DesignTime>
     </Compile>
-    <EmbeddedResource Include="en.resx">
+    <EmbeddedResource Include="Resources\en\en.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>en.Designer.cs</LastGenOutput>
       <SubType>Designer</SubType>
@@ -231,13 +231,7 @@
     </BootstrapperPackage>
   </ItemGroup>
   <ItemGroup>
-    <None Include="Resources\logo_horizontal_right_click.bmp" />
-  </ItemGroup>
-  <ItemGroup>
     <None Include="Resources\patch_green.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Resources\patch_yellow.png" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\ic_clock.png" />
@@ -246,16 +240,10 @@
     <None Include="Resources\ic_logo.png" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Resources\ic_usage.png" />
-  </ItemGroup>
-  <ItemGroup>
     <None Include="Resources\mezeosyncstatus-syncing.ico" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\MezeoVault.ico" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Resources\app_disabled.ico" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\app_offline.ico" />
@@ -268,9 +256,6 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\horizontal_seperator1.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Resources\logo_horizontal_right_click.png" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\meze_menu_logo_small.png" />

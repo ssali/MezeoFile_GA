@@ -24,13 +24,9 @@ namespace Mezeo
                 
                 for (int i = 0; i < names.Length; i++)
                 {
-                    //"Language", "Resources Name: " + names[i]);
-
                     if (Path.GetExtension(names[i]).Equals(".resources", StringComparison.OrdinalIgnoreCase))
                     {
                         supportedLanguages.Add(Path.GetFileNameWithoutExtension(names[i]));
-                        
-                        //"Language", "Language Name: " + Path.GetFileNameWithoutExtension(names[i]));
                     }
                 }
             }
@@ -39,16 +35,12 @@ namespace Mezeo
  
         public static ResourceManager GetResourceManager(string languageCode) 
         {
-            //languageCode = "Mezeo." + languageCode;
-            //"Language", "Getting resource manager for: " + languageCode);
             foreach (string name in GetSupportedLanguages()) 
             { 
                 string[] arrLanguageCode = Regex.Split(name,"[ ./]");
  
                 string supportedLanuageCode = arrLanguageCode[arrLanguageCode.Length - 1];
-
-                //"Language", "Supported Language code: " + supportedLanuageCode);
-                
+      
                 if (supportedLanuageCode.Equals(languageCode, StringComparison.OrdinalIgnoreCase)) 
                 { 
                     ResourceManager resMan = new ResourceManager(name, Assembly.GetExecutingAssembly()); 

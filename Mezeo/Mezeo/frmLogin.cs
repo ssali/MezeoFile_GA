@@ -25,10 +25,9 @@ namespace Mezeo
     {
         NotificationManager notificationManager;
         CloudService mezeoFileCloud;
-        //MezeoFileSupport.MezeoFileCloud mezeoFileCloud;
+        
         MezeoFileSupport.LoginDetails loginDetails;
         frmSyncManager syncManager;
-       // private bool internetConnection = false;
 
         public bool isLoginSuccess = false;
         public bool showLogin = false;
@@ -36,18 +35,18 @@ namespace Mezeo
         private Sparkle _sparkle;
 
         //Adding for installer with upgread
-       // static uint s_uTaskbarRestart;
+       //static uint s_uTaskbarRestart;
         public static AutoResetEvent _Appexit = new AutoResetEvent(false);
        
         public frmLogin()
         {
             InitializeComponent();
 
-#if MEZEO32
+        #if MEZEO32
             string osVersion = "32";
-#else
+        #else
             string osVersion = "64";
-#endif
+        #endif
             string RSSFeed = "";
 
             this.Icon = Properties.Resources.MezeoVault;
@@ -59,7 +58,6 @@ namespace Mezeo
             notificationManager.NotificationHandler = this.niSystemTray;
 
             niSystemTray.ContextMenuStrip = cmSystemTrayLogin;
-            //Debugger.ShowLogger();
             
             mezeoFileCloud = new CloudService();
 
@@ -112,7 +110,7 @@ namespace Mezeo
           
             if (syncManager != null && (syncManager.isSyncInProgress || syncManager.isLocalEventInProgress || syncManager.isOfflineWorking))
             {
-                DialogResult dResult = MessageBox.Show(LanguageTranslator.GetValue("MezeoExitString1") + "\n" + LanguageTranslator.GetValue("MezeoExitString2"), AboutBox.AssemblyTitle, MessageBoxButtons.OKCancel);
+                DialogResult dResult = MessageBox.Show(LanguageTranslator.GetValue("MezeoExitString1") + "\n" + LanguageTranslator.GetValue("BrMezeoExitString2"), AboutBox.AssemblyTitle, MessageBoxButtons.OKCancel);
                 if (dResult == DialogResult.Cancel)
                     return;
                     
@@ -195,8 +193,8 @@ namespace Mezeo
             this.Text =   AboutBox.AssemblyTitle + " " + LanguageTranslator.GetValue("LoginFormTitle");
             this.txtUserName.CueText = LanguageTranslator.GetValue("UserIdCueText");
             this.txtPasswrod.CueText=LanguageTranslator.GetValue("PasswordCueText");
-            this.txtServerUrl.CueText = LanguageTranslator.GetValue("ServerUrlCueText");
-            this.txtServerUrl.Text = LanguageTranslator.GetValue("ServerUrlCueText");
+            this.txtServerUrl.CueText = LanguageTranslator.GetValue("BrServerUrlCueText");
+            this.txtServerUrl.Text = LanguageTranslator.GetValue("BrServerUrlCueText");
             this.labelError.Text = "";
 
             isFromSyncMgrVerification = false;
@@ -207,7 +205,6 @@ namespace Mezeo
             }
             else
             {
-                //if (BasicInfo.UserName.Trim().Length == 0 || BasicInfo.Password.Trim().Length == 0 || BasicInfo.ServiceUrl.Trim().Length == 0)
                 if (!BasicInfo.IsCredentialsAvailable)
                 {
                     showLogin = true;
@@ -409,20 +406,6 @@ namespace Mezeo
                 BasicInfo.ServiceUrl = txtServerUrl.Text;
 
                 isLoginSuccess = true;
-                //ShellNotifyIcon.ConnectMyMenu(cmSyncManager.Handle);
-                //niSystemTray.ContextMenuStrip = cmSystemTraySyncMgr;
-                //CheckAndCreateSyncDirectory();
-                //syncManager = new frmSyncManager(mezeoFileCloud, loginDetails, notificationManager);
-                ////syncManager.CreateControl();
-                ////syncManager.Show();
-                //syncManager.CreateControl();
-
-                //syncManager.InitializeSync();
-
-                //if (showLogin)
-                //{
-                //    this.Close();
-                //}
             }
              
             if (showLogin)
@@ -555,8 +538,9 @@ namespace Mezeo
                 {
                     DialogResult checkDir;
 
-                    string message = LanguageTranslator.GetValue("ExpectedLocation") + Environment.NewLine + BasicInfo.SyncDirPath + ". " + Environment.NewLine + Environment.NewLine + LanguageTranslator.GetValue("FolderMoved") + Environment.NewLine + Environment.NewLine + LanguageTranslator.GetValue("ClickNoExit") + Environment.NewLine + Environment.NewLine + LanguageTranslator.GetValue("ClickYesRestore");
-                    string caption = "MezeoFile Setup";
+                    string message = LanguageTranslator.GetValue("BrExpectedLocation") + Environment.NewLine + BasicInfo.SyncDirPath + ". " + Environment.NewLine + Environment.NewLine + LanguageTranslator.GetValue("FolderMoved") + Environment.NewLine + Environment.NewLine + LanguageTranslator.GetValue("ClickNoExit") + Environment.NewLine + Environment.NewLine + LanguageTranslator.GetValue("ClickYesRestore");
+                    //string caption = "MezeoFile Setup";
+                    string caption = LanguageTranslator.GetValue("BrCaptionFileMissingDialog");
                     MessageBoxButtons buttons = MessageBoxButtons.YesNo;
                     MessageBoxDefaultButton defaultbutton = MessageBoxDefaultButton.Button2;
 
@@ -692,7 +676,7 @@ namespace Mezeo
         {
             if (txtServerUrl.Text.Trim().Length == 0)
             {
-                txtServerUrl.Text = LanguageTranslator.GetValue("ServerUrlCueText"); ;
+                txtServerUrl.Text = LanguageTranslator.GetValue("BrServerUrlCueText"); ;
             }
         }
 
