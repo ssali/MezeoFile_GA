@@ -2256,9 +2256,17 @@ namespace Mezeo
                             bIsAlreadyAdded = true;
                     }
 
-                    FileAttributes attr = File.GetAttributes(fi.FullName);
-                    if ((attr & FileAttributes.Hidden) == FileAttributes.Hidden || (attr & FileAttributes.Temporary) == FileAttributes.Temporary)
+                    try
+                    {
+                        FileAttributes attr = File.GetAttributes(fi.FullName);
+                        if ((attr & FileAttributes.Hidden) == FileAttributes.Hidden || (attr & FileAttributes.Temporary) == FileAttributes.Temporary)
+                            bIsAlreadyAdded = true;
+                    }
+                    catch (Exception ex)
+                    {
+                        LogWrapper.LogMessage("frmSyncManager - WalkDirectoryTreeforAddFolder", "Caught exception: " + ex.Message);
                         bIsAlreadyAdded = true;
+                    }
 
                     if (!bIsAlreadyAdded)
                     {

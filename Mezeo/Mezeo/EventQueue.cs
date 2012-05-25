@@ -2,8 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-//using System.Threading;
-//using System.ComponentModel;
+using System.IO;
 
 namespace Mezeo
 {
@@ -112,6 +111,24 @@ namespace Mezeo
         public static void Add(LocalEvents newEvent)
         {
             LogWrapper.LogMessage("EventQueue - Add", "Adding event: (" + newEvent.EventType + ") " + newEvent.FullPath);
+            if (newEvent.EventType == LocalEvents.EventsType.FILE_ACTION_RENAMED)
+            {
+                LogWrapper.LogMessage("EventQueue - Add", "              (" + newEvent.EventType + ") old path:" + newEvent.OldFullPath);
+                LogWrapper.LogMessage("EventQueue - Add", "              (" + newEvent.EventType + ") new path:" + newEvent.FullPath);
+            }
+
+            bool isFile = true;
+            try
+            {
+                var fileInfo = new FileInfo(newEvent.FullPath);
+                if ((fileInfo.Attributes & FileAttributes.Directory) == FileAttributes.Directory)
+                    isFile = false;
+            }
+            catch (Exception ex)
+            {
+                LogWrapper.LogMessage("EventQueue - Add", "Caught exception: " + ex.Message);
+            }
+
             lock (thisLock)
             {
                 bool bAdd = true;
@@ -119,14 +136,29 @@ namespace Mezeo
                 {
                     if (id.FileName == newEvent.FileName)
                     {
-                        // If a event type is added, removed, renamed, or moved, then go ahead and accept the event.
-                        // If the event is MODIFIED, then update the timestamp of the existing event, but don't add it to the list.
-                        if (newEvent.EventType == LocalEvents.EventsType.FILE_ACTION_MODIFIED)
+                        if (isFile)
                         {
-                            LogWrapper.LogMessage("EventQueue - Add", "Local event already exists for: " + newEvent.FullPath);
-                            id.EventTimeStamp = newEvent.EventTimeStamp;
-                            bAdd = false;
-                            break;
+                            // If a event type is added, removed, renamed, or moved, then go ahead and accept the event.
+                            // If the new event is MODIFIED and the existing is ADDED, then update the timestamp of the
+                            // existing event, but don't add it to the list.
+                            if ((id.EventType == LocalEvents.EventsType.FILE_ACTION_ADDED) &&
+                                (newEvent.EventType == LocalEvents.EventsType.FILE_ACTION_MODIFIED))
+                            {
+                                LogWrapper.LogMessage("EventQueue - Add", "Local event already exists for: " + newEvent.FullPath);
+                                id.EventTimeStamp = newEvent.EventTimeStamp;
+                                bAdd = false;
+                                break;
+                            }
+                        }
+                        else
+                        {
+                            // For directories, ignore any FILE_ACTION_MODIFIED events.  They should not reset the time either.
+                            if (LocalEvents.EventsType.FILE_ACTION_MODIFIED == newEvent.EventType)
+                            {
+                                LogWrapper.LogMessage("EventQueue - Add", "Local event already exists for: " + newEvent.FullPath);
+                                bAdd = false;
+                                break;
+                            }
                         }
                     }
                 }
