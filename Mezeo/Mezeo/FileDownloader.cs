@@ -280,11 +280,6 @@ namespace Mezeo
                             }
                         }
                        
-                        //if (downloadEvent != null)
-                        //{
-                        //    downloadEvent(this, new FileDownloaderEvents(downloadObjectName, 0));
-                        //}
-
                     }
                         
                 }

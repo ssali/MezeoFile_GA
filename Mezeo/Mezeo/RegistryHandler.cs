@@ -65,7 +65,6 @@ namespace Mezeo
                 }
                 catch (Exception e)
                 {
-                    //ShowErrorMessage(e, "Reading registry " + KeyName.ToUpper());
                     return null;
                 }
             }

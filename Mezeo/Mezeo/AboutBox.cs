@@ -114,16 +114,19 @@ namespace Mezeo
         private void AboutBox_Load(object sender, EventArgs e)
         {
             this.Text = String.Format("About {0}", AssemblyTitle);
-            this.labelProductName.Text = AssemblyProduct;
+            //This will show Assembly Title
+            //this.Text = LanguageTranslator.GetValue("BrSyncManagerTitle");
+
+            this.labelProductName.Text = LanguageTranslator.GetValue("BrAssemblyProduct");
             this.labelProductName.Width = this.Width - 40;
             
             this.labelVersion.Text = String.Format("Version {0}", AssemblyVersion);
             this.labelVersion.Width = this.Width - 40;
 
-            this.labelCopyright.Text = AssemblyCopyright;
+            this.labelCopyright.Text = LanguageTranslator.GetValue("BrAssemblyCopyright");
             this.labelCopyright.Width = this.Width - 40;
 
-            this.labelCompanyName.Text = AssemblyCompany;
+            this.labelCompanyName.Text = LanguageTranslator.GetValue("BrAssemblyCompany");
             this.labelCompanyName.Width = this.Width - 40;
         }
     }

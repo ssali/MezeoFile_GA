@@ -13,11 +13,7 @@ namespace Mezeo
         FileSystemWatcher fileWatcher;
         string folderToWatch;
         DateTime eventTime;
-        //System.Timers.Timer timer;
-
-        //public delegate void WatchCompleted();
-        //public event WatchCompleted WatchCompletedEvent;
-
+    
         public Watcher(Object lockObject, string folder)
         {
             this.lockObject = lockObject;
@@ -33,20 +29,7 @@ namespace Mezeo
             fileWatcher.Created += new FileSystemEventHandler(fileWatcher_Created);
             fileWatcher.Deleted += new FileSystemEventHandler(fileWatcher_Deleted);
             fileWatcher.Renamed += new RenamedEventHandler(fileWatcher_Renamed);
-            //timer = new System.Timers.Timer();
-            //timer.Elapsed += new System.Timers.ElapsedEventHandler(timer_Elapsed);
-            //timer.Interval = 2 * 1000;
-            //timer.AutoReset = false;
         }
-
-        //void timer_Elapsed(object sender, System.Timers.ElapsedEventArgs e)
-        //{
-        //    if (WatchCompletedEvent != null)
-        //    {
-        //        if (EventQueue.QueueNotEmpty())
-        //            WatchCompletedEvent();
-        //    }
-        //}
 
         public void StartMonitor()
         {
@@ -59,34 +42,23 @@ namespace Mezeo
             fileWatcher.Dispose();
         }
 
-        //private void StampTime()
-        //{
-        //    //eventTime = DateTime.Now;
-        //    //timer.Stop();
-        //    //timer.Start();
-        //}
-
         void fileWatcher_Renamed(object sender, RenamedEventArgs e)
         {
-            //StampTime();
             FillEventsQueue(e, true, LocalEvents.EventsType.FILE_ACTION_RENAMED);
         }
 
         void fileWatcher_Deleted(object sender, FileSystemEventArgs e)
         {
-            //StampTime();
             FillEventsQueue(e, false, LocalEvents.EventsType.FILE_ACTION_REMOVED);           
         }
 
         void fileWatcher_Created(object sender, FileSystemEventArgs e)
         {
-            //StampTime();
             FillEventsQueue(e, false, LocalEvents.EventsType.FILE_ACTION_ADDED);            
         }
 
         void fileWatcher_Changed(object sender, FileSystemEventArgs e)
         {
-            //StampTime();
             FillEventsQueue(e, false, LocalEvents.EventsType.FILE_ACTION_MODIFIED);            
         }
 

@@ -170,9 +170,7 @@ namespace Mezeo
         
         private void panel1_Paint(object sender, PaintEventArgs e)
         {
-            //Rectangle paintRect=new Rectangle(0, 0,panel1.Width, panel1.Height);
-            //LinearGradientBrush brush = new LinearGradientBrush(paintRect, Color.FromArgb(133, 213, 122), Color.FromArgb(38, 160, 31),90.0f);
-            //e.Graphics.FillRectangle(brush, paintRect);
+
         }
         
         private void DrawRoundedRectangle(Graphics gfx, Rectangle Bounds, int CornerRadius, Pen DrawPen, Color FillColor)
@@ -1313,15 +1311,6 @@ namespace Mezeo
                 {
                     DirectoryInfo rootDir = new DirectoryInfo(strPath);
                     WalkDirectoryTreeForDelete(rootDir);
-
-                    //SHFILEOPSTRUCT shOperation = new SHFILEOPSTRUCT();
-                    //shOperation.wFunc = FO_DELETE;
-                    //shOperation.pFrom = strPath;
-                    //shOperation.fFlags = FOF_ALLOWUNDO | FOF_NOCONFIRMATION | FOF_NOERRORUI;
-
-                    //int nRet = SHFileOperation(ref shOperation);
-                    //nRet = GetLastError();
-
                     SendToRecycleBin(strPath, false);
                     //Directory.Delete(strPath);
                     dbHandler.Delete(DbHandler.TABLE_NAME, DbHandler.KEY, strKey);
@@ -1329,14 +1318,7 @@ namespace Mezeo
             }
             else
             {
-                //SHFILEOPSTRUCT shOperation = new SHFILEOPSTRUCT();
-                //shOperation.wFunc = FO_DELETE;
-                //shOperation.pFrom = strPath;
-                //shOperation.fFlags = FOF_ALLOWUNDO | FOF_NOCONFIRMATION | FOF_NOERRORUI;
-
-                //int nRet = SHFileOperation(ref shOperation);
-                //nRet = GetLastError();
-
+           
                 SendToRecycleBin(strPath, true);
                 //File.Delete(strPath);
                 dbHandler.Delete(DbHandler.TABLE_NAME, DbHandler.KEY, strKey);
@@ -2185,14 +2167,6 @@ namespace Mezeo
                 foreach (System.IO.FileInfo fi in files)
                 {
                     string Key = fi.FullName.Substring(BasicInfo.SyncDirPath.Length + 1);
-
-                    //SHFILEOPSTRUCT shOperation = new SHFILEOPSTRUCT();
-                    //shOperation.wFunc = FO_DELETE;
-                    //shOperation.pFrom = fi.FullName;
-                    //shOperation.fFlags = FOF_ALLOWUNDO | FOF_NOCONFIRMATION | FOF_NOERRORUI;
-
-                    //int nRet = SHFileOperation(ref shOperation);
-                    //nRet = GetLastError();
                     SendToRecycleBin(fi.FullName, true);
                    // File.Delete(fi.FullName);
                     dbHandler.Delete(DbHandler.TABLE_NAME, DbHandler.KEY , Key);
@@ -2207,15 +2181,6 @@ namespace Mezeo
                     WalkDirectoryTreeForDelete(dirInfo);
 
                     string Key = dirInfo.FullName.Substring(BasicInfo.SyncDirPath.Length + 1);
-
-                    //SHFILEOPSTRUCT shOperation = new SHFILEOPSTRUCT();
-                    //shOperation.wFunc = FO_DELETE;
-                    //shOperation.pFrom = dirInfo.FullName;
-                    //shOperation.fFlags = FOF_ALLOWUNDO | FOF_NOCONFIRMATION | FOF_NOERRORUI;
-
-                    //int nRet = SHFileOperation(ref shOperation);
-                    //nRet = GetLastError();
-
                     SendToRecycleBin(dirInfo.FullName, false);
                     //Directory.Delete(dirInfo.FullName);
                     dbHandler.Delete(DbHandler.TABLE_NAME, DbHandler.KEY , Key);
@@ -2824,7 +2789,8 @@ namespace Mezeo
             return "";
         }
 
-        //Adding function to put limit on file upload 25MB
+        /* 25MB Need to keep this function for future reference */
+        //Adding function to put limit on file upload 
         private bool checkFileTooLarge(string filePath)
         {
             //FileInfo iFileDetails = new FileInfo(filePath);
@@ -2863,12 +2829,6 @@ namespace Mezeo
                     caller.CancelAsync();
                     return USER_CANCELLED;
                 }
-
-                //if (!IsLocalEventInProgress())
-                //{
-                //    StopLocalSync();
-                //    return;
-                //}
 
                 if (caller != null)
                 {
@@ -3252,11 +3212,7 @@ namespace Mezeo
                                     MarkParentsStatus(lEvent.FullPath, DB_STATUS_SUCCESS);
                                     UpdateDBForRemoveSuccess(lEvent);
                                 }
-                                //else if (nStatusCode != 204 && nStatusCode != 401 && nStatusCode != 403)
-                                //{
-                                //    bRet = false;
-                                //    bOffline = true;
-                                //}
+                       
                             }
 
                             LogWrapper.LogMessage("SyncManager - ProcessLocalEvents", "FILE_ACTION_REMOVED - Leave for file path " + lEvent.FullPath);
@@ -3313,11 +3269,7 @@ namespace Mezeo
                                     LogWrapper.LogMessage("SyncManager - ProcessLocalEvents", "Calling for UpdateDBForRenameSuccess");
                                     UpdateDBForRenameSuccess(lEvent);
                                 }
-                                //else if (nStatusCode != 204 && nStatusCode != 401 && nStatusCode != 403)
-                                //{
-                                //    bRet = false;
-                                //    bOffline = true;
-                                //}
+                   
                             }
                             else
                             {
@@ -3367,11 +3319,7 @@ namespace Mezeo
                                         LogWrapper.LogMessage("SyncManager - ProcessLocalEvents", "Calling UpdateDBForRenameSuccess");
                                         UpdateDBForRenameSuccess(lEvent);
                                     }
-                                    //else if (nStatusCode != 204 && nStatusCode != 401 && nStatusCode != 403)
-                                    //{
-                                    //    bRet = false;
-                                    //    bOffline = true;
-                                    //}
+                
                                 }
                             }
                         }
@@ -3398,34 +3346,8 @@ namespace Mezeo
                 }
             }
 
-            //if (bOffline)
-            //{
-            //    LogWrapper.LogMessage("SyncManager - ProcessLocalEvents", "return with -2");
-            //    return -2;
-            //}
-            int returnCode = 1;
-            //if (LocalEventList.Count != 0)
-            //{
-            //    LogWrapper.LogMessage("SyncManager - ProcessLocalEvents", "LocalEventList.Count NOT ZERO, locking folderWatcherLockObject");
-            //    lock (folderWatcherLockObject)
-            //    {
-            //        if (LocalEventList.Count != 0)
-            //        {
-            //            if (events == null)
-            //                events = new List<LocalEvents>();
-
-            //            LogWrapper.LogMessage("SyncManager - ProcessLocalEvents", "adding LocalEventList to events");
-            //            events.AddRange(LocalEventList);
-            //            LogWrapper.LogMessage("SyncManager - ProcessLocalEvents", "clear LocalEventList");
-            //            LocalEventList.Clear();
-            //        }
-            //    }
-
-            //    LogWrapper.LogMessage("SyncManager - ProcessLocalEvents", "Calling HandleEvents");
-
-            //    returnCode = HandleEvents(caller);
-            //}
-
+           int returnCode = 1;
+          
             SetIsLocalEventInProgress(false);
 
             LogWrapper.LogMessage("SyncManager - ProcessLocalEvents", "Leave");
@@ -4123,12 +4045,6 @@ namespace Mezeo
                     pbSyncProgress.Maximum = 1;
                     pbSyncProgress.Value = 0;
 
-                    //if (pbSyncProgress.Style != ProgressBarStyle.Marquee)
-                    //{
-                    //    pbSyncProgress.Style = ProgressBarStyle.Marquee;
-                    //    pbSyncProgress.MarqueeAnimationSpeed = 200;
-                    //}
-
                     if (false == pbSyncProgress.Visible)
                     {
                         pbSyncProgress.Visible = true;
@@ -4199,7 +4115,9 @@ namespace Mezeo
                         }
                         else
                         {
-                            lblPercentDone.Text = "100%";
+                            //Progress bar will show 100% - making as string in resource file
+                            lblPercentDone.Text = LanguageTranslator.GetValue("ProgressBarComplete");
+                            //lblPercentDone.Text = "100%";
                             cnotificationManager.HoverText = AboutBox.AssemblyTitle + "\n" + LanguageTranslator.GetValue("TrayHoverSyncProgressText") + 100 + LanguageTranslator.GetValue("TrayHoverSyncProgressInitialText");
                         }
                     }
@@ -4236,7 +4154,9 @@ namespace Mezeo
                     }
                     else
                     {
-                        lblPercentDone.Text = "100%";
+                        //Progress bar will show 100% - making as string in resource file
+                        lblPercentDone.Text = LanguageTranslator.GetValue("ProgressBarComplete");
+                        //lblPercentDone.Text = "100%";
                         cnotificationManager.HoverText = AboutBox.AssemblyTitle + "\n" + LanguageTranslator.GetValue("TrayHoverSyncProgressText") + 100 + LanguageTranslator.GetValue("TrayHoverSyncProgressInitialText");
                     }
                 }
@@ -4267,12 +4187,17 @@ namespace Mezeo
             SyncOfflineMessage();
             lblStatusL1.Text = LanguageTranslator.GetValue("AppOfflineMenu");
             label1.Text = "";
-            lblStatusL3.Text = lblStatusL3.Text = LanguageTranslator.GetValue("SyncManagerStatusLastSyncLabel") + " " + lastSync.ToString("MMM d, yyyy h:mm tt");
+
             //Adding following line for fogbugzid: 1489
-            //lblStatusL3.Text = "";
+            if(lastSync.ToString("MMM d, yyyy h:mm tt") == "Jan 1, 0001 12:00 AM")
+                lblStatusL3.Text = "";
+            else  
+                lblStatusL3.Text = lblStatusL3.Text = LanguageTranslator.GetValue("SyncManagerStatusLastSyncLabel") + " " + lastSync.ToString("MMM d, yyyy h:mm tt");
+            
             //btnMoveFolder.Enabled = false;
             //Commeted above line as move folder functinality disable 
-            lblPercentDone.Text = "";
+            
+                lblPercentDone.Text = "";
             pbSyncProgress.Visible = false;
             pbSyncProgress.Hide();
             LogWrapper.LogMessage("frmSyncManager - ShowSyncManagerOffline", "leave");

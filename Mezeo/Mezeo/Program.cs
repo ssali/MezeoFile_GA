@@ -39,10 +39,7 @@ namespace Mezeo
                     string argument = BasicInfo.SyncDirPath;
                     System.Diagnostics.Process.Start(argument);
                 }
-                //else
-                //{
-                //    SwitchToCurrentInstance();
-                //}
+         
                 return; 
             }
 
