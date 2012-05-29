@@ -212,9 +212,20 @@ namespace MezeoFileSupport
         public event FileUploadStoppedEvent uploadStoppedEvent;
 
         //create request format for get details
-        private void OnGetRequest(ref HttpWebRequest webRequest, String strRequestURL, String strAccept, String strXCloudDepth, String strMethod)
+        private void OnGetRequest(ref HttpWebRequest webRequest, String strRequestURL, String strAccept, String strXCloudDepth, String strMethod, String strFilterName)
         {
-	        webRequest = (HttpWebRequest)WebRequest.Create( strRequestURL );
+            //curl -u user:password -H "X-Cloud-Depth: 1" "https://rj.mezeo.net/v2/containers/Yzk0OTFiMmQzMTMyMWY4Y2ExZTExOWYwYTg4YTYzNDI5/contents?filterField=name&filterValue=Pi&filterOperation=ILIKE"
+            //curl -u user:password -H "X-Cloud-Depth: 1" "https://rj.mezeo.net/v2/containers/Yzk0OTFiMmQzMTMyMWY4Y2ExZTExOWYwYTg4YTYzNDI5/contents?count=1&start=2"
+            // Construct the URL to use.  If there is a filter, then add it to the URL.
+            String strRequestURLAndFilter;
+            if (null != strFilterName)
+            {
+                strRequestURLAndFilter = strRequestURL + "?filterField=name&filterOperation=ILIKE&filterValue=" + strFilterName;
+            }
+            else
+                strRequestURLAndFilter = strRequestURL;
+
+            webRequest = (HttpWebRequest)WebRequest.Create(strRequestURLAndFilter);
             //string credentials = Convert.ToBase64String(ASCIIEncoding.ASCII.GetBytes(m_strLoginName + ":" + m_strPassword));
             //webRequest.Headers.Add("Authorization", "Basic " + credentials);
 	        webRequest.Credentials = new NetworkCredential(m_strLoginName, m_strPassword);
@@ -328,7 +339,7 @@ namespace MezeoFileSupport
 	        }
 	        else
 		        fstPersons = new FileStream(strSaveInFile, FileMode.Create);
-	
+
 	        while ((bytes_read = responseStream.Read(buffer, 0, buffer.Length)) > 0)
 	        {
                 if (IncProgress != null)
@@ -346,7 +357,6 @@ namespace MezeoFileSupport
 			        bStatus = false;
                     break;
                 }
-              
 	        }
 
 	        responseStream.Close();
@@ -392,7 +402,7 @@ namespace MezeoFileSupport
                 else
                     StrMimeType = GetMineTypeContainsKey(fileInfo.Extension.ToLower());
             }
-     
+
 	        return StrMimeType;
         }
 
@@ -461,16 +471,17 @@ namespace MezeoFileSupport
 	        m_strLoginName = strLoginName;
 	        m_strPassword = strPassword;
             LoginDetails pLoginDetails = null;
-            
-	        try
+
+            try
 	        {
 		        HttpWebRequest webRequest = null;
-                XmlNode nodeXml, nodeChildXml;
+                XmlNode nodeXml;
                 HttpWebResponse response = null;
 
                 //------------Root Container and Management URI--------------------------
-                OnGetRequest(ref webRequest, strUrl, "application/vnd.csp.cloud2+xml", "", "GET");           //--- RootContainer and Management URI
-                
+                OnGetRequest(ref webRequest, strUrl, "application/vnd.csp.cloud2+xml", "", "GET", null);
+                //--- RootContainer and Management URI
+
                 webRequest.Headers.Add("X-Cloud-Key", StrAPIKey);
 
 		        response = (HttpWebResponse)webRequest.GetResponse();
@@ -515,9 +526,9 @@ namespace MezeoFileSupport
                 response.Close();
 
                 //--------Account information----------------------//
-                OnGetRequest(ref webRequest, strUrl + "/account", "application/vnd.csp.account-info2+xml", "", "GET");   
+                OnGetRequest(ref webRequest, strUrl + "/account", "application/vnd.csp.account-info2+xml", "", "GET", null);   
                 //--- Account Information ---------//
-                
+
                 response = (HttpWebResponse)webRequest.GetResponse();
 
                 nStatusCode = 200;
@@ -584,9 +595,10 @@ namespace MezeoFileSupport
                 m_xmlDocument.RemoveAll();
                 nodeXml.RemoveAll();
                 response.Close();
-		        
+
                 //--------------namespace URI---------------------------------//
-                OnGetRequest(ref webRequest, strUrl + "/namespaces", "", "", "GET");                                        //--- NameSpaces URI
+                OnGetRequest(ref webRequest, strUrl + "/namespaces", "", "", "GET", null);
+                //--- NameSpaces URI
 
                 response = (HttpWebResponse)webRequest.GetResponse();
 
@@ -618,23 +630,23 @@ namespace MezeoFileSupport
 		        //delete pLoginDetails;
 		        return null;
 	        }
-	
+
 	        return pLoginDetails;
         }
 
         //item detials
-        public ItemDetails[] DownloadItemDetails(String strContainer, ref int nStatusCode)
+        public ItemDetails[] DownloadItemDetails(String strContainer, ref int nStatusCode, string strFilterName)
         {
             nStatusCode=0;
             String m_strTemp;
 	        ItemDetails[] pItemDetails = null;
 
             DateTime tmStaticSet = new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc);
-	        //DateTime tmObj;
-	        try
+
+            try
 	        {
 		        HttpWebRequest webRequest = null;
-		        OnGetRequest(ref webRequest, strContainer, "", "1", "Get");
+                OnGetRequest(ref webRequest, strContainer, "", "1", "Get", strFilterName);
 
 		        HttpWebResponse response = (HttpWebResponse)(webRequest.GetResponse());
 		        nStatusCode = 200;
@@ -682,7 +694,7 @@ namespace MezeoFileSupport
 					        pItemDetails[nNodePos].szContentUrl = nodeChildXml.Attributes["xlink:href"].Value;
 					        nodeChildXml.RemoveAll();
 				        }
-				
+
                         nodeChildXml = m_xmlFileList.SelectSingleNode("/file");
 				        if(nodeChildXml != null)
 				        {
@@ -781,7 +793,7 @@ namespace MezeoFileSupport
                 }
 
 		        HttpWebRequest webRequest = null;
-		        OnGetRequest(ref webRequest, strSource, "", "1", "Get");
+                OnGetRequest(ref webRequest, strSource, "", "1", "Get", null);
 
 		        HttpWebResponse response = (HttpWebResponse)webRequest.GetResponse();
 		        nStatusCode = 200;
@@ -819,20 +831,19 @@ namespace MezeoFileSupport
                 if (strBuff == "content" || strBuff == "contents")
                     strContainUrl = strContainUrl.Substring(0, nTypeLen-1);
 
-		
 		        //Get Parent Url
 		        HttpWebRequest webRequest = null;
-		        OnGetRequest(ref webRequest, strContainUrl, "", "", "Get");
+                OnGetRequest(ref webRequest, strContainUrl, "", "", "Get", null);
 
 		        HttpWebResponse response = (HttpWebResponse)webRequest.GetResponse();
 		        nStatusCode = 200;
-	
-		        XmlDocument m_xmlSingleFile = new XmlDocument();
+
+                XmlDocument m_xmlSingleFile = new XmlDocument();
 		        m_xmlSingleFile.LoadXml(OnGetResponseString(response.GetResponseStream()));
 		        webRequest.Abort();
 		        response.Close();
-		
-		        XmlNode nodeXml = m_xmlSingleFile.SelectSingleNode("/file");
+
+                XmlNode nodeXml = m_xmlSingleFile.SelectSingleNode("/file");
 		        if(nodeXml != null)
 		        {
 			        nodeXml = m_xmlSingleFile.SelectSingleNode("/file/parent");
@@ -850,7 +861,7 @@ namespace MezeoFileSupport
 		        m_xmlSingleFile.RemoveAll();
 
 		        //check url infomation
-		        OnGetRequest(ref webRequest, StrRet, "", "", "Get");
+                OnGetRequest(ref webRequest, StrRet, "", "", "Get", null);
 		        response = (HttpWebResponse)webRequest.GetResponse();		
 		        m_xmlSingleFile.LoadXml(OnGetResponseString(response.GetResponseStream()));
 		        webRequest.Abort();
@@ -859,7 +870,7 @@ namespace MezeoFileSupport
 
 		        //get eTag
 		        strContainUrl += "/" + strBuff;
-		        OnGetRequest(ref webRequest, strContainUrl, "", "", "Get");
+                OnGetRequest(ref webRequest, strContainUrl, "", "", "Get", null);
 		        response = (HttpWebResponse)webRequest.GetResponse();
 		        StrRet = response.Headers.Get("eTag");
 		        webRequest.Abort();
@@ -888,7 +899,7 @@ namespace MezeoFileSupport
 	        try
 	        {
 		        HttpWebRequest webRequest = null;
-                OnGetRequest(ref webRequest, strContainUrl, "", "", "Get");
+                OnGetRequest(ref webRequest, strContainUrl, "", "", "Get", null);
 
 		        HttpWebResponse response = (HttpWebResponse)webRequest.GetResponse();
 		        nStatusCode = 200;
@@ -1453,7 +1464,7 @@ namespace MezeoFileSupport
 	        try
 	        {
 		        HttpWebRequest webRequest = null;
-		        OnGetRequest(ref webRequest, strContents, "", "1", "Get");
+                OnGetRequest(ref webRequest, strContents, "", "1", "Get", null);
 
 		        HttpWebResponse response = (HttpWebResponse)webRequest.GetResponse();
 
@@ -1494,7 +1505,7 @@ namespace MezeoFileSupport
 	        try
 	        {
 		        HttpWebRequest webRequest = null;
-		        OnGetRequest(ref webRequest, strContainUrl, "", "", "Get");
+                OnGetRequest(ref webRequest, strContainUrl, "", "", "Get", null);
 
 		        HttpWebResponse response = (HttpWebResponse)webRequest.GetResponse();
 		        nStatusCode = 200;
@@ -1503,7 +1514,7 @@ namespace MezeoFileSupport
 		        m_xmlSingleFile.LoadXml(OnGetResponseString(response.GetResponseStream()));
 		        webRequest.Abort();
 		        response.Close();
-		
+
 		        XmlNode nodeXml = m_xmlSingleFile.SelectSingleNode("/file");
 		        if(nodeXml != null)
 		        {
@@ -1608,7 +1619,7 @@ namespace MezeoFileSupport
 		        nStatusCode = -3;
 		        return false;
 	        }
-	
+
 	        return true;
         }
 
@@ -1618,7 +1629,7 @@ namespace MezeoFileSupport
 	        try
 	        {
 		        HttpWebRequest webRequest = null;
-		        OnGetRequest(ref webRequest, strPath, "", "", "DELETE");
+                OnGetRequest(ref webRequest, strPath, "", "", "DELETE", null);
 
 		        HttpWebResponse response = (HttpWebResponse)webRequest.GetResponse();
 		        nStatusCode = 204;
@@ -1635,7 +1646,7 @@ namespace MezeoFileSupport
 		        nStatusCode = -3;
 		        return false;
 	        }
-	
+
 	        return true;
         }
 
@@ -1778,12 +1789,12 @@ namespace MezeoFileSupport
                 HttpWebRequest webRequest = null;
                 if (StrObjectType == "FILE")
                 {
-                    OnGetRequest(ref webRequest, StrUri, "application/vnd.csp.file-info+xml", "", "Get");
+                    OnGetRequest(ref webRequest, StrUri, "application/vnd.csp.file-info+xml", "", "Get", null);
                     strItemType = "/file";
                 }
                 else if (StrObjectType == "DIRECTORY")
                 {
-                    OnGetRequest(ref webRequest, StrUri, "application/vnd.csp.container-info+xml", "", "Get");
+                    OnGetRequest(ref webRequest, StrUri, "application/vnd.csp.container-info+xml", "", "Get", null);
                     strItemType = "/container";
                 }
 
@@ -1890,7 +1901,7 @@ namespace MezeoFileSupport
             try
             {
                 HttpWebRequest webRequest = null;
-                OnGetRequest(ref webRequest, StrUri, "", "", "GET");
+                OnGetRequest(ref webRequest, StrUri, "", "", "GET", null);
                 webRequest.Headers.Add("If-None-Match", StrETag);
 
                 HttpWebResponse response = (HttpWebResponse)webRequest.GetResponse();
@@ -1922,7 +1933,7 @@ namespace MezeoFileSupport
 	        try
 	        {
 		        HttpWebRequest webRequest = null;
-		        OnGetRequest(ref webRequest, strUrl, "", "1", "Get");
+                OnGetRequest(ref webRequest, strUrl, "", "1", "Get", null);
 
 		        HttpWebResponse response = (HttpWebResponse)webRequest.GetResponse();
 		        nStatusCode = 200;
@@ -1957,7 +1968,7 @@ namespace MezeoFileSupport
         }
 
         public bool StatusConnection(String strLoginName, String strPassword, String strUrl, ref int nStatusCode)
-        {	
+        {
             nStatusCode = 0;
 	        try
 	        {
@@ -2011,7 +2022,7 @@ namespace MezeoFileSupport
 	        {
 		        HttpWebRequest webRequest = null;
 		        //OnGetResumeRequest(ref webRequest, strSource, lFrom, lTo);
-                OnGetRequest(ref webRequest, strSource, "", "", "GET");
+                OnGetRequest(ref webRequest, strSource, "", "", "GET", null);
                 webRequest.AddRange(lFrom, lTo);
 
 		        HttpWebResponse response = (HttpWebResponse)webRequest.GetResponse();
@@ -2044,7 +2055,7 @@ namespace MezeoFileSupport
                     Process.Start(Environment.SystemDirectory + "\\winevt\\Logs\\" + strName + ".evtx");
                 else
                     Process.Start(Environment.SystemDirectory + "\\eventvwr.msc");
-	        }   
+	        }
 	        catch
 	        {
 		        return false;
@@ -2098,8 +2109,8 @@ namespace MezeoFileSupport
 	        }
             eventLog.Dispose();
 	        eventLog.Close();
-	
-	        return bResult;	
+
+            return bResult;	
         }
 
         public bool CleanEventViewer(String StrLogName)
@@ -2608,7 +2619,5 @@ namespace MezeoFileSupport
             types.Add(".m4a", "audio/mp4");
             types.Add(".m4v", "video/mp4");
         }
-
-
     }
 }

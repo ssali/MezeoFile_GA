@@ -72,7 +72,7 @@ namespace Mezeo
             LogWrapper.LogMessage("StructureDownloader - startAnalyseItemDetails", "Enter");
 
             int refCode=0;
-            ItemDetails[] contents = cFileCloud.DownloadItemDetails(cRootContainerUrl, ref refCode);
+            ItemDetails[] contents = cFileCloud.DownloadItemDetails(cRootContainerUrl, ref refCode, null);
             
             if (refCode == ResponseCode.LOGINFAILED1 || refCode == ResponseCode.LOGINFAILED2)
             {
@@ -173,7 +173,7 @@ namespace Mezeo
         {
             LogWrapper.LogMessage("StructureDownloader - analyseItemDetails", "Enter");
             int refCode = 0;
-            ItemDetails[] contents = cFileCloud.DownloadItemDetails(itemDetail.szContentUrl, ref refCode);
+            ItemDetails[] contents = cFileCloud.DownloadItemDetails(itemDetail.szContentUrl, ref refCode, null);
             
             if (refCode == ResponseCode.LOGINFAILED1 || refCode == ResponseCode.LOGINFAILED2)
             {

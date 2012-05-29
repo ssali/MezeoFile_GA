@@ -126,14 +126,14 @@ namespace Mezeo
             return bRet;
         }
 
-        public ItemDetails[] DownloadItemDetails(string strContainer, ref int nStatusCode)
+        public ItemDetails[] DownloadItemDetails(string strContainer, ref int nStatusCode, string strFilterName)
         {
-            ItemDetails[] itemDetails = fileCloud.DownloadItemDetails(strContainer, ref nStatusCode);
+            ItemDetails[] itemDetails = fileCloud.DownloadItemDetails(strContainer, ref nStatusCode, strFilterName);
             if (nStatusCode != ResponseCode.DOWNLOADITEMDETAILS)
             {
                 for (int n = 0; n < CloudService.NUMBER_OF_RETRIES; n++)
                 {
-                    itemDetails = fileCloud.DownloadItemDetails(strContainer, ref nStatusCode);
+                    itemDetails = fileCloud.DownloadItemDetails(strContainer, ref nStatusCode, strFilterName);
                     if (nStatusCode == ResponseCode.DOWNLOADITEMDETAILS)
                         return itemDetails;
                 }
@@ -434,19 +434,27 @@ namespace Mezeo
 
         public string UploadingFile(string strSource, string strDestination, ref int nStatusCode)
         {
-            var fileinfo = new FileInfo(strSource);
-
-            syncManager.SetMaxProgress(fileinfo.Length, strSource);
-
-            string strUrl = fileCloud.UploadingFile(strSource, strDestination, ref nStatusCode, syncManager.myDelegate);
-            if (nStatusCode != ResponseCode.UPLOADINGFILE)
+            string strUrl = null;
+            try
             {
-                for (int n = 0; n < CloudService.NUMBER_OF_RETRIES; n++)
+                var fileinfo = new FileInfo(strSource);
+
+                syncManager.SetMaxProgress(fileinfo.Length, strSource);
+
+                strUrl = fileCloud.UploadingFile(strSource, strDestination, ref nStatusCode, syncManager.myDelegate);
+                if (nStatusCode != ResponseCode.UPLOADINGFILE)
                 {
-                    strUrl = fileCloud.UploadingFile(strSource, strDestination, ref nStatusCode, syncManager.myDelegate);
-                    if (nStatusCode == ResponseCode.UPLOADINGFILE)
-                        return strUrl;
+                    for (int n = 0; n < CloudService.NUMBER_OF_RETRIES; n++)
+                    {
+                        strUrl = fileCloud.UploadingFile(strSource, strDestination, ref nStatusCode, syncManager.myDelegate);
+                        if (nStatusCode == ResponseCode.UPLOADINGFILE)
+                            return strUrl;
+                    }
                 }
+            }
+            catch (Exception ex)
+            {
+                LogWrapper.LogMessage("CloudService - UploadingFile", "Caught exception: " + ex.Message);
             }
             return strUrl;
         }

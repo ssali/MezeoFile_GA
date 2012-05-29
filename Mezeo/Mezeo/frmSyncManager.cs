@@ -1427,7 +1427,7 @@ namespace Mezeo
 
             if (nqDetail.StrObjectType == "DIRECTORY")
             {
-                ItemDetails[] iDetails = cMezeoFileCloud.DownloadItemDetails(nsResult.StrContentsUri, ref nStatusCode);
+                ItemDetails[] iDetails = cMezeoFileCloud.DownloadItemDetails(nsResult.StrContentsUri, ref nStatusCode, null);
                 if (nStatusCode == ResponseCode.LOGINFAILED1 || nStatusCode == ResponseCode.LOGINFAILED2)
                 {
                     return nStatusCode;
@@ -1568,7 +1568,7 @@ namespace Mezeo
 
                 MarkParentsStatus(strPath, DB_STATUS_SUCCESS);
 
-                ItemDetails[] iDetails = cMezeoFileCloud.DownloadItemDetails(iDetail.szContentUrl, ref nStatusCode);
+                ItemDetails[] iDetails = cMezeoFileCloud.DownloadItemDetails(iDetail.szContentUrl, ref nStatusCode, null);
                 if (nStatusCode == ResponseCode.LOGINFAILED1 || nStatusCode == ResponseCode.LOGINFAILED2)
                 {
                     return nStatusCode;
@@ -2972,7 +2972,7 @@ namespace Mezeo
                                 ItemDetails[] itemDetails;
                                 bool bCreateCloudContainer = true;
                                 // Grab a list of files and containers for the parent.
-                                itemDetails = cMezeoFileCloud.DownloadItemDetails(strParentURi, ref nStatusCode);
+                                itemDetails = cMezeoFileCloud.DownloadItemDetails(strParentURi, ref nStatusCode, folderName);
                                 if (nStatusCode == ResponseCode.LOGINFAILED1 || nStatusCode == ResponseCode.LOGINFAILED2)
                                 {
                                     return LOGIN_FAILED;
@@ -3053,7 +3053,7 @@ namespace Mezeo
                                 ItemDetails[] itemDetailsfile;
                                 bool buploadfileToCloud = true;
                                 // Grab a list of files for the parent.
-                                itemDetailsfile = cMezeoFileCloud.DownloadItemDetails(strParentURi, ref nStatusCode);
+                                itemDetailsfile = cMezeoFileCloud.DownloadItemDetails(strParentURi, ref nStatusCode, fileName);
                                 if (nStatusCode == ResponseCode.LOGINFAILED1 || nStatusCode == ResponseCode.LOGINFAILED2)
                                 {
                                     return LOGIN_FAILED;
@@ -3948,48 +3948,100 @@ namespace Mezeo
         private void bwLocalEvents_ProgressChanged(object sender, ProgressChangedEventArgs e)
         {
             LogWrapper.LogMessage("frmSyncManager - bwLocalEvents_ProgressChanged", "enter");
-            label1.Visible = false;
-            pbSyncProgress.Refresh();
-
-            if (!lblPercentDone.Visible)
+            if (this.InvokeRequired)
             {
-                lblPercentDone.Text = "";
-                Application.DoEvents();
-            }
-
-            if (e.ProgressPercentage == SYNC_STARTED)
-            {
-                ShowInitialSyncMessage();
-            }
-            else if (e.ProgressPercentage == PROCESS_LOCAL_EVENTS_STARTED)
-            {
-                InitializeLocalEventsProcess((int)e.UserState);
-            }
-            else if (e.ProgressPercentage == PROGRESS_CHANGED_WITH_FILE_NAME)
-            {
-                showProgress();
-                lblStatusL3.Text = e.UserState.ToString();  
-            }
-            else if (e.ProgressPercentage == LOCAL_EVENTS_COMPLETED)
-            {
-                if (IsDisabledByConnection())
+                this.Invoke((MethodInvoker)delegate
                 {
-                    lastSync = DateTime.Now;
-                    BasicInfo.LastSyncAt = lastSync;
+                    label1.Visible = false;
+                    pbSyncProgress.Refresh();
 
-                    //  CheckServerStatus(); *** TODO:check for offline (Modified for server status thread)
-                   // DisableProgress();
-                   // ShowSyncDisabledMessage();
-                   // ShowSyncManagerOffline();
-                }
-                else
-                {
-                    ShowLocalEventsCompletedMessage();
-                }
+                    if (!lblPercentDone.Visible)
+                    {
+                        lblPercentDone.Text = "";
+                        Application.DoEvents();
+                    }
+
+                    if (e.ProgressPercentage == SYNC_STARTED)
+                    {
+                        ShowInitialSyncMessage();
+                    }
+                    else if (e.ProgressPercentage == PROCESS_LOCAL_EVENTS_STARTED)
+                    {
+                        InitializeLocalEventsProcess((int)e.UserState);
+                    }
+                    else if (e.ProgressPercentage == PROGRESS_CHANGED_WITH_FILE_NAME)
+                    {
+                        showProgress();
+                        lblStatusL3.Text = e.UserState.ToString();
+                    }
+                    else if (e.ProgressPercentage == LOCAL_EVENTS_COMPLETED)
+                    {
+                        if (IsDisabledByConnection())
+                        {
+                            lastSync = DateTime.Now;
+                            BasicInfo.LastSyncAt = lastSync;
+
+                            //  CheckServerStatus(); *** TODO:check for offline (Modified for server status thread)
+                            // DisableProgress();
+                            // ShowSyncDisabledMessage();
+                            // ShowSyncManagerOffline();
+                        }
+                        else
+                        {
+                            ShowLocalEventsCompletedMessage();
+                        }
+                    }
+                    else if (e.ProgressPercentage == LOCAL_EVENTS_STOPPED)
+                    {
+                        ShowSyncMessage(EventQueue.QueueNotEmpty());
+                    }
+                });
             }
-            else if (e.ProgressPercentage == LOCAL_EVENTS_STOPPED)
+            else
             {
-                ShowSyncMessage(EventQueue.QueueNotEmpty());
+                label1.Visible = false;
+                pbSyncProgress.Refresh();
+
+                if (!lblPercentDone.Visible)
+                {
+                    lblPercentDone.Text = "";
+                    Application.DoEvents();
+                }
+
+                if (e.ProgressPercentage == SYNC_STARTED)
+                {
+                    ShowInitialSyncMessage();
+                }
+                else if (e.ProgressPercentage == PROCESS_LOCAL_EVENTS_STARTED)
+                {
+                    InitializeLocalEventsProcess((int)e.UserState);
+                }
+                else if (e.ProgressPercentage == PROGRESS_CHANGED_WITH_FILE_NAME)
+                {
+                    showProgress();
+                    lblStatusL3.Text = e.UserState.ToString();
+                }
+                else if (e.ProgressPercentage == LOCAL_EVENTS_COMPLETED)
+                {
+                    if (IsDisabledByConnection())
+                    {
+                        lastSync = DateTime.Now;
+                        BasicInfo.LastSyncAt = lastSync;
+
+                        //  CheckServerStatus(); *** TODO:check for offline (Modified for server status thread)
+                        // DisableProgress();
+                        // ShowSyncDisabledMessage();
+                        // ShowSyncManagerOffline();
+                    }
+                    else
+                    {
+                        ShowLocalEventsCompletedMessage();
+                    }
+                }
+                else if (e.ProgressPercentage == LOCAL_EVENTS_STOPPED)
+                {
+                    ShowSyncMessage(EventQueue.QueueNotEmpty());
+                }
             }
             
             //Application.DoEvents();
@@ -4186,7 +4238,7 @@ namespace Mezeo
             LogWrapper.LogMessage("frmSyncManager - InitializeLocalEventsProcess", "leave");
         }
 
-        public void ShowSyncManagerOffline()
+        public void ShowSyncManagerOffline()          
         {
             LogWrapper.LogMessage("frmSyncManager - ShowSyncManagerOffline", "enter");
             SyncOfflineMessage();
