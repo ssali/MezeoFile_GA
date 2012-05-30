@@ -42,28 +42,20 @@ namespace Mezeo
         {
             InitializeComponent();
 
-        #if MEZEO32
-            string osVersion = "32";
-        #else
-            string osVersion = "64";
-        #endif
-            string RSSFeed = "";
-
             this.Icon = Properties.Resources.MezeoVault;
 
             //this.HandleCreated += new EventHandler(frmLogin_HandleCreated);
-           // this.HandleDestroyed += new EventHandler(frmLogin_HandleDestroyed);
-            
+            // this.HandleDestroyed += new EventHandler(frmLogin_HandleDestroyed);
             notificationManager = new NotificationManager();
             notificationManager.NotificationHandler = this.niSystemTray;
 
             niSystemTray.ContextMenuStrip = cmSystemTrayLogin;
-            
+
             mezeoFileCloud = new CloudService();
 
             LoadResources();
 
-            RSSFeed = string.Format("{0}/update/sync/win/{1}/versioninfo.xml", BasicInfo.ServiceUrl, osVersion);
+            string RSSFeed = BasicInfo.GetUpdateURL();
 
             if (RSSFeed.Length != 0)
             {

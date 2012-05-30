@@ -14,8 +14,9 @@ namespace Mezeo
         private static string password="";
         private static string serviceUrl="";
         private static DateTime lastSync;
+        private static DateTime lastUpdateCheckAt;
         private static bool autoSync=true;
-        private static bool loggingEnabled = true;
+        private static bool loggingEnabled = false;
         private static string syncDirPath="";
         private static bool isInitailSync = true;
 
@@ -153,6 +154,17 @@ namespace Mezeo
             {
                 LogWrapper.LogMessage("BasicInfo - ReadRegValue", "Caught exception: " + ex.Message);
             }
+            try
+            {
+                lastSync = DateTime.Parse(regHandler.Read("Basic5", Microsoft.Win32.RegistryValueKind.Binary, false));
+                string regValue = regHandler.Read("Basic9", Microsoft.Win32.RegistryValueKind.Binary, false);
+                if (null != regValue)
+                    lastUpdateCheckAt = DateTime.Parse(regValue);
+            }
+            catch (Exception ex)
+            {
+                LogWrapper.LogMessage("BasicInfo - ReadRegValue", "Caught exception: " + ex.Message);
+            }
         }
 
         private static void WriteRegValue()
@@ -165,6 +177,7 @@ namespace Mezeo
             regHandler.Write("Basic6", autoSync, Microsoft.Win32.RegistryValueKind.Binary, false);
             regHandler.Write("Basic7", isInitailSync, Microsoft.Win32.RegistryValueKind.Binary, false);
             regHandler.Write("Basic8", loggingEnabled, Microsoft.Win32.RegistryValueKind.Binary, false);
+            regHandler.Write("Basic9", lastUpdateCheckAt, Microsoft.Win32.RegistryValueKind.Binary, false);
         }
 
         private static string GetNinMacAddress()
@@ -185,6 +198,26 @@ namespace Mezeo
         public static string GetQueueName()
         {
             return MacAddress + "-" + UserName;
+        }
+
+        public static string GetUpdateURL()
+        {
+#if MEZEO32
+            string osVersion = "32";
+#else
+            string osVersion = "64";
+#endif
+            return string.Format("{0}/update/sync/win/{1}/versioninfo.xml", ServiceUrl, osVersion);
+        }
+
+        public static DateTime LastUpdateCheckAt
+        {
+            get { return lastUpdateCheckAt; }
+            set
+            {
+                lastUpdateCheckAt = value;
+                regHandler.Write("Basic9", lastUpdateCheckAt, Microsoft.Win32.RegistryValueKind.Binary, false);
+            }
         }
     }
 

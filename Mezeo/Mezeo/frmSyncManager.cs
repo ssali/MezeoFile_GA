@@ -12,6 +12,9 @@ using MezeoFileSupport;
 using System.Threading;
 using System.Runtime.InteropServices;
 using System.Net.NetworkInformation;
+using System.Net;
+using System.Xml;
+using System.Reflection;
 using Mezeo;
 
 namespace Mezeo
@@ -351,8 +354,79 @@ namespace Mezeo
                 StopSync();
         }
 
+        // Read in the response for an HTTP request.
+        private String OnGetResponseString(Stream responseStream)
+        {
+            StringBuilder responseString = new StringBuilder();
+            byte[] buffer = new byte[1024 * 64];
+            int bytes_read = 0;
+            while ((bytes_read = responseStream.Read(buffer, 0, buffer.Length)) > 0)
+            {
+                responseString.Append(Encoding.UTF8.GetString(buffer, 0, bytes_read));
+            }
+            responseStream.Close();
+            return responseString.ToString();
+        }
+
         private void tmrNextSync_Tick(object sender, EventArgs e)
         {
+            // Only look for updates once a day.
+            // TODO: Make the timespan (in hours) a string that can be part of branding or configuration.
+            TimeSpan diff = DateTime.Now - BasicInfo.LastUpdateCheckAt;
+            if (12 < diff.TotalHours)
+            {
+                // See if an update is available.
+                string strURL = BasicInfo.GetUpdateURL();
+                string strCurVersion = Assembly.GetExecutingAssembly().GetName().Version.ToString();
+                string strNewVersion = "";
+
+                // Remove the 4th field from the version since that doesn't exist in the sparkle version.
+                string[] strSubVersion = strCurVersion.Split('.');
+                strCurVersion = strSubVersion[0] + "." + strSubVersion[1] + "." + strSubVersion[2];
+
+                // Check to see what versions are available.
+                HttpWebRequest webRequest = (HttpWebRequest)WebRequest.Create(strURL);
+                webRequest.Method = "GET";
+                webRequest.KeepAlive = false;
+                webRequest.Timeout = 60000;
+
+                HttpWebResponse response = (HttpWebResponse)(webRequest.GetResponse());
+                string strTemp = OnGetResponseString(response.GetResponseStream());
+
+                XmlDocument m_xmlVersionList = new XmlDocument();
+                m_xmlVersionList.LoadXml(strTemp);
+
+                XmlNodeList nodes = m_xmlVersionList.SelectNodes("/rss/channel/item");
+                if (null != nodes)
+                {
+                    foreach (XmlNode node in nodes)
+                    {
+                        if (node.HasChildNodes)
+                        {
+                            // See what the most recent version is and if it is newer than the current version.
+                            XmlNode enclosure = node.SelectSingleNode("enclosure");
+                            if (null != enclosure)
+                            {
+                                XmlNode xmlVersion = enclosure.Attributes.GetNamedItem("sparkle:version");
+                                if (null != xmlVersion)
+                                {
+                                    if (-1 == strCurVersion.CompareTo(xmlVersion.Value))
+                                        strNewVersion = xmlVersion.Value;
+
+                                }
+                            }
+                        }
+                    }
+                }
+
+                // If an update is available, the show a pop
+                ShowUpdateAvailableBalloonMessage(strNewVersion);
+
+                // Update the time we last checked for an update.
+                BasicInfo.LastUpdateCheckAt = DateTime.Now;
+            }
+
+            // See if I need to kick off a sync action.
             if (BasicInfo.AutoSync)
             {
                 if (IsInIdleState())
@@ -1734,6 +1808,28 @@ namespace Mezeo
 
         #region Ballon message functions
 
+        private void ShowUpdateAvailableBalloonMessage(string strNewVersion)
+        {
+            string strUpdate;
+
+            if (null != strNewVersion)
+                strUpdate = "Version " + strNewVersion + " of the sync application is now available.  Please exit the application and relaunch to install the update.";
+            else
+                strUpdate = "An update for the sync application is available.  Please exit the application and relaunch to install the update.";
+            cnotificationManager.NotificationHandler.Icon = Properties.Resources.app_icon_warning;
+            //cnotificationManager.NotificationHandler.ShowBalloonTip(1, LanguageTranslator.GetValue("TrayBalloonSyncStatusText"),
+            //                                                          LanguageTranslator.GetValue("SyncIssueFoundText"),
+            //                                                         ToolTipIcon.None);
+            cnotificationManager.NotificationHandler.ShowBalloonTip(1, "Update Available",
+                                                                      strUpdate,
+                                                                     ToolTipIcon.None);
+
+            //cnotificationManager.HoverText = AboutBox.AssemblyTitle + "\n" + LanguageTranslator.GetValue("SyncIssueFoundText");
+            cnotificationManager.HoverText = AboutBox.AssemblyTitle + "\n" + "Update Available";
+
+            //frmParent.toolStripMenuItem4.Text = LanguageTranslator.GetValue("SyncManagerMenuIssueFoundText");
+        }
+ 
         private void IssueFoundBalloonMessage()
         {
             SetIssueFound(true);
@@ -1745,9 +1841,7 @@ namespace Mezeo
             cnotificationManager.HoverText = AboutBox.AssemblyTitle + "\n" + LanguageTranslator.GetValue("SyncIssueFoundText");
 
             frmParent.toolStripMenuItem4.Text = LanguageTranslator.GetValue("SyncManagerMenuIssueFoundText");
-
         }
-
 
         private void SyncStoppedBalloonMessage()
         {
