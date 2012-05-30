@@ -370,60 +370,70 @@ namespace Mezeo
 
         private void tmrNextSync_Tick(object sender, EventArgs e)
         {
-            // Only look for updates once a day.
-            // TODO: Make the timespan (in hours) a string that can be part of branding or configuration.
-            TimeSpan diff = DateTime.Now - BasicInfo.LastUpdateCheckAt;
-            if (12 < diff.TotalHours)
+            // Don't check for updates the first time the app runs....  Leave that to Sparkle.
+            if (1 == BasicInfo.LastUpdateCheckAt.Year)
             {
-                // See if an update is available.
-                string strURL = BasicInfo.GetUpdateURL();
-                string strCurVersion = Assembly.GetExecutingAssembly().GetName().Version.ToString();
-                string strNewVersion = "";
-
-                // Remove the 4th field from the version since that doesn't exist in the sparkle version.
-                string[] strSubVersion = strCurVersion.Split('.');
-                strCurVersion = strSubVersion[0] + "." + strSubVersion[1] + "." + strSubVersion[2];
-
-                // Check to see what versions are available.
-                HttpWebRequest webRequest = (HttpWebRequest)WebRequest.Create(strURL);
-                webRequest.Method = "GET";
-                webRequest.KeepAlive = false;
-                webRequest.Timeout = 60000;
-
-                HttpWebResponse response = (HttpWebResponse)(webRequest.GetResponse());
-                string strTemp = OnGetResponseString(response.GetResponseStream());
-
-                XmlDocument m_xmlVersionList = new XmlDocument();
-                m_xmlVersionList.LoadXml(strTemp);
-
-                XmlNodeList nodes = m_xmlVersionList.SelectNodes("/rss/channel/item");
-                if (null != nodes)
+                // Update the time we last checked for an update.
+                BasicInfo.LastUpdateCheckAt = DateTime.Now;
+            }
+            else
+            {
+                // Only look for updates once a day.
+                // TODO: Make the timespan (in hours) a string that can be part of branding or configuration.
+                TimeSpan diff = DateTime.Now - BasicInfo.LastUpdateCheckAt;
+                if (12 < diff.TotalHours)
                 {
-                    foreach (XmlNode node in nodes)
-                    {
-                        if (node.HasChildNodes)
-                        {
-                            // See what the most recent version is and if it is newer than the current version.
-                            XmlNode enclosure = node.SelectSingleNode("enclosure");
-                            if (null != enclosure)
-                            {
-                                XmlNode xmlVersion = enclosure.Attributes.GetNamedItem("sparkle:version");
-                                if (null != xmlVersion)
-                                {
-                                    if (-1 == strCurVersion.CompareTo(xmlVersion.Value))
-                                        strNewVersion = xmlVersion.Value;
+                    // See if an update is available.
+                    string strURL = BasicInfo.GetUpdateURL();
+                    string strCurVersion = Assembly.GetExecutingAssembly().GetName().Version.ToString();
+                    string strNewVersion = "";
 
+                    // Remove the 4th field from the version since that doesn't exist in the sparkle version.
+                    string[] strSubVersion = strCurVersion.Split('.');
+                    strCurVersion = strSubVersion[0] + "." + strSubVersion[1] + "." + strSubVersion[2];
+
+                    // Check to see what versions are available.
+                    HttpWebRequest webRequest = (HttpWebRequest)WebRequest.Create(strURL);
+                    webRequest.Method = "GET";
+                    webRequest.KeepAlive = false;
+                    webRequest.Timeout = 60000;
+
+                    HttpWebResponse response = (HttpWebResponse)(webRequest.GetResponse());
+                    string strTemp = OnGetResponseString(response.GetResponseStream());
+
+                    XmlDocument m_xmlVersionList = new XmlDocument();
+                    m_xmlVersionList.LoadXml(strTemp);
+
+                    XmlNodeList nodes = m_xmlVersionList.SelectNodes("/rss/channel/item");
+                    if (null != nodes)
+                    {
+                        foreach (XmlNode node in nodes)
+                        {
+                            if (node.HasChildNodes)
+                            {
+                                // See what the most recent version is and if it is newer than the current version.
+                                XmlNode enclosure = node.SelectSingleNode("enclosure");
+                                if (null != enclosure)
+                                {
+                                    XmlNode xmlVersion = enclosure.Attributes.GetNamedItem("sparkle:version");
+                                    if (null != xmlVersion)
+                                    {
+                                        if (-1 == strCurVersion.CompareTo(xmlVersion.Value))
+                                            strNewVersion = xmlVersion.Value;
+
+                                    }
                                 }
                             }
                         }
                     }
+
+                    // If an update is available, the show a pop
+                    if ((null != strNewVersion) && (0 != strNewVersion.Length))
+                        ShowUpdateAvailableBalloonMessage(strNewVersion);
+
+                    // Update the time we last checked for an update.
+                    BasicInfo.LastUpdateCheckAt = DateTime.Now;
                 }
-
-                // If an update is available, the show a pop
-                ShowUpdateAvailableBalloonMessage(strNewVersion);
-
-                // Update the time we last checked for an update.
-                BasicInfo.LastUpdateCheckAt = DateTime.Now;
             }
 
             // See if I need to kick off a sync action.
