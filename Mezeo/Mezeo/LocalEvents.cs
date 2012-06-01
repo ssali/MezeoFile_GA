@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.IO;
 
 namespace Mezeo
 {
@@ -19,6 +20,12 @@ namespace Mezeo
 
         public DateTime EventTimeStamp { get; set; }
 
+        public bool IsDirectory { get; set; }
+
+        public bool IsFile { get; set; }
+
+        public FileAttributes Attributes { get; set; }
+
         public enum EventsType
         {
             FILE_ACTION_ADDED,
@@ -28,5 +35,11 @@ namespace Mezeo
             FILE_ACTION_MOVE
         }
 
+        public LocalEvents()
+        {
+            Attributes = FileAttributes.Normal;
+            IsDirectory = false;
+            IsFile = false;
+        }
     }
 }

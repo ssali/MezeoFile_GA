@@ -128,17 +128,94 @@ namespace Mezeo
 
         public ItemDetails[] DownloadItemDetails(string strContainer, ref int nStatusCode, string strFilterName)
         {
-            ItemDetails[] itemDetails = fileCloud.DownloadItemDetails(strContainer, ref nStatusCode, strFilterName);
-            if (nStatusCode != ResponseCode.DOWNLOADITEMDETAILS)
+            ItemDetails[] resultItemDetails = null;
+
+            // If there is no filter, then handle pagination.
+            if ((null == strFilterName) || (0 == strFilterName.Length))
             {
-                for (int n = 0; n < CloudService.NUMBER_OF_RETRIES; n++)
+                int newTotal = 0;
+                bool continuePaging = true;
+                ItemDetails[] itemDetails;
+                FilterDetails filterDetails = new FilterDetails();
+                filterDetails.szFieldValue = strFilterName;
+                filterDetails.nStartPosition = 0;
+                filterDetails.nCount = 10;
+
+                while (continuePaging)
                 {
-                    itemDetails = fileCloud.DownloadItemDetails(strContainer, ref nStatusCode, strFilterName);
-                    if (nStatusCode == ResponseCode.DOWNLOADITEMDETAILS)
-                        return itemDetails;
+                    itemDetails = fileCloud.DownloadItemDetails(strContainer, ref nStatusCode, filterDetails);
+                    if (nStatusCode != ResponseCode.DOWNLOADITEMDETAILS)
+                    {
+                        for (int n = 0; n < CloudService.NUMBER_OF_RETRIES; n++)
+                        {
+                            itemDetails = fileCloud.DownloadItemDetails(strContainer, ref nStatusCode, filterDetails);
+                            if ((null != itemDetails) && (nStatusCode == ResponseCode.DOWNLOADITEMDETAILS))
+                            {
+                                // Update the total count member of item 0 since it is the
+                                // only item the calling code uses to get/check the count.
+                                newTotal = 0;
+                                if (null == resultItemDetails)
+                                    resultItemDetails = itemDetails;
+                                else
+                                {
+                                    newTotal = resultItemDetails[0].nTotalItem + itemDetails[0].nTotalItem;
+                                    resultItemDetails = resultItemDetails.Concat(itemDetails).ToArray();
+                                    resultItemDetails[0].nTotalItem = newTotal;
+                                }
+                                if (0 == itemDetails[0].nTotalItem)
+                                    continuePaging = false;
+                            }
+                            if (n >= CloudService.NUMBER_OF_RETRIES)
+                                continuePaging = false;
+                        }
+                    }
+                    else
+                    {
+                        if (null != itemDetails)
+                        {
+                            // Update the total count member of item 0 since it is the
+                            // only item the calling code uses to get/check the count.
+                            newTotal = 0;
+                            if (null == resultItemDetails)
+                                resultItemDetails = itemDetails;
+                            else
+                            {
+                                newTotal = resultItemDetails[0].nTotalItem + itemDetails[0].nTotalItem;
+                                resultItemDetails = resultItemDetails.Concat(itemDetails).ToArray();
+                                resultItemDetails[0].nTotalItem = newTotal;
+                            }
+                            if (0 == itemDetails[0].nTotalItem)
+                                continuePaging = false;
+                        }
+                    }
+
+                    if (null == itemDetails)
+                    {
+                        // Nothing was there so there are no more pages.
+                        continuePaging = false;
+                    }
+                    else
+                    {
+                        // Increment the count and ask for another possible page.
+                        filterDetails.nStartPosition += itemDetails[0].nTotalItem;
+                    }
                 }
             }
-            return itemDetails;
+            else
+            {
+                resultItemDetails = fileCloud.DownloadItemDetails(strContainer, ref nStatusCode, null);
+                if (nStatusCode != ResponseCode.DOWNLOADITEMDETAILS)
+                {
+                    for (int n = 0; n < CloudService.NUMBER_OF_RETRIES; n++)
+                    {
+                        resultItemDetails = fileCloud.DownloadItemDetails(strContainer, ref nStatusCode, null);
+                        if (nStatusCode == ResponseCode.DOWNLOADITEMDETAILS)
+                            return resultItemDetails;
+                    }
+                }
+            }
+
+            return resultItemDetails;
         }
 
         public bool ExceuteEventViewer(string strName)

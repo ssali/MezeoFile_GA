@@ -119,6 +119,31 @@ namespace Mezeo
                 LogWrapper.LogMessage("EventQueue - Add", "              (" + newEvent.EventType + ") new path:" + newEvent.FullPath);
             }
 
+            try
+            {
+                // Only fill in this information if the event isn't a DELETE event.
+                // Otherwise, the file/folder isn't there to get the info for.
+                if (newEvent.EventType != LocalEvents.EventsType.FILE_ACTION_REMOVED)
+                {
+                    FileInfo fileInfo = new FileInfo(newEvent.FullPath);
+                    newEvent.Attributes = fileInfo.Attributes;
+                    if (0 == (fileInfo.Attributes & FileAttributes.Directory))
+                    {
+                        newEvent.IsDirectory = false;
+                        newEvent.IsFile = true;
+                    }
+                    else
+                    {
+                        newEvent.IsDirectory = true;
+                        newEvent.IsFile = false;
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                LogWrapper.LogMessage("EventQueue - Add", "Caught exception: " + ex.Message);
+            }
+
             lock (thisLock)
             {
                 bool bAdd = true;
@@ -127,13 +152,11 @@ namespace Mezeo
                 // we should spend the effort/time to loop through the list for.
                 if (newEvent.EventType == LocalEvents.EventsType.FILE_ACTION_MODIFIED)
                 {
-                    bool isFile = File.Exists(newEvent.FullPath);
-
                     foreach (LocalEvents id in eventListCandidates)
                     {
                         if (id.FileName == newEvent.FileName)
                         {
-                            if (isFile)
+                            if (newEvent.IsFile)
                             {
                                 // If a event type is added, removed, renamed, or moved, then go ahead and accept the event.
                                 // If the new event is MODIFIED and the existing is ADDED, then update the timestamp of the
@@ -159,8 +182,7 @@ namespace Mezeo
                 }
                 else if (newEvent.EventType == LocalEvents.EventsType.FILE_ACTION_RENAMED)
                 {
-                    bool isFile = File.Exists(newEvent.FullPath);
-                    if (isFile)
+                    if (newEvent.IsFile)
                     {
                         // If something locally has been renamed, then look through the existing events
                         // and see if there is a 'created' event for the old path.  If so, then the
@@ -197,6 +219,50 @@ namespace Mezeo
                                 }
                             }
                         }
+                    }
+                }
+                else if (newEvent.EventType == LocalEvents.EventsType.FILE_ACTION_ADDED)
+                {
+                    // The 'Save As' from editors like Notepad execute a strange series of events.  Specifically,
+                    // FILE_ACTION_ADDED, FILE_ACTION_REMOVED, FILE_ACTION_ADDED, and FILE_ACTION_MODIFIED.
+                    // If the ADDED action finds both the ADDED and REMOVED actions earlier in the list, then
+                    // modify the first ADDED event, remove the REMOVED, and throw this event away.
+                    bool foundAdded = false;
+                    bool foundRemoved = false;
+                    int indexAdded = -1;
+                    int indexRemoved = -1;
+                    foreach (LocalEvents id in eventListCandidates)
+                    {
+                        if ((id.FullPath == newEvent.FullPath) && (id.EventType == LocalEvents.EventsType.FILE_ACTION_ADDED))
+                        {
+                            LogWrapper.LogMessage("EventQueue - Add", "Found existing FILE_ACTION_ADDED for: " + newEvent.FullPath);
+                            foundAdded = true;
+                            indexAdded = eventListCandidates.IndexOf(id);
+                        }
+                        if (foundAdded)
+                        {
+                            if ((id.FullPath == newEvent.FullPath) && (id.EventType == LocalEvents.EventsType.FILE_ACTION_REMOVED))
+                            {
+                                LogWrapper.LogMessage("EventQueue - Add", "Found existing FILE_ACTION_REMOVED for: " + newEvent.FullPath);
+                                foundRemoved = true;
+                                indexRemoved = eventListCandidates.IndexOf(id);
+                            }
+                        }
+
+                        // We found what we were looking for so we can exit the loop.
+                        if (foundAdded && foundRemoved)
+                            break;
+                    }
+                    if (foundAdded && foundRemoved)
+                    {
+                        // If I found the two events (in the correct order), then I need to modify
+                        // the Added entry, remove the Removed entry, and throw this entry away.
+                        bAdd = false;
+                        indexToRemove = indexRemoved;
+                        eventListCandidates[indexAdded].EventTimeStamp = newEvent.EventTimeStamp;
+                        LogWrapper.LogMessage("EventQueue - Add", "Updating existing FILE_ACTION_ADD for: " + newEvent.FullPath);
+                        LogWrapper.LogMessage("EventQueue - Add", "Removing existing FILE_ACTION_REMOVED for: " + newEvent.FullPath);
+                        LogWrapper.LogMessage("EventQueue - Add", "Ignoring new FILE_ACTION_ADDED for: " + newEvent.FullPath);
                     }
                 }
 

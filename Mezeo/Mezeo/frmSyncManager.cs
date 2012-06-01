@@ -380,6 +380,7 @@ namespace Mezeo
             {
                 // Only look for updates once a day.
                 // TODO: Make the timespan (in hours) a string that can be part of branding or configuration.
+                // TODO: Put this on a different thread since it makes a network call.  Possibly on the CheckServerStatus thread.
                 TimeSpan diff = DateTime.Now - BasicInfo.LastUpdateCheckAt;
                 if (12 < diff.TotalHours)
                 {
@@ -2555,15 +2556,11 @@ namespace Mezeo
 
                 LogWrapper.LogMessage("frmSyncManager - HandleEvents - lEvent - ", lEvent.FullPath);
 
-                FileAttributes attr = FileAttributes.Normal ;
+                FileAttributes attr = lEvent.Attributes;
 
-                bool isDirectory = false;
-                bool isFile = File.Exists(lEvent.FullPath);
-                if (!isFile)
-                    isDirectory = Directory.Exists(lEvent.FullPath);
-                if (isFile || isDirectory)
-                    attr = File.GetAttributes(lEvent.FullPath);
-                else
+                bool isDirectory = lEvent.IsDirectory;
+                bool isFile = lEvent.IsFile;
+                if (!isFile && !isDirectory)
                 {
                     if (lEvent.EventType != LocalEvents.EventsType.FILE_ACTION_REMOVED)
                     {
@@ -2617,6 +2614,8 @@ namespace Mezeo
                     {
                         if (id.EventType == LocalEvents.EventsType.FILE_ACTION_REMOVED)
                         {
+                            // TODO: Move this code to the event queue Add() function.  Should help with defect 1648.  Test EXTENSIVLY afterwards.
+                            // Move this code to the event queue.
                             DateTime dtCreate = lEvent.EventTimeStamp.AddMilliseconds(-id.EventTimeStamp.Millisecond);
                             TimeSpan Diff = dtCreate - id.EventTimeStamp;
                             if (Diff <= TimeSpan.FromSeconds(1))
@@ -3158,6 +3157,7 @@ namespace Mezeo
                                 bool buploadfileToCloud = true;
                                 // Grab a list of files for the parent.
                                 itemDetailsfile = cMezeoFileCloud.DownloadItemDetails(strParentURi, ref nStatusCode, fileName);
+                                //itemDetailsfile = cMezeoFileCloud.DownloadItemDetails(strParentURi, ref nStatusCode, null);
                                 if (nStatusCode == ResponseCode.LOGINFAILED1 || nStatusCode == ResponseCode.LOGINFAILED2)
                                 {
                                     return LOGIN_FAILED;

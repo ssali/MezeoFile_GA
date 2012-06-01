@@ -106,6 +106,26 @@ namespace MezeoFileSupport
         }
     };
 
+    public class FilterDetails
+    {
+        public String szFieldValue;
+        public String szFieldName;
+        public String szFilterOperation;
+
+        public int nStartPosition;
+        public int nCount;
+
+        public FilterDetails()
+        {
+            szFieldValue = "";
+            szFieldName = "name";
+            szFilterOperation = "ILIKE";
+
+            nStartPosition = -1;
+            nCount = 100;
+        }
+    };
+
     public class ItemResults
     {
         public String szContentsUrl;
@@ -212,18 +232,27 @@ namespace MezeoFileSupport
         public event FileUploadStoppedEvent uploadStoppedEvent;
 
         //create request format for get details
-        private void OnGetRequest(ref HttpWebRequest webRequest, String strRequestURL, String strAccept, String strXCloudDepth, String strMethod, String strFilterName)
+        private void OnGetRequest(ref HttpWebRequest webRequest, String strRequestURL, String strAccept, String strXCloudDepth, String strMethod, FilterDetails filterDetails)
         {
             //curl -u user:password -H "X-Cloud-Depth: 1" "https://rj.mezeo.net/v2/containers/Yzk0OTFiMmQzMTMyMWY4Y2ExZTExOWYwYTg4YTYzNDI5/contents?filterField=name&filterValue=Pi&filterOperation=ILIKE"
             //curl -u user:password -H "X-Cloud-Depth: 1" "https://rj.mezeo.net/v2/containers/Yzk0OTFiMmQzMTMyMWY4Y2ExZTExOWYwYTg4YTYzNDI5/contents?count=1&start=2"
-            // Construct the URL to use.  If there is a filter, then add it to the URL.
+            // Construct the URL to use.  Add a useless random element at the end to get around caching issues.
             String strRequestURLAndFilter;
-            if (null != strFilterName)
+            strRequestURLAndFilter = strRequestURL + "?n=" + DateTime.Now.Ticks.ToString();
+
+            // If there is a filter, add the information to the URL.
+            if (null != filterDetails)
             {
-                strRequestURLAndFilter = strRequestURL + "?filterField=name&filterOperation=ILIKE&filterValue=" + strFilterName;
+                if ((null != filterDetails.szFieldValue) && (0 != filterDetails.szFieldValue.Length))
+                {
+                    strRequestURLAndFilter = strRequestURLAndFilter + "&filterField=" + filterDetails.szFieldName + "&filterOperation=" + filterDetails.szFilterOperation + "&filterValue=" + filterDetails.szFieldValue;
+                }
+
+                if (-1 != filterDetails.nStartPosition)
+                {
+                    strRequestURLAndFilter = strRequestURLAndFilter + "&start=" + filterDetails.nStartPosition + "&count=" + filterDetails.nCount;
+                }
             }
-            else
-                strRequestURLAndFilter = strRequestURL;
 
             webRequest = (HttpWebRequest)WebRequest.Create(strRequestURLAndFilter);
             //string credentials = Convert.ToBase64String(ASCIIEncoding.ASCII.GetBytes(m_strLoginName + ":" + m_strPassword));
@@ -635,7 +664,7 @@ namespace MezeoFileSupport
         }
 
         //item detials
-        public ItemDetails[] DownloadItemDetails(String strContainer, ref int nStatusCode, string strFilterName)
+        public ItemDetails[] DownloadItemDetails(String strContainer, ref int nStatusCode, FilterDetails filterDetails)
         {
             nStatusCode=0;
             String m_strTemp;
@@ -646,7 +675,7 @@ namespace MezeoFileSupport
             try
 	        {
 		        HttpWebRequest webRequest = null;
-                OnGetRequest(ref webRequest, strContainer, "", "1", "Get", strFilterName);
+                OnGetRequest(ref webRequest, strContainer, "", "1", "Get", filterDetails);
 
 		        HttpWebResponse response = (HttpWebResponse)(webRequest.GetResponse());
 		        nStatusCode = 200;
