@@ -393,47 +393,56 @@ namespace Mezeo
                     string[] strSubVersion = strCurVersion.Split('.');
                     strCurVersion = strSubVersion[0] + "." + strSubVersion[1] + "." + strSubVersion[2];
 
-                    // Check to see what versions are available.
-                    HttpWebRequest webRequest = (HttpWebRequest)WebRequest.Create(strURL);
-                    webRequest.Method = "GET";
-                    webRequest.KeepAlive = false;
-                    webRequest.Timeout = 60000;
-
-                    HttpWebResponse response = (HttpWebResponse)(webRequest.GetResponse());
-                    string strTemp = OnGetResponseString(response.GetResponseStream());
-
-                    XmlDocument m_xmlVersionList = new XmlDocument();
-                    m_xmlVersionList.LoadXml(strTemp);
-
-                    XmlNodeList nodes = m_xmlVersionList.SelectNodes("/rss/channel/item");
-                    if (null != nodes)
+                    // Put the version check inside of a try/catch block in case an exception
+                    // is thrown (ex 404 or network problem).  This keeps the app from crashing.
+                    try
                     {
-                        foreach (XmlNode node in nodes)
-                        {
-                            if (node.HasChildNodes)
-                            {
-                                // See what the most recent version is and if it is newer than the current version.
-                                XmlNode enclosure = node.SelectSingleNode("enclosure");
-                                if (null != enclosure)
-                                {
-                                    XmlNode xmlVersion = enclosure.Attributes.GetNamedItem("sparkle:version");
-                                    if (null != xmlVersion)
-                                    {
-                                        if (-1 == strCurVersion.CompareTo(xmlVersion.Value))
-                                            strNewVersion = xmlVersion.Value;
+                        // Check to see what versions are available.
+                        HttpWebRequest webRequest = (HttpWebRequest)WebRequest.Create(strURL);
+                        webRequest.Method = "GET";
+                        webRequest.KeepAlive = false;
+                        webRequest.Timeout = 30000;
 
+                        HttpWebResponse response = (HttpWebResponse)(webRequest.GetResponse());
+                        string strTemp = OnGetResponseString(response.GetResponseStream());
+
+                        XmlDocument m_xmlVersionList = new XmlDocument();
+                        m_xmlVersionList.LoadXml(strTemp);
+
+                        XmlNodeList nodes = m_xmlVersionList.SelectNodes("/rss/channel/item");
+                        if (null != nodes)
+                        {
+                            foreach (XmlNode node in nodes)
+                            {
+                                if (node.HasChildNodes)
+                                {
+                                    // See what the most recent version is and if it is newer than the current version.
+                                    XmlNode enclosure = node.SelectSingleNode("enclosure");
+                                    if (null != enclosure)
+                                    {
+                                        XmlNode xmlVersion = enclosure.Attributes.GetNamedItem("sparkle:version");
+                                        if (null != xmlVersion)
+                                        {
+                                            if (-1 == strCurVersion.CompareTo(xmlVersion.Value))
+                                                strNewVersion = xmlVersion.Value;
+
+                                        }
                                     }
                                 }
                             }
                         }
+
+                        // If an update is available, the show a pop
+                        if ((null != strNewVersion) && (0 != strNewVersion.Length))
+                            ShowUpdateAvailableBalloonMessage(strNewVersion);
+
+                        // Update the time we last checked for an update.
+                        BasicInfo.LastUpdateCheckAt = DateTime.Now;
                     }
-
-                    // If an update is available, the show a pop
-                    if ((null != strNewVersion) && (0 != strNewVersion.Length))
-                        ShowUpdateAvailableBalloonMessage(strNewVersion);
-
-                    // Update the time we last checked for an update.
-                    BasicInfo.LastUpdateCheckAt = DateTime.Now;
+                    catch (Exception ex)
+                    {
+                        LogWrapper.LogMessage("frmSyncManager - tmrNextSync_Tick (checking for updates)", "Caught exception: " + ex.Message);
+                    }
                 }
             }
 
