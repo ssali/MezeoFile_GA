@@ -409,6 +409,7 @@ namespace Mezeo
 
             CheckAndCreateSyncDirectory();
             CheckAndCreateNotificationQueue();
+            HandleUpdates();
             if (syncManager == null)
             {
                 syncManager = new frmSyncManager(mezeoFileCloud, loginDetails, notificationManager);
@@ -569,13 +570,23 @@ namespace Mezeo
             }
 
             System.IO.Directory.SetCurrentDirectory(BasicInfo.SyncDirPath);
+        }
 
-            if (true == isDbCreateNew)
+        private void HandleUpdates()
+        {
+            // See what version ran last.
+            string strCurVersion = Assembly.GetExecutingAssembly().GetName().Version.ToString();
+
+            // If this is a newer version, handle any update logic.
+            if (-1 == strCurVersion.CompareTo(BasicInfo.LastExecutedVersion))
             {
                 // Since this is the first time we've run, add the sync folder to
                 // the users favorites list.
                 AddFarvoritesLinkToFolder();
             }
+
+            // Save out the version that is running.
+            BasicInfo.LastExecutedVersion = strCurVersion;
         }
 
         private static void AddFarvoritesLinkToFolder()
@@ -650,6 +661,7 @@ namespace Mezeo
             {
                 CheckAndCreateSyncDirectory();
                 CheckAndCreateNotificationQueue();
+                HandleUpdates();
                 return loginDetails;
             }
         }

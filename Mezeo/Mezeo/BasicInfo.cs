@@ -18,6 +18,7 @@ namespace Mezeo
         private static bool autoSync=true;
         private static bool loggingEnabled = false;
         private static string syncDirPath="";
+        private static string lastExecutedVersion="";
         private static bool isInitailSync = true;
 
         private static RegistryHandler regHandler = new RegistryHandler();
@@ -89,6 +90,16 @@ namespace Mezeo
             { 
                 syncDirPath = value;
                 regHandler.Write("Basic4", syncDirPath, Microsoft.Win32.RegistryValueKind.String, false);
+            }
+        }
+
+        public static string LastExecutedVersion
+        {
+            get { return lastExecutedVersion; }
+            set 
+            { 
+                lastExecutedVersion = value;
+                regHandler.Write("Version", lastExecutedVersion, Microsoft.Win32.RegistryValueKind.String, false);
             }
         }
 
@@ -165,6 +176,14 @@ namespace Mezeo
             {
                 LogWrapper.LogMessage("BasicInfo - ReadRegValue", "Caught exception: " + ex.Message);
             }
+            try
+            {
+                lastExecutedVersion = regHandler.Read("Version", Microsoft.Win32.RegistryValueKind.String, false);
+            }
+            catch (Exception ex)
+            {
+                LogWrapper.LogMessage("BasicInfo - ReadRegValue", "Caught exception: " + ex.Message);
+            }
         }
 
         private static void WriteRegValue()
@@ -178,6 +197,7 @@ namespace Mezeo
             regHandler.Write("Basic7", isInitailSync, Microsoft.Win32.RegistryValueKind.Binary, false);
             regHandler.Write("Basic8", loggingEnabled, Microsoft.Win32.RegistryValueKind.Binary, false);
             regHandler.Write("Basic9", lastUpdateCheckAt, Microsoft.Win32.RegistryValueKind.Binary, false);
+            regHandler.Write("Version", lastExecutedVersion, Microsoft.Win32.RegistryValueKind.String, false);
         }
 
         private static string GetNinMacAddress()
