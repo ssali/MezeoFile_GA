@@ -2618,37 +2618,37 @@ namespace Mezeo
                 if (lEvent.EventType == LocalEvents.EventsType.FILE_ACTION_ADDED && bRet)
                 {
                     LogWrapper.LogMessage("frmSyncManager - HandleEvents - lEvent - ", lEvent.FullPath + "- checking for move events - Enter");
-                    string strNameAdd = lEvent.FileName.Substring(lEvent.FileName.LastIndexOf("\\") + 1);
-                    foreach (LocalEvents id in events)
-                    {
-                        if (id.EventType == LocalEvents.EventsType.FILE_ACTION_REMOVED)
-                        {
-                            // TODO: Move this code to the event queue Add() function.  Should help with defect 1648.  Test EXTENSIVLY afterwards.
-                            // Move this code to the event queue.
-                            DateTime dtCreate = lEvent.EventTimeStamp.AddMilliseconds(-id.EventTimeStamp.Millisecond);
-                            TimeSpan Diff = dtCreate - id.EventTimeStamp;
-                            if (Diff <= TimeSpan.FromSeconds(1))
-                            {
-                                string strNameComp = id.FileName.Substring(id.FileName.LastIndexOf("\\") + 1);
-                                if (strNameComp == strNameAdd)
-                                {
-                                    if (!RemoveIndexes.Contains(events.IndexOf(id)))
-                                        RemoveIndexes.Add(events.IndexOf(id));
+                    //string strNameAdd = lEvent.FileName.Substring(lEvent.FileName.LastIndexOf("\\") + 1);
+                    //foreach (LocalEvents id in events)
+                    //{
+                    //    if (id.EventType == LocalEvents.EventsType.FILE_ACTION_REMOVED)
+                    //    {
+                    //        // TODO: Move this code to the event queue Add() function.  Should help with defect 1648.  Test EXTENSIVLY afterwards.
+                    //        // Move this code to the event queue.
+                    //        DateTime dtCreate = lEvent.EventTimeStamp.AddMilliseconds(-id.EventTimeStamp.Millisecond);
+                    //        TimeSpan Diff = dtCreate - id.EventTimeStamp;
+                    //        if (Diff <= TimeSpan.FromSeconds(1))
+                    //        {
+                    //            string strNameComp = id.FileName.Substring(id.FileName.LastIndexOf("\\") + 1);
+                    //            if (strNameComp == strNameAdd)
+                    //            {
+                    //                if (!RemoveIndexes.Contains(events.IndexOf(id)))
+                    //                    RemoveIndexes.Add(events.IndexOf(id));
 
-                                    bRet = false;
+                    //                bRet = false;
 
-                                    LocalEvents levent = new LocalEvents();
-                                    levent.FileName = lEvent.FileName;
-                                    levent.FullPath = lEvent.FullPath;
-                                    levent.OldFileName = id.FileName;
-                                    levent.OldFullPath = id.FullPath;
-                                    levent.EventType = LocalEvents.EventsType.FILE_ACTION_MOVE;
+                    //                LocalEvents levent = new LocalEvents();
+                    //                levent.FileName = lEvent.FileName;
+                    //                levent.FullPath = lEvent.FullPath;
+                    //                levent.OldFileName = id.FileName;
+                    //                levent.OldFullPath = id.FullPath;
+                    //                levent.EventType = LocalEvents.EventsType.FILE_ACTION_MOVE;
 
-                                    eMove.Add(levent);
-                                }
-                            }
-                        }
-                    }
+                    //                eMove.Add(levent);
+                    //            }
+                    //        }
+                    //    }
+                    //}
 
                     bool bIsMove = false;
                     if ((attr & FileAttributes.Directory) == FileAttributes.Directory)
@@ -2956,8 +2956,10 @@ namespace Mezeo
 
                 FileAttributes attr = FileAttributes.Normal;
 
-                bool isDirectory = false;
-                bool isFile = File.Exists(lEvent.FullPath);
+                //bool isDirectory = false;
+                //bool isFile = File.Exists(lEvent.FullPath);
+                bool isDirectory = lEvent.IsDirectory;
+                bool isFile = lEvent.IsFile;
 
                 if (isFile && lEvent.EventType == LocalEvents.EventsType.FILE_ACTION_ADDED)
                 {
@@ -2971,26 +2973,34 @@ namespace Mezeo
                     LogWrapper.LogMessage("SyncManager - ProcessLocalEvents", "Check for file lock - Leave");
                 }
 
-                isFile = File.Exists(lEvent.FullPath);
-                if(!isFile)
-                    isDirectory = Directory.Exists(lEvent.FullPath);
-                if (isFile || isDirectory)
+                //isFile = File.Exists(lEvent.FullPath);
+                //if (!isFile)
+                //    isDirectory = Directory.Exists(lEvent.FullPath);
+                //if (isFile || isDirectory)
+                //    attr = File.GetAttributes(lEvent.FullPath);
+                //else
+                //{
+                //    if (lEvent.EventType != LocalEvents.EventsType.FILE_ACTION_REMOVED)
+                //        continue;
+                //}
+                FileInfo fileInfo = new FileInfo(lEvent.FullPath);
+                if (fileInfo.Exists)
                     attr = File.GetAttributes(lEvent.FullPath);
                 else
                 {
                     if (lEvent.EventType != LocalEvents.EventsType.FILE_ACTION_REMOVED)
                         continue;
-                }               
+                }
 
                 int nStatusCode = 0;
                 bool bRet = true;
-                
+
                 switch (lEvent.EventType)
                 {
                     case LocalEvents.EventsType.FILE_ACTION_MOVE:
                         {
                             LogWrapper.LogMessage("SyncManager - ProcessLocalEvents", "FILE_ACTION_MOVE - Enter for file path " + lEvent.FullPath);
-                             string strContentURi =GetContentURI(lEvent.FileName);
+                             string strContentURi = GetContentURI(lEvent.FileName);
                              if (strContentURi.Trim().Length == 0)
                              {
                                  LogWrapper.LogMessage("SyncManager - ProcessLocalEvents", "GetContentURI for length ZERO");

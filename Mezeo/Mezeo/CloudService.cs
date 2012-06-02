@@ -139,7 +139,6 @@ namespace Mezeo
                 FilterDetails filterDetails = new FilterDetails();
                 filterDetails.szFieldValue = strFilterName;
                 filterDetails.nStartPosition = 0;
-                filterDetails.nCount = 10;
 
                 while (continuePaging)
                 {

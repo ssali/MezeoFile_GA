@@ -108,6 +108,32 @@ namespace Mezeo
             }
         }
 
+        public static void FillInFileInfo(ref LocalEvents theEvent)
+        {
+            try
+            {
+                FileInfo fileInfo = new FileInfo(theEvent.FullPath);
+                if (fileInfo.Exists)
+                {
+                    theEvent.Attributes = fileInfo.Attributes;
+                    if (0 == (fileInfo.Attributes & FileAttributes.Directory))
+                    {
+                        theEvent.IsDirectory = false;
+                        theEvent.IsFile = true;
+                    }
+                    else
+                    {
+                        theEvent.IsDirectory = true;
+                        theEvent.IsFile = false;
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                LogWrapper.LogMessage("EventQueue - FillInFileInfo", "Caught exception: " + ex.Message);
+            }
+        }
+
         public static void Add(LocalEvents newEvent)
         {
             int indexToRemove = -1;
@@ -119,29 +145,11 @@ namespace Mezeo
                 LogWrapper.LogMessage("EventQueue - Add", "              (" + newEvent.EventType + ") new path:" + newEvent.FullPath);
             }
 
-            try
+            // Only fill in this information if the event isn't a DELETE event.
+            // Otherwise, the file/folder isn't there to get the info for.
+            if (newEvent.EventType != LocalEvents.EventsType.FILE_ACTION_REMOVED)
             {
-                // Only fill in this information if the event isn't a DELETE event.
-                // Otherwise, the file/folder isn't there to get the info for.
-                if (newEvent.EventType != LocalEvents.EventsType.FILE_ACTION_REMOVED)
-                {
-                    FileInfo fileInfo = new FileInfo(newEvent.FullPath);
-                    newEvent.Attributes = fileInfo.Attributes;
-                    if (0 == (fileInfo.Attributes & FileAttributes.Directory))
-                    {
-                        newEvent.IsDirectory = false;
-                        newEvent.IsFile = true;
-                    }
-                    else
-                    {
-                        newEvent.IsDirectory = true;
-                        newEvent.IsFile = false;
-                    }
-                }
-            }
-            catch (Exception ex)
-            {
-                LogWrapper.LogMessage("EventQueue - Add", "Caught exception: " + ex.Message);
+                FillInFileInfo(ref newEvent);
             }
 
             lock (thisLock)
@@ -233,17 +241,17 @@ namespace Mezeo
                     int indexRemoved = -1;
                     foreach (LocalEvents id in eventListCandidates)
                     {
-                        if ((id.FullPath == newEvent.FullPath) && (id.EventType == LocalEvents.EventsType.FILE_ACTION_ADDED))
+                        if ((id.EventType == LocalEvents.EventsType.FILE_ACTION_ADDED) && (id.FullPath == newEvent.FullPath))
                         {
-                            LogWrapper.LogMessage("EventQueue - Add", "Found existing FILE_ACTION_ADDED for: " + newEvent.FullPath);
+                            LogWrapper.LogMessage("EventQueue - Add", "Found existing FILE_ACTION_ADDED (save seq) for: " + newEvent.FullPath);
                             foundAdded = true;
                             indexAdded = eventListCandidates.IndexOf(id);
                         }
                         if (foundAdded)
                         {
-                            if ((id.FullPath == newEvent.FullPath) && (id.EventType == LocalEvents.EventsType.FILE_ACTION_REMOVED))
+                            if ((id.EventType == LocalEvents.EventsType.FILE_ACTION_REMOVED) && (id.FullPath == newEvent.FullPath))
                             {
-                                LogWrapper.LogMessage("EventQueue - Add", "Found existing FILE_ACTION_REMOVED for: " + newEvent.FullPath);
+                                LogWrapper.LogMessage("EventQueue - Add", "Found existing FILE_ACTION_REMOVED (save seq) for: " + newEvent.FullPath);
                                 foundRemoved = true;
                                 indexRemoved = eventListCandidates.IndexOf(id);
                             }
@@ -253,6 +261,7 @@ namespace Mezeo
                         if (foundAdded && foundRemoved)
                             break;
                     }
+
                     if (foundAdded && foundRemoved)
                     {
                         // If I found the two events (in the correct order), then I need to modify
@@ -260,10 +269,63 @@ namespace Mezeo
                         bAdd = false;
                         indexToRemove = indexRemoved;
                         eventListCandidates[indexAdded].EventTimeStamp = newEvent.EventTimeStamp;
+                        eventListCandidates[indexAdded].IsDirectory = newEvent.IsDirectory;
+                        eventListCandidates[indexAdded].IsFile = newEvent.IsFile;
+                        eventListCandidates[indexAdded].Attributes = newEvent.Attributes;
                         LogWrapper.LogMessage("EventQueue - Add", "Updating existing FILE_ACTION_ADD for: " + newEvent.FullPath);
                         LogWrapper.LogMessage("EventQueue - Add", "Removing existing FILE_ACTION_REMOVED for: " + newEvent.FullPath);
                         LogWrapper.LogMessage("EventQueue - Add", "Ignoring new FILE_ACTION_ADDED for: " + newEvent.FullPath);
                     }
+                    //else
+                    //{
+                    //    string fileName = newEvent.FileName.Substring(newEvent.FileName.LastIndexOf("\\") + 1);
+
+                    //    foundRemoved = false;
+                    //    indexRemoved = -1;
+                    //    LogWrapper.LogMessage("EventQueue - Add", "Looking for a MOVE sequence.");
+                    //    foreach (LocalEvents id in eventListCandidates)
+                    //    {
+                    //        LogWrapper.LogMessage("EventQueue - Add", "Comparing " + id.FileName + " to " + fileName);
+                    //        //if ((id.EventType == LocalEvents.EventsType.FILE_ACTION_REMOVED) && (id.FileName == newEvent.FileName))
+                    //        if ((id.EventType == LocalEvents.EventsType.FILE_ACTION_REMOVED) && (id.FileName == fileName))
+                    //        {
+                    //            LogWrapper.LogMessage("EventQueue - Add", "Found existing FILE_ACTION_REMOVED (move seq) for: " + newEvent.FullPath);
+                    //            indexRemoved = eventListCandidates.IndexOf(id);
+                    //            foundRemoved = true;
+
+                    //            // We found what we were looking for so we can exit the loop.
+                    //            break;
+                    //        }
+                    //    }
+
+                    //    if (foundRemoved)
+                    //    {
+                    //        // If an item has an ADDED and REMOVED action within a VERY short time
+                    //        // period then the item was probably MOVED/RENAMED.  Adjust the existing
+                    //        // REMOVED action accordingly and ignore the ADDED action.
+                    //        TimeSpan diff = newEvent.EventTimeStamp - eventListCandidates[indexRemoved].EventTimeStamp;
+
+                    //        LogWrapper.LogMessage("EventQueue - Add", "Time diff (move seq) is : " + diff.TotalMilliseconds + "ms");
+                    //        if (1 >= diff.TotalMilliseconds)
+                    //        {
+                    //            LogWrapper.LogMessage("EventQueue - Add", "Time diff is small so ASSuming " + eventListCandidates[indexRemoved].FullPath + " was MOVED to " + newEvent.FullPath);
+                    //            // Change the REMOVED event to a MOVE.
+                    //            eventListCandidates[indexRemoved].EventType = LocalEvents.EventsType.FILE_ACTION_MOVE;
+
+                    //            // Update the old path, full path, and time.
+                    //            eventListCandidates[indexRemoved].OldFileName = eventListCandidates[indexRemoved].FileName;
+                    //            eventListCandidates[indexRemoved].FileName = newEvent.FileName;
+                    //            eventListCandidates[indexRemoved].OldFullPath = eventListCandidates[indexRemoved].FullPath;
+                    //            eventListCandidates[indexRemoved].FullPath = newEvent.FullPath;
+
+                    //            // Ignore this event since it's really a move.
+                    //            bAdd = false;
+
+                    //            LogWrapper.LogMessage("EventQueue - Add", "Updating existing FILE_ACTION_REMOVED for: " + eventListCandidates[indexRemoved].FullPath);
+                    //            LogWrapper.LogMessage("EventQueue - Add", "Ignoring new FILE_ACTION_ADDED for: " + newEvent.FullPath);
+                    //        }
+                    //    }
+                    //}
                 }
 
                 if (-1 != indexToRemove)
