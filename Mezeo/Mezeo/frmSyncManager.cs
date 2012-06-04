@@ -2604,6 +2604,10 @@ namespace Mezeo
                             bRet = true;
                         else if (nRet == 2)
                         {
+                            // If the event was queued up as a MODIFY instead
+                            // of an ADDED by mistake, then change it back.
+                            LogWrapper.LogMessage("frmSyncManager - HandleEvents - lEvent - ", lEvent.FullPath + " - Changed from FILE_ACTION_MODIFIED to " + lEvent.EventType.ToString());
+                            lEvent.EventType = LocalEvents.EventsType.FILE_ACTION_ADDED;
                             bRet = false;
                         }
                     }

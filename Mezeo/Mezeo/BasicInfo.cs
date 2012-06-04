@@ -194,6 +194,8 @@ namespace Mezeo
             try
             {
                 lastExecutedVersion = regHandler.Read("Version", Microsoft.Win32.RegistryValueKind.String, false);
+                if (null == lastExecutedVersion)
+                    lastExecutedVersion = "1.0.0";
             }
             catch (Exception ex)
             {

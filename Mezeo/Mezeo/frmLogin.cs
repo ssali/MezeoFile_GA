@@ -578,7 +578,7 @@ namespace Mezeo
             string strCurVersion = Assembly.GetExecutingAssembly().GetName().Version.ToString();
 
             // If this is a newer version, handle any update logic.
-            if (-1 == strCurVersion.CompareTo(BasicInfo.LastExecutedVersion))
+            if (0 != strCurVersion.CompareTo(BasicInfo.LastExecutedVersion))
             {
                 // Since this is the first time we've run, add the sync folder to
                 // the users favorites list.
