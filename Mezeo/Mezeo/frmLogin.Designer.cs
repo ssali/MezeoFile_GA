@@ -64,6 +64,8 @@
             this.txtPasswrod = new Mezeo.CueTextBox();
             this.txtUserName = new Mezeo.CueTextBox();
             this.bwCheckServerStatus = new System.ComponentModel.BackgroundWorker();
+            this.toolStripMenuItem3 = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripSeparator4 = new System.Windows.Forms.ToolStripSeparator();
             this.cmSystemTrayLogin.SuspendLayout();
             this.cmSystemTraySyncMgr.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pbLogo)).BeginInit();
@@ -110,16 +112,11 @@
             this.exitToolStripMenuItem.Name = "exitToolStripMenuItem";
             resources.ApplyResources(this.exitToolStripMenuItem, "exitToolStripMenuItem");
             this.exitToolStripMenuItem.Click += new System.EventHandler(this.exitToolStripMenuItem_Click);
-
+            // 
             // bwLogin
             // 
             this.bwLogin.DoWork += new System.ComponentModel.DoWorkEventHandler(this.bwLogin_DoWork);
             this.bwLogin.RunWorkerCompleted += new System.ComponentModel.RunWorkerCompletedEventHandler(this.bwLogin_RunWorkerCompleted);
-            // 
-            // bwCheckServerStatus
-            // 
-            this.bwCheckServerStatus.DoWork += new System.ComponentModel.DoWorkEventHandler(this.bwCheckServerStatus_DoWork);
-            //this.bwLogin.RunWorkerCompleted += new System.ComponentModel.RunWorkerCompletedEventHandler(this.bwLogin_RunWorkerCompleted);
             // 
             // cmSystemTraySyncMgr
             // 
@@ -131,6 +128,8 @@
             this.toolStripSeparator2,
             this.toolStripMenuItem5,
             this.toolStripSeparator3,
+            this.toolStripMenuItem3,
+            this.toolStripSeparator4,
             this.msSyncMgrExit});
             this.cmSystemTraySyncMgr.Name = "cmSystemTrayLogin";
             resources.ApplyResources(this.cmSystemTraySyncMgr, "cmSystemTraySyncMgr");
@@ -139,9 +138,7 @@
             // 
             this.toolStripMenuItem2.BackColor = System.Drawing.SystemColors.Control;
             resources.ApplyResources(this.toolStripMenuItem2, "toolStripMenuItem2");
-            //this.toolStripMenuItem2.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.None;
             this.toolStripMenuItem2.Name = "toolStripMenuItem2";
-            //this.toolStripMenuItem2.Paint += new System.Windows.Forms.PaintEventHandler(this.toolStripMenuItem2_Paint);
             // 
             // toolStripSeparator1
             // 
@@ -235,8 +232,8 @@
             // 
             // menuItem7
             // 
-            resources.ApplyResources(this.menuItem7, "menuItem7");
             this.menuItem7.Index = 1;
+            resources.ApplyResources(this.menuItem7, "menuItem7");
             this.menuItem7.Click += new System.EventHandler(this.menuItem7_Click);
             // 
             // menuItem5
@@ -287,6 +284,21 @@
             resources.ApplyResources(this.txtUserName, "txtUserName");
             this.txtUserName.Name = "txtUserName";
             this.txtUserName.TextChanged += new System.EventHandler(this.txtUserName_TextChanged);
+            // 
+            // bwCheckServerStatus
+            // 
+            this.bwCheckServerStatus.DoWork += new System.ComponentModel.DoWorkEventHandler(this.bwCheckServerStatus_DoWork);
+            // 
+            // toolStripMenuItem3
+            // 
+            this.toolStripMenuItem3.Name = "toolStripMenuItem3";
+            resources.ApplyResources(this.toolStripMenuItem3, "toolStripMenuItem3");
+            this.toolStripMenuItem3.Click += new System.EventHandler(this.toolStripMenuItem3_Click);
+            // 
+            // toolStripSeparator4
+            // 
+            this.toolStripSeparator4.Name = "toolStripSeparator4";
+            resources.ApplyResources(this.toolStripSeparator4, "toolStripSeparator4");
             // 
             // frmLogin
             // 
@@ -350,6 +362,8 @@
         public System.Windows.Forms.ToolStripMenuItem toolStripMenuItem4;
         private System.Windows.Forms.ToolStripMenuItem toolStripMenuItem6;
         private System.ComponentModel.BackgroundWorker bwCheckServerStatus;
+        private System.Windows.Forms.ToolStripMenuItem toolStripMenuItem3;
+        private System.Windows.Forms.ToolStripSeparator toolStripSeparator4;
 
     }
 }

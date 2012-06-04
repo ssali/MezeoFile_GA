@@ -370,82 +370,7 @@ namespace Mezeo
 
         private void tmrNextSync_Tick(object sender, EventArgs e)
         {
-            // Don't check for updates the first time the app runs....  Leave that to Sparkle.
-            if (1 == BasicInfo.LastUpdateCheckAt.Year)
-            {
-                // Update the time we last checked for an update.
-                BasicInfo.LastUpdateCheckAt = DateTime.Now;
-            }
-            else
-            {
-                // Only look for updates once a day.
-                // TODO: Make the timespan (in hours) a string that can be part of branding or configuration.
-                // TODO: Put this on a different thread since it makes a network call.  Possibly on the CheckServerStatus thread.
-                TimeSpan diff = DateTime.Now - BasicInfo.LastUpdateCheckAt;
-                if (12 < diff.TotalHours)
-                {
-                    // See if an update is available.
-                    string strURL = BasicInfo.GetUpdateURL();
-                    string strCurVersion = Assembly.GetExecutingAssembly().GetName().Version.ToString();
-                    string strNewVersion = "";
-
-                    // Remove the 4th field from the version since that doesn't exist in the sparkle version.
-                    string[] strSubVersion = strCurVersion.Split('.');
-                    strCurVersion = strSubVersion[0] + "." + strSubVersion[1] + "." + strSubVersion[2];
-
-                    // Put the version check inside of a try/catch block in case an exception
-                    // is thrown (ex 404 or network problem).  This keeps the app from crashing.
-                    try
-                    {
-                        // Check to see what versions are available.
-                        HttpWebRequest webRequest = (HttpWebRequest)WebRequest.Create(strURL);
-                        webRequest.Method = "GET";
-                        webRequest.KeepAlive = false;
-                        webRequest.Timeout = 30000;
-
-                        HttpWebResponse response = (HttpWebResponse)(webRequest.GetResponse());
-                        string strTemp = OnGetResponseString(response.GetResponseStream());
-
-                        XmlDocument m_xmlVersionList = new XmlDocument();
-                        m_xmlVersionList.LoadXml(strTemp);
-
-                        XmlNodeList nodes = m_xmlVersionList.SelectNodes("/rss/channel/item");
-                        if (null != nodes)
-                        {
-                            foreach (XmlNode node in nodes)
-                            {
-                                if (node.HasChildNodes)
-                                {
-                                    // See what the most recent version is and if it is newer than the current version.
-                                    XmlNode enclosure = node.SelectSingleNode("enclosure");
-                                    if (null != enclosure)
-                                    {
-                                        XmlNode xmlVersion = enclosure.Attributes.GetNamedItem("sparkle:version");
-                                        if (null != xmlVersion)
-                                        {
-                                            if (-1 == strCurVersion.CompareTo(xmlVersion.Value))
-                                                strNewVersion = xmlVersion.Value;
-
-                                        }
-                                    }
-                                }
-                            }
-                        }
-
-                        // If an update is available, the show a pop
-                        if ((null != strNewVersion) && (0 != strNewVersion.Length))
-                            ShowUpdateAvailableBalloonMessage(strNewVersion);
-
-                        // Update the time we last checked for an update.
-                        BasicInfo.LastUpdateCheckAt = DateTime.Now;
-                    }
-                    catch (Exception ex)
-                    {
-                        LogWrapper.LogMessage("frmSyncManager - tmrNextSync_Tick (checking for updates)", "Caught exception: " + ex.Message);
-                    }
-                }
-            }
-
+            checkForAppUpdate(false);
             // See if I need to kick off a sync action.
             if (BasicInfo.AutoSync)
             {
@@ -498,6 +423,91 @@ namespace Mezeo
                 }
             }
         }
+
+        public void checkForAppUpdate(bool ignoreTime)
+        {
+            // Don't check for updates the first time the app runs....  Leave that to Sparkle.
+            if (1 == BasicInfo.LastUpdateCheckAt.Year)
+            {
+                // Update the time we last checked for an update.
+                BasicInfo.LastUpdateCheckAt = DateTime.Now;
+            }
+            else
+            {
+                // Only look for updates once a day.
+                // TODO: Make the timespan (in hours) a string that can be part of branding or configuration.
+                // TODO: Put this on a different thread since it makes a network call.  Possibly on the CheckServerStatus thread.
+                TimeSpan diff = DateTime.Now - BasicInfo.LastUpdateCheckAt;
+                if (12 < diff.TotalHours || ignoreTime)
+                {
+                    // See if an update is available.
+                    string strURL = BasicInfo.GetUpdateURL();
+                    string strCurVersion = Assembly.GetExecutingAssembly().GetName().Version.ToString();
+                    string strNewVersion = "";
+
+                    // Remove the 4th field from the version since that doesn't exist in the sparkle version.
+                    string[] strSubVersion = strCurVersion.Split('.');
+                    strCurVersion = strSubVersion[0] + "." + strSubVersion[1] + "." + strSubVersion[2];
+
+                    // Put the version check inside of a try/catch block in case an exception
+                    // is thrown (ex 404 or network problem).  This keeps the app from crashing.
+                    try
+                    {
+                        // Check to see what versions are available.
+                        HttpWebRequest webRequest = (HttpWebRequest)WebRequest.Create(strURL);
+                        webRequest.Method = "GET";
+                        webRequest.KeepAlive = false;
+                        webRequest.Timeout = 30000;
+
+                        HttpWebResponse response = (HttpWebResponse)(webRequest.GetResponse());
+                        string strTemp = OnGetResponseString(response.GetResponseStream());
+
+                        XmlDocument m_xmlVersionList = new XmlDocument();
+                        m_xmlVersionList.LoadXml(strTemp);
+
+                        XmlNodeList nodes = m_xmlVersionList.SelectNodes("/rss/channel/item");
+                        if (null != nodes)
+                        {
+                            foreach (XmlNode node in nodes)
+                            {
+                                if (node.HasChildNodes)
+                                {
+                                    // See what the most recent version is and if it is newer than the current version.
+                                    XmlNode enclosure = node.SelectSingleNode("enclosure");
+                                    if (null != enclosure)
+                                    {
+                                        XmlNode xmlVersion = enclosure.Attributes.GetNamedItem("sparkle:version");
+                                        if (null != xmlVersion)
+                                        {
+                                            if (-1 == strCurVersion.CompareTo(xmlVersion.Value))
+                                                strNewVersion = xmlVersion.Value;
+
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                       
+                        // If an update is available, the show a pop
+                        if ((null != strNewVersion) && (0 != strNewVersion.Length))
+                        {
+                            ShowUpdateAvailableBalloonMessage(strNewVersion);
+                            BasicInfo.updateAvailable = true;
+                            frmParent.changeUpdatesText(strNewVersion);
+                           // cnotificationManager.HoverText = "Install Update";
+                        }
+
+                        // Update the time we last checked for an update.
+                        BasicInfo.LastUpdateCheckAt = DateTime.Now;
+                    }
+                    catch (Exception ex)
+                    {
+                        LogWrapper.LogMessage("frmSyncManager - tmrNextSync_Tick (checking for updates)", "Caught exception: " + ex.Message);
+                    }
+                }
+            }
+        }
+
                
         private void lnkFolderPath_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
         {
@@ -1832,10 +1842,8 @@ namespace Mezeo
         {
             string strUpdate;
 
-            if (null != strNewVersion)
-                strUpdate = "Version " + strNewVersion + " of the sync application is now available.  Please exit the application and relaunch to install the update.";
-            else
-                strUpdate = "An update for the sync application is available.  Please exit the application and relaunch to install the update.";
+            //if (null != strNewVersion)
+                strUpdate = "Version " + strNewVersion + " of the sync application is now available.";
             cnotificationManager.NotificationHandler.Icon = Properties.Resources.app_icon_warning;
             //cnotificationManager.NotificationHandler.ShowBalloonTip(1, LanguageTranslator.GetValue("TrayBalloonSyncStatusText"),
             //                                                          LanguageTranslator.GetValue("SyncIssueFoundText"),

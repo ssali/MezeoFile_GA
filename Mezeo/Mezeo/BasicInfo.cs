@@ -21,6 +21,9 @@ namespace Mezeo
         private static string lastExecutedVersion="";
         private static bool isInitailSync = true;
 
+        //Flag for updates 
+        public static bool updateAvailable = false;
+
         private static RegistryHandler regHandler = new RegistryHandler();
 
         public static string UserName
@@ -143,6 +146,18 @@ namespace Mezeo
             get
             {
                 return userName.Trim().Length != 0 && password.Trim().Length != 0 && serviceUrl.Trim().Length != 0;
+            }
+        }
+
+        public static bool UpdateAvailable
+        {
+            get
+            {
+                return updateAvailable;
+            }
+            set
+            {
+                updateAvailable = value;
             }
         }
 

@@ -707,6 +707,38 @@ namespace Mezeo
             System.Diagnostics.Process.Start(BasicInfo.ServiceUrl);
         }
 
+        private void toolStripMenuItem3_Click(object sender, EventArgs e)
+        {
+            if (BasicInfo.updateAvailable == false)
+                syncManager.checkForAppUpdate(true);
+
+            if (BasicInfo.updateAvailable == true)
+            {
+                string RSSFeed = BasicInfo.GetUpdateURL();
+
+                if (RSSFeed.Length != 0)
+                {
+                    _sparkle = new Sparkle(RSSFeed);
+                    _sparkle.StartLoop(true);
+                }
+            }
+        }
+
+        public void changeUpdatesText(string newVersion)
+        {
+            if (this.InvokeRequired)
+            {
+                this.Invoke((MethodInvoker)delegate
+                {
+                    toolStripMenuItem3.Text = "Install Update " + newVersion;
+                });
+            }
+            else
+            {
+                toolStripMenuItem3.Text = "Install Update " + newVersion;
+            }
+        }
+
         private void toolStripMenuItem6_Paint(object sender, PaintEventArgs e)
         {
             //Point pt = new Point(0, 0);
