@@ -205,7 +205,7 @@ namespace Mezeo.Resources.en {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to  detected a conflict while updating the file. This typically happens when you make a change to a file in your sync folder and the corresponding file in your .
+        ///   Looks up a localized string similar to A conflict was detected while updating the file. This typically happens when you make a change to a file in your sync folder and the corresponding file in your .
         /// </summary>
         internal static string ErrorBlurbConflict1 {
             get {
@@ -214,7 +214,7 @@ namespace Mezeo.Resources.en {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to  account was updated between sync cycles..
+        ///   Looks up a localized string similar to account was updated between sync cycles..
         /// </summary>
         internal static string ErrorBlurbConflict2 {
             get {
@@ -241,7 +241,7 @@ namespace Mezeo.Resources.en {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to  account by clicking on the link below..
+        ///   Looks up a localized string similar to account by clicking on the link below..
         /// </summary>
         internal static string ErrorBlurbConflict5 {
             get {
@@ -250,7 +250,7 @@ namespace Mezeo.Resources.en {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to was unable to download the file from your.
+        ///   Looks up a localized string similar to Sync manager was unable to download the file from your .
         /// </summary>
         internal static string ErrorBlurbDownload1 {
             get {
@@ -277,7 +277,7 @@ namespace Mezeo.Resources.en {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to  was unable to upload the file from your local machine to your .
+        ///   Looks up a localized string similar to Sync manager was unable to upload the file from your local machine to your .
         /// </summary>
         internal static string ErrorBlurbUpload1 {
             get {
@@ -286,7 +286,7 @@ namespace Mezeo.Resources.en {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to  account..
+        ///   Looks up a localized string similar to account..
         /// </summary>
         internal static string ErrorBlurbUpload2 {
             get {

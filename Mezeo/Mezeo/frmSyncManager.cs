@@ -3524,7 +3524,7 @@ namespace Mezeo
             iFound.ConflictTimeStamp = DateTime.Now;
             iFound.cType = cType;
 
-            string Description = AboutBox.AssemblyTitle;
+            string Description = "";
             switch (cType)
             {
                 case IssueFound.ConflictType.CONFLICT_MODIFIED:
@@ -3532,11 +3532,9 @@ namespace Mezeo
                         iFound.IssueTitle = LanguageTranslator.GetValue("ConflictDetectedModified");
 
                         Description += LanguageTranslator.GetValue("ErrorBlurbConflict1");
-                       // Description += AboutBox.AssemblyProduct;
                         Description += LanguageTranslator.GetValue("ErrorBlurbConflict2") + "\n";
                         Description += LanguageTranslator.GetValue("ErrorBlurbConflict3") + "\n";
                         Description += LanguageTranslator.GetValue("ErrorBlurbConflict4");
-                       // Description += AboutBox.AssemblyProduct;
                         Description += LanguageTranslator.GetValue("ErrorBlurbConflict5");
 
                         iFound.IssueDescripation = Description;
@@ -3547,7 +3545,7 @@ namespace Mezeo
                         iFound.IssueTitle = LanguageTranslator.GetValue("ConflictDetectedError");
 
                         Description += LanguageTranslator.GetValue("ErrorBlurbUpload1");
-                        Description += AboutBox.AssemblyProduct;
+                        //Description += AboutBox.AssemblyProduct;
                         Description += LanguageTranslator.GetValue("ErrorBlurbUpload2");
                         Description += LanguageTranslator.GetValue("ErrorBlurbUpload3");
 

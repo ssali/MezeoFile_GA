@@ -99,6 +99,12 @@
         }
         "Entry"
         {
+        "MsmKey" = "8:_90A85F1D4C3A7F43DDC86B9F5133E1AF"
+        "OwnerKey" = "8:_7534F32F1B53476FAA72264608D6113B"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
         "MsmKey" = "8:_952769F1A4F84068BAC4DED1D5A461AD"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
@@ -117,8 +123,8 @@
         }
         "Entry"
         {
-        "MsmKey" = "8:_CC811EE4B07C42938F655497AC4011FB"
-        "OwnerKey" = "8:_UNDEFINED"
+        "MsmKey" = "8:_E66B53928F3AEA50BBBDD301CEA24A14"
+        "OwnerKey" = "8:_7534F32F1B53476FAA72264608D6113B"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
@@ -136,13 +142,7 @@
         "Entry"
         {
         "MsmKey" = "8:_UNDEFINED"
-        "OwnerKey" = "8:_2B48656010A15B81D2632FA65A68BD24"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_UNDEFINED"
-        "OwnerKey" = "8:_7534F32F1B53476FAA72264608D6113B"
+        "OwnerKey" = "8:_F1636F102AE448F70DF6C1A91AFA84B4"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
@@ -154,7 +154,25 @@
         "Entry"
         {
         "MsmKey" = "8:_UNDEFINED"
-        "OwnerKey" = "8:_F1636F102AE448F70DF6C1A91AFA84B4"
+        "OwnerKey" = "8:_7534F32F1B53476FAA72264608D6113B"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_UNDEFINED"
+        "OwnerKey" = "8:_90A85F1D4C3A7F43DDC86B9F5133E1AF"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_UNDEFINED"
+        "OwnerKey" = "8:_E66B53928F3AEA50BBBDD301CEA24A14"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_UNDEFINED"
+        "OwnerKey" = "8:_2B48656010A15B81D2632FA65A68BD24"
         "MsmSig" = "8:_UNDEFINED"
         }
     }
@@ -434,7 +452,7 @@
             {
             "AssemblyRegister" = "3:1"
             "AssemblyIsInGAC" = "11:FALSE"
-            "AssemblyAsmDisplayName" = "8:MezeoFileSupport, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL"
+            "AssemblyAsmDisplayName" = "8:MezeoFileSupport, Version=2.0.45.0, Culture=neutral, processorArchitecture=MSIL"
                 "ScatterAssemblies"
                 {
                     "_2B48656010A15B81D2632FA65A68BD24"
@@ -545,7 +563,7 @@
             {
             "AssemblyRegister" = "3:1"
             "AssemblyIsInGAC" = "11:FALSE"
-            "AssemblyAsmDisplayName" = "8:MezeoFile, Version=2.0.17.0, Culture=neutral, processorArchitecture=x86"
+            "AssemblyAsmDisplayName" = "8:MezeoFile, Version=2.0.45.0, Culture=neutral, processorArchitecture=x86"
                 "ScatterAssemblies"
                 {
                     "_7534F32F1B53476FAA72264608D6113B"
@@ -603,11 +621,42 @@
             "IsDependency" = "11:FALSE"
             "IsolateTo" = "8:"
             }
+            "{9F6F8455-1EF1-4B85-886A-4223BCC8E7F7}:_90A85F1D4C3A7F43DDC86B9F5133E1AF"
+            {
+            "AssemblyRegister" = "3:1"
+            "AssemblyIsInGAC" = "11:FALSE"
+            "AssemblyAsmDisplayName" = "8:AppLimit.NetSparkle.Net40, Version=1.0.83.0, Culture=neutral, processorArchitecture=MSIL"
+                "ScatterAssemblies"
+                {
+                    "_90A85F1D4C3A7F43DDC86B9F5133E1AF"
+                    {
+                    "Name" = "8:AppLimit.NetSparkle.Net40.DLL"
+                    "Attributes" = "3:512"
+                    }
+                }
+            "SourcePath" = "8:AppLimit.NetSparkle.Net40.DLL"
+            "TargetName" = "8:"
+            "Tag" = "8:"
+            "Folder" = "8:_E2CA41781701484DA8E973D55A111194"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:TRUE"
+            "IsolateTo" = "8:"
+            }
             "{9F6F8455-1EF1-4B85-886A-4223BCC8E7F7}:_952769F1A4F84068BAC4DED1D5A461AD"
             {
             "AssemblyRegister" = "3:1"
             "AssemblyIsInGAC" = "11:FALSE"
-            "AssemblyAsmDisplayName" = "8:MezeoFileSupport, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL"
+            "AssemblyAsmDisplayName" = "8:MezeoFileSupport, Version=2.0.45.0, Culture=neutral, processorArchitecture=MSIL"
                 "ScatterAssemblies"
                 {
                     "_952769F1A4F84068BAC4DED1D5A461AD"
@@ -674,12 +723,23 @@
             "IsDependency" = "11:FALSE"
             "IsolateTo" = "8:"
             }
-            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_CC811EE4B07C42938F655497AC4011FB"
+            "{9F6F8455-1EF1-4B85-886A-4223BCC8E7F7}:_E66B53928F3AEA50BBBDD301CEA24A14"
             {
-            "SourcePath" = "8:MezeoFileOverlay.dll"
-            "TargetName" = "8:MezeoFileOverlay.dll"
+            "AssemblyRegister" = "3:1"
+            "AssemblyIsInGAC" = "11:TRUE"
+            "AssemblyAsmDisplayName" = "8:Microsoft.VisualBasic.PowerPacks.Vs, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL"
+                "ScatterAssemblies"
+                {
+                    "_E66B53928F3AEA50BBBDD301CEA24A14"
+                    {
+                    "Name" = "8:Microsoft.VisualBasic.PowerPacks.Vs.dll"
+                    "Attributes" = "3:512"
+                    }
+                }
+            "SourcePath" = "8:Microsoft.VisualBasic.PowerPacks.Vs.dll"
+            "TargetName" = "8:"
             "Tag" = "8:"
-            "Folder" = "8:_AEC52BA4E85C4C629254310955D39374"
+            "Folder" = "8:_E2CA41781701484DA8E973D55A111194"
             "Condition" = "8:"
             "Transitive" = "11:FALSE"
             "Vital" = "11:TRUE"
@@ -691,7 +751,7 @@
             "PackageAs" = "3:1"
             "Register" = "3:1"
             "Exclude" = "11:FALSE"
-            "IsDependency" = "11:FALSE"
+            "IsDependency" = "11:TRUE"
             "IsolateTo" = "8:"
             }
             "{9F6F8455-1EF1-4B85-886A-4223BCC8E7F7}:_F1636F102AE448F70DF6C1A91AFA84B4"
@@ -859,15 +919,15 @@
         {
         "Name" = "8:Microsoft Visual Studio"
         "ProductName" = "8:MezeoFile"
-        "ProductCode" = "8:{2796DE26-CA35-4CB3-8765-15A87CABF8D3}"
-        "PackageCode" = "8:{7F83BC84-5095-4C71-9A2B-10E9E8AF841E}"
+        "ProductCode" = "8:{14741598-15F4-446D-AEDF-F73B86B6C25D}"
+        "PackageCode" = "8:{C3B3C4C6-0D5E-4F00-AEB8-2A7B65FE23F5}"
         "UpgradeCode" = "8:{9A686460-3EE8-42C7-987B-2AC187ED8477}"
         "AspNetVersion" = "8:4.0.30319.0"
         "RestartWWWService" = "11:FALSE"
-        "RemovePreviousVersions" = "11:FALSE"
+        "RemovePreviousVersions" = "11:TRUE"
         "DetectNewerInstalledVersion" = "11:TRUE"
         "InstallAllUsers" = "11:FALSE"
-        "ProductVersion" = "8:2.0.17"
+        "ProductVersion" = "8:2.0.45"
         "Manufacturer" = "8:MezeoFile"
         "ARPHELPTELEPHONE" = "8:"
         "ARPHELPLINK" = "8:"
@@ -1745,7 +1805,7 @@
             "{970C0BB2-C7D0-45D7-ABFA-7EC378858BC0}:_33A615A6549D44C9A6CB5168A4C75448"
             {
             "Name" = "8:Uninstall MezeoFile"
-            "Arguments" = "8:/x {2796DE26-CA35-4CB3-8765-15A87CABF8D3}"
+            "Arguments" = "8:/x {14741598-15F4-446D-AEDF-F73B86B6C25D}"
             "Description" = "8:"
             "ShowCmd" = "3:1"
             "IconIndex" = "3:0"
