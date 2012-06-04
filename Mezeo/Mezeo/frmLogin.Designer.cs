@@ -110,7 +110,7 @@
             this.exitToolStripMenuItem.Name = "exitToolStripMenuItem";
             resources.ApplyResources(this.exitToolStripMenuItem, "exitToolStripMenuItem");
             this.exitToolStripMenuItem.Click += new System.EventHandler(this.exitToolStripMenuItem_Click);
-            // 
+
             // bwLogin
             // 
             this.bwLogin.DoWork += new System.ComponentModel.DoWorkEventHandler(this.bwLogin_DoWork);
@@ -139,9 +139,9 @@
             // 
             this.toolStripMenuItem2.BackColor = System.Drawing.SystemColors.Control;
             resources.ApplyResources(this.toolStripMenuItem2, "toolStripMenuItem2");
-            this.toolStripMenuItem2.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.None;
+            //this.toolStripMenuItem2.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.None;
             this.toolStripMenuItem2.Name = "toolStripMenuItem2";
-            this.toolStripMenuItem2.Paint += new System.Windows.Forms.PaintEventHandler(this.toolStripMenuItem2_Paint);
+            //this.toolStripMenuItem2.Paint += new System.Windows.Forms.PaintEventHandler(this.toolStripMenuItem2_Paint);
             // 
             // toolStripSeparator1
             // 

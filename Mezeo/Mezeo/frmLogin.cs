@@ -695,10 +695,10 @@ namespace Mezeo
             rect.Width=((ToolStripMenuItem)sender).Width;
             rect.Height=((ToolStripMenuItem)sender).Height;
 
-            Image img = Properties.Resources.mezeo_menu_logo_large;
+            //Image img = Properties.Resources.mezeo_menu_logo_large;
             //e.Graphics.DrawImage(img, pt);
-            GraphicsUnit gu = new GraphicsUnit();
-            e.Graphics.DrawImage(img, rect, img.GetBounds(ref gu), gu);
+            //GraphicsUnit gu = new GraphicsUnit();
+           // e.Graphics.DrawImage(img, rect, img.GetBounds(ref gu), gu);
             //e.Graphics.DrawImageUnscaled(img, rect);
         }
 
