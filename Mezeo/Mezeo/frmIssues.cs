@@ -282,6 +282,11 @@ namespace Mezeo
             ClearInfoLabels();
             EnableNameLabels();
             e.Cancel = true;
+           
+            for(int i=0; i<lvIssues.Items.Count; i++)
+            {
+                lvIssues.Items[i].Selected = false;
+            }
             this.Hide();
             return;
         }
@@ -294,8 +299,8 @@ namespace Mezeo
                 {
                     if (lvIssues.Items.Count > 0)
                     {
-                        lvIssues.Items[0].Selected = true;
-                        UpdateInfoLabels((IssueFound)lvIssues.Items[0].Tag);
+                        lvIssues.Items[0].Selected = false;
+                      //  UpdateInfoLabels((IssueFound)lvIssues.Items[0].Tag);
                     }
                 });
             }
@@ -303,8 +308,8 @@ namespace Mezeo
             {
                 if (lvIssues.Items.Count > 0)
                 {
-                    lvIssues.Items[0].Selected = true;
-                    UpdateInfoLabels((IssueFound)lvIssues.Items[0].Tag);
+                    lvIssues.Items[0].Selected = false;
+                 //   UpdateInfoLabels((IssueFound)lvIssues.Items[0].Tag);
                 }
             }
         }
