@@ -2987,24 +2987,24 @@ namespace Mezeo
                     LogWrapper.LogMessage("SyncManager - ProcessLocalEvents", "Check for file lock - Leave");
                 }
 
-                //isFile = File.Exists(lEvent.FullPath);
-                //if (!isFile)
-                //    isDirectory = Directory.Exists(lEvent.FullPath);
-                //if (isFile || isDirectory)
-                //    attr = File.GetAttributes(lEvent.FullPath);
-                //else
-                //{
-                //    if (lEvent.EventType != LocalEvents.EventsType.FILE_ACTION_REMOVED)
-                //        continue;
-                //}
-                FileInfo fileInfo = new FileInfo(lEvent.FullPath);
-                if (fileInfo.Exists)
+                isFile = File.Exists(lEvent.FullPath);
+                if (!isFile)
+                    isDirectory = Directory.Exists(lEvent.FullPath);
+                if (isFile || isDirectory)
                     attr = File.GetAttributes(lEvent.FullPath);
                 else
                 {
                     if (lEvent.EventType != LocalEvents.EventsType.FILE_ACTION_REMOVED)
                         continue;
                 }
+                //FileInfo fileInfo = new FileInfo(lEvent.FullPath);
+                //if (fileInfo.Exists)
+                //    attr = File.GetAttributes(lEvent.FullPath);
+                //else
+                //{
+                //    if (lEvent.EventType != LocalEvents.EventsType.FILE_ACTION_REMOVED)
+                //        continue;
+                //}
 
                 int nStatusCode = 0;
                 bool bRet = true;

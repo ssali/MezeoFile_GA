@@ -127,6 +127,11 @@ namespace Mezeo
                         theEvent.IsFile = false;
                     }
                 }
+                else
+                {
+                    theEvent.IsDirectory = true;
+                    theEvent.IsFile = false;
+                }
             }
             catch (Exception ex)
             {
