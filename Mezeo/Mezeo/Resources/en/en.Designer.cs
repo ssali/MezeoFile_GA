@@ -205,7 +205,7 @@ namespace Mezeo.Resources.en {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to A conflict was detected while updating the file. This typically happens when you make a change to a file in your sync folder and the corresponding file in your .
+        ///   Looks up a localized string similar to A conflict was detected while updating the file. This typically happens when you make a change to a file in your local sync folder and the corresponding file on the server .
         /// </summary>
         internal static string ErrorBlurbConflict1 {
             get {
@@ -214,7 +214,7 @@ namespace Mezeo.Resources.en {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to account was updated between sync cycles..
+        ///   Looks up a localized string similar to was updated between sync cycles, from another source..
         /// </summary>
         internal static string ErrorBlurbConflict2 {
             get {
@@ -232,7 +232,7 @@ namespace Mezeo.Resources.en {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to You can see all versions of the file in your .
+        ///   Looks up a localized string similar to You can see all versions of the file from the web app, .
         /// </summary>
         internal static string ErrorBlurbConflict4 {
             get {
@@ -241,7 +241,7 @@ namespace Mezeo.Resources.en {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to account by clicking on the link below..
+        ///   Looks up a localized string similar to by clicking the link to the &apos;Server File Info&apos; below..
         /// </summary>
         internal static string ErrorBlurbConflict5 {
             get {

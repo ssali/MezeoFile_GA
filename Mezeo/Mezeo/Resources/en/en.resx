@@ -166,19 +166,19 @@
     <value>Everything is great!    All your files are in sync and there are no conflicts or errors to report at this time.</value>
   </data>
   <data name="ErrorBlurbConflict1" xml:space="preserve">
-    <value>A conflict was detected while updating the file. This typically happens when you make a change to a file in your sync folder and the corresponding file in your </value>
+    <value>A conflict was detected while updating the file. This typically happens when you make a change to a file in your local sync folder and the corresponding file on the server </value>
   </data>
   <data name="ErrorBlurbConflict2" xml:space="preserve">
-    <value>account was updated between sync cycles.</value>
+    <value>was updated between sync cycles, from another source.</value>
   </data>
   <data name="ErrorBlurbConflict3" xml:space="preserve">
     <value>Your local changes have been saved as the most recent version.</value>
   </data>
   <data name="ErrorBlurbConflict4" xml:space="preserve">
-    <value>You can see all versions of the file in your </value>
+    <value>You can see all versions of the file from the web app, </value>
   </data>
   <data name="ErrorBlurbConflict5" xml:space="preserve">
-    <value>account by clicking on the link below.</value>
+    <value>by clicking the link to the 'Server File Info' below.</value>
   </data>
   <data name="ErrorBlurbDownload1" xml:space="preserve">
     <value>Sync manager was unable to download the file from your </value>
