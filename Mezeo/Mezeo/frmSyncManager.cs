@@ -1852,8 +1852,7 @@ namespace Mezeo
                                                                       strUpdate,
                                                                      ToolTipIcon.None);
 
-            //cnotificationManager.HoverText = AboutBox.AssemblyTitle + "\n" + LanguageTranslator.GetValue("SyncIssueFoundText");
-            cnotificationManager.HoverText = AboutBox.AssemblyTitle + "\n" + "Update Available";
+            cnotificationManager.HoverText = LanguageTranslator.GetValue("BrSyncManagerTitle") + " " + AboutBox.AssemblyVersion + "\n" + "Update Available";
 
             //frmParent.toolStripMenuItem4.Text = LanguageTranslator.GetValue("SyncManagerMenuIssueFoundText");
         }
@@ -1866,7 +1865,7 @@ namespace Mezeo
                                                                       LanguageTranslator.GetValue("SyncIssueFoundText"),
                                                                      ToolTipIcon.None);
 
-            cnotificationManager.HoverText = AboutBox.AssemblyTitle + "\n" + LanguageTranslator.GetValue("SyncIssueFoundText");
+            cnotificationManager.HoverText = LanguageTranslator.GetValue("BrSyncManagerTitle") + " " + AboutBox.AssemblyVersion + "\n" + LanguageTranslator.GetValue("SyncIssueFoundText");
 
             frmParent.toolStripMenuItem4.Text = LanguageTranslator.GetValue("SyncManagerMenuIssueFoundText");
         }
@@ -1876,7 +1875,7 @@ namespace Mezeo
             cnotificationManager.NotificationHandler.ShowBalloonTip(1, LanguageTranslator.GetValue("TrayBalloonSyncStatusText"),
                                                                            LanguageTranslator.GetValue("TrayBalloonSyncStopText"),
                                                                           ToolTipIcon.None);
-            cnotificationManager.HoverText = AboutBox.AssemblyTitle + "\n" + LanguageTranslator.GetValue("TrayBalloonSyncStopText");
+            cnotificationManager.HoverText = LanguageTranslator.GetValue("BrSyncManagerTitle") + " " + AboutBox.AssemblyVersion + "\n" + LanguageTranslator.GetValue("TrayBalloonSyncStopText");
             frmParent.toolStripMenuItem4.Text = LanguageTranslator.GetValue("TrayBalloonSyncStopText");
         }
 
@@ -1884,8 +1883,7 @@ namespace Mezeo
         {
             lblStatusL1.Text = LanguageTranslator.GetValue("SyncManagerStatusAllFilesInSyncLabel");
             cnotificationManager.NotificationHandler.Icon = Properties.Resources.MezeoVault;
-           // cnotificationManager.HoverText = AboutBox.AssemblyTitle + "\n" + LanguageTranslator.GetValue("TrayBalloonInitialSyncFilesUpToDateText");
-            cnotificationManager.HoverText = LanguageTranslator.GetValue("BrIconHoverText") + "\n" + LanguageTranslator.GetValue("TrayBalloonInitialSyncFilesUpToDateText");
+            cnotificationManager.HoverText = LanguageTranslator.GetValue("BrSyncManagerTitle") + " " + AboutBox.AssemblyVersion + "\n" + LanguageTranslator.GetValue("TrayBalloonInitialSyncFilesUpToDateText");
             frmParent.toolStripMenuItem4.Text = LanguageTranslator.GetValue("TrayBalloonInitialSyncFilesUpToDateText");
         }
 
@@ -1895,8 +1893,7 @@ namespace Mezeo
             cnotificationManager.NotificationHandler.ShowBalloonTip(1, LanguageTranslator.GetValue("TrayBalloonSyncStatusText"),
                                                                          LanguageTranslator.GetValue("InsufficientStorageMessage"),
                                                                         ToolTipIcon.None);
-           // cnotificationManager.HoverText = AboutBox.AssemblyTitle + "\n" + LanguageTranslator.GetValue("InsufficientStorageMessage");
-            cnotificationManager.HoverText = LanguageTranslator.GetValue("BrIconHoverText") + "\n" + LanguageTranslator.GetValue("InsufficientStorageMessage");
+            cnotificationManager.HoverText = LanguageTranslator.GetValue("BrSyncManagerTitle") + " " + AboutBox.AssemblyVersion + "\n" + LanguageTranslator.GetValue("InsufficientStorageMessage");
             frmParent.toolStripMenuItem4.Text = LanguageTranslator.GetValue("TrayBalloonSyncStopText");
         }
 
@@ -1906,14 +1903,14 @@ namespace Mezeo
             cnotificationManager.NotificationHandler.ShowBalloonTip(1, LanguageTranslator.GetValue("TrayBalloonSyncStatusText"),
                                                                         LanguageTranslator.GetValue("TrayBalloonInitialSyncText") + "\n" + LanguageTranslator.GetValue("TrayBalloonInitialSyncFilesUpToDateText"),
                                                                     ToolTipIcon.None);
-            cnotificationManager.HoverText = LanguageTranslator.GetValue("BrIconHoverText") + "\n" + LanguageTranslator.GetValue("TrayHoverInitialSyncUpToDateText");
+            cnotificationManager.HoverText = LanguageTranslator.GetValue("BrSyncManagerTitle") + " " + AboutBox.AssemblyVersion + "\n" + LanguageTranslator.GetValue("TrayHoverInitialSyncUpToDateText");            
             frmParent.toolStripMenuItem4.Text = LanguageTranslator.GetValue("TrayHoverInitialSyncUpToDateText");
         }
 
         public void SetUpSyncNowNotification()
         {
             cnotificationManager.NotificationHandler.Icon = Properties.Resources.mezeosyncstatus_syncing;
-            cnotificationManager.HoverText = LanguageTranslator.GetValue("BrIconHoverText") + "\n" + LanguageTranslator.GetValue("TrayHoverSyncProgressText") + (int)0 + LanguageTranslator.GetValue("TrayHoverSyncProgressInitialText");
+            cnotificationManager.HoverText = LanguageTranslator.GetValue("BrSyncManagerTitle") + " " + AboutBox.AssemblyVersion + "\n" + LanguageTranslator.GetValue("TrayHoverSyncProgressText") + (int)0 + LanguageTranslator.GetValue("TrayHoverSyncProgressInitialText");
             frmParent.toolStripMenuItem4.Text = LanguageTranslator.GetValue("TrayHoverSyncProgressText");
         }
 
@@ -1925,7 +1922,7 @@ namespace Mezeo
                                                                                         LanguageTranslator.GetValue("TrayBalloonSyncFolderUpToDate"),
                                                                                        ToolTipIcon.None);
 
-                cnotificationManager.HoverText = LanguageTranslator.GetValue("BrIconHoverText") + "\n" + LanguageTranslator.GetValue("TrayBalloonSyncFolderUpToDate");
+                cnotificationManager.HoverText = LanguageTranslator.GetValue("BrSyncManagerTitle") + " " + AboutBox.AssemblyVersion + "\n" + LanguageTranslator.GetValue("TrayBalloonSyncFolderUpToDate");
                 frmParent.toolStripMenuItem4.Text = LanguageTranslator.GetValue("TrayHoverInitialSyncUpToDateText");
             }
         }
@@ -1934,7 +1931,7 @@ namespace Mezeo
         {
             btnSyncNow.Text = LanguageTranslator.GetValue("SyncManagerSyncStopButtonText");
             cnotificationManager.NotificationHandler.Icon = Properties.Resources.mezeosyncstatus_syncing;
-            cnotificationManager.HoverText = LanguageTranslator.GetValue("BrIconHoverText") + "\n" + LanguageTranslator.GetValue("TrayHoverSyncProgressText") +
+            cnotificationManager.HoverText = LanguageTranslator.GetValue("BrSyncManagerTitle") + " " + AboutBox.AssemblyVersion + "\n" + LanguageTranslator.GetValue("TrayHoverSyncProgressText") +
                                             (int)0 + LanguageTranslator.GetValue("TrayHoverSyncProgressInitialText");
             frmParent.toolStripMenuItem4.Text = LanguageTranslator.GetValue("TrayHoverSyncProgressText");
         }

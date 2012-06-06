@@ -37,7 +37,7 @@ namespace Mezeo
             }
         }
 
-        public string AssemblyVersion
+        public static string AssemblyVersion
         {
             get
             {
