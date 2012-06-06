@@ -594,38 +594,44 @@ namespace Mezeo
             // Add the folder to the IE Favorites.
             // Call Environment.GetFolderPath() to get the full path to "Favourites".
             // Add on the folder name and .lnk file extension.
-            string favorites = Environment.GetFolderPath(Environment.SpecialFolder.Favorites) + "\\" + AboutBox.AssemblyTitle + ".lnk";
-            favorites = favorites.Replace("Favorites", "Links");
+            try
+            {
+                string favorites = Environment.GetFolderPath(Environment.SpecialFolder.Favorites) + "\\" + AboutBox.AssemblyTitle + ".lnk";
+                favorites = favorites.Replace("Favorites", "Links");
 
-            // This creates a Folder Shortcut 
-            IWshShell wsh = new WshShellClass();
-            IWshShortcut shortcut = (IWshShortcut)wsh.CreateShortcut(favorites);
-            shortcut.TargetPath = BasicInfo.SyncDirPath;  // The directory the link points to.
-            shortcut.Save();
+                // This creates a Folder Shortcut 
+                IWshShell wsh = new WshShellClass();
+                IWshShortcut shortcut = (IWshShortcut)wsh.CreateShortcut(favorites);
+                shortcut.TargetPath = BasicInfo.SyncDirPath;  // The directory the link points to.
+                shortcut.Save();
 
-            //// Add the folder to the 'Save As' dialog Favorites.
-            //string Key_Policies = @"Software\Microsoft\Windows\CurrentVersion\Policies";
-            //string Key_PlacesBar = @"Software\Microsoft\Windows\CurrentVersion\Policies\ComDlg32\PlacesBar";
-            //Microsoft.Win32.RegistryKey reg = Microsoft.Win32.Registry.CurrentUser.CreateSubKey(Key_PlacesBar, Microsoft.Win32.RegistryKeyPermissionCheck.ReadWriteSubTree);
+                //// Add the folder to the 'Save As' dialog Favorites.
+                //string Key_Policies = @"Software\Microsoft\Windows\CurrentVersion\Policies";
+                //string Key_PlacesBar = @"Software\Microsoft\Windows\CurrentVersion\Policies\ComDlg32\PlacesBar";
+                //Microsoft.Win32.RegistryKey reg = Microsoft.Win32.Registry.CurrentUser.CreateSubKey(Key_PlacesBar, Microsoft.Win32.RegistryKeyPermissionCheck.ReadWriteSubTree);
 
-
-            //int index = 0;
-            //// Find the first key that doesn't exist.
-            //while (index > -1)
-            //{
-            //    string key = "Place" + index.ToString();
-            //    try
-            //    {
-            //        reg.GetValue(key);
-            //    }
-            //    catch (Exception e)
-            //    {
-            //        //LogWrapper.LogMessage("frmLogin - AddFarvoritesLinkToFolder", "Add sync folder to favorite index: " + e.Message);
-            //        LogWrapper.LogMessage("frmLogin - AddFarvoritesLinkToFolder", "Add sync folder to favorite index: " + index.ToString());
-            //        reg.SetValue(key, BasicInfo.SyncDirPath);
-            //    }
-            //}
-            //reg.Close();
+                //int index = 0;
+                //// Find the first key that doesn't exist.
+                //while (index > -1)
+                //{
+                //    string key = "Place" + index.ToString();
+                //    try
+                //    {
+                //        reg.GetValue(key);
+                //    }
+                //    catch (Exception e)
+                //    {
+                //        //LogWrapper.LogMessage("frmLogin - AddFarvoritesLinkToFolder", "Add sync folder to favorite index: " + e.Message);
+                //        LogWrapper.LogMessage("frmLogin - AddFarvoritesLinkToFolder", "Add sync folder to favorite index: " + index.ToString());
+                //        reg.SetValue(key, BasicInfo.SyncDirPath);
+                //    }
+                //}
+                //reg.Close();
+            }
+            catch (Exception e)
+            {
+                LogWrapper.LogMessage("frmLogin - AddFarvoritesLinkToFolder", "Caught exception: " + e.Message);
+            }
         }
 
         private void txtPasswrod_TextChanged(object sender, EventArgs e)
