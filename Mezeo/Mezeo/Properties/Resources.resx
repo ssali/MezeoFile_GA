@@ -178,4 +178,7 @@
   <data name="app_icon_warning" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\app_icon_warning.ico;System.Drawing.Icon, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
+  <data name="app_icon_upgrade" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\app_icon_upgrade.ico;System.Drawing.Icon, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
 </root>

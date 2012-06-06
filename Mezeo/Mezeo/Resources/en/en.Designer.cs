@@ -115,15 +115,6 @@ namespace Mezeo.Resources.en {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to MezeoFile 2.0.41.
-        /// </summary>
-        internal static string BrIconHoverText {
-            get {
-                return ResourceManager.GetString("BrIconHoverText", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Cancel sync and close MezeoFile now?.
         /// </summary>
         internal static string BrMezeoExitString2 {

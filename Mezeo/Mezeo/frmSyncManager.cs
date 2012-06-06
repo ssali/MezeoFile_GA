@@ -1844,7 +1844,7 @@ namespace Mezeo
 
             //if (null != strNewVersion)
                 strUpdate = "Version " + strNewVersion + " of the sync application is now available.";
-            cnotificationManager.NotificationHandler.Icon = Properties.Resources.app_icon_warning;
+                cnotificationManager.NotificationHandler.Icon = Properties.Resources.app_icon_upgrade;
             //cnotificationManager.NotificationHandler.ShowBalloonTip(1, LanguageTranslator.GetValue("TrayBalloonSyncStatusText"),
             //                                                          LanguageTranslator.GetValue("SyncIssueFoundText"),
             //                                                         ToolTipIcon.None);

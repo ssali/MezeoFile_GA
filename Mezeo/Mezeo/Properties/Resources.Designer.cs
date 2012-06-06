@@ -67,6 +67,13 @@ namespace Mezeo.Properties {
             }
         }
         
+        internal static System.Drawing.Icon app_icon_upgrade {
+            get {
+                object obj = ResourceManager.GetObject("app_icon_upgrade", resourceCulture);
+                return ((System.Drawing.Icon)(obj));
+            }
+        }
+        
         internal static System.Drawing.Icon app_icon_warning {
             get {
                 object obj = ResourceManager.GetObject("app_icon_warning", resourceCulture);
