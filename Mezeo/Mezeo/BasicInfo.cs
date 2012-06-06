@@ -16,7 +16,7 @@ namespace Mezeo
         private static DateTime lastSync;
         private static DateTime lastUpdateCheckAt;
         private static bool autoSync=true;
-        private static bool loggingEnabled = false;
+        private static bool loggingEnabled = true;
         private static string syncDirPath="";
         private static string lastExecutedVersion="";
         private static bool isInitailSync = true;

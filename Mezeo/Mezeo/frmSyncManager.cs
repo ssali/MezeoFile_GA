@@ -938,7 +938,7 @@ namespace Mezeo
 
         public void SyncNow()
         {
-            LogWrapper.LogMessage("frmSyncManager - SyncNow", "enter");
+            //LogWrapper.LogMessage("frmSyncManager - SyncNow", "enter");
             InitTransferCount();
 
             // int nServerStatus = CheckServerStatus(); TODO:check for offline (Modified for server status thread)
@@ -994,12 +994,12 @@ namespace Mezeo
                     UpdateNQ();
                 }
             }
-            LogWrapper.LogMessage("frmSyncManager - SyncNow", "leave");
+            //LogWrapper.LogMessage("frmSyncManager - SyncNow", "leave");
         }
 
         public void ProcessOfflineEvents()
         {
-            LogWrapper.LogMessage("frmSyncManager - ProcessOfflineEvents", "enter");
+            //LogWrapper.LogMessage("frmSyncManager - ProcessOfflineEvents", "enter");
             // See if there are any offline events since the last time we ran.
             offlineWatcher.PrepareStructureList();
 
@@ -1012,12 +1012,12 @@ namespace Mezeo
             {
                 UpdateNQ();
             }
-            LogWrapper.LogMessage("frmSyncManager - ProcessOfflineEvents", "leave");
+            //LogWrapper.LogMessage("frmSyncManager - ProcessOfflineEvents", "leave");
         }
 
         public void UpdateNQ()
         {
-            LogWrapper.LogMessage("frmSyncManager - UpdateNQ", "Enter");
+            //LogWrapper.LogMessage("frmSyncManager - UpdateNQ", "Enter");
 
             lblStatusL1.Text = LanguageTranslator.GetValue("SyncManagerCheckingServer");
             lblStatusL3.Text = "";
@@ -1070,17 +1070,17 @@ namespace Mezeo
 
             if (nNQLength > 0)
             {
-                LogWrapper.LogMessage("frmSyncManager - UpdateNQ", "nNQLength" + nNQLength.ToString());
+                //LogWrapper.LogMessage("frmSyncManager - UpdateNQ", "nNQLength" + nNQLength.ToString());
                 //ShowNextSyncLabel(false);
                 if (!bwNQUpdate.IsBusy)
                 {
-                    LogWrapper.LogMessage("frmSyncManager - UpdateNQ", "bwNQUpdate.RunWorkerAsync called");
+                    //LogWrapper.LogMessage("frmSyncManager - UpdateNQ", "bwNQUpdate.RunWorkerAsync called");
                     bwNQUpdate.RunWorkerAsync(nNQLength);
                 }
             }
             else
             {
-                LogWrapper.LogMessage("frmSyncManager - UpdateNQ", "nNQLength 0");
+                //LogWrapper.LogMessage("frmSyncManager - UpdateNQ", "nNQLength 0");
 
                 SetIsSyncInProgress(false);
                 ShowSyncMessage();
@@ -1106,12 +1106,12 @@ namespace Mezeo
                 }
             }
 
-            LogWrapper.LogMessage("frmSyncManager - UpdateNQ", "Leave");
+            //LogWrapper.LogMessage("frmSyncManager - UpdateNQ", "Leave");
         }
 
         private int UpdateFromNQ(NQDetails UpdateQ)
         {
-            LogWrapper.LogMessage("frmSyncManager - UpdateFromNQ - ", "Enter"); 
+            //LogWrapper.LogMessage("frmSyncManager - UpdateFromNQ - ", "Enter"); 
 
             NQDetails nqDetail = UpdateQ;
             int nStatus = 0;
@@ -1132,7 +1132,7 @@ namespace Mezeo
             
             if (nsResult == null && nqDetail.StrEvent != "cdmi_delete")
             {
-                LogWrapper.LogMessage("frmSyncManager - UpdateFromNQ - ", "nsResult Null");
+                //LogWrapper.LogMessage("frmSyncManager - UpdateFromNQ - ", "nsResult Null");
 
                 nStatus = 1;
                 return nStatus;
@@ -1140,7 +1140,7 @@ namespace Mezeo
 
             if (nqDetail.StrObjectName == "csp_recyclebin")
             {
-                LogWrapper.LogMessage("frmSyncManager - UpdateFromNQ - skipping csp_recyclebin notification.", "csp_recyclebin notification skipped");
+                //LogWrapper.LogMessage("frmSyncManager - UpdateFromNQ - skipping csp_recyclebin notification.", "csp_recyclebin notification skipped");
                 nStatus = 1;
                 return nStatus;
             }
@@ -1159,7 +1159,7 @@ namespace Mezeo
 
             if (nqDetail.StrEvent == "cdmi_create_complete")
             {
-                LogWrapper.LogMessage("frmSyncManager - UpdateFromNQ - ", nqDetail.StrEvent + " - " + strKey + " - Enter"); 
+                //LogWrapper.LogMessage("frmSyncManager - UpdateFromNQ - ", nqDetail.StrEvent + " - " + strKey + " - Enter"); 
 
                 string strDBKey = dbHandler.GetString(DbHandler.TABLE_NAME, DbHandler.KEY, new string[] { DbHandler.CONTENT_URL }, new string[] { nsResult.StrContentsUri }, new DbType[] { DbType.String });
                 if (strDBKey.Trim().Length == 0)
@@ -1177,11 +1177,11 @@ namespace Mezeo
                 else
                     nStatus = 1;
 
-                LogWrapper.LogMessage("frmSyncManager - UpdateFromNQ - ", nqDetail.StrEvent + " - " + strKey + " - Leave"); 
+                //LogWrapper.LogMessage("frmSyncManager - UpdateFromNQ - ", nqDetail.StrEvent + " - " + strKey + " - Leave"); 
             }
             else if (nqDetail.StrEvent == "cdmi_modify_complete")
             {
-                LogWrapper.LogMessage("frmSyncManager - UpdateFromNQ - ", nqDetail.StrEvent + " - " + strKey + " - Enter"); 
+                //LogWrapper.LogMessage("frmSyncManager - UpdateFromNQ - ", nqDetail.StrEvent + " - " + strKey + " - Enter"); 
 
                 string strDBKey = dbHandler.GetString(DbHandler.TABLE_NAME, DbHandler.KEY, new string[] { DbHandler.CONTENT_URL }, new string[] { nsResult.StrContentsUri }, new DbType[] { DbType.String });
                 string strDBEtag = dbHandler.GetString(DbHandler.TABLE_NAME, DbHandler.E_TAG, new string[] { DbHandler.KEY }, new string[] { strDBKey }, new DbType[] { DbType.String });
@@ -1234,21 +1234,21 @@ namespace Mezeo
                     }
                 }
                 nStatus = 1;
-                LogWrapper.LogMessage("frmSyncManager - UpdateFromNQ - ", nqDetail.StrEvent + " - " + strKey + " - Leave"); 
+                //LogWrapper.LogMessage("frmSyncManager - UpdateFromNQ - ", nqDetail.StrEvent + " - " + strKey + " - Leave"); 
             }
             else if (nqDetail.StrEvent == "cdmi_delete")
             {
-                LogWrapper.LogMessage("frmSyncManager - UpdateFromNQ - ", nqDetail.StrEvent + " - " + strKey + " - Enter");
+                //LogWrapper.LogMessage("frmSyncManager - UpdateFromNQ - ", nqDetail.StrEvent + " - " + strKey + " - Enter");
 
                 nqEventCdmiDelete(strPath, strKey);
 
                 nStatus = 1;
 
-                LogWrapper.LogMessage("frmSyncManager - UpdateFromNQ - ", nqDetail.StrEvent + " - " + strKey + " - Leave"); 
+                //LogWrapper.LogMessage("frmSyncManager - UpdateFromNQ - ", nqDetail.StrEvent + " - " + strKey + " - Leave"); 
             }
             else if (nqDetail.StrEvent == "cdmi_rename")
             {
-                LogWrapper.LogMessage("frmSyncManager - UpdateFromNQ - ", nqDetail.StrEvent + " - " + strKey + " - Enter"); 
+                //LogWrapper.LogMessage("frmSyncManager - UpdateFromNQ - ", nqDetail.StrEvent + " - " + strKey + " - Enter"); 
 
                 string strDBKey = dbHandler.GetString(DbHandler.TABLE_NAME, DbHandler.KEY, new string[] { DbHandler.CONTENT_URL }, new string[] { nsResult.StrContentsUri }, new DbType[] { DbType.String });
                 if (strDBKey.Trim().Length != 0 && strDBKey != strKey)
@@ -1279,11 +1279,11 @@ namespace Mezeo
                     }
                 }
                 nStatus = 1;
-                LogWrapper.LogMessage("frmSyncManager - UpdateFromNQ - ", nqDetail.StrEvent + " - " + strKey + " - Leave"); 
+                //LogWrapper.LogMessage("frmSyncManager - UpdateFromNQ - ", nqDetail.StrEvent + " - " + strKey + " - Leave"); 
             }
             else if (nqDetail.StrEvent == "cdmi_copy")
             {
-                LogWrapper.LogMessage("frmSyncManager - UpdateFromNQ - ", nqDetail.StrEvent + " - " + strKey + " - Enter"); 
+                //LogWrapper.LogMessage("frmSyncManager - UpdateFromNQ - ", nqDetail.StrEvent + " - " + strKey + " - Enter"); 
 
                 if (strKey.LastIndexOf("\\") != -1)
                     CheckAndCreateForParentDir(strKey.Substring(0, strKey.LastIndexOf("\\")));
@@ -1393,17 +1393,17 @@ namespace Mezeo
                     dbHandler.Write(fileFolderInfo);
                 }
                 nStatus = 1;
-                LogWrapper.LogMessage("frmSyncManager - UpdateFromNQ - ", nqDetail.StrEvent + " - " + strKey + " - Leave"); 
+                //LogWrapper.LogMessage("frmSyncManager - UpdateFromNQ - ", nqDetail.StrEvent + " - " + strKey + " - Leave"); 
             }
 
-            LogWrapper.LogMessage("frmSyncManager - UpdateFromNQ - ", "Leave");
+            //LogWrapper.LogMessage("frmSyncManager - UpdateFromNQ - ", "Leave");
 
             return nStatus;
         }
 
         private void nqEventCdmiDelete(string strPath, string strKey)
         {
-            LogWrapper.LogMessage("frmSyncManager - nqEventCdmiDelete", "enter");
+            //LogWrapper.LogMessage("frmSyncManager - nqEventCdmiDelete", "enter");
             bool isDirectory = false;
             bool isFile = File.Exists(strPath);
             if (!isFile)
@@ -1425,12 +1425,12 @@ namespace Mezeo
                 //File.Delete(strPath);
                 dbHandler.Delete(DbHandler.TABLE_NAME, DbHandler.KEY, strKey);
             }
-            LogWrapper.LogMessage("frmSyncManager - nqEventCdmiDelete", "leave");
+            //LogWrapper.LogMessage("frmSyncManager - nqEventCdmiDelete", "leave");
         }
 
         private int nqEventCdmiCreate(NQDetails nqDetail, NSResult nsResult, string strKey, string strPath)
         {
-            LogWrapper.LogMessage("frmSyncManager - nqEventCdmiCreate", "enter");
+            //LogWrapper.LogMessage("frmSyncManager - nqEventCdmiCreate", "enter");
             //bool bIssuccess = false;
             int nStatus = 0;
             FileFolderInfo fileFolderInfo = new FileFolderInfo();
@@ -1559,7 +1559,7 @@ namespace Mezeo
                     nStatus = 1;
             }
 
-            LogWrapper.LogMessage("frmSyncManager - nqEventCdmiCreate", "leave");
+            //LogWrapper.LogMessage("frmSyncManager - nqEventCdmiCreate", "leave");
             return nStatus;
         }
 
@@ -1578,7 +1578,7 @@ namespace Mezeo
 
         private int DownloadFolderStructureForNQ(ItemDetails iDetail,string strParentKey)
         {
-            LogWrapper.LogMessage("frmSyncManager - DownloadFolderStructureForNQ", "enter");
+            //LogWrapper.LogMessage("frmSyncManager - DownloadFolderStructureForNQ", "enter");
             //bool bIssuccess = false;
             int nStatus = 0;
             FileFolderInfo fileFolderInfo = new FileFolderInfo();
@@ -1700,23 +1700,23 @@ namespace Mezeo
                     nStatus = 1;
             }
 
-            LogWrapper.LogMessage("frmSyncManager - DownloadFolderStructureForNQ", "leave");
+            //LogWrapper.LogMessage("frmSyncManager - DownloadFolderStructureForNQ", "leave");
             return nStatus;
         }
 
         void stDownloader_startDownloaderEvent(bool bStart)
         {
-            LogWrapper.LogMessage("frmSyncManager - stDownloader_startDownloaderEvent", "enter");
+            //LogWrapper.LogMessage("frmSyncManager - stDownloader_startDownloaderEvent", "enter");
             if (bStart)
                 downloadingThread.Start();
             else
                 fileDownloder.ForceComplete();
-            LogWrapper.LogMessage("frmSyncManager - stDownloader_startDownloaderEvent", "leave");
+            //LogWrapper.LogMessage("frmSyncManager - stDownloader_startDownloaderEvent", "leave");
         }
 
         private void showProgress()
         {
-            LogWrapper.LogMessage("frmSyncManager - showProgress", "enter");
+            //LogWrapper.LogMessage("frmSyncManager - showProgress", "enter");
             double progress = 100.0;
             if (pbSyncProgress.Maximum > 0)
                 progress = ((double)pbSyncProgress.Value / pbSyncProgress.Maximum) * 100.0;
@@ -1729,7 +1729,7 @@ namespace Mezeo
                 messageValue = fileDownloadCount;
 
             lblStatusL1.Text = LanguageTranslator.GetValue("SyncManagerDownloading") + " " + (fileDownloadCount) + " " + LanguageTranslator.GetValue("SyncManagerUsageOfLabel") + " " + messageMax;
-            LogWrapper.LogMessage("frmSyncManager - showProgress", "leave");
+            //LogWrapper.LogMessage("frmSyncManager - showProgress", "leave");
         }
 
         private void setUpControls()
@@ -1814,7 +1814,7 @@ namespace Mezeo
 
         private void ShowSyncMessage(bool IsStopped = false, bool IsLocalEvents = false)
         {
-            LogWrapper.LogMessage("frmSyncManager - ShowSyncMessage", "enter");
+            //LogWrapper.LogMessage("frmSyncManager - ShowSyncMessage", "enter");
             lastSync = DateTime.Now;
             BasicInfo.LastSyncAt = lastSync;
 
@@ -1832,8 +1832,8 @@ namespace Mezeo
             {
                 ShowSyncDisabledMessage();
             }
-           
-            LogWrapper.LogMessage("frmSyncManager - ShowSyncMessage", "leave");
+
+            //LogWrapper.LogMessage("frmSyncManager - ShowSyncMessage", "leave");
         }
 
         #region Ballon message functions
@@ -1953,7 +1953,7 @@ namespace Mezeo
 
         private void ShowAutoSyncMessage(bool IsStopped)
         {
-            LogWrapper.LogMessage("frmSyncManager - ShowAutoSyncMessage", "enter");
+            //LogWrapper.LogMessage("frmSyncManager - ShowAutoSyncMessage", "enter");
             if (IsStopped)
             {
                 if (frmIssuesFound != null && frmIssuesFound.GetItemsInList() > 0)
@@ -1983,25 +1983,25 @@ namespace Mezeo
             label1.BringToFront();
             label1.Visible = true;
             label1.Show();
-            LogWrapper.LogMessage("frmSyncManager - ShowAutoSyncMessage", "leave");
+            //LogWrapper.LogMessage("frmSyncManager - ShowAutoSyncMessage", "leave");
         }
 
         public void ShowOfflineAtStartUpSyncManager()
         {
-            LogWrapper.LogMessage("frmSyncManager - ShowOfflineAtStartUpSyncManager", "enter");
+            //LogWrapper.LogMessage("frmSyncManager - ShowOfflineAtStartUpSyncManager", "enter");
             lastSync = BasicInfo.LastSyncAt;
             lblPercentDone.Text = "";
             pbSyncProgress.Visible = false;
             lblStatusL1.Text = LanguageTranslator.GetValue("SyncManagerSyncDisabled");
             label1.Text = LanguageTranslator.GetValue("SyncManagerResumeSync");
             lblStatusL3.Text = LanguageTranslator.GetValue("SyncManagerStatusLastSyncLabel") + " " + lastSync.ToString("MMM d, yyyy h:mm tt");
-            LogWrapper.LogMessage("frmSyncManager - ShowOfflineAtStartUpSyncManager", "leave");
+            //LogWrapper.LogMessage("frmSyncManager - ShowOfflineAtStartUpSyncManager", "leave");
         }
 
         private void ShowSyncDisabledMessage()
         {
             //frmParent.menuItem7.Text = LanguageTranslator.GetValue("SyncManagerSyncDisabled");
-            LogWrapper.LogMessage("frmSyncManager - ShowSyncDisabledMessage", "enter");
+            //LogWrapper.LogMessage("frmSyncManager - ShowSyncDisabledMessage", "enter");
 
             cnotificationManager.NotificationHandler.Icon = Properties.Resources.app_icon_disabled;
 
@@ -2015,12 +2015,12 @@ namespace Mezeo
             label1.Text = LanguageTranslator.GetValue("SyncManagerResumeSync");
             lblStatusL3.Text = LanguageTranslator.GetValue("SyncManagerStatusLastSyncLabel") + " " + lastSync.ToString("MMM d, yyyy h:mm tt");
             ShowNextSyncLabel(true);
-            LogWrapper.LogMessage("frmSyncManager - ShowSyncDisabledMessage", "leave");
+            //LogWrapper.LogMessage("frmSyncManager - ShowSyncDisabledMessage", "leave");
         }
 
         private void DisableProgress()
         {
-            LogWrapper.LogMessage("frmSyncManager - DisableProgress", "enter");
+            //LogWrapper.LogMessage("frmSyncManager - DisableProgress", "enter");
             lblPercentDone.Visible = false;
             lblPercentDone.Text = "";
 
@@ -2030,15 +2030,15 @@ namespace Mezeo
            // btnMoveFolder.Enabled = true;
           // Commeted above line as move folder functinality disable 
             ShowNextSyncLabel(true);
-            LogWrapper.LogMessage("frmSyncManager - DisableProgress", "leave");
+            //LogWrapper.LogMessage("frmSyncManager - DisableProgress", "leave");
         }
 
         private void EnableProgress()
         {
-            LogWrapper.LogMessage("frmSyncManager - EnableProgress", "enter");
+            //LogWrapper.LogMessage("frmSyncManager - EnableProgress", "enter");
             ShowNextSyncLabel(false);
             Application.DoEvents();
-            LogWrapper.LogMessage("frmSyncManager - EnableProgress", "leave");
+            //LogWrapper.LogMessage("frmSyncManager - EnableProgress", "leave");
         }
 
         private void OpenFolder()
@@ -2049,7 +2049,7 @@ namespace Mezeo
 
         public void DisableSyncManager()
         {
-            LogWrapper.LogMessage("frmSyncManager - DisableSyncManager", "enter");
+            //LogWrapper.LogMessage("frmSyncManager - DisableSyncManager", "enter");
             SetIsDisabledByConnection(true);
             StopSync();
             pnlFileSyncOnOff.Enabled = false;
@@ -2059,12 +2059,12 @@ namespace Mezeo
             btnSyncNow.Enabled = false;
             //tmrNextSync.Enabled = false;
             //lnkFolderPath.Enabled = false;
-            LogWrapper.LogMessage("frmSyncManager - DisableSyncManager", "leave");
+            //LogWrapper.LogMessage("frmSyncManager - DisableSyncManager", "leave");
         }
 
         public void EnableSyncManager()
         {
-            LogWrapper.LogMessage("frmSyncManager - EnableSyncManager", "enter");
+            //LogWrapper.LogMessage("frmSyncManager - EnableSyncManager", "enter");
             cnotificationManager.NotificationHandler.ShowBalloonTip(1, LanguageTranslator.GetValue("TrayBalloonSyncStatusText"),
                                                                                 LanguageTranslator.GetValue("TrayAppOnlineText"), ToolTipIcon.None);
 
@@ -2089,7 +2089,7 @@ namespace Mezeo
             if(lockObject != null)
                 lockObject.StopThread = false;
             //lnkFolderPath.Enabled = false;
-            LogWrapper.LogMessage("frmSyncManager - EnableSyncManager", "leave");
+            //LogWrapper.LogMessage("frmSyncManager - EnableSyncManager", "leave");
         }
         #endregion
 
@@ -2588,6 +2588,12 @@ namespace Mezeo
                         continue;
                     }
                 }
+                else if (isFile)
+                {
+                    // Make sure the attributes are up to date.
+                    FileInfo fileInfo = new FileInfo(lEvent.FullPath);
+                    attr = fileInfo.Attributes;
+                }
 
                 if (lEvent.EventType == LocalEvents.EventsType.FILE_ACTION_MODIFIED)
                 {
@@ -2944,7 +2950,7 @@ namespace Mezeo
 
             if (caller != null)
             {
-                LogWrapper.LogMessage("SyncManager - ProcessLocalEvents", "Calling ReportProgress with PROCESS_LOCAL_EVENTS_STARTED");
+                //LogWrapper.LogMessage("SyncManager - ProcessLocalEvents", "Calling ReportProgress with PROCESS_LOCAL_EVENTS_STARTED");
                 caller.ReportProgress(PROCESS_LOCAL_EVENTS_STARTED, events.Count());
             }
 
@@ -2964,7 +2970,7 @@ namespace Mezeo
 
                 if (caller != null)
                 {
-                    LogWrapper.LogMessage("SyncManager - ProcessLocalEvents", "ReportProgress Called with PROGRESS_CHANGED_WITH_FILE_NAME for " + lEvent.FullPath);
+                    //LogWrapper.LogMessage("SyncManager - ProcessLocalEvents", "ReportProgress Called with PROGRESS_CHANGED_WITH_FILE_NAME for " + lEvent.FullPath);
                     caller.ReportProgress(PROGRESS_CHANGED_WITH_FILE_NAME, lEvent.FullPath);
                 }
 
@@ -3500,7 +3506,7 @@ namespace Mezeo
 
         private void SetIssueFound(bool bIsIssueFound)
         {
-            LogWrapper.LogMessage("frmSyncManager - SetIssueFound", "enter");
+            //LogWrapper.LogMessage("frmSyncManager - SetIssueFound", "enter");
             if (this.InvokeRequired)
             {
                 this.Invoke((MethodInvoker)delegate
@@ -3512,12 +3518,12 @@ namespace Mezeo
             {
                 this.btnIssuesFound.Visible = bIsIssueFound;
             }
-            LogWrapper.LogMessage("frmSyncManager - SetIssueFound", "leave");
+            //LogWrapper.LogMessage("frmSyncManager - SetIssueFound", "leave");
         }
 
         private void ReportConflict(LocalEvents lEvent , IssueFound.ConflictType cType)
         {
-            LogWrapper.LogMessage("SyncManager - ReportConflict", "Enter");
+            //LogWrapper.LogMessage("SyncManager - ReportConflict", "Enter");
             FileInfo fInfo = new FileInfo(lEvent.FullPath);
 
             IssueFound iFound = new IssueFound();
@@ -3579,13 +3585,13 @@ namespace Mezeo
 
             // Issue Fix for Conflicts 
              IssueFoundBalloonMessage();
-            
-             LogWrapper.LogMessage("SyncManager - ReportConflict", "Leave");
+
+            //LogWrapper.LogMessage("SyncManager - ReportConflict", "Leave");
         }
 
         private bool CheckForConflicts(LocalEvents lEvent, string strContentUrl)
         {
-            LogWrapper.LogMessage("SyncManager - CheckForConflicts", "Enter, content uri " + strContentUrl);
+            //LogWrapper.LogMessage("SyncManager - CheckForConflicts", "Enter, content uri " + strContentUrl);
             int nStatusCode = 0;
             bool bRet = false;
             string strEtag;
@@ -3757,24 +3763,24 @@ namespace Mezeo
                  //   break;
             }
 
-            LogWrapper.LogMessage("SyncManager - CheckForConflicts", "Leave");
+            //LogWrapper.LogMessage("SyncManager - CheckForConflicts", "Leave");
             return true;
         }
 
         void queue_WatchCompletedEvent()
         {
-            LogWrapper.LogMessage("frmSyncManager - queue_WatchCompletedEvent", "enter");
+            //LogWrapper.LogMessage("frmSyncManager - queue_WatchCompletedEvent", "enter");
             if (IsInIdleState() && EventQueue.QueueNotEmpty() && BasicInfo.AutoSync && !BasicInfo.IsInitialSync && !IsDisabledByConnection())
             {
                 if (!bwLocalEvents.IsBusy)
                     bwLocalEvents.RunWorkerAsync();
             }
-            LogWrapper.LogMessage("frmSyncManager - queue_WatchCompletedEvent", "leave");
+            //LogWrapper.LogMessage("frmSyncManager - queue_WatchCompletedEvent", "leave");
         }
 
         private void bwNQUpdate_DoWork(object sender, DoWorkEventArgs e)
         {
-            LogWrapper.LogMessage("frmSyncManager - bwNQUpdate_DoWork", "Enter");
+            //LogWrapper.LogMessage("frmSyncManager - bwNQUpdate_DoWork", "Enter");
 
             fileDownloadCount = 1;
 
@@ -3847,7 +3853,7 @@ namespace Mezeo
 
                         if (bwNQUpdate.CancellationPending)
                         {
-                            LogWrapper.LogMessage("frmSyncManager - bwNQUpdate_DoWork", "bwNQUpdate.CancellationPending called inner");
+                            //LogWrapper.LogMessage("frmSyncManager - bwNQUpdate_DoWork", "bwNQUpdate.CancellationPending called inner");
 
                             //e.Cancel = true;
                             //bwNQUpdate.ReportProgress(UPDATE_NQ_CANCELED);
@@ -3869,7 +3875,7 @@ namespace Mezeo
                         }
                         if (nStatus == 1)
                         {
-                            LogWrapper.LogMessage("frmSyncManager - bwNQUpdate_DoWork - ", nq.StrObjectName + " - Delete From NQ");
+                            //LogWrapper.LogMessage("frmSyncManager - bwNQUpdate_DoWork - ", nq.StrObjectName + " - Delete From NQ");
                             cMezeoFileCloud.NQDeleteValue(BasicInfo.ServiceUrl + cLoginDetails.szNQParentUri, BasicInfo.GetQueueName(), 1, ref nStatusCode);
                             if (nStatusCode == ResponseCode.LOGINFAILED1 || nStatusCode == ResponseCode.LOGINFAILED2)
                             {
@@ -3901,7 +3907,7 @@ namespace Mezeo
 
                 if (bwNQUpdate.CancellationPending)
                 {
-                    LogWrapper.LogMessage("frmSyncManager - bwNQUpdate_DoWork", "bwNQUpdate.CancellationPending called outer");
+                    //LogWrapper.LogMessage("frmSyncManager - bwNQUpdate_DoWork", "bwNQUpdate.CancellationPending called outer");
 
                     e.Cancel = true;
                     bwNQUpdate.ReportProgress(UPDATE_NQ_CANCELED);
@@ -3943,12 +3949,12 @@ namespace Mezeo
             }
 
             SetIsSyncInProgress(false);
-            LogWrapper.LogMessage("frmSyncManager - bwNQUpdate_DoWork", "Leave");   
+            //LogWrapper.LogMessage("frmSyncManager - bwNQUpdate_DoWork", "Leave");   
         }
 
         private void bwNQUpdate_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
         {
-            LogWrapper.LogMessage("frmSyncManager - bwNQUpdate_RunWorkerCompleted", "enter");
+            //LogWrapper.LogMessage("frmSyncManager - bwNQUpdate_RunWorkerCompleted", "enter");
             ShowSyncMessage(IsEventCanceled());
             tmrNextSync.Interval = FIVE_MINUTES;
             SetIsSyncInProgress(false);
@@ -3975,12 +3981,12 @@ namespace Mezeo
             {
                 LogWrapper.LogMessage("frmSyncManager - bwNQUpdate_RunWorkerCompleted", "Caught exception: " + ex.Message);
             }
-            LogWrapper.LogMessage("frmSyncManager - bwNQUpdate_RunWorkerCompleted", "leave");
+            //LogWrapper.LogMessage("frmSyncManager - bwNQUpdate_RunWorkerCompleted", "leave");
         }
 
         private void bwNQUpdate_ProgressChanged(object sender, ProgressChangedEventArgs e)
         {
-            LogWrapper.LogMessage("frmSyncManager - bwNQUpdate_ProgressChanged", "enter");
+            //LogWrapper.LogMessage("frmSyncManager - bwNQUpdate_ProgressChanged", "enter");
             if (e.ProgressPercentage == INITIAL_NQ_SYNC)
             {
                 SetUpControlForSync();
@@ -4013,7 +4019,7 @@ namespace Mezeo
             {
                 showProgress();
             }
-            LogWrapper.LogMessage("frmSyncManager - bwNQUpdate_ProgressChanged", "leave");
+            //LogWrapper.LogMessage("frmSyncManager - bwNQUpdate_ProgressChanged", "leave");
         }
 
         private void btnIssuesFound_Click(object sender, EventArgs e)
@@ -4034,16 +4040,16 @@ namespace Mezeo
 
         private void bwOffilneEvent_DoWork(object sender, DoWorkEventArgs e)
         {
-            LogWrapper.LogMessage("frmSyncManager - bwOffilneEvent_DoWork", "enter");
+            //LogWrapper.LogMessage("frmSyncManager - bwOffilneEvent_DoWork", "enter");
             SetIsOfflineWorking(true);
             int statusCode = HandleEvents((BackgroundWorker)sender);
             e.Result = statusCode;
-            LogWrapper.LogMessage("frmSyncManager - bwOffilneEvent_DoWork", "leave");
+            //LogWrapper.LogMessage("frmSyncManager - bwOffilneEvent_DoWork", "leave");
         }
 
         private void bwOffilneEvent_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
         {
-            LogWrapper.LogMessage("frmSyncManager - bwOffilneEvent_RunWorkerCompleted", "enter");
+            //LogWrapper.LogMessage("frmSyncManager - bwOffilneEvent_RunWorkerCompleted", "enter");
             SetIsOfflineWorking(false);
             if ((int)e.Result == 1)
             {
@@ -4068,21 +4074,21 @@ namespace Mezeo
                // ShowSyncManagerOffline();
                 //  CheckServerStatus(); TODO:check for offline (Modified for server status thread)
             }
-            LogWrapper.LogMessage("frmSyncManager - bwOffilneEvent_RunWorkerCompleted", "leave");
+            //LogWrapper.LogMessage("frmSyncManager - bwOffilneEvent_RunWorkerCompleted", "leave");
         }
 
         private void bwLocalEvents_DoWork(object sender, DoWorkEventArgs e)
         {
-            LogWrapper.LogMessage("frmSyncManager - bwLocalEvents_DoWork", "enter");
+            //LogWrapper.LogMessage("frmSyncManager - bwLocalEvents_DoWork", "enter");
             // SetIsDisabledByConnection(false);
             int statusCode = HandleEvents((BackgroundWorker)sender);
             e.Result = statusCode;
-            LogWrapper.LogMessage("frmSyncManager - bwLocalEvents_DoWork", "leave");
+            //LogWrapper.LogMessage("frmSyncManager - bwLocalEvents_DoWork", "leave");
         }
 
         private void bwLocalEvents_ProgressChanged(object sender, ProgressChangedEventArgs e)
         {
-            LogWrapper.LogMessage("frmSyncManager - bwLocalEvents_ProgressChanged", "enter");
+            //LogWrapper.LogMessage("frmSyncManager - bwLocalEvents_ProgressChanged", "enter");
             if (this.InvokeRequired)
             {
                 this.Invoke((MethodInvoker)delegate
@@ -4180,7 +4186,7 @@ namespace Mezeo
             }
             
             //Application.DoEvents();
-            LogWrapper.LogMessage("frmSyncManager - bwLocalEvents_ProgressChanged", "leave");
+            //LogWrapper.LogMessage("frmSyncManager - bwLocalEvents_ProgressChanged", "leave");
         }
 
         public void SetMaxProgress(double fileSize, string fileName)
@@ -4189,7 +4195,7 @@ namespace Mezeo
             {
                 this.Invoke((MethodInvoker)delegate
                 {
-                    LogWrapper.LogMessage("frmSyncManager - SetMaxProgress", "enter");
+                    //LogWrapper.LogMessage("frmSyncManager - SetMaxProgress", "enter");
                     lblStatusL3.Text = fileName;
 
                     pbSyncProgress.Maximum = (int)fileSize;
@@ -4203,12 +4209,12 @@ namespace Mezeo
                     pbSyncProgress.Show();
                     lblPercentDone.Visible = true;
                     lblPercentDone.Show();
-                    LogWrapper.LogMessage("frmSyncManager - SetMaxProgress", "leave");
+                    //LogWrapper.LogMessage("frmSyncManager - SetMaxProgress", "leave");
                 });
             }
             else
             {
-                LogWrapper.LogMessage("frmSyncManager - SetMaxProgress", "enter");
+                //LogWrapper.LogMessage("frmSyncManager - SetMaxProgress", "enter");
                 lblStatusL3.Text = fileName;
 
                 pbSyncProgress.Maximum = (int)fileSize;
@@ -4222,7 +4228,7 @@ namespace Mezeo
                 pbSyncProgress.Show();
                 lblPercentDone.Visible = true;
                 lblPercentDone.Show();
-                LogWrapper.LogMessage("frmSyncManager - SetMaxProgress", "leave");
+                //LogWrapper.LogMessage("frmSyncManager - SetMaxProgress", "leave");
             }
         }
 
@@ -4232,7 +4238,7 @@ namespace Mezeo
             {
                 this.Invoke((MethodInvoker)delegate
                 {
-                    LogWrapper.LogMessage("frmSyncManager - ShowOtherProgressBar", "enter");
+                    //LogWrapper.LogMessage("frmSyncManager - ShowOtherProgressBar", "enter");
                     lblStatusL3.Text = fileName;
                     pbSyncProgress.Maximum = 1;
                     pbSyncProgress.Value = 0;
@@ -4247,12 +4253,12 @@ namespace Mezeo
                     lblPercentDone.Text = "100%";
                     lblPercentDone.Visible = true;
                     lblPercentDone.Show();
-                    LogWrapper.LogMessage("frmSyncManager - ShowOtherProgressBar", "leave");
+                    //LogWrapper.LogMessage("frmSyncManager - ShowOtherProgressBar", "leave");
                 });
             }
             else
             {
-                LogWrapper.LogMessage("frmSyncManager - ShowOtherProgressBar", "enter");
+                //LogWrapper.LogMessage("frmSyncManager - ShowOtherProgressBar", "enter");
                 lblStatusL3.Text = fileName;
                 pbSyncProgress.Maximum = 1;
                 pbSyncProgress.Value = 1;
@@ -4273,7 +4279,7 @@ namespace Mezeo
                 lblPercentDone.Text = "100%";
                 lblPercentDone.Visible = true;
                 lblPercentDone.Show();
-                LogWrapper.LogMessage("frmSyncManager - ShowOtherProgressBar", "leave");
+                //LogWrapper.LogMessage("frmSyncManager - ShowOtherProgressBar", "leave");
             }
         }
 
@@ -4284,7 +4290,7 @@ namespace Mezeo
             {
                 this.Invoke((MethodInvoker)delegate
                 {
-                    LogWrapper.LogMessage("frmSyncManager - CallbackSyncProgress", "enter");
+                    //LogWrapper.LogMessage("frmSyncManager - CallbackSyncProgress", "enter");
                     try
                     {
                         if (pbSyncProgress.Value + filesize > pbSyncProgress.Maximum)
@@ -4318,12 +4324,12 @@ namespace Mezeo
                         LogWrapper.LogMessage("frmSyncManager - CallBackSyncProgress", "Caught exception: " + ex.Message);
                         LogWrapper.LogMessage("frmSyncManager - CallBackSyncProgress", "Caught exception Maximum and actual value is: " + pbSyncProgress.Maximum + " , " + pbSyncProgress.Value);
                     }
-                    LogWrapper.LogMessage("frmSyncManager - CallbackSyncProgress", "leave");
+                    //LogWrapper.LogMessage("frmSyncManager - CallbackSyncProgress", "leave");
                 });
             }
             else
             {
-                LogWrapper.LogMessage("frmSyncManager - CallbackSyncProgress", "enter");
+                //LogWrapper.LogMessage("frmSyncManager - CallbackSyncProgress", "enter");
                 try
                 {
                     if (pbSyncProgress.Value + filesize > pbSyncProgress.Maximum)
@@ -4358,24 +4364,24 @@ namespace Mezeo
                     LogWrapper.LogMessage("frmSyncManager - CallBackSyncProgress", "Caught exception Maximum and actual value is: " + pbSyncProgress.Maximum + " , " + pbSyncProgress.Value);
                 }
 
-                LogWrapper.LogMessage("frmSyncManager - CallbackSyncProgress", "leave");
+                //LogWrapper.LogMessage("frmSyncManager - CallbackSyncProgress", "leave");
             }
         }
 
         private void InitializeLocalEventsProcess(int progressMax)
         {
-            LogWrapper.LogMessage("frmSyncManager - InitializeLocalEventsProcess", "enter");
+            //LogWrapper.LogMessage("frmSyncManager - InitializeLocalEventsProcess", "enter");
             messageValue = 0;
             fileDownloadCount = 1;
 
             SetIssueFound(false);
             ShowNextSyncLabel(false);
-            LogWrapper.LogMessage("frmSyncManager - InitializeLocalEventsProcess", "leave");
+            //LogWrapper.LogMessage("frmSyncManager - InitializeLocalEventsProcess", "leave");
         }
 
         public void ShowSyncManagerOffline()          
         {
-            LogWrapper.LogMessage("frmSyncManager - ShowSyncManagerOffline", "enter");
+            //LogWrapper.LogMessage("frmSyncManager - ShowSyncManagerOffline", "enter");
             SyncOfflineMessage();
             lblStatusL1.Text = LanguageTranslator.GetValue("AppOfflineMenu");
             label1.Text = "";
@@ -4392,12 +4398,12 @@ namespace Mezeo
                 lblPercentDone.Text = "";
             pbSyncProgress.Visible = false;
             pbSyncProgress.Hide();
-            LogWrapper.LogMessage("frmSyncManager - ShowSyncManagerOffline", "leave");
+            //LogWrapper.LogMessage("frmSyncManager - ShowSyncManagerOffline", "leave");
         }
 
         private void ShowLocalEventsCompletedMessage()
         {
-            LogWrapper.LogMessage("frmSyncManager - ShowLocalEventsCompletedMessage", "enter");
+            //LogWrapper.LogMessage("frmSyncManager - ShowLocalEventsCompletedMessage", "enter");
             //btnSyncNow.Text = LanguageTranslator.GetValue("SyncManagerSyncStopButtonText");
             ShowSyncMessage(EventQueue.QueueNotEmpty());
             //btnSyncNow.Text = LanguageTranslator.GetValue("SyncManagerSyncNowButtonText");
@@ -4415,26 +4421,26 @@ namespace Mezeo
                
                 SyncFolderUpToDateMessage();
             }
-            LogWrapper.LogMessage("frmSyncManager - ShowLocalEventsCompletedMessage", "leave");
+            //LogWrapper.LogMessage("frmSyncManager - ShowLocalEventsCompletedMessage", "leave");
         }
 
         private void bwUpdateUsage_DoWork(object sender, DoWorkEventArgs e)
         {
-            LogWrapper.LogMessage("frmSyncManager - bwUpdateUsage_DoWork", "enter");
+            //LogWrapper.LogMessage("frmSyncManager - bwUpdateUsage_DoWork", "enter");
             e.Result = GetUsageString();
-            LogWrapper.LogMessage("frmSyncManager - bwUpdateUsage_DoWork", "leave");
+            //LogWrapper.LogMessage("frmSyncManager - bwUpdateUsage_DoWork", "leave");
         }
 
         private void bwUpdateUsage_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
         {
-            LogWrapper.LogMessage("frmSyncManager - bwUpdateUsage_RunWorkerCompleted", "enter");
+            //LogWrapper.LogMessage("frmSyncManager - bwUpdateUsage_RunWorkerCompleted", "enter");
             lblUsageDetails.Text = e.Result.ToString();
-            LogWrapper.LogMessage("frmSyncManager - bwUpdateUsage_RunWorkerCompleted", "leave");
+            //LogWrapper.LogMessage("frmSyncManager - bwUpdateUsage_RunWorkerCompleted", "leave");
         }
 
         private void bwLocalEvents_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
         {
-            LogWrapper.LogMessage("frmSyncManager - bwLocalEvents_RunWorkerCompleted", "enter");
+            //LogWrapper.LogMessage("frmSyncManager - bwLocalEvents_RunWorkerCompleted", "enter");
             if ((int)e.Result == 1)
             {
                 ShowLocalEventsCompletedMessage();
@@ -4477,7 +4483,7 @@ namespace Mezeo
                 //DisableSyncManager();
                 //ShowSyncManagerOffline();
             }
-            LogWrapper.LogMessage("frmSyncManager - bwLocalEvents_RunWorkerCompleted", "leave");
+            //LogWrapper.LogMessage("frmSyncManager - bwLocalEvents_RunWorkerCompleted", "leave");
         }
 
         private void SendToRecycleBin(string strPath, bool isFile)

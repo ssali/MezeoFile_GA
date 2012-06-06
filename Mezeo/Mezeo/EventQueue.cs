@@ -3,11 +3,14 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.IO;
+using System.Data;  // Needed to use the DbHandler stuff.
 
 namespace Mezeo
 {
     public static class EventQueue
     {
+        private static DbHandler dbHandler;
+
         // Time without receiving events for a resource before
         // it is moved from evenListCandidates to eventList.
         private static int TIME_WITHOUT_EVENTS = 20000;  // 20 seconds as milliseconds.
@@ -30,6 +33,63 @@ namespace Mezeo
             timer.Interval = TIME_WITHOUT_EVENTS;
             timer.AutoReset = true;
             timer.Enabled = true;
+
+            dbHandler = new DbHandler();
+            dbHandler.OpenConnection();
+        }
+
+        // Collate the events before finally releasing them to be acted on.
+        public static void CollateEvents()
+        {
+            // Go through the list of events and see what can be pruned out.
+            // For now, just look at items that are REMOVED.  If they don't
+            // exist in the database, then they were never created in the
+            // cloud and all related events can be removed as a NOOP.
+
+            if (0 < eventList.Count)
+            {
+                // Loop backwards theough the list.
+                // If I find a REMOVED event, then keep track of it.
+                List<LocalEvents> eventsToRemove = new List<LocalEvents>();
+                for (int index = eventList.Count - 1; index >= 0; index--)
+                {
+                    if (eventList[index].EventType == LocalEvents.EventsType.FILE_ACTION_REMOVED)
+                    {
+                        string strCheck = dbHandler.GetString(DbHandler.TABLE_NAME, DbHandler.CONTENT_URL, new string[] { DbHandler.KEY }, new string[] { eventList[index].FileName }, new DbType[] { DbType.String });
+                        if (0 == strCheck.Length)
+                        {
+                            // Since this item isn't in the database (and so not on the cloud),
+                            // then we can throw out any events for this item since in the
+                            // end it was deleted anyway.
+                            LocalEvents lEvent = new LocalEvents();
+                            lEvent = eventList[index];
+                            eventsToRemove.Add(lEvent);
+
+                            // Now look for related events (before this event) and throw them out as well.
+                            for (int indexRemove = 0; indexRemove < index; indexRemove++)
+                            {
+                                if ((eventList[indexRemove].FileName == lEvent.FileName) && (eventList[indexRemove].FullPath == lEvent.FullPath))
+                                {
+                                    LocalEvents relatedEvent = new LocalEvents();
+                                    relatedEvent = eventList[indexRemove];
+                                    eventsToRemove.Add(relatedEvent);
+                                }
+                            }
+                        }
+                    }
+                }
+
+                if (0 != eventsToRemove.Count)
+                {
+                    // Each event that was moved to eventList must
+                    // be removed from eventListCandidates.
+                    foreach (LocalEvents id in eventsToRemove)
+                    {
+                        eventList.Remove(id);
+                    }
+                    eventsToRemove.Clear();
+                }
+            }
         }
 
         public static void timer_Elapsed(object sender, System.Timers.ElapsedEventArgs e)
@@ -65,6 +125,9 @@ namespace Mezeo
                 }
 
                 eventsToRemove.Clear();
+
+                // Collate the events before finally releasing them to be acted on.
+                CollateEvents();
             }
 
             // If something was added to the list, trigger the event.
@@ -104,6 +167,18 @@ namespace Mezeo
             {
                 List<LocalEvents> currentList = eventList;
                 eventList = new List<LocalEvents>();
+
+                ////----------------------------------------------------------------------
+                //// TODO: Remove this code since it's just for debugging.
+                ////----------------------------------------------------------------------
+                //int index = 0;
+                //foreach (LocalEvents item in currentList)
+                //{
+                //    index = index + 1;
+                //    LogWrapper.LogMessage("EventQueue - GetCurrentQueue", "(" + index + ") Event type: " + item.EventType + " - " + item.FullPath + " - (old path) " + item.OldFullPath);
+                //}
+                ////----------------------------------------------------------------------
+
                 return currentList;
             }
         }
@@ -113,9 +188,10 @@ namespace Mezeo
             try
             {
                 FileInfo fileInfo = new FileInfo(theEvent.FullPath);
+                theEvent.Attributes = fileInfo.Attributes;
+                LogWrapper.LogMessage("EventQueue - FillInFileInfo", "File " + theEvent.FullPath + " attributes are: " + fileInfo.Attributes.ToString());
                 if (fileInfo.Exists)
                 {
-                    theEvent.Attributes = fileInfo.Attributes;
                     if (0 == (fileInfo.Attributes & FileAttributes.Directory))
                     {
                         theEvent.IsDirectory = false;

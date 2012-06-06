@@ -139,7 +139,7 @@ namespace Mezeo
                                 "@ParentDir )";
 
                 sqlCommand = new SQLiteCommand(query, sqlConnection);
-                           
+
                 sqlCommand.Parameters.Add(new SQLiteParameter("@Key",System.Data.DbType.String));
                 sqlCommand.Parameters.Add(new SQLiteParameter("@ModifiedDate",System.Data.DbType.DateTime));
                 sqlCommand.Parameters.Add(new SQLiteParameter("@CreatedDate", System.Data.DbType.DateTime));
@@ -278,7 +278,7 @@ namespace Mezeo
             string result = "";
 
             //query = HandleSpecialCharacter(query);
-            
+
             sqlCommand = new SQLiteCommand(query, sqlConnection);
             sqlDataReader = sqlCommand.ExecuteReader();
             sqlDataReader.Read();
