@@ -181,7 +181,7 @@ namespace Mezeo
 
         private void LoadResources()
         {
-            this.Text =   AboutBox.AssemblyTitle + " " + LanguageTranslator.GetValue("LoginFormTitle");
+            this.Text = LanguageTranslator.GetValue("BrSyncManagerTitle") + " " + LanguageTranslator.GetValue("LoginFormTitle");
             this.txtUserName.CueText = LanguageTranslator.GetValue("UserIdCueText");
             this.txtPasswrod.CueText=LanguageTranslator.GetValue("PasswordCueText");
             this.txtServerUrl.CueText = LanguageTranslator.GetValue("BrServerUrlCueText");

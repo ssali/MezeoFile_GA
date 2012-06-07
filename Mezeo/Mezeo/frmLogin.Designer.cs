@@ -140,7 +140,6 @@
             resources.ApplyResources(this.toolStripMenuItem2, "toolStripMenuItem2");
             this.toolStripMenuItem2.ForeColor = System.Drawing.Color.Black;
             this.toolStripMenuItem2.Name = "toolStripMenuItem2";
-            this.toolStripMenuItem2.Text = LanguageTranslator.GetValue("BrSyncManagerTitle") + " " + AboutBox.AssemblyVersion;
             // 
             // toolStripSeparator1
             // 
@@ -152,13 +151,11 @@
             this.msShowSyncMgr.Name = "msShowSyncMgr";
             resources.ApplyResources(this.msShowSyncMgr, "msShowSyncMgr");
             this.msShowSyncMgr.Click += new System.EventHandler(this.msShowSyncMgr_Click);
-            this.msShowSyncMgr.Text = LanguageTranslator.GetValue("SyncManager");
             // 
             // toolStripMenuItem4
             // 
             resources.ApplyResources(this.toolStripMenuItem4, "toolStripMenuItem4");
             this.toolStripMenuItem4.Name = "toolStripMenuItem4";
-            this.toolStripMenuItem4.Text = LanguageTranslator.GetValue("SyncProgress");
             // 
             // toolStripSeparator2
             // 
@@ -169,7 +166,6 @@
             // 
             this.toolStripMenuItem5.Name = "toolStripMenuItem5";
             resources.ApplyResources(this.toolStripMenuItem5, "toolStripMenuItem5");
-            this.toolStripMenuItem5.Text = LanguageTranslator.GetValue("WebsiteUrl");
             this.toolStripMenuItem5.Click += new System.EventHandler(this.toolStripMenuItem5_Click);
             // 
             // toolStripSeparator3
@@ -181,7 +177,6 @@
             // 
             this.toolStripMenuItem3.Name = "toolStripMenuItem3";
             resources.ApplyResources(this.toolStripMenuItem3, "toolStripMenuItem3");
-            this.toolStripMenuItem3.Text = LanguageTranslator.GetValue("CheckforUpdates");
             this.toolStripMenuItem3.Click += new System.EventHandler(this.toolStripMenuItem3_Click);
             // 
             // toolStripSeparator4
@@ -193,7 +188,6 @@
             // 
             this.msSyncMgrExit.Name = "msSyncMgrExit";
             resources.ApplyResources(this.msSyncMgrExit, "msSyncMgrExit");
-            this.msSyncMgrExit.Text = LanguageTranslator.GetValue("ExitSyncManager");
             this.msSyncMgrExit.Click += new System.EventHandler(this.exitToolStripMenuItem_Click);
             // 
             // pbLogo
@@ -230,7 +224,6 @@
             // 
             this.menuItem3.Index = 2;
             resources.ApplyResources(this.menuItem3, "menuItem3");
-            this.menuItem3.Text = LanguageTranslator.GetValue("ExitSyncManager");
             this.menuItem3.Click += new System.EventHandler(this.exitToolStripMenuItem_Click);
             // 
             // cmSyncManager
@@ -279,7 +272,6 @@
             // niSystemTray
             // 
             resources.ApplyResources(this.niSystemTray, "niSystemTray");
-            this.niSystemTray.Text = LanguageTranslator.GetValue("BrSyncManagerTitle") + " " + AboutBox.AssemblyVersion;
             this.niSystemTray.MouseClick += new System.Windows.Forms.MouseEventHandler(this.niSystemTray_MouseClick);
             // 
             // bwCheckServerStatus
