@@ -147,6 +147,9 @@
   <data name="BrSyncManagerTitle" xml:space="preserve">
     <value>MezeoFile</value>
   </data>
+  <data name="CheckforUpdate" xml:space="preserve">
+    <value>Check for Updates</value>
+  </data>
   <data name="ClickNoExit" xml:space="preserve">
     <value>Click "No" to exit the application and then re-run the application after you have returned the folder to its expected location.  The application will resume automatic syncing with your online account.</value>
   </data>
@@ -194,6 +197,9 @@
   </data>
   <data name="ErrorBlurbUpload3" xml:space="preserve">
     <value>This is typically caused by internet or service interruptions and is usually resolved automatically.  Another upload attempt will be made during the next sync cycle.</value>
+  </data>
+  <data name="ExitSyncManager" xml:space="preserve">
+    <value>Exit</value>
   </data>
   <data name="FolderMoved" xml:space="preserve">
     <value>The folder may have been moved, renamed, or deleted.</value>
@@ -260,6 +266,9 @@
   </data>
   <data name="SyncIssueFoundText" xml:space="preserve">
     <value>Issues found. Launch Sync Manager to review.</value>
+  </data>
+  <data name="SyncManager" xml:space="preserve">
+    <value>Sync Manager</value>
   </data>
   <data name="SyncManagerAboutLinkText" xml:space="preserve">
     <value>About</value>
@@ -348,6 +357,9 @@
   <data name="SyncManagerUsageUsed" xml:space="preserve">
     <value>Used</value>
   </data>
+  <data name="SyncProgress" xml:space="preserve">
+    <value>Sync in Progress</value>
+  </data>
   <data name="TrayAppOfflineText" xml:space="preserve">
     <value>Sync is offline because it cannot connect to your account.</value>
   </data>
@@ -389,5 +401,8 @@
   </data>
   <data name="UserIdCueText" xml:space="preserve">
     <value>Username</value>
+  </data>
+  <data name="WebsiteUrl" xml:space="preserve">
+    <value>Go to Website</value>
   </data>
 </root>

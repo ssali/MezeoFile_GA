@@ -28,6 +28,8 @@ namespace Mezeo
             string sExeName = fileInfo.Name; 
             bool bCreatedNew;
 
+            LanguageTranslator.SetLanguage("en");
+
             mutex = new Mutex(true, "Global\\" + sExeName, out bCreatedNew);
             if (bCreatedNew)
                 mutex.ReleaseMutex();

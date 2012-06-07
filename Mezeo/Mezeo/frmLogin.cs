@@ -181,7 +181,6 @@ namespace Mezeo
 
         private void LoadResources()
         {
-            LanguageTranslator.SetLanguage("en");
             this.Text =   AboutBox.AssemblyTitle + " " + LanguageTranslator.GetValue("LoginFormTitle");
             this.txtUserName.CueText = LanguageTranslator.GetValue("UserIdCueText");
             this.txtPasswrod.CueText=LanguageTranslator.GetValue("PasswordCueText");
@@ -582,7 +581,7 @@ namespace Mezeo
             {
                 // Since this is the first time we've run, add the sync folder to
                 // the users favorites list.
-                AddFarvoritesLinkToFolder();
+              //   AddFarvoritesLinkToFolder();
             }
 
             // Save out the version that is running.

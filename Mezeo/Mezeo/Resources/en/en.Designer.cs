@@ -151,6 +151,15 @@ namespace Mezeo.Resources.en {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Check for Updates.
+        /// </summary>
+        internal static string CheckforUpdate {
+            get {
+                return ResourceManager.GetString("CheckforUpdate", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Click &quot;No&quot; to exit the application and then re-run the application after you have returned the folder to its expected location.  The application will resume automatic syncing with your online account..
         /// </summary>
         internal static string ClickNoExit {
@@ -291,6 +300,15 @@ namespace Mezeo.Resources.en {
         internal static string ErrorBlurbUpload3 {
             get {
                 return ResourceManager.GetString("ErrorBlurbUpload3", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Exit.
+        /// </summary>
+        internal static string ExitSyncManager {
+            get {
+                return ResourceManager.GetString("ExitSyncManager", resourceCulture);
             }
         }
         
@@ -489,6 +507,15 @@ namespace Mezeo.Resources.en {
         internal static string SyncIssueFoundText {
             get {
                 return ResourceManager.GetString("SyncIssueFoundText", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Sync Manager.
+        /// </summary>
+        internal static string SyncManager {
+            get {
+                return ResourceManager.GetString("SyncManager", resourceCulture);
             }
         }
         
@@ -754,6 +781,15 @@ namespace Mezeo.Resources.en {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Sync in Progress.
+        /// </summary>
+        internal static string SyncProgress {
+            get {
+                return ResourceManager.GetString("SyncProgress", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Sync is offline because it cannot connect to your account..
         /// </summary>
         internal static string TrayAppOfflineText {
@@ -876,6 +912,15 @@ namespace Mezeo.Resources.en {
         internal static string UserIdCueText {
             get {
                 return ResourceManager.GetString("UserIdCueText", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Go to Website.
+        /// </summary>
+        internal static string WebsiteUrl {
+            get {
+                return ResourceManager.GetString("WebsiteUrl", resourceCulture);
             }
         }
     }
