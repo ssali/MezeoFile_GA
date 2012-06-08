@@ -13,6 +13,7 @@ namespace Mezeo
         public AboutBox()
         {
             InitializeComponent();
+            LoadResources();
             
             
             //this.textBoxDescription.Text = AssemblyDescription;
@@ -113,20 +114,38 @@ namespace Mezeo
 
         private void AboutBox_Load(object sender, EventArgs e)
         {
+            //this.Text = String.Format("About {0}", AssemblyTitle);
+            ////This will show Assembly Title
+            ////this.Text = LanguageTranslator.GetValue("BrSyncManagerTitle");
+
+            //this.labelProductName.Text = LanguageTranslator.GetValue("BrAssemblyProduct");
+            //this.labelProductName.Width = this.Width - 40;
+            
+            //this.labelVersion.Text = String.Format("Version {0}", AssemblyVersion);
+            //this.labelVersion.Width = this.Width - 40;
+
+            //this.labelCopyright.Text = LanguageTranslator.GetValue("BrAssemblyCopyright");
+            //this.labelCopyright.Width = this.Width - 40;
+
+            //this.labelCompanyName.Text = LanguageTranslator.GetValue("BrAssemblyCompany");
+            //this.labelCompanyName.Width = this.Width - 40;
+        }
+
+        private void LoadResources()
+        {
             this.Text = String.Format("About {0}", AssemblyTitle);
             //This will show Assembly Title
-            //this.Text = LanguageTranslator.GetValue("BrSyncManagerTitle");
 
-            this.labelProductName.Text = LanguageTranslator.GetValue("BrAssemblyProduct");
+            this.labelProductName.Text = global::Mezeo.Properties.Resources.BrSyncManagerTitle;
             this.labelProductName.Width = this.Width - 40;
-            
+
             this.labelVersion.Text = String.Format("Version {0}", AssemblyVersion);
             this.labelVersion.Width = this.Width - 40;
 
-            this.labelCopyright.Text = LanguageTranslator.GetValue("BrAssemblyCopyright");
+            this.labelCopyright.Text = global::Mezeo.Properties.Resources.BrAssemblyCopyright;
             this.labelCopyright.Width = this.Width - 40;
 
-            this.labelCompanyName.Text = LanguageTranslator.GetValue("BrAssemblyCompany");
+            this.labelCompanyName.Text = global::Mezeo.Properties.Resources.BrAssemblyCompany;
             this.labelCompanyName.Width = this.Width - 40;
         }
     }

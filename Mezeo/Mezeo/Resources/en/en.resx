@@ -120,33 +120,6 @@
   <data name="AppOfflineMenu" xml:space="preserve">
     <value>Sync is offline</value>
   </data>
-  <data name="BrAssemblyCompany" xml:space="preserve">
-    <value>Mezeo Software</value>
-  </data>
-  <data name="BrAssemblyCopyright" xml:space="preserve">
-    <value>Copyright © 2009 - 2012</value>
-  </data>
-  <data name="BrAssemblyProduct" xml:space="preserve">
-    <value>MezeoFile for Windows</value>
-  </data>
-  <data name="BrCaptionFileMissingDialog" xml:space="preserve">
-    <value>MezeoFile Setup</value>
-  </data>
-  <data name="BrExpectedLocation" xml:space="preserve">
-    <value>Your MezeoFile folder was not found in its expected location:</value>
-  </data>
-  <data name="BrMezeoExitString2" xml:space="preserve">
-    <value>Cancel sync and close MezeoFile now?</value>
-  </data>
-  <data name="BrServerUrlCueText" xml:space="preserve">
-    <value>https://demo.mezeofile.com</value>
-  </data>
-  <data name="BrSyncManagerMoveFolderDesc" xml:space="preserve">
-    <value>Select the desired location for the MezeoFile folder:</value>
-  </data>
-  <data name="BrSyncManagerTitle" xml:space="preserve">
-    <value>MezeoFile</value>
-  </data>
   <data name="CheckforUpdate" xml:space="preserve">
     <value>Check for Updates</value>
   </data>

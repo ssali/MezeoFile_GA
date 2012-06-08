@@ -121,9 +121,6 @@
   <data name="mezeosyncstatus_syncing" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\mezeosyncstatus-syncing.ico;System.Drawing.Icon, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <!--<data name="ic_usage" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\ic_usage.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>-->
   <data name="ic_logo" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\ic_logo.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
@@ -142,9 +139,6 @@
   <data name="logo_small_light" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\logo_small_light.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <!--<data name="app_disabled" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\app_disabled.ico;System.Drawing.Icon, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>-->
   <data name="app_offline" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\app_offline.ico;System.Drawing.Icon, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
@@ -154,18 +148,12 @@
   <data name="ic_clock" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\ic_clock.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <!--<data name="patch_yellow" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\patch_yellow.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>-->
   <data name="horizontal_seperator" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\horizontal_seperator.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="horizontal_seperator1" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\horizontal_seperator1.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <!--<data name="logo_horizontal_right_click" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\logo_horizontal_right_click.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>-->
   <data name="mezeo_menu_logo_large" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\mezeo_menu_logo_large.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
@@ -180,5 +168,32 @@
   </data>
   <data name="app_icon_upgrade" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\app_icon_upgrade.ico;System.Drawing.Icon, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="BrAssemblyCompany" xml:space="preserve">
+    <value>Mezeo Software</value>
+  </data>
+  <data name="BrAssemblyCopyright" xml:space="preserve">
+    <value>Copyright © 2009 - 2012</value>
+  </data>
+  <data name="BrAssemblyProduct" xml:space="preserve">
+    <value>MezeoFile for Windows</value>
+  </data>
+  <data name="BrCaptionFileMissingDialog" xml:space="preserve">
+    <value>MezeoFile Setup</value>
+  </data>
+  <data name="BrExpectedLocation" xml:space="preserve">
+    <value>Your MezeoFile folder was not found in its expected location:</value>
+  </data>
+  <data name="BrMezeoExitString2" xml:space="preserve">
+    <value>Cancel sync and close MezeoFile now?</value>
+  </data>
+  <data name="BrServerUrlCueText" xml:space="preserve">
+    <value>https://demo.mezeofile.com</value>
+  </data>
+  <data name="BrSyncManagerMoveFolderDesc" xml:space="preserve">
+    <value>Select the desired location for the MezeoFile folder:</value>
+  </data>
+  <data name="BrSyncManagerTitle" xml:space="preserve">
+    <value>MezeoFile</value>
   </data>
 </root>

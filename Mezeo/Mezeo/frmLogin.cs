@@ -181,13 +181,20 @@ namespace Mezeo
 
         private void LoadResources()
         {
-            this.Text = LanguageTranslator.GetValue("BrSyncManagerTitle") + " " + LanguageTranslator.GetValue("LoginFormTitle");
+            this.Text = global::Mezeo.Properties.Resources.BrSyncManagerTitle + " " + LanguageTranslator.GetValue("LoginFormTitle");
+            
             this.txtUserName.CueText = LanguageTranslator.GetValue("UserIdCueText");
             this.txtPasswrod.CueText=LanguageTranslator.GetValue("PasswordCueText");
-            this.txtServerUrl.CueText = LanguageTranslator.GetValue("BrServerUrlCueText");
-            this.txtServerUrl.Text = LanguageTranslator.GetValue("BrServerUrlCueText");
+
+            this.txtServerUrl.CueText = global::Mezeo.Properties.Resources.BrServerUrlCueText;
+            this.txtServerUrl.Text = global::Mezeo.Properties.Resources.BrServerUrlCueText;
+            
             this.labelError.Text = "";
 
+            this.toolStripMenuItem6.Text = global::Mezeo.Properties.Resources.BrSyncManagerTitle + " " + AboutBox.AssemblyVersion;
+            this.toolStripMenuItem2.Text = global::Mezeo.Properties.Resources.BrSyncManagerTitle + " " + AboutBox.AssemblyVersion;
+           
+            
             isFromSyncMgrVerification = false;
 
             if (!BasicInfo.LoadRegistryValues())
@@ -735,12 +742,27 @@ namespace Mezeo
             {
                 this.Invoke((MethodInvoker)delegate
                 {
-                    toolStripMenuItem3.Text = "Install Update " + newVersion;
+                    toolStripMenuItem7.Text = "Install Update " + newVersion;
                 });
             }
             else
             {
-                toolStripMenuItem3.Text = "Install Update " + newVersion;
+                toolStripMenuItem7.Text = "Install Update " + newVersion;
+            }
+        }
+
+        public void changePauseText()
+        {
+            if (this.InvokeRequired)
+            {
+                this.Invoke((MethodInvoker)delegate
+                {
+                    toolStripMenuItem3.Text = "Resume";
+                });
+            }
+            else
+            {
+                toolStripMenuItem3.Text = "Resume";
             }
         }
 
@@ -753,10 +775,10 @@ namespace Mezeo
             rect.Width = ((ToolStripMenuItem)sender).Width;
             rect.Height = ((ToolStripMenuItem)sender).Height;
 
-            Image img = Properties.Resources.meze_menu_logo_small;
+           // Image img = Properties.Resources.meze_menu_logo_small;
             //e.Graphics.DrawImage(img, pt);
-            GraphicsUnit gu = new GraphicsUnit();
-            e.Graphics.DrawImage(img, rect, img.GetBounds(ref gu), gu);
+          //  GraphicsUnit gu = new GraphicsUnit();
+           // e.Graphics.DrawImage(img, rect, img.GetBounds(ref gu), gu);
             //e.Graphics.DrawImageUnscaled(img, rect);
         }
 
