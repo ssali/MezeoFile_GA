@@ -116,33 +116,6 @@ namespace Mezeo.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to MezeoFile Setup.
-        /// </summary>
-        internal static string BrCaptionFileMissingDialog {
-            get {
-                return ResourceManager.GetString("BrCaptionFileMissingDialog", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Your MezeoFile folder was not found in its expected location:.
-        /// </summary>
-        internal static string BrExpectedLocation {
-            get {
-                return ResourceManager.GetString("BrExpectedLocation", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Cancel sync and close MezeoFile now?.
-        /// </summary>
-        internal static string BrMezeoExitString2 {
-            get {
-                return ResourceManager.GetString("BrMezeoExitString2", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to https://demo.mezeofile.com.
         /// </summary>
         internal static string BrServerUrlCueText {
@@ -152,11 +125,11 @@ namespace Mezeo.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Select the desired location for the MezeoFile folder:.
+        ///   Looks up a localized string similar to true.
         /// </summary>
-        internal static string BrSyncManagerMoveFolderDesc {
+        internal static string BrServerUrlVisible {
             get {
-                return ResourceManager.GetString("BrSyncManagerMoveFolderDesc", resourceCulture);
+                return ResourceManager.GetString("BrServerUrlVisible", resourceCulture);
             }
         }
         

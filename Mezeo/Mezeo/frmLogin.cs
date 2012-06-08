@@ -138,6 +138,17 @@ namespace Mezeo
             }
         }
 
+        private void HideUrl()
+        {
+            if (Convert.ToBoolean(global::Mezeo.Properties.Resources.BrServerUrlVisible) == false)
+            {
+                txtServerUrl.Visible = false;
+            }
+            else
+            {
+                txtServerUrl.Visible = true;
+            }
+        }
         public void Login()
         {
             CheckForIllegalCrossThreadCalls = false;
@@ -188,7 +199,8 @@ namespace Mezeo
 
             this.txtServerUrl.CueText = global::Mezeo.Properties.Resources.BrServerUrlCueText;
             this.txtServerUrl.Text = global::Mezeo.Properties.Resources.BrServerUrlCueText;
-            
+            HideUrl();
+
             this.labelError.Text = "";
 
             this.toolStripMenuItem6.Text = global::Mezeo.Properties.Resources.BrSyncManagerTitle + " " + AboutBox.AssemblyVersion;

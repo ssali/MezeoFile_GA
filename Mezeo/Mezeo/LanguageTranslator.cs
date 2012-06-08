@@ -11,6 +11,7 @@ namespace Mezeo
     {
         private static string currentLanguage;
         private static ResourceManager resManager;
+       // private static ResourceManager branding;
 
         public static string GetLanguage() 
         { 
@@ -39,7 +40,8 @@ namespace Mezeo
                 string value = resManager.GetString(key);
                 if (value != null)
                 {
-                    return value;
+                   
+                    return stringReplace(ref value);
                 }
                 return originalKey; 
             } 
@@ -51,7 +53,15 @@ namespace Mezeo
             catch (NullReferenceException) 
             {
                 return originalKey; 
-            } 
-        } 
+            }
+
+        }
+
+        public static string stringReplace(ref string value)
+        {
+            value.Replace("$$COMPANY$$",global::Mezeo.Properties.Resources.BrAssemblyCompany);
+            value.Replace("$$PRODUCT$$", global::Mezeo.Properties.Resources.BrSyncManagerTitle);
+            return value;
+        }
     }
 }

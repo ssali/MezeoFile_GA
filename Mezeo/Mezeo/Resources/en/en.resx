@@ -120,6 +120,18 @@
   <data name="AppOfflineMenu" xml:space="preserve">
     <value>Sync is offline</value>
   </data>
+  <data name="BrCaptionFileMissingDialog" xml:space="preserve">
+    <value>$$PRODUCT$$ Setup</value>
+  </data>
+  <data name="BrExpectedLocation" xml:space="preserve">
+    <value>Your $$PRODUCT$$ folder was not found in its expected location:</value>
+  </data>
+  <data name="BrMezeoExitString2" xml:space="preserve">
+    <value>Cancel sync and close $$PRODUCT$$ now?</value>
+  </data>
+  <data name="BrSyncManagerMoveFolderDesc" xml:space="preserve">
+    <value>Select the desired location for the $$PRODUCT$$ folder:</value>
+  </data>
   <data name="CheckforUpdate" xml:space="preserve">
     <value>Check for Updates</value>
   </data>
