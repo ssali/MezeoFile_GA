@@ -728,9 +728,9 @@ namespace Mezeo
         private void LoadResources()
         {
             this.Text = AboutBox.AssemblyTitle; 
-            this.lblFileSync.Text = LanguageTranslator.GetValue("SyncManagerFileSyncLabel");
-            this.rbSyncOff.Text = LanguageTranslator.GetValue("SyncManagerOffButtonText");
-            this.rbSyncOn.Text = LanguageTranslator.GetValue("SyncManagerOnButtonText");
+            //this.lblFileSync.Text = LanguageTranslator.GetValue("SyncManagerFileSyncLabel");
+            //this.rbSyncOff.Text = LanguageTranslator.GetValue("SyncManagerOffButtonText");
+            //this.rbSyncOn.Text = LanguageTranslator.GetValue("SyncManagerOnButtonText");
             this.lblFolder.Text = LanguageTranslator.GetValue("SyncManagerFolderLabel");
             this.lblStatus.Text = LanguageTranslator.GetValue("SyncManagerStatusLabel");
             this.lblUsage.Text = LanguageTranslator.GetValue("SyncManagerUsageLabel");
@@ -753,11 +753,11 @@ namespace Mezeo
 
             if (BasicInfo.AutoSync)
             {
-                rbSyncOn.Checked = true;
+                //rbSyncOn.Checked = true;
             }
             else
             {
-                rbSyncOff.Checked = true;
+                //rbSyncOff.Checked = true;
             }
 
             if (cLoginDetails != null)
@@ -2049,8 +2049,8 @@ namespace Mezeo
             //LogWrapper.LogMessage("frmSyncManager - DisableSyncManager", "enter");
             SetIsDisabledByConnection(true);
             StopSync();
-            pnlFileSyncOnOff.Enabled = false;
-            rbSyncOff.Checked = true;
+            //pnlFileSyncOnOff.Enabled = false;
+            //rbSyncOff.Checked = true;
             //btnMoveFolder.Enabled = false;
             //Commeted above line as move folder functinality disable 
             btnSyncNow.Enabled = false;
@@ -2068,15 +2068,15 @@ namespace Mezeo
             cnotificationManager.HoverText = LanguageTranslator.GetValue("TrayAppOnlineText");
             cnotificationManager.NotifyIcon = Properties.Resources.MezeoVault;
 
-            pnlFileSyncOnOff.Enabled = true;
+           // pnlFileSyncOnOff.Enabled = true;
 
             if (BasicInfo.AutoSync)
             {
-                rbSyncOn.Checked = true;
+               // rbSyncOn.Checked = true;
             }
             else
             {
-                rbSyncOff.Checked = true;
+              //  rbSyncOff.Checked = true;
             }
 
             SetIsDisabledByConnection(false);

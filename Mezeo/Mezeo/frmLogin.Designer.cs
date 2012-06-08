@@ -66,6 +66,8 @@
             this.txtServerUrl = new Mezeo.CueTextBox();
             this.txtPasswrod = new Mezeo.CueTextBox();
             this.txtUserName = new Mezeo.CueTextBox();
+            this.toolStripMenuItem7 = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripSeparator5 = new System.Windows.Forms.ToolStripSeparator();
             this.cmSystemTrayLogin.SuspendLayout();
             this.cmSystemTraySyncMgr.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pbLogo)).BeginInit();
@@ -126,6 +128,8 @@
             this.msShowSyncMgr,
             this.toolStripMenuItem4,
             this.toolStripSeparator2,
+            this.toolStripMenuItem7,
+            this.toolStripSeparator5,
             this.toolStripMenuItem5,
             this.toolStripSeparator3,
             this.toolStripMenuItem3,
@@ -301,6 +305,16 @@
             this.txtUserName.Name = "txtUserName";
             this.txtUserName.TextChanged += new System.EventHandler(this.txtUserName_TextChanged);
             // 
+            // toolStripMenuItem7
+            // 
+            this.toolStripMenuItem7.Name = "toolStripMenuItem7";
+            resources.ApplyResources(this.toolStripMenuItem7, "toolStripMenuItem7");
+            // 
+            // toolStripSeparator5
+            // 
+            this.toolStripSeparator5.Name = "toolStripSeparator5";
+            resources.ApplyResources(this.toolStripSeparator5, "toolStripSeparator5");
+            // 
             // frmLogin
             // 
             this.AcceptButton = this.btnLogin;
@@ -365,6 +379,8 @@
         private System.ComponentModel.BackgroundWorker bwCheckServerStatus;
         private System.Windows.Forms.ToolStripMenuItem toolStripMenuItem3;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator4;
+        private System.Windows.Forms.ToolStripMenuItem toolStripMenuItem7;
+        private System.Windows.Forms.ToolStripSeparator toolStripSeparator5;
 
     }
 }
