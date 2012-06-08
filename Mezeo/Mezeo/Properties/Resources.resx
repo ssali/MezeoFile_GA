@@ -187,4 +187,10 @@
   <data name="BrServerUrlVisible" xml:space="preserve">
     <value>true</value>
   </data>
+  <data name="BrSettleTimer" xml:space="preserve">
+    <value>20</value>
+  </data>
+  <data name="BrSyncTimer" xml:space="preserve">
+    <value>5</value>
+  </data>
 </root>

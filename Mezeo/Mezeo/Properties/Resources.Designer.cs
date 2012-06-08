@@ -134,11 +134,29 @@ namespace Mezeo.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to 20.
+        /// </summary>
+        internal static string BrSettleTimer {
+            get {
+                return ResourceManager.GetString("BrSettleTimer", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to MezeoFile.
         /// </summary>
         internal static string BrSyncManagerTitle {
             get {
                 return ResourceManager.GetString("BrSyncManagerTitle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to 5.
+        /// </summary>
+        internal static string BrSyncTimer {
+            get {
+                return ResourceManager.GetString("BrSyncTimer", resourceCulture);
             }
         }
         

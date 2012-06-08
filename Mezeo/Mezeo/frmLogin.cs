@@ -102,7 +102,7 @@ namespace Mezeo
           
             if (syncManager != null && (syncManager.isSyncInProgress || syncManager.isLocalEventInProgress || syncManager.isOfflineWorking))
             {
-                DialogResult dResult = MessageBox.Show(LanguageTranslator.GetValue("MezeoExitString1") + "\n" + LanguageTranslator.GetValue("BrMezeoExitString2"), AboutBox.AssemblyTitle, MessageBoxButtons.OKCancel);
+                DialogResult dResult = MessageBox.Show(LanguageTranslator.GetValue("MezeoExitString1") + "\n" + LanguageTranslator.GetValue("MezeoExitString2"), AboutBox.AssemblyTitle, MessageBoxButtons.OKCancel);
                 if (dResult == DialogResult.Cancel)
                     return;
                     
@@ -546,9 +546,9 @@ namespace Mezeo
                 {
                     DialogResult checkDir;
 
-                    string message = LanguageTranslator.GetValue("BrExpectedLocation") + Environment.NewLine + BasicInfo.SyncDirPath + ". " + Environment.NewLine + Environment.NewLine + LanguageTranslator.GetValue("FolderMoved") + Environment.NewLine + Environment.NewLine + LanguageTranslator.GetValue("ClickNoExit") + Environment.NewLine + Environment.NewLine + LanguageTranslator.GetValue("ClickYesRestore");
+                    string message = LanguageTranslator.GetValue("ExpectedLocation") + Environment.NewLine + BasicInfo.SyncDirPath + ". " + Environment.NewLine + Environment.NewLine + LanguageTranslator.GetValue("FolderMoved") + Environment.NewLine + Environment.NewLine + LanguageTranslator.GetValue("ClickNoExit") + Environment.NewLine + Environment.NewLine + LanguageTranslator.GetValue("ClickYesRestore");
                     //string caption = "MezeoFile Setup";
-                    string caption = LanguageTranslator.GetValue("BrCaptionFileMissingDialog");
+                    string caption = LanguageTranslator.GetValue("CaptionFileMissingDialog");
                     MessageBoxButtons buttons = MessageBoxButtons.YesNo;
                     MessageBoxDefaultButton defaultbutton = MessageBoxDefaultButton.Button2;
 
@@ -702,7 +702,7 @@ namespace Mezeo
         {
             if (txtServerUrl.Text.Trim().Length == 0)
             {
-                txtServerUrl.Text = LanguageTranslator.GetValue("BrServerUrlCueText"); ;
+                txtServerUrl.Text = global::Mezeo.Properties.Resources.BrServerUrlCueText;
             }
         }
 

@@ -72,36 +72,9 @@ namespace Mezeo.Resources.en {
         /// <summary>
         ///   Looks up a localized string similar to $$PRODUCT$$ Setup.
         /// </summary>
-        internal static string BrCaptionFileMissingDialog {
+        internal static string CaptionFileMissingDialog {
             get {
-                return ResourceManager.GetString("BrCaptionFileMissingDialog", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Your $$PRODUCT$$ folder was not found in its expected location:.
-        /// </summary>
-        internal static string BrExpectedLocation {
-            get {
-                return ResourceManager.GetString("BrExpectedLocation", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Cancel sync and close $$PRODUCT$$ now?.
-        /// </summary>
-        internal static string BrMezeoExitString2 {
-            get {
-                return ResourceManager.GetString("BrMezeoExitString2", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Select the desired location for the $$PRODUCT$$ folder:.
-        /// </summary>
-        internal static string BrSyncManagerMoveFolderDesc {
-            get {
-                return ResourceManager.GetString("BrSyncManagerMoveFolderDesc", resourceCulture);
+                return ResourceManager.GetString("CaptionFileMissingDialog", resourceCulture);
             }
         }
         
@@ -264,6 +237,15 @@ namespace Mezeo.Resources.en {
         internal static string ExitSyncManager {
             get {
                 return ResourceManager.GetString("ExitSyncManager", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Your $$PRODUCT$$ folder was not found in its expected location:.
+        /// </summary>
+        internal static string ExpectedLocation {
+            get {
+                return ResourceManager.GetString("ExpectedLocation", resourceCulture);
             }
         }
         
@@ -435,6 +417,15 @@ namespace Mezeo.Resources.en {
         internal static string MezeoExitString1 {
             get {
                 return ResourceManager.GetString("MezeoExitString1", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Cancel sync and close $$PRODUCT$$ now?.
+        /// </summary>
+        internal static string MezeoExitString2 {
+            get {
+                return ResourceManager.GetString("MezeoExitString2", resourceCulture);
             }
         }
         

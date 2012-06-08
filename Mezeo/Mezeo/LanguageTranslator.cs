@@ -27,7 +27,9 @@ namespace Mezeo
 
         public static string GetValue(string key) 
         {
-         
+
+            string keyValue;
+
             if (resManager == null)
             {
                 return key;
@@ -40,8 +42,9 @@ namespace Mezeo
                 string value = resManager.GetString(key);
                 if (value != null)
                 {
-                   
-                    return stringReplace(ref value);
+                   keyValue = stringReplace(value);
+
+                   return keyValue; 
                 }
                 return originalKey; 
             } 
@@ -57,11 +60,11 @@ namespace Mezeo
 
         }
 
-        public static string stringReplace(ref string value)
+        public static string stringReplace(string KeyValue)
         {
-            value.Replace("$$COMPANY$$",global::Mezeo.Properties.Resources.BrAssemblyCompany);
-            value.Replace("$$PRODUCT$$", global::Mezeo.Properties.Resources.BrSyncManagerTitle);
-            return value;
+           KeyValue = KeyValue.Replace("$$COMPANY$$",global::Mezeo.Properties.Resources.BrAssemblyCompany);
+           KeyValue = KeyValue.Replace("$$PRODUCT$$", global::Mezeo.Properties.Resources.BrSyncManagerTitle);
+           return KeyValue;
         }
     }
 }
