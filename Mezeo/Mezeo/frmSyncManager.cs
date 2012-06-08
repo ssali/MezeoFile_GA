@@ -2242,11 +2242,14 @@ namespace Mezeo
         {
             UpdateDBForStatus(lEvent, DB_STATUS_SUCCESS);
 
-            FileAttributes attr = File.GetAttributes(lEvent.FullPath);
-            if((attr & FileAttributes.Directory) == FileAttributes.Directory)
+            FileInfo fileInfo = new FileInfo(lEvent.FullPath);
+            if (fileInfo.Exists)
             {
-                DirectoryInfo rootDir = new DirectoryInfo(lEvent.FullPath);
-                WalkDirectoryTree(rootDir,lEvent.OldFullPath);
+                if ((fileInfo.Attributes & FileAttributes.Directory) == FileAttributes.Directory)
+                {
+                    DirectoryInfo rootDir = new DirectoryInfo(lEvent.FullPath);
+                    WalkDirectoryTree(rootDir, lEvent.OldFullPath);
+                }
             }
         }
 
@@ -2257,8 +2260,8 @@ namespace Mezeo
             dbHandler.Update(DbHandler.TABLE_NAME, DbHandler.E_TAG, strEtag, DbHandler.KEY, lEvent.FileName);
 
             FileInfo fileInfo = new FileInfo(lEvent.FullPath);
-
-            dbHandler.UpdateModifiedDate(fileInfo.LastWriteTime, lEvent.FileName);
+            if (fileInfo.Exists)
+                dbHandler.UpdateModifiedDate(fileInfo.LastWriteTime, lEvent.FileName);
 
             UpdateDBForStatus(lEvent, DB_STATUS_SUCCESS);
         }
@@ -2578,6 +2581,16 @@ namespace Mezeo
                 bool isFile = lEvent.IsFile;
                 if (!isFile && !isDirectory)
                 {
+                    // An optimization to keep from makinhg disk calls all the time.
+                    isFile = File.Exists(lEvent.FullPath);
+                    if (!isFile)
+                        isDirectory = Directory.Exists(lEvent.FullPath);
+                    if (isFile || isDirectory)
+                        attr = File.GetAttributes(lEvent.FullPath);
+                }
+
+                if (!isFile && !isDirectory)
+                {
                     if (lEvent.EventType != LocalEvents.EventsType.FILE_ACTION_REMOVED)
                     {
                         if (!RemoveIndexes.Contains(events.IndexOf(lEvent)))
@@ -2589,7 +2602,8 @@ namespace Mezeo
                 {
                     // Make sure the attributes are up to date.
                     FileInfo fileInfo = new FileInfo(lEvent.FullPath);
-                    attr = fileInfo.Attributes;
+                    if (fileInfo.Exists)
+                        attr = fileInfo.Attributes;
                 }
 
                 if (lEvent.EventType == LocalEvents.EventsType.FILE_ACTION_MODIFIED)
@@ -2997,7 +3011,12 @@ namespace Mezeo
                     attr = File.GetAttributes(lEvent.FullPath);
                 else
                 {
-                    if (lEvent.EventType != LocalEvents.EventsType.FILE_ACTION_REMOVED)
+                    if (lEvent.EventType == LocalEvents.EventsType.FILE_ACTION_RENAMED)
+                    {
+                        isFile = lEvent.IsFile;
+                        isDirectory = lEvent.IsDirectory;
+                    }
+                    else if (lEvent.EventType != LocalEvents.EventsType.FILE_ACTION_REMOVED)
                         continue;
                 }
                 //FileInfo fileInfo = new FileInfo(lEvent.FullPath);
