@@ -194,19 +194,36 @@ namespace Mezeo
         {
             this.Text = global::Mezeo.Properties.Resources.BrSyncManagerTitle + " " + LanguageTranslator.GetValue("LoginFormTitle");
             
+            //Loading resources at runtime for login screen
             this.txtUserName.CueText = LanguageTranslator.GetValue("UserIdCueText");
-            this.txtPasswrod.CueText=LanguageTranslator.GetValue("PasswordCueText");
+            this.txtPasswrod.CueText = LanguageTranslator.GetValue("PasswordCueText");
 
             this.txtServerUrl.CueText = global::Mezeo.Properties.Resources.BrServerUrlCueText;
             this.txtServerUrl.Text = global::Mezeo.Properties.Resources.BrServerUrlCueText;
+            //Show or hide url part of branding stuff
             HideUrl();
-
             this.labelError.Text = "";
 
+            //Loading resources at runtime for for context menu 
             this.toolStripMenuItem6.Text = global::Mezeo.Properties.Resources.BrSyncManagerTitle + " " + AboutBox.AssemblyVersion;
             this.toolStripMenuItem2.Text = global::Mezeo.Properties.Resources.BrSyncManagerTitle + " " + AboutBox.AssemblyVersion;
-           
+            this.niSystemTray.Text = global::Mezeo.Properties.Resources.BrSyncManagerTitle + " " + AboutBox.AssemblyVersion;
             
+            this.btnLogin.Text = LanguageTranslator.GetValue("LoginButtonText");	
+            this.exitToolStripMenuItem.Text	 = LanguageTranslator.GetValue("ExitSyncManager");
+	        this.loginToolStripMenuItem.Text = LanguageTranslator.GetValue("LoginButtonText");
+
+            this.menuItem3.Text = LanguageTranslator.GetValue("ExitSyncManager");
+
+            this.msShowSyncMgr.Text = LanguageTranslator.GetValue("SyncManager");
+            this.msSyncMgrExit.Text = LanguageTranslator.GetValue("ExitSyncManager");	
+
+            this.toolStripMenuItem3.Text = LanguageTranslator.GetValue("CheckforUpdate");
+            this.toolStripMenuItem4.Text = LanguageTranslator.GetValue("SyncProgress");
+            this.toolStripMenuItem5.Text = LanguageTranslator.GetValue("WebsiteUrl");
+            this.toolStripMenuItem7.Text = LanguageTranslator.GetValue("PauseSync");	
+
+
             isFromSyncMgrVerification = false;
 
             if (!BasicInfo.LoadRegistryValues())
@@ -754,12 +771,12 @@ namespace Mezeo
             {
                 this.Invoke((MethodInvoker)delegate
                 {
-                    toolStripMenuItem7.Text = "Install Update " + newVersion;
+                    toolStripMenuItem7.Text = LanguageTranslator.GetValue("InstallUpdateText") + newVersion;
                 });
             }
             else
             {
-                toolStripMenuItem7.Text = "Install Update " + newVersion;
+                toolStripMenuItem7.Text = LanguageTranslator.GetValue("InstallUpdateText") + newVersion;
             }
         }
 
@@ -769,12 +786,12 @@ namespace Mezeo
             {
                 this.Invoke((MethodInvoker)delegate
                 {
-                    toolStripMenuItem3.Text = "Resume";
+                    toolStripMenuItem3.Text = "Resume Sync";
                 });
             }
             else
             {
-                toolStripMenuItem3.Text = "Resume";
+                toolStripMenuItem3.Text = "Resume Sync";
             }
         }
 

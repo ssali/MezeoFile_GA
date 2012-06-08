@@ -61,6 +61,15 @@ namespace Mezeo.Resources.en {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to  of the sync application is now available..
+        /// </summary>
+        internal static string AppAvailableMessage {
+            get {
+                return ResourceManager.GetString("AppAvailableMessage", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Sync is offline.
         /// </summary>
         internal static string AppOfflineMenu {
@@ -259,6 +268,15 @@ namespace Mezeo.Resources.en {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Install Update .
+        /// </summary>
+        internal static string InstallUpdateText {
+            get {
+                return ResourceManager.GetString("InstallUpdateText", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Not enough space available to download file(s)..
         /// </summary>
         internal static string InsufficientStorageMessage {
@@ -435,6 +453,15 @@ namespace Mezeo.Resources.en {
         internal static string PasswordCueText {
             get {
                 return ResourceManager.GetString("PasswordCueText", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Pause Sync.
+        /// </summary>
+        internal static string PauseSync {
+            get {
+                return ResourceManager.GetString("PauseSync", resourceCulture);
             }
         }
         
@@ -844,6 +871,15 @@ namespace Mezeo.Resources.en {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Update Available.
+        /// </summary>
+        internal static string UpdateAvailable {
+            get {
+                return ResourceManager.GetString("UpdateAvailable", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Not Available.
         /// </summary>
         internal static string UsageNotAvailable {
@@ -858,6 +894,15 @@ namespace Mezeo.Resources.en {
         internal static string UserIdCueText {
             get {
                 return ResourceManager.GetString("UserIdCueText", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Version .
+        /// </summary>
+        internal static string VersionText {
+            get {
+                return ResourceManager.GetString("VersionText", resourceCulture);
             }
         }
         

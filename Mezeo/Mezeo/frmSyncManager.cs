@@ -1841,13 +1841,13 @@ namespace Mezeo
         private void ShowUpdateAvailableBalloonMessage(string strNewVersion)
         {
             string strUpdate;
-            strUpdate = "Version " + strNewVersion + " of the sync application is now available.";
+            strUpdate = LanguageTranslator.GetValue("VersionText") + strNewVersion + LanguageTranslator.GetValue("AppAvailableMessage");
             cnotificationManager.NotificationHandler.Icon = Properties.Resources.app_icon_upgrade;
-            cnotificationManager.NotificationHandler.ShowBalloonTip(1, "Update Available",
+            cnotificationManager.NotificationHandler.ShowBalloonTip(1, LanguageTranslator.GetValue("UpdateAvailable"),
                                                                       strUpdate,
                                                                      ToolTipIcon.None);
 
-            cnotificationManager.HoverText = global::Mezeo.Properties.Resources.BrSyncManagerTitle + " " + AboutBox.AssemblyVersion + "\n" + "Update Available";
+            cnotificationManager.HoverText = global::Mezeo.Properties.Resources.BrSyncManagerTitle + " " + AboutBox.AssemblyVersion + "\n" + LanguageTranslator.GetValue("UpdateAvailable");
         }
  
         private void IssueFoundBalloonMessage()
@@ -1870,6 +1870,16 @@ namespace Mezeo
                                                                           ToolTipIcon.None);
             cnotificationManager.HoverText = global::Mezeo.Properties.Resources.BrSyncManagerTitle + " " + AboutBox.AssemblyVersion + "\n" + LanguageTranslator.GetValue("TrayBalloonSyncStopText");
             frmParent.toolStripMenuItem4.Text = LanguageTranslator.GetValue("TrayBalloonSyncStopText");
+        }
+
+        private void SyncEvaluatingBalloonMessage()
+        {
+            cnotificationManager.NotificationHandler.Icon = Properties.Resources.mezeosyncstatus_syncing;
+            cnotificationManager.NotificationHandler.ShowBalloonTip(1, LanguageTranslator.GetValue("TrayBalloonSyncStatusText"),
+                                                                           LanguageTranslator.GetValue("TrayBalloonSyncStopText"),
+                                                                          ToolTipIcon.None);
+            cnotificationManager.HoverText = global::Mezeo.Properties.Resources.BrSyncManagerTitle + " " + AboutBox.AssemblyVersion + "\n" + LanguageTranslator.GetValue("TrayBalloonSyncStopText");
+           // frmParent.toolStripMenuItem4.Text = LanguageTranslator.GetValue("TrayBalloonSyncStopText");
         }
 
         private void InitialSyncBalloonMessage()
