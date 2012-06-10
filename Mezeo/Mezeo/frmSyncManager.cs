@@ -4499,7 +4499,6 @@ namespace Mezeo
                  if (frmParent.checkReferenceCode() > 0)
                  {
                      ShowLocalEventsCompletedMessage();
-
                  }
                  else
                  {

@@ -101,10 +101,13 @@ namespace Mezeo
             bool bNewEventExists = false;
             DateTime currTime = DateTime.Now;
             List<LocalEvents> eventsToRemove = new List<LocalEvents>();
+            List<LocalEvents> eventsFromDB = new List<LocalEvents>();
 
             // Check the event candidate list and see which events should be moved.
             lock (thisLock)
             {
+//                eventsFromDB = dbHandler.GetSettledEventCandidates(5);
+
                 // If the resource has not had an event in the last X timespan,
                 // move it from the eventListCandidates to eventList.
                 foreach (LocalEvents id in eventListCandidates)
@@ -421,6 +424,7 @@ namespace Mezeo
                 if (bAdd)
                 {
                     eventListCandidates.Add(newEvent);
+                    dbHandler.AddEventCandidate(newEvent);
                 }
             }
         }

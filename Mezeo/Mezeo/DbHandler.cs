@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using MezeoFileSupport;
+
 
 #if MEZEO32
 using Finisar.SQLite;
@@ -33,6 +35,35 @@ namespace Mezeo
         public const string STATUS = "status";
         public const string PARENT_DIR = "parent_dir";
         public const string TYPE = "type";
+
+        //Event table fields.
+        public const string EVENT_CANDIDATE_TABLE_NAME = "EventInfoCandidate";
+        public const string EVENT_TABLE_NAME = "EventInfo";
+        public const string EVENT_INDEX = "EventIndex";
+        public const string EVENT_ORIGIN = "Origin";
+        public const string EVENT_LOCAL_FILE_NAME = "LFileName";
+        public const string EVENT_LOCAL_OLD_FILE_NAME = "LOldFileName";
+        public const string EVENT_LOCAL_FULL_PATH = "LFullPath";
+        public const string EVENT_LOCAL_OLD_FULL_PATH = "LOldFullPath";
+        public const string EVENT_LOCAL_TYPE = "LEventType";
+        public const string EVENT_LOCAL_TIMESTAMP = "LEventTimeStamp";
+        public const string EVENT_LOCAL_IS_DIRECTORY = "LIsDirectory";
+        public const string EVENT_LOCAL_IS_FILE = "LIsFile";
+        public const string EVENT_LOCAL_FILE_ATTRIBUTES = "LFileAttributes";
+        public const string EVENT_NQ_SIZE = "NQSize";
+        public const string EVENT_NQ_DOMAIN_URI = "NQDomainURI";
+        public const string EVENT_NQ_EVENT = "NQEvent";
+        public const string EVENT_NQ_RESULT = "NQResult";
+        public const string EVENT_NQ_TIME = "NQTime";
+        public const string EVENT_NQ_USER = "NQUser";
+        public const string EVENT_NQ_HASH = "NQHash";
+        public const string EVENT_NQ_EXPORTED_PATH = "NQExportedPath";
+        public const string EVENT_NQ_ID = "NQID";
+        public const string EVENT_NQ_NAME = "NQName";
+        public const string EVENT_NQ_OBJ_TYPE = "NQObjType";
+        public const string EVENT_NQ_PARENT_ID = "NQParentID";
+        public const string EVENT_NQ_PARENT_URI = "NQParentURI";
+
 
         private SQLiteConnection sqlConnection;
         private SQLiteCommand sqlCommand;
@@ -90,6 +121,78 @@ namespace Mezeo
                             PARENT_DIR + " TEXT)";
 
             ExecuteNonQuery(query);
+            CreateEventsTable();
+        }
+
+        public void CreateEventsTable()
+        {
+            // See if the table already exists.
+            if (null == sqlConnection)
+                OpenConnection();
+            //if (null != sqlConnection)
+            //{
+            //    string query = "SELECT count(*) FROM sqlite_master WHERE type='table' AND name='" + EVENT_TABLE_NAME + "';";
+            //    SQLiteDataReader sqlDataReader = ExecuteQuery(query);
+            //    sqlDataReader.Read();
+            //    string result = sqlDataReader.GetString(0);
+            //    sqlDataReader.Close();
+            //    if (0 != result.Length)
+            //    {
+            //    }
+            //}
+
+            // Create the events table if it doesn't already exist.
+            string queryEvents = "CREATE TABLE IF NOT EXISTS " + EVENT_TABLE_NAME + " (" +
+                            EVENT_INDEX + " INTEGER PRIMARY KEY, " +
+                            EVENT_ORIGIN + " TEXT, " +
+                            EVENT_LOCAL_FILE_NAME + " TEXT, " +
+                            EVENT_LOCAL_OLD_FILE_NAME + " TEXT, " +
+                            EVENT_LOCAL_FULL_PATH + " TEXT, " +
+                            EVENT_LOCAL_OLD_FULL_PATH + " TEXT, " +
+                            EVENT_LOCAL_TYPE + " TEXT, " +
+                            EVENT_LOCAL_TIMESTAMP + " DATE, " +
+                            EVENT_LOCAL_IS_DIRECTORY + " BOOL, " +
+                            EVENT_LOCAL_IS_FILE + " BOOL, " +
+                            EVENT_LOCAL_FILE_ATTRIBUTES + " LONG, " +
+                            EVENT_NQ_SIZE + " LONG, " +
+                            EVENT_NQ_DOMAIN_URI + " TEXT, " +
+                            EVENT_NQ_EVENT + " TEXT, " +
+                            EVENT_NQ_RESULT + " TEXT, " +
+                            EVENT_NQ_TIME + " TEXT, " +
+                            EVENT_NQ_USER + " TEXT, " +
+                            EVENT_NQ_HASH + " TEXT, " +
+                            EVENT_NQ_EXPORTED_PATH + " TEXT, " +
+                            EVENT_NQ_ID + " TEXT, " +
+                            EVENT_NQ_NAME + " TEXT, " +
+                            EVENT_NQ_OBJ_TYPE + " TEXT, " +
+                            EVENT_NQ_PARENT_ID + " TEXT, " +
+                            EVENT_NQ_PARENT_URI + " TEXT)";
+
+            ExecuteNonQuery(queryEvents);
+
+            // Since the database schema has changed, we need to get a new connection.
+            sqlConnection.Close();
+            OpenConnection();
+
+            // Create the event candidates table if it doesn't already exist.
+            string queryCandidates = "CREATE TABLE IF NOT EXISTS " + EVENT_CANDIDATE_TABLE_NAME + " (" +
+                            EVENT_INDEX + " INTEGER PRIMARY KEY, " +
+                            EVENT_ORIGIN + " TEXT, " +
+                            EVENT_LOCAL_FILE_NAME + " TEXT, " +
+                            EVENT_LOCAL_OLD_FILE_NAME + " TEXT, " +
+                            EVENT_LOCAL_FULL_PATH + " TEXT, " +
+                            EVENT_LOCAL_OLD_FULL_PATH + " TEXT, " +
+                            EVENT_LOCAL_TYPE + " TEXT, " +
+                            EVENT_LOCAL_TIMESTAMP + " DATE, " +
+                            EVENT_LOCAL_IS_DIRECTORY + " BOOL, " +
+                            EVENT_LOCAL_IS_FILE + " BOOL, " +
+                            EVENT_LOCAL_FILE_ATTRIBUTES + " LONG)";
+
+                ExecuteNonQuery(queryCandidates);
+
+                // Since the database schema has changed, we need to get a new connection.
+                sqlConnection.Close();
+                OpenConnection();
         }
 
         public SQLiteDataReader ExecuteQuery(string query)
@@ -180,18 +283,250 @@ namespace Mezeo
             }
         }
 
+        public void ClearLocalEvents()
+        {
+            // Make sure we have a connection.
+            if (null == sqlConnection)
+                OpenConnection();
+
+            int result = -1;
+            string query = "DELETE FROM " + EVENT_CANDIDATE_TABLE_NAME + " WHERE " + EVENT_ORIGIN + "='L';";
+            sqlCommand = new SQLiteCommand(query, sqlConnection);
+            LogWrapper.LogMessage("DBHandler - ClearLocalEvents", "Running query: " + query);
+            result = sqlCommand.ExecuteNonQuery();
+
+            string query2 = "DELETE FROM " + EVENT_TABLE_NAME + " WHERE " + EVENT_ORIGIN + "='L';";
+            sqlCommand = new SQLiteCommand(query2, sqlConnection);
+            LogWrapper.LogMessage("DBHandler - ClearLocalEvents", "Running query: " + query2);
+            result = sqlCommand.ExecuteNonQuery();
+        }
+
+        public int AddEventCandidate(LocalEvents newEvent)
+        {
+            int result = -1;
+            string query = "insert into " + EVENT_CANDIDATE_TABLE_NAME + " (" +
+                            EVENT_ORIGIN + ", " +
+                            EVENT_LOCAL_FILE_NAME + ", " +
+                            EVENT_LOCAL_OLD_FILE_NAME + ", " +
+                            EVENT_LOCAL_FULL_PATH + ", " +
+                            EVENT_LOCAL_OLD_FULL_PATH + ", " +
+                            EVENT_LOCAL_TYPE + ", " +
+                            EVENT_LOCAL_TIMESTAMP + ", " +
+                            EVENT_LOCAL_IS_DIRECTORY + ", " +
+                            EVENT_LOCAL_IS_FILE + ", " +
+                            EVENT_LOCAL_FILE_ATTRIBUTES + ") values ('L', '" +
+                            newEvent.FileName + "','" +
+                            newEvent.OldFileName + "','" +
+                            newEvent.FullPath + "','" +
+                            newEvent.OldFullPath + "','" +
+                            newEvent.EventType + "','" +
+                            newEvent.EventTimeStamp + "','" +
+                            newEvent.IsDirectory + "','" +
+                            newEvent.IsFile + "'," +
+                            (long)newEvent.Attributes + ");";
+
+            sqlCommand = new SQLiteCommand(query, sqlConnection);
+            LogWrapper.LogMessage("DBHandler - AddEventCandidate", "Running query: " + query);
+
+            result = sqlCommand.ExecuteNonQuery();
+
+            // A result of 1 is success (# of rows affected and we should
+            // only have 1), not the index of the newly created entry.
+            return result;
+        }
+
+        public int AddEvent(LocalEvents newEvent)
+        {
+            int result = -1;
+            string query = "insert into " + EVENT_TABLE_NAME + " (" +
+                            EVENT_ORIGIN + ", " +
+                            EVENT_LOCAL_FILE_NAME + ", " +
+                            EVENT_LOCAL_OLD_FILE_NAME + ", " +
+                            EVENT_LOCAL_FULL_PATH + ", " +
+                            EVENT_LOCAL_OLD_FULL_PATH + ", " +
+                            EVENT_LOCAL_TYPE + ", " +
+                            EVENT_LOCAL_TIMESTAMP + ", " +
+                            EVENT_LOCAL_IS_DIRECTORY + ", " +
+                            EVENT_LOCAL_IS_FILE + ", " +
+                            EVENT_LOCAL_FILE_ATTRIBUTES + ") values ('L', '" +
+                            newEvent.FileName + "','" +
+                            newEvent.OldFileName + "','" +
+                            newEvent.FullPath + "','" +
+                            newEvent.OldFullPath + "','" +
+                            newEvent.EventType + "','" +
+                            newEvent.EventTimeStamp + "','" +
+                            newEvent.IsDirectory + "','" +
+                            newEvent.IsFile + "','" +
+                            (long)newEvent.Attributes + "');";
+
+            sqlCommand = new SQLiteCommand(query, sqlConnection);
+            LogWrapper.LogMessage("DBHandler - AddEvent", "Running query: " + query);
+
+            result = sqlCommand.ExecuteNonQuery();
+
+            // A result of 1 is success (# of rows affected and we should
+            // only have 1), not the index of the newly created entry.
+            return result;
+        }
+
+        public int AddNQEvent(NQDetails nqEvent)
+        {
+            int result = -1;
+            string query = "insert into " + EVENT_TABLE_NAME + " (" +
+                            EVENT_ORIGIN + ", " +
+                            EVENT_NQ_SIZE + ", " +
+                            EVENT_NQ_DOMAIN_URI + ", " +
+                            EVENT_NQ_EVENT + ", " +
+                            EVENT_NQ_RESULT + ", " +
+                            EVENT_NQ_TIME + ", " +
+                            EVENT_NQ_USER + ", " +
+                            EVENT_NQ_HASH + ", " +
+                            EVENT_NQ_EXPORTED_PATH + ", " +
+                            EVENT_NQ_ID + ", " +
+                            EVENT_NQ_NAME + ", " +
+                            EVENT_NQ_OBJ_TYPE + ", " +
+                            EVENT_NQ_PARENT_ID + ", " +
+                            EVENT_NQ_PARENT_URI + ") values ('N', '" +
+                            nqEvent.lSize + "','" +
+                            nqEvent.StrDomainUri + "','" +
+                            nqEvent.StrEvent + "','" +
+                            nqEvent.StrEventResult + "','" +
+                            nqEvent.StrEventTime + "','" +
+                            nqEvent.StrEventUser + "','" +
+                            nqEvent.StrHash + "','" +
+                            nqEvent.StrMezeoExportedPath + "','" +
+                            nqEvent.StrObjectID + "','" +
+                            nqEvent.StrObjectName + "','" +
+                            nqEvent.StrObjectType + "','" +
+                            nqEvent.StrParentID + "','" +
+                            nqEvent.StrParentUri + "');";
+
+            sqlCommand = new SQLiteCommand(query, sqlConnection);
+            LogWrapper.LogMessage("DBHandler - AddNQEvent", "Running query: " + query);
+
+            result = sqlCommand.ExecuteNonQuery();
+
+            // A result of 1 is success (# of rows affected and we should
+            // only have 1), not the index of the newly created entry.
+            return result;
+        }
+
+        public int DeleteEventCandidate(Int32 eventID)
+        {
+            int result = -1;
+            string query = "DELETE FROM" + EVENT_CANDIDATE_TABLE_NAME + " WHERE EventIndex=" + eventID + ";";
+            sqlCommand = new SQLiteCommand(query, sqlConnection);
+            LogWrapper.LogMessage("DBHandler - DeleteEventCandidate", "Running query: " + query);
+
+            result = sqlCommand.ExecuteNonQuery();
+
+            // A result of 1 is success (# of rows affected and we should
+            // only have 1), not the index of the newly created entry.
+            return result;
+        }
+
+        public int DeleteEvent(Int32 eventID)
+        {
+            int result = -1;
+            string query = "DELETE FROM" + EVENT_TABLE_NAME + " WHERE EventIndex=" + eventID + ";";
+            sqlCommand = new SQLiteCommand(query, sqlConnection);
+            LogWrapper.LogMessage("DBHandler - DeleteEventCandidate", "Running query: " + query);
+
+            result = sqlCommand.ExecuteNonQuery();
+
+            // A result of 1 is success (# of rows affected and we should
+            // only have 1), not the index of the newly created entry.
+            return result;
+        }
+
+        public List<LocalEvents> GetSettledEventCandidates(int secondsSettled)
+        {
+            List<LocalEvents> listEvents = new List<LocalEvents>();
+            int result = -1;
+            string query = "SELECT * FROM " + EVENT_CANDIDATE_TABLE_NAME + ";";
+            sqlCommand = new SQLiteCommand(query, sqlConnection);
+            LogWrapper.LogMessage("DBHandler - DeleteEventCandidate", "Running query: " + query);
+
+            result = sqlCommand.ExecuteNonQuery();
+
+            sqlCommand = new SQLiteCommand();
+            sqlCommand.CommandText = query;
+            sqlCommand.Connection = sqlConnection;
+            try
+            {
+                sqlDataReader = sqlCommand.ExecuteReader();
+                while (sqlDataReader.Read())
+                {
+                    LocalEvents item = new LocalEvents();
+                    item.FileName = (string)sqlDataReader[EVENT_LOCAL_FILE_NAME];
+                    item.OldFileName = (string)sqlDataReader[EVENT_LOCAL_OLD_FILE_NAME];
+                    item.FullPath = (string)sqlDataReader[EVENT_LOCAL_FULL_PATH];
+                    item.OldFullPath = (string)sqlDataReader[EVENT_LOCAL_OLD_FULL_PATH];
+                    item.IsDirectory = (bool)sqlDataReader[EVENT_LOCAL_IS_DIRECTORY];
+                    item.IsFile = (bool)sqlDataReader[EVENT_LOCAL_IS_FILE];
+                    //item.EventTimeStamp = (DateTime)sqlDataReader[EVENT_LOCAL_TIMESTAMP];
+                    Int64 test = 0;
+                    if (false == Int64.TryParse((string)sqlDataReader[EVENT_LOCAL_FILE_ATTRIBUTES], out test))
+                        test = 0;
+                    System.IO.FileAttributes ftest = (System.IO.FileAttributes)test;
+                    if (0 != (ftest & System.IO.FileAttributes.Archive))
+                    {
+                    }
+                    //item.Attributes = (System.IO.FileAttributes)sqlDataReader[EVENT_LOCAL_FILE_ATTRIBUTES];
+                    //item.EventType = sqlDataReader[EVENT_LOCAL_TYPE];
+                }
+            }
+            catch (Exception ex)
+            {
+                LogWrapper.LogMessage("DbHandler - GetString", "Caught exception: " + ex.Message);
+                sqlConnection.Close();
+                OpenConnection();
+                sqlCommand.Connection = sqlConnection;
+                sqlDataReader = sqlCommand.ExecuteReader();
+                while (sqlDataReader.Read())
+                {
+                    LocalEvents item = new LocalEvents();
+                    item.FileName = (string)sqlDataReader[EVENT_LOCAL_FILE_NAME];
+                    item.OldFileName = (string)sqlDataReader[EVENT_LOCAL_OLD_FILE_NAME];
+                    item.FullPath = (string)sqlDataReader[EVENT_LOCAL_FULL_PATH];
+                    item.OldFullPath = (string)sqlDataReader[EVENT_LOCAL_OLD_FULL_PATH];
+                    item.IsDirectory = (bool)sqlDataReader[EVENT_LOCAL_IS_DIRECTORY];
+                    item.IsFile = (bool)sqlDataReader[EVENT_LOCAL_IS_FILE];
+                    //item.Attributes = (System.IO.FileAttributes)sqlDataReader[EVENT_LOCAL_FILE_ATTRIBUTES];
+                    //item.EventTimeStamp = (DateTime)sqlDataReader[EVENT_LOCAL_TIMESTAMP];
+                    //item.EventType = sqlDataReader[EVENT_LOCAL_TYPE];
+                }
+            }
+
+#if MEZEO32
+            //result = sqlDataReader.GetString(0);
+#elif MEZEO64
+                //if (sqlDataReader.HasRows)
+                //        result = sqlDataReader.GetString(0);
+                //    else
+                //        result = "";
+#else
+                //result = sqlDataReader.GetString(0);
+#endif
+
+            if (null != sqlDataReader)
+                sqlDataReader.Close();
+
+            return listEvents;
+        }
+
         public int Update(string tableName, string newValues, string whereCondition)
         {
             string query = "update " + tableName + " set " + newValues + " where " + whereCondition;
             int result = -1;
 
             sqlCommand = new SQLiteCommand(query, sqlConnection);
-            
+
             //sqlCommand.Parameters.Add("@NewValues", newValues);
             //sqlCommand.Parameters.Add("@WhereCondition", whereCondition);
 
             result = sqlCommand.ExecuteNonQuery();
-            
+
             return result;
         }
 
@@ -266,7 +601,7 @@ namespace Mezeo
             sqlDataReader.Read();
 
             result = sqlDataReader.GetString(0);
-            
+
             sqlDataReader.Close();
             
             return result;
@@ -324,8 +659,20 @@ namespace Mezeo
             //sqlCommand = new SQLiteCommand(query, sqlConnection);
             sqlCommand.CommandText = query;
             sqlCommand.Connection = sqlConnection;
-            sqlDataReader = sqlCommand.ExecuteReader();
-            sqlDataReader.Read();
+            try
+            {
+                sqlDataReader = sqlCommand.ExecuteReader();
+                sqlDataReader.Read();
+            }
+            catch (Exception ex)
+            {
+                LogWrapper.LogMessage("DbHandler - GetString", "Caught exception: " + ex.Message);
+                sqlConnection.Close();
+                OpenConnection();
+                sqlCommand.Connection = sqlConnection;
+                sqlDataReader = sqlCommand.ExecuteReader();
+                sqlDataReader.Read();
+            }
 
             #if MEZEO32
                 result = sqlDataReader.GetString(0);
@@ -335,9 +682,7 @@ namespace Mezeo
                     else
                         result = "";
             #else
-
                 result = sqlDataReader.GetString(0);
-
             #endif
 
             result = sqlDataReader.GetString(0);

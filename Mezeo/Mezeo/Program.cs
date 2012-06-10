@@ -48,6 +48,16 @@ namespace Mezeo
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
 
+            // Create the events tables since they weren't here last time.
+            // The tables are only created if they don't already exist so
+            // it is safe to make this call every time to be sure they exist.
+            DbHandler dbHandler = new DbHandler();
+            dbHandler.CreateEventsTable();
+
+            // Clear any local events since the code will search for any local
+            // changes and create events for them.
+            dbHandler.ClearLocalEvents();
+
             frmLogin loginForm = new frmLogin();
             bool showLogin = loginForm.showLogin;
 

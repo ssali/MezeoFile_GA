@@ -24,15 +24,17 @@ namespace Mezeo
 
         public bool IsFile { get; set; }
 
+        public Int32 EventDbId { get; set; }
+
         public FileAttributes Attributes { get; set; }
 
         public enum EventsType
         {
-            FILE_ACTION_ADDED,
-            FILE_ACTION_MODIFIED,
-            FILE_ACTION_REMOVED,
-            FILE_ACTION_RENAMED,
-            FILE_ACTION_MOVE
+            FILE_ACTION_ADDED = 0,
+            FILE_ACTION_MODIFIED = 1,
+            FILE_ACTION_REMOVED = 2,
+            FILE_ACTION_RENAMED = 3,
+            FILE_ACTION_MOVE = 4
         }
 
         public LocalEvents()
@@ -40,6 +42,7 @@ namespace Mezeo
             Attributes = FileAttributes.Normal;
             IsDirectory = false;
             IsFile = false;
+            EventDbId = -1;
         }
     }
 }
