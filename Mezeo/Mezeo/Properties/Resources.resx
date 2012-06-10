@@ -193,4 +193,7 @@
   <data name="BrSyncTimer" xml:space="preserve">
     <value>5</value>
   </data>
+  <data name="BrUpdateTimer" xml:space="preserve">
+    <value>12</value>
+  </data>
 </root>

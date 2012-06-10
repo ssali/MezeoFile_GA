@@ -160,6 +160,15 @@ namespace Mezeo.Properties {
             }
         }
         
+        /// <summary>
+        ///   Looks up a localized string similar to 12.
+        /// </summary>
+        internal static string BrUpdateTimer {
+            get {
+                return ResourceManager.GetString("BrUpdateTimer", resourceCulture);
+            }
+        }
+        
         internal static System.Drawing.Bitmap horizontal_seperator {
             get {
                 object obj = ResourceManager.GetObject("horizontal_seperator", resourceCulture);
