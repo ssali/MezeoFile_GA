@@ -24,6 +24,8 @@ namespace Mezeo
         //Flag for updates 
         public static bool updateAvailable = false;
 
+        //Flag to check sync app is pause or not 
+        public static bool isSyncPause = false;
         private static RegistryHandler regHandler = new RegistryHandler();
 
         public static string UserName

@@ -484,6 +484,15 @@ namespace Mezeo.Resources.en {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Resume Sync.
+        /// </summary>
+        internal static string ResumeSyncText {
+            get {
+                return ResourceManager.GetString("ResumeSyncText", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Issues found. Launch Sync Manager to review..
         /// </summary>
         internal static string SyncIssueFoundText {

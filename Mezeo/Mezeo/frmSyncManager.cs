@@ -51,6 +51,8 @@ namespace Mezeo
 
         public MezeoFileSupport.CallbackIncrementProgress myDelegate;
 
+        public MezeoFileSupport.CallbackContinueRunning ContinueRunningDelegate;
+
         #region Private Members
 
         private CloudService cMezeoFileCloud;
@@ -60,7 +62,7 @@ namespace Mezeo
         private int statusMessageCounter = 0;
         private bool isAnalysingStructure = false;
         private bool isAnalysisCompleted = false;
-        public bool isOfflineWorking = false;
+        public bool isOfflineWorking = false; // Flag used to collect all local changes since the app was last run
         public bool isSyncInProgress = false;
         public bool isLocalEventInProgress = false;
         public bool isEventCanceled = false;
@@ -75,6 +77,7 @@ namespace Mezeo
         private int messageMax;
         private int messageValue;
         
+     
         
         Queue<LocalItemDetails> queue;
         frmIssues frmIssuesFound;
@@ -136,6 +139,7 @@ namespace Mezeo
             offlineWatcher = new OfflineWatcher(dbHandler);
             
             myDelegate = new MezeoFileSupport.CallbackIncrementProgress(this.CallbackSyncProgress);
+            ContinueRunningDelegate = new MezeoFileSupport.CallbackContinueRunning(this.CallbackContinueRun);
         }
 
         public static void setSynNextCycleTimer()
@@ -4300,6 +4304,15 @@ namespace Mezeo
                 lblPercentDone.Show();
                 //LogWrapper.LogMessage("frmSyncManager - ShowOtherProgressBar", "leave");
             }
+        }
+
+        //Callback function for contiue running application
+        public bool CallbackContinueRun()
+        {
+            if (IsInIdleState())
+                return false;
+
+            return true;
         }
 
         //To increment progress bar this is a call back function 

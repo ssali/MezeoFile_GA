@@ -18,6 +18,8 @@ namespace MezeoFileSupport
 {
     public delegate void CallbackIncrementProgress(double fileSize);
 
+    public delegate bool CallbackContinueRunning();
+
     public class LoginDetails
     {
         public String szUserName;
@@ -353,7 +355,7 @@ namespace MezeoFileSupport
         }
 
         //save on the local drive
-        private bool OnSaveResponseFile(Stream responseStream, String strSaveInFile, long lFrom, CallbackIncrementProgress IncProgress)
+        private bool OnSaveResponseFile(Stream responseStream, String strSaveInFile, long lFrom, CallbackIncrementProgress IncProgress, CallbackContinueRunning ContinueRun)
         {
             byte[] buffer = new byte[1024 * 64];
 	        int bytes_read = 0;
@@ -369,10 +371,17 @@ namespace MezeoFileSupport
 	        else
 		        fstPersons = new FileStream(strSaveInFile, FileMode.Create);
 
-	        while ((bytes_read = responseStream.Read(buffer, 0, buffer.Length)) > 0)
+            bool keepRunning = true;
+            if (ContinueRun != null)
+                keepRunning = ContinueRun();
+
+	        while ((bytes_read = responseStream.Read(buffer, 0, buffer.Length)) > 0 && keepRunning)
 	        {
                 if (IncProgress != null)
                     IncProgress(bytes_read);
+
+                if (ContinueRun != null)
+                    keepRunning = ContinueRun();
 
                 fstPersons.Write(buffer, 0, bytes_read);
 		        if(m_bStop)
@@ -801,7 +810,7 @@ namespace MezeoFileSupport
 	        return pItemDetails;
         }
 
-        public bool DownloadFile(String strSource, String strDestination, double dblFileSizeInBytes, ref int nStatusCode, CallbackIncrementProgress IncProgress)
+        public bool DownloadFile(String strSource, String strDestination, double dblFileSizeInBytes, ref int nStatusCode, CallbackIncrementProgress IncProgress, CallbackContinueRunning ContinueRun) 
         {
             bool bStatus = true;
             nStatusCode = 0;
@@ -826,7 +835,7 @@ namespace MezeoFileSupport
 
 		        HttpWebResponse response = (HttpWebResponse)webRequest.GetResponse();
 		        nStatusCode = 200;
-                if (!OnSaveResponseFile(response.GetResponseStream(), strDestination, 0, IncProgress))
+                if (!OnSaveResponseFile(response.GetResponseStream(), strDestination, 0, IncProgress, ContinueRun))
                 {
                     nStatusCode = -4;
                     bStatus = false;
@@ -2044,7 +2053,7 @@ namespace MezeoFileSupport
 	        return true;
         }
 
-        public bool DownloadResumeFile(String strSource, String strDestination, long lFrom, long lTo, ref int nStatusCode, CallbackIncrementProgress IncProgress)
+        public bool DownloadResumeFile(String strSource, String strDestination, long lFrom, long lTo, ref int nStatusCode, CallbackIncrementProgress IncProgress, CallbackContinueRunning ContinueRun)
         {
             nStatusCode = 0;
 	        try
@@ -2056,7 +2065,7 @@ namespace MezeoFileSupport
 
 		        HttpWebResponse response = (HttpWebResponse)webRequest.GetResponse();
 		        nStatusCode = 200;
-		        if(!OnSaveResponseFile(response.GetResponseStream(), strDestination, lFrom, IncProgress))
+		        if(!OnSaveResponseFile(response.GetResponseStream(), strDestination, lFrom, IncProgress, ContinueRun))
 		        {
 			        webRequest.Abort();
 			        response.Close();

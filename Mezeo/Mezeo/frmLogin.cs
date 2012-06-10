@@ -767,10 +767,25 @@ namespace Mezeo
             }
         }
 
+        private void toolStripMenuItem7_Click(object sender, EventArgs e)
+        {
+            changePauseText();
+            SyncPauseBalloonMessage();
+        }
+
         private void SyncEvaluatingBalloonMessage()
         {
             notificationManager.NotificationHandler.Icon = Properties.Resources.mezeosyncstatus_syncing;
             notificationManager.NotificationHandler.ShowBalloonTip(1, LanguageTranslator.GetValue("SyncStartMessage"),
+                                                                           LanguageTranslator.GetValue("EvaluatingLocalChanges"),
+                                                                          ToolTipIcon.None);
+            notificationManager.HoverText = global::Mezeo.Properties.Resources.BrSyncManagerTitle + " " + AboutBox.AssemblyVersion + "\n" + LanguageTranslator.GetValue("EvaluatingLocalChanges");
+        }
+
+        private void SyncPauseBalloonMessage()
+        {
+            notificationManager.NotificationHandler.Icon = Properties.Resources.app_icon_disabled;
+            notificationManager.NotificationHandler.ShowBalloonTip(1, LanguageTranslator.GetValue("PauseSync"),
                                                                            LanguageTranslator.GetValue("EvaluatingLocalChanges"),
                                                                           ToolTipIcon.None);
             notificationManager.HoverText = global::Mezeo.Properties.Resources.BrSyncManagerTitle + " " + AboutBox.AssemblyVersion + "\n" + LanguageTranslator.GetValue("EvaluatingLocalChanges");
@@ -782,12 +797,12 @@ namespace Mezeo
             {
                 this.Invoke((MethodInvoker)delegate
                 {
-                    toolStripMenuItem7.Text = LanguageTranslator.GetValue("InstallUpdateText") + newVersion;
+                    toolStripMenuItem3.Text = LanguageTranslator.GetValue("InstallUpdateText") + newVersion;
                 });
             }
             else
             {
-                toolStripMenuItem7.Text = LanguageTranslator.GetValue("InstallUpdateText") + newVersion;
+                toolStripMenuItem3.Text = LanguageTranslator.GetValue("InstallUpdateText") + newVersion;
             }
         }
 
@@ -797,12 +812,12 @@ namespace Mezeo
             {
                 this.Invoke((MethodInvoker)delegate
                 {
-                    toolStripMenuItem3.Text = "Resume Sync";
+                    toolStripMenuItem7.Text = LanguageTranslator.GetValue("ResumeSyncText");
                 });
             }
             else
             {
-                toolStripMenuItem3.Text = "Resume Sync";
+                toolStripMenuItem7.Text = LanguageTranslator.GetValue("ResumeSyncText");
             }
         }
 

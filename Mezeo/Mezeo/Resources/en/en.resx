@@ -258,6 +258,9 @@
   <data name="ProgressBarComplete" xml:space="preserve">
     <value>100%</value>
   </data>
+  <data name="ResumeSyncText" xml:space="preserve">
+    <value>Resume Sync</value>
+  </data>
   <data name="SyncIssueFoundText" xml:space="preserve">
     <value>Issues found. Launch Sync Manager to review.</value>
   </data>

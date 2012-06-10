@@ -112,13 +112,13 @@ namespace Mezeo
         {
             syncManager.SetMaxProgress(dblFileSizeInBytes, strDestination);
 
-            bool bRet = fileCloud.DownloadFile(strSource, strDestination, dblFileSizeInBytes, ref nStatusCode, syncManager.myDelegate);
+            bool bRet = fileCloud.DownloadFile(strSource, strDestination, dblFileSizeInBytes, ref nStatusCode, syncManager.myDelegate, syncManager.ContinueRunningDelegate);
 
             if (nStatusCode != ResponseCode.DOWNLOADFILE)
             {
                 for (int n = 0; n < CloudService.NUMBER_OF_RETRIES; n++)
                 {
-                    bRet = fileCloud.DownloadFile(strSource, strDestination, dblFileSizeInBytes, ref nStatusCode, syncManager.myDelegate);
+                    bRet = fileCloud.DownloadFile(strSource, strDestination, dblFileSizeInBytes, ref nStatusCode, syncManager.myDelegate, syncManager.ContinueRunningDelegate);
                     if (nStatusCode == ResponseCode.DOWNLOADFILE)
                         return bRet;
                 }
