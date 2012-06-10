@@ -241,6 +241,15 @@ namespace Mezeo.Resources.en {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Sync is evaluating local changes..
+        /// </summary>
+        internal static string EvaluatingLocalChanges {
+            get {
+                return ResourceManager.GetString("EvaluatingLocalChanges", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Exit.
         /// </summary>
         internal static string ExitSyncManager {
@@ -759,6 +768,15 @@ namespace Mezeo.Resources.en {
         internal static string SyncProgress {
             get {
                 return ResourceManager.GetString("SyncProgress", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Sync is starting up.
+        /// </summary>
+        internal static string SyncStartMessage {
+            get {
+                return ResourceManager.GetString("SyncStartMessage", resourceCulture);
             }
         }
         

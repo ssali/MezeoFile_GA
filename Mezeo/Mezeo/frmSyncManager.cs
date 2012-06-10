@@ -31,7 +31,7 @@ namespace Mezeo
         private static int ONE_MINUTE = ONE_SECOND * 60;
 
         private static int FIVE_SECONDS = ONE_SECOND * 5;
-        private static int FIVE_MINUTES = ONE_MINUTE * 5;
+        private static int FIVE_MINUTES; //= ONE_MINUTE * 5;//Convert.ToInt32(LanguageTranslator.GetValue("BrSyncTimer"));
 
         private static int INITIAL_NQ_SYNC = LOCAL_EVENTS_COMPLETED + 1;
         private static int UPDATE_NQ_PROGRESS = INITIAL_NQ_SYNC + 1;
@@ -122,6 +122,8 @@ namespace Mezeo
 
             LoadResources();
 
+            setSynNextCycleTimer();
+
             watcher = new Watcher(lockObject, BasicInfo.SyncDirPath);
             EventQueue.WatchCompletedEvent += new EventQueue.WatchCompleted(queue_WatchCompletedEvent);
             CheckForIllegalCrossThreadCalls = false;
@@ -134,6 +136,12 @@ namespace Mezeo
             offlineWatcher = new OfflineWatcher(dbHandler);
             
             myDelegate = new MezeoFileSupport.CallbackIncrementProgress(this.CallbackSyncProgress);
+        }
+
+        public static void setSynNextCycleTimer()
+        {
+            int syncTime = Convert.ToInt32(global::Mezeo.Properties.Resources.BrSyncTimer);
+            FIVE_MINUTES = ONE_MINUTE * syncTime;
         }
 
         void cMezeoFileCloud_uploadStoppedEvent(string szSourceFileName, string szContantURI)
@@ -426,6 +434,8 @@ namespace Mezeo
 
         public void checkForAppUpdate(bool ignoreTime)
         {
+            int updateTimer = Convert.ToInt32(global::Mezeo.Properties.Resources.BrUpdateTimer);
+
             // Don't check for updates the first time the app runs....  Leave that to Sparkle.
             if (1 == BasicInfo.LastUpdateCheckAt.Year)
             {
@@ -438,7 +448,7 @@ namespace Mezeo
                 // TODO: Make the timespan (in hours) a string that can be part of branding or configuration.
                 // TODO: Put this on a different thread since it makes a network call.  Possibly on the CheckServerStatus thread.
                 TimeSpan diff = DateTime.Now - BasicInfo.LastUpdateCheckAt;
-                if (12 < diff.TotalHours || ignoreTime)
+                if (updateTimer < diff.TotalHours || ignoreTime)
                 {
                     // See if an update is available.
                     string strURL = BasicInfo.GetUpdateURL();
@@ -1870,16 +1880,6 @@ namespace Mezeo
                                                                           ToolTipIcon.None);
             cnotificationManager.HoverText = global::Mezeo.Properties.Resources.BrSyncManagerTitle + " " + AboutBox.AssemblyVersion + "\n" + LanguageTranslator.GetValue("TrayBalloonSyncStopText");
             frmParent.toolStripMenuItem4.Text = LanguageTranslator.GetValue("TrayBalloonSyncStopText");
-        }
-
-        private void SyncEvaluatingBalloonMessage()
-        {
-            cnotificationManager.NotificationHandler.Icon = Properties.Resources.mezeosyncstatus_syncing;
-            cnotificationManager.NotificationHandler.ShowBalloonTip(1, LanguageTranslator.GetValue("TrayBalloonSyncStatusText"),
-                                                                           LanguageTranslator.GetValue("TrayBalloonSyncStopText"),
-                                                                          ToolTipIcon.None);
-            cnotificationManager.HoverText = global::Mezeo.Properties.Resources.BrSyncManagerTitle + " " + AboutBox.AssemblyVersion + "\n" + LanguageTranslator.GetValue("TrayBalloonSyncStopText");
-           // frmParent.toolStripMenuItem4.Text = LanguageTranslator.GetValue("TrayBalloonSyncStopText");
         }
 
         private void InitialSyncBalloonMessage()

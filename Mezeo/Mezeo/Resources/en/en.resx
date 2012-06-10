@@ -177,6 +177,9 @@
   <data name="ErrorBlurbUpload3" xml:space="preserve">
     <value>This is typically caused by internet or service interruptions and is usually resolved automatically.  Another upload attempt will be made during the next sync cycle.</value>
   </data>
+  <data name="EvaluatingLocalChanges" xml:space="preserve">
+    <value>Sync is evaluating local changes.</value>
+  </data>
   <data name="ExitSyncManager" xml:space="preserve">
     <value>Exit</value>
   </data>
@@ -350,6 +353,9 @@
   </data>
   <data name="SyncProgress" xml:space="preserve">
     <value>Sync in Progress</value>
+  </data>
+  <data name="SyncStartMessage" xml:space="preserve">
+    <value>Sync is starting up</value>
   </data>
   <data name="TrayAppOfflineText" xml:space="preserve">
     <value>Sync is offline because it cannot connect to your account.</value>

@@ -13,8 +13,10 @@ namespace Mezeo
 
         // Time without receiving events for a resource before
         // it is moved from evenListCandidates to eventList.
-        private static int TIME_WITHOUT_EVENTS = 20000;  // 20 seconds as milliseconds.
-
+        //private static int TIME_WITHOUT_EVENTS = 20000;  // 20 seconds as milliseconds.
+        private static int TIME_WITHOUT_EVENTS = Convert.ToInt32(global::Mezeo.Properties.Resources.BrSettleTimer);
+        // 20 seconds as 20000 milliseconds.
+        
         // A list of events that have not had any activity in the last TIME_WITHOUT_EVENTS.
         private static List<LocalEvents> eventList = new List<LocalEvents>();
 

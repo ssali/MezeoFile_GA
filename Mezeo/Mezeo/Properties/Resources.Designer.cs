@@ -134,7 +134,7 @@ namespace Mezeo.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to 20.
+        ///   Looks up a localized string similar to 20000.
         /// </summary>
         internal static string BrSettleTimer {
             get {

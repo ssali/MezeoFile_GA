@@ -49,7 +49,8 @@ namespace Mezeo
             notificationManager = new NotificationManager();
             notificationManager.NotificationHandler = this.niSystemTray;
 
-            niSystemTray.ContextMenuStrip = cmSystemTrayLogin;
+            //niSystemTray.ContextMenuStrip = cmSystemTrayLogin;
+            SyncEvaluatingBalloonMessage();
 
             mezeoFileCloud = new CloudService();
 
@@ -378,7 +379,8 @@ namespace Mezeo
 
             this.btnLogin.Enabled = true;
 
-            niSystemTray.ContextMenuStrip = cmSystemTrayLogin;
+           // niSystemTray.ContextMenuStrip = cmSystemTrayLogin;
+            SyncEvaluatingBalloonMessage();
 
             this.Show();
 
@@ -763,6 +765,15 @@ namespace Mezeo
                     _sparkle.StartLoop(true);
                 }
             }
+        }
+
+        private void SyncEvaluatingBalloonMessage()
+        {
+            notificationManager.NotificationHandler.Icon = Properties.Resources.mezeosyncstatus_syncing;
+            notificationManager.NotificationHandler.ShowBalloonTip(1, LanguageTranslator.GetValue("SyncStartMessage"),
+                                                                           LanguageTranslator.GetValue("EvaluatingLocalChanges"),
+                                                                          ToolTipIcon.None);
+            notificationManager.HoverText = global::Mezeo.Properties.Resources.BrSyncManagerTitle + " " + AboutBox.AssemblyVersion + "\n" + LanguageTranslator.GetValue("EvaluatingLocalChanges");
         }
 
         public void changeUpdatesText(string newVersion)
