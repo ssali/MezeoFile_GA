@@ -11,7 +11,8 @@
     <RootNamespace>Mezeo</RootNamespace>
     <AssemblyName>MezeoFile</AssemblyName>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
-    <TargetFrameworkProfile>Client</TargetFrameworkProfile>
+    <TargetFrameworkProfile>
+    </TargetFrameworkProfile>
     <FileAlignment>512</FileAlignment>
     <PublishUrl>publish\</PublishUrl>
     <Install>true</Install>
@@ -75,7 +76,7 @@
       <HintPath>..\..\NetSparkle-1.0.83\AppLimit.NetSparkle.Net40.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="MezeoFileSupport, Version=2.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+    <Reference Include="MezeoFileSupport, Version=2.0.46.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>bin\Release\MezeoFileSupport.dll</HintPath>
     </Reference>
@@ -93,6 +94,7 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>bin\x64\Release\System.Data.SQLite.dll</HintPath>
     </Reference>
+    <Reference Include="System.Web" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
@@ -279,6 +281,9 @@
       <Isolated>False</Isolated>
       <EmbedInteropTypes>False</EmbedInteropTypes>
     </COMReference>
+  </ItemGroup>
+  <ItemGroup>
+    <WCFMetadata Include="Service References\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

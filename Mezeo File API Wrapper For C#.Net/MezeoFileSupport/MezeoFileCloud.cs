@@ -12,6 +12,7 @@ using System.Diagnostics;
 using System.Windows.Forms;
 using System.Threading;
 using System.Runtime.InteropServices;
+using System.Web;
 
 
 namespace MezeoFileSupport
@@ -1382,7 +1383,7 @@ namespace MezeoFileSupport
 	        strXML += "<container xmlns:xlink=\"http://www.w3.org/1999/xlink\">";
 	        strXML += "<modified>0</modified>";
 	        strXML += "<name>";
-	        strXML += strNewContainer;
+	        strXML += HttpUtility.HtmlEncode(strNewContainer);
 	        strXML += "</name>";
 	        strXML += "<created>0</created>";
 	        strXML += "</container>";
@@ -1591,7 +1592,7 @@ namespace MezeoFileSupport
 	        strXML += "<file xmlns:xlink=\"http://www.w3.org/1999/xlink\">";
 	        strXML += "<modified>0</modified>";
 	        strXML += "<name>";
-	        strXML += strNewName;
+	        strXML += HttpUtility.HtmlEncode(strNewName);
 	        strXML += "</name>";
 	        strXML += "<mime_type>";
 	        strXML += strMineType;
@@ -1632,7 +1633,7 @@ namespace MezeoFileSupport
 	        strXML += "<container xmlns:xlink=\"http://www.w3.org/1999/xlink\">";
 	        strXML += "<modified>0</modified>";
 	        strXML += "<name>";
-	        strXML += strNewName;
+	        strXML += HttpUtility.HtmlEncode(strNewName);
 	        strXML += "</name>";
 	        strXML += "<created>0</created>";
 	        strXML += "</container>";
@@ -1694,7 +1695,7 @@ namespace MezeoFileSupport
             String strXML = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>";
             strXML += "<file xmlns:xlink=\"http://www.w3.org/1999/xlink\">";
             strXML += "<name>";
-            strXML += strNewName;
+            strXML += HttpUtility.HtmlEncode(strNewName);
             strXML += "</name>";
             strXML += "<mime_type>";
             strXML += strMineType;
@@ -1736,7 +1737,7 @@ namespace MezeoFileSupport
             String strXML = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>";
             strXML += "<container xmlns:xlink=\"http://www.w3.org/1999/xlink\">";
             strXML += "<name>";
-            strXML += strNewName;
+            strXML += HttpUtility.HtmlEncode(strNewName);
             strXML += "</name>";
             strXML += "<mime_type>";
             strXML += strMineType;
