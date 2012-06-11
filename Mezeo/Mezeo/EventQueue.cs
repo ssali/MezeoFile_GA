@@ -101,13 +101,10 @@ namespace Mezeo
             bool bNewEventExists = false;
             DateTime currTime = DateTime.Now;
             List<LocalEvents> eventsToRemove = new List<LocalEvents>();
-            List<LocalEvents> eventsFromDB = new List<LocalEvents>();
 
             // Check the event candidate list and see which events should be moved.
             lock (thisLock)
             {
-//                eventsFromDB = dbHandler.GetSettledEventCandidates(5);
-
                 // If the resource has not had an event in the last X timespan,
                 // move it from the eventListCandidates to eventList.
                 foreach (LocalEvents id in eventListCandidates)
@@ -121,6 +118,7 @@ namespace Mezeo
                         eventList.Add(lEvent);
                         eventsToRemove.Add(id);
                         bNewEventExists = true;
+                        dbHandler.AddEvent(lEvent);
                     }
                 }
 
@@ -135,6 +133,12 @@ namespace Mezeo
 
                 // Collate the events before finally releasing them to be acted on.
                 CollateEvents();
+
+                // Move the events to the database.
+                //foreach (LocalEvents item in eventList)
+                //{
+                //    dbHandler.AddEvent(item);
+                //}
             }
 
             // If something was added to the list, trigger the event.
@@ -150,12 +154,8 @@ namespace Mezeo
 
         public static bool QueueNotEmpty()
         {
-            bool bIsEmpty = true;
-            lock (thisLock)
-            {
-                bIsEmpty = (eventList.Count() > 0);
-            }
-            return bIsEmpty;
+            Int64 jobCount = dbHandler.GetJobCount();
+            return (jobCount > 0);
         }
 
         public static int QueueCount()
@@ -185,6 +185,10 @@ namespace Mezeo
                 //    LogWrapper.LogMessage("EventQueue - GetCurrentQueue", "(" + index + ") Event type: " + item.EventType + " - " + item.FullPath + " - (old path) " + item.OldFullPath);
                 //}
                 ////----------------------------------------------------------------------
+                LocalEvents item = dbHandler.GetLocalEvent();
+                if (null != item)
+                {
+                }
 
                 return currentList;
             }
@@ -423,8 +427,9 @@ namespace Mezeo
 
                 if (bAdd)
                 {
+                    if (1 == newEvent.EventTimeStamp.Year)
+                        newEvent.EventTimeStamp = DateTime.Now;
                     eventListCandidates.Add(newEvent);
-                    dbHandler.AddEventCandidate(newEvent);
                 }
             }
         }

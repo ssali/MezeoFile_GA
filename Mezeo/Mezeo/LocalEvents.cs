@@ -24,7 +24,7 @@ namespace Mezeo
 
         public bool IsFile { get; set; }
 
-        public Int32 EventDbId { get; set; }
+        public Int64 EventDbId { get; set; }
 
         public FileAttributes Attributes { get; set; }
 

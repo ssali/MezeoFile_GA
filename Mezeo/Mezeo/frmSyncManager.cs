@@ -522,7 +522,6 @@ namespace Mezeo
             }
         }
 
-               
         private void lnkFolderPath_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
         {
             OpenFolder();
@@ -3109,6 +3108,7 @@ namespace Mezeo
                                 SuccessIndexes.Add(events.IndexOf(lEvent));
                                 UpdateDBForStatus(lEvent, DB_STATUS_SUCCESS);
                                 MarkParentsStatus(lEvent.FullPath, DB_STATUS_SUCCESS);
+                                dbHandler.DeleteEvent(lEvent.EventDbId);
                             }
 
                             LogWrapper.LogMessage("SyncManager - ProcessLocalEvents", "FILE_ACTION_MOVE - Leave for file path " + lEvent.FullPath);
@@ -3182,6 +3182,7 @@ namespace Mezeo
                                     {
                                         strUrl += "/contents";
                                         SuccessIndexes.Add(events.IndexOf(lEvent));
+                                        dbHandler.DeleteEvent(lEvent.EventDbId);
                                         bRet = true;
 
                                         string strParent = dbHandler.GetString(DbHandler.TABLE_NAME, DbHandler.PARENT_URL, new string[] { DbHandler.KEY }, new string[] { lEvent.FileName }, new DbType[] { DbType.String });
@@ -3195,6 +3196,7 @@ namespace Mezeo
                                 else
                                 {
                                     SuccessIndexes.Add(events.IndexOf(lEvent));
+                                    dbHandler.DeleteEvent(lEvent.EventDbId);
                                     bRet = true;
 
                                     string strParent = dbHandler.GetString(DbHandler.TABLE_NAME, DbHandler.PARENT_URL, new string[] { DbHandler.KEY }, new string[] { lEvent.FileName }, new DbType[] { DbType.String });
@@ -3269,6 +3271,7 @@ namespace Mezeo
                                     {
                                         strUrl += "/content";
                                         SuccessIndexes.Add(events.IndexOf(lEvent));
+                                        dbHandler.DeleteEvent(lEvent.EventDbId);
                                         bRet = true;
 
                                         string strParent = dbHandler.GetString(DbHandler.TABLE_NAME, DbHandler.PARENT_URL, new string[] { DbHandler.KEY }, new string[] { lEvent.FileName }, new DbType[] { DbType.String });
@@ -3282,6 +3285,7 @@ namespace Mezeo
                                 else
                                 {
                                     SuccessIndexes.Add(events.IndexOf(lEvent));
+                                    dbHandler.DeleteEvent(lEvent.EventDbId);
                                     bRet = true;
 
                                     string strParent = dbHandler.GetString(DbHandler.TABLE_NAME, DbHandler.PARENT_URL, new string[] { DbHandler.KEY }, new string[] { lEvent.FileName }, new DbType[] { DbType.String });
@@ -3334,6 +3338,7 @@ namespace Mezeo
                                         SuccessIndexes.Add(events.IndexOf(lEvent));
                                         MarkParentsStatus(lEvent.FullPath, DB_STATUS_SUCCESS);
                                         UpdateDBForModifiedSuccess(lEvent, strContentURi);
+                                        dbHandler.DeleteEvent(lEvent.EventDbId);
                                     }
                                 }
                             }
@@ -3383,6 +3388,7 @@ namespace Mezeo
                                     SuccessIndexes.Add(events.IndexOf(lEvent));
                                     MarkParentsStatus(lEvent.FullPath, DB_STATUS_SUCCESS);
                                     UpdateDBForRemoveSuccess(lEvent);
+                                    dbHandler.DeleteEvent(lEvent.EventDbId);
                                 }
                        
                             }
@@ -3440,6 +3446,7 @@ namespace Mezeo
                                     MarkParentsStatus(lEvent.FullPath, DB_STATUS_SUCCESS);
                                     LogWrapper.LogMessage("SyncManager - ProcessLocalEvents", "Calling for UpdateDBForRenameSuccess");
                                     UpdateDBForRenameSuccess(lEvent);
+                                    dbHandler.DeleteEvent(lEvent.EventDbId);
                                 }
                    
                             }
@@ -3490,6 +3497,7 @@ namespace Mezeo
                                         MarkParentsStatus(lEvent.FullPath, DB_STATUS_SUCCESS);
                                         LogWrapper.LogMessage("SyncManager - ProcessLocalEvents", "Calling UpdateDBForRenameSuccess");
                                         UpdateDBForRenameSuccess(lEvent);
+                                        dbHandler.DeleteEvent(lEvent.EventDbId);
                                     }
                 
                                 }
@@ -3506,8 +3514,7 @@ namespace Mezeo
             }
 
             LogWrapper.LogMessage("SyncManager - ProcessLocalEvents", "clear events");
-            //if (events.Count == SuccessIndexes.Count)
-            if (EventQueue.QueueCount() == SuccessIndexes.Count)
+            if (events.Count == SuccessIndexes.Count)
                     events.Clear();
             else
             {

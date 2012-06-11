@@ -36,8 +36,12 @@ namespace Mezeo
         public const string PARENT_DIR = "parent_dir";
         public const string TYPE = "type";
 
+        // Event queue information table fields.
+        public const string EVENT_QUEUE_INFO_TABLE_NAME = "EventQueueInfo";
+        public const string EVENT_QUEUE_INFO_JOB_COUNT = "JobCount";
+        public const string EVENT_QUEUE_INFO_NAME = "TableName";
+
         //Event table fields.
-        public const string EVENT_CANDIDATE_TABLE_NAME = "EventInfoCandidate";
         public const string EVENT_TABLE_NAME = "EventInfo";
         public const string EVENT_INDEX = "EventIndex";
         public const string EVENT_ORIGIN = "Origin";
@@ -81,7 +85,9 @@ namespace Mezeo
                 createNew = true;
             }
 
+            //sqlConnection = new SQLiteConnection("Data Source=" + dbPath + DATABASE_NAME + ";Version=3;New=" + createNew + ";Compress=True;DateTimeFormat=Ticks;");
             sqlConnection = new SQLiteConnection("Data Source=" + dbPath + DATABASE_NAME + ";Version=3;New=" + createNew + ";Compress=True;");
+
             sqlConnection.Open();
 
             if (createNew)
@@ -150,11 +156,11 @@ namespace Mezeo
                             EVENT_LOCAL_FULL_PATH + " TEXT, " +
                             EVENT_LOCAL_OLD_FULL_PATH + " TEXT, " +
                             EVENT_LOCAL_TYPE + " TEXT, " +
-                            EVENT_LOCAL_TIMESTAMP + " DATE, " +
+                            EVENT_LOCAL_TIMESTAMP + " INTEGER, " +
                             EVENT_LOCAL_IS_DIRECTORY + " BOOL, " +
                             EVENT_LOCAL_IS_FILE + " BOOL, " +
-                            EVENT_LOCAL_FILE_ATTRIBUTES + " LONG, " +
-                            EVENT_NQ_SIZE + " LONG, " +
+                            EVENT_LOCAL_FILE_ATTRIBUTES + " INTEGER, " +
+                            EVENT_NQ_SIZE + " INTEGER, " +
                             EVENT_NQ_DOMAIN_URI + " TEXT, " +
                             EVENT_NQ_EVENT + " TEXT, " +
                             EVENT_NQ_RESULT + " TEXT, " +
@@ -174,25 +180,16 @@ namespace Mezeo
             sqlConnection.Close();
             OpenConnection();
 
-            // Create the event candidates table if it doesn't already exist.
-            string queryCandidates = "CREATE TABLE IF NOT EXISTS " + EVENT_CANDIDATE_TABLE_NAME + " (" +
-                            EVENT_INDEX + " INTEGER PRIMARY KEY, " +
-                            EVENT_ORIGIN + " TEXT, " +
-                            EVENT_LOCAL_FILE_NAME + " TEXT, " +
-                            EVENT_LOCAL_OLD_FILE_NAME + " TEXT, " +
-                            EVENT_LOCAL_FULL_PATH + " TEXT, " +
-                            EVENT_LOCAL_OLD_FULL_PATH + " TEXT, " +
-                            EVENT_LOCAL_TYPE + " TEXT, " +
-                            EVENT_LOCAL_TIMESTAMP + " DATE, " +
-                            EVENT_LOCAL_IS_DIRECTORY + " BOOL, " +
-                            EVENT_LOCAL_IS_FILE + " BOOL, " +
-                            EVENT_LOCAL_FILE_ATTRIBUTES + " LONG)";
+            // Create the events table if it doesn't already exist.
+            string queryEventInfo = "CREATE TABLE IF NOT EXISTS " + EVENT_QUEUE_INFO_TABLE_NAME + " (" +
+                            EVENT_QUEUE_INFO_NAME + " TEXT, " +
+                            EVENT_QUEUE_INFO_JOB_COUNT + " INTEGER);";
 
-                ExecuteNonQuery(queryCandidates);
+            ExecuteNonQuery(queryEventInfo);
 
-                // Since the database schema has changed, we need to get a new connection.
-                sqlConnection.Close();
-                OpenConnection();
+            // Since the database schema has changed, we need to get a new connection.
+            sqlConnection.Close();
+            OpenConnection();
         }
 
         public SQLiteDataReader ExecuteQuery(string query)
@@ -285,54 +282,64 @@ namespace Mezeo
 
         public void ClearLocalEvents()
         {
+            int result = -1;
+
             // Make sure we have a connection.
             if (null == sqlConnection)
                 OpenConnection();
 
-            int result = -1;
-            string query = "DELETE FROM " + EVENT_CANDIDATE_TABLE_NAME + " WHERE " + EVENT_ORIGIN + "='L';";
+            string query = "DELETE FROM " + EVENT_TABLE_NAME + " WHERE " + EVENT_ORIGIN + "='L';";
             sqlCommand = new SQLiteCommand(query, sqlConnection);
             LogWrapper.LogMessage("DBHandler - ClearLocalEvents", "Running query: " + query);
             result = sqlCommand.ExecuteNonQuery();
 
-            string query2 = "DELETE FROM " + EVENT_TABLE_NAME + " WHERE " + EVENT_ORIGIN + "='L';";
+            string query2 = "DELETE FROM " + EVENT_QUEUE_INFO_TABLE_NAME + ";";
             sqlCommand = new SQLiteCommand(query2, sqlConnection);
             LogWrapper.LogMessage("DBHandler - ClearLocalEvents", "Running query: " + query2);
             result = sqlCommand.ExecuteNonQuery();
+
+            string query3 = "INSERT INTO " + EVENT_QUEUE_INFO_TABLE_NAME + " (" + EVENT_QUEUE_INFO_NAME + ", " + EVENT_QUEUE_INFO_JOB_COUNT + ") VALUES ('" + EVENT_TABLE_NAME + "', 0);";
+            sqlCommand = new SQLiteCommand(query3, sqlConnection);
+            LogWrapper.LogMessage("DBHandler - ClearLocalEvents", "Running query: " + query3);
+            result = sqlCommand.ExecuteNonQuery();
         }
 
-        public int AddEventCandidate(LocalEvents newEvent)
+        public Int64 GetJobCount()
+        {
+            Int64 jobCount = 0;
+            string query = "SELECT " + EVENT_QUEUE_INFO_JOB_COUNT + " FROM " + EVENT_QUEUE_INFO_TABLE_NAME + " WHERE " + EVENT_QUEUE_INFO_NAME + "='" + EVENT_TABLE_NAME + "';";
+
+            sqlCommand = new SQLiteCommand();
+            sqlCommand.CommandText = query;
+            sqlCommand.Connection = sqlConnection;
+            try
+            {
+                sqlDataReader = sqlCommand.ExecuteReader();
+                while (sqlDataReader.Read())
+                {
+                    jobCount = (Int64)sqlDataReader[EVENT_QUEUE_INFO_JOB_COUNT];
+                }
+            }
+            catch (Exception ex)
+            {
+                LogWrapper.LogMessage("DbHandler - GetJobCount", "Caught exception: " + ex.Message);
+            }
+
+            return jobCount;
+        }
+
+        public void IncrementJobCount()
         {
             int result = -1;
-            string query = "insert into " + EVENT_CANDIDATE_TABLE_NAME + " (" +
-                            EVENT_ORIGIN + ", " +
-                            EVENT_LOCAL_FILE_NAME + ", " +
-                            EVENT_LOCAL_OLD_FILE_NAME + ", " +
-                            EVENT_LOCAL_FULL_PATH + ", " +
-                            EVENT_LOCAL_OLD_FULL_PATH + ", " +
-                            EVENT_LOCAL_TYPE + ", " +
-                            EVENT_LOCAL_TIMESTAMP + ", " +
-                            EVENT_LOCAL_IS_DIRECTORY + ", " +
-                            EVENT_LOCAL_IS_FILE + ", " +
-                            EVENT_LOCAL_FILE_ATTRIBUTES + ") values ('L', '" +
-                            newEvent.FileName + "','" +
-                            newEvent.OldFileName + "','" +
-                            newEvent.FullPath + "','" +
-                            newEvent.OldFullPath + "','" +
-                            newEvent.EventType + "','" +
-                            newEvent.EventTimeStamp + "','" +
-                            newEvent.IsDirectory + "','" +
-                            newEvent.IsFile + "'," +
-                            (long)newEvent.Attributes + ");";
-
+            string query = "UPDATE " + EVENT_QUEUE_INFO_TABLE_NAME + " SET " + EVENT_QUEUE_INFO_JOB_COUNT + " = (SELECT " + EVENT_QUEUE_INFO_JOB_COUNT + "+1 FROM " + EVENT_QUEUE_INFO_TABLE_NAME + " WHERE " + EVENT_QUEUE_INFO_NAME + "='" + EVENT_TABLE_NAME + "') WHERE " + EVENT_QUEUE_INFO_NAME + "='" + EVENT_TABLE_NAME + "';";
             sqlCommand = new SQLiteCommand(query, sqlConnection);
-            LogWrapper.LogMessage("DBHandler - AddEventCandidate", "Running query: " + query);
-
+            LogWrapper.LogMessage("DBHandler - IncrementJobCount", "Running query: " + query);
             result = sqlCommand.ExecuteNonQuery();
+        }
 
-            // A result of 1 is success (# of rows affected and we should
-            // only have 1), not the index of the newly created entry.
-            return result;
+        public string EscapeString(string value)
+        {
+            return value.Replace("'", "''");
         }
 
         public int AddEvent(LocalEvents newEvent)
@@ -349,10 +356,10 @@ namespace Mezeo
                             EVENT_LOCAL_IS_DIRECTORY + ", " +
                             EVENT_LOCAL_IS_FILE + ", " +
                             EVENT_LOCAL_FILE_ATTRIBUTES + ") values ('L', '" +
-                            newEvent.FileName + "','" +
-                            newEvent.OldFileName + "','" +
-                            newEvent.FullPath + "','" +
-                            newEvent.OldFullPath + "','" +
+                            EscapeString(newEvent.FileName) + "','" +
+                            EscapeString(newEvent.OldFileName) + "','" +
+                            EscapeString(newEvent.FullPath) + "','" +
+                            EscapeString(newEvent.OldFullPath) + "','" +
                             newEvent.EventType + "','" +
                             newEvent.EventTimeStamp + "','" +
                             newEvent.IsDirectory + "','" +
@@ -363,6 +370,10 @@ namespace Mezeo
             LogWrapper.LogMessage("DBHandler - AddEvent", "Running query: " + query);
 
             result = sqlCommand.ExecuteNonQuery();
+
+            // Increment the job count.
+            if (0 < result)
+                IncrementJobCount();
 
             // A result of 1 is success (# of rows affected and we should
             // only have 1), not the index of the newly created entry.
@@ -394,9 +405,9 @@ namespace Mezeo
                             nqEvent.StrEventTime + "','" +
                             nqEvent.StrEventUser + "','" +
                             nqEvent.StrHash + "','" +
-                            nqEvent.StrMezeoExportedPath + "','" +
+                            EscapeString(nqEvent.StrMezeoExportedPath) + "','" +
                             nqEvent.StrObjectID + "','" +
-                            nqEvent.StrObjectName + "','" +
+                            EscapeString(nqEvent.StrObjectName) + "','" +
                             nqEvent.StrObjectType + "','" +
                             nqEvent.StrParentID + "','" +
                             nqEvent.StrParentUri + "');";
@@ -406,17 +417,21 @@ namespace Mezeo
 
             result = sqlCommand.ExecuteNonQuery();
 
+            // Increment the job count.
+            if (0 < result)
+                IncrementJobCount();
+
             // A result of 1 is success (# of rows affected and we should
             // only have 1), not the index of the newly created entry.
             return result;
         }
 
-        public int DeleteEventCandidate(Int32 eventID)
+        public int DeleteEvent(Int64 eventID)
         {
             int result = -1;
-            string query = "DELETE FROM" + EVENT_CANDIDATE_TABLE_NAME + " WHERE EventIndex=" + eventID + ";";
+            string query = "DELETE FROM " + EVENT_TABLE_NAME + " WHERE EventIndex=" + eventID + ";";
             sqlCommand = new SQLiteCommand(query, sqlConnection);
-            LogWrapper.LogMessage("DBHandler - DeleteEventCandidate", "Running query: " + query);
+            LogWrapper.LogMessage("DBHandler - DeleteEvent", "Running query: " + query);
 
             result = sqlCommand.ExecuteNonQuery();
 
@@ -425,27 +440,45 @@ namespace Mezeo
             return result;
         }
 
-        public int DeleteEvent(Int32 eventID)
+        public void PopulateLocalEventFromReader(ref LocalEvents item, ref SQLiteDataReader sqlDataReader)
         {
-            int result = -1;
-            string query = "DELETE FROM" + EVENT_TABLE_NAME + " WHERE EventIndex=" + eventID + ";";
-            sqlCommand = new SQLiteCommand(query, sqlConnection);
-            LogWrapper.LogMessage("DBHandler - DeleteEventCandidate", "Running query: " + query);
-
-            result = sqlCommand.ExecuteNonQuery();
-
-            // A result of 1 is success (# of rows affected and we should
-            // only have 1), not the index of the newly created entry.
-            return result;
+            item.EventDbId = (Int64)sqlDataReader[EVENT_INDEX];
+            item.FileName = (string)sqlDataReader[EVENT_LOCAL_FILE_NAME];
+            item.OldFileName = (string)sqlDataReader[EVENT_LOCAL_OLD_FILE_NAME];
+            item.FullPath = (string)sqlDataReader[EVENT_LOCAL_FULL_PATH];
+            item.OldFullPath = (string)sqlDataReader[EVENT_LOCAL_OLD_FULL_PATH];
+            item.IsDirectory = (bool)sqlDataReader[EVENT_LOCAL_IS_DIRECTORY];
+            item.IsFile = (bool)sqlDataReader[EVENT_LOCAL_IS_FILE];
+            item.EventTimeStamp.AddTicks((Int64)sqlDataReader[EVENT_LOCAL_TIMESTAMP]);
+            Int64 test = (Int64)sqlDataReader[EVENT_LOCAL_FILE_ATTRIBUTES];
+            item.Attributes = (System.IO.FileAttributes)test;
+            switch ((string)sqlDataReader[EVENT_LOCAL_TYPE])
+            {
+                case "FILE_ACTION_ADDED":
+                    item.EventType = LocalEvents.EventsType.FILE_ACTION_ADDED;
+                    break;
+                case "FILE_ACTION_MODIFIED":
+                    item.EventType = LocalEvents.EventsType.FILE_ACTION_MODIFIED;
+                    break;
+                case "FILE_ACTION_REMOVED":
+                    item.EventType = LocalEvents.EventsType.FILE_ACTION_REMOVED;
+                    break;
+                case "FILE_ACTION_RENAMED":
+                    item.EventType = LocalEvents.EventsType.FILE_ACTION_RENAMED;
+                    break;
+                case "FILE_ACTION_MOVE":
+                    item.EventType = LocalEvents.EventsType.FILE_ACTION_MOVE;
+                    break;
+            }
         }
 
-        public List<LocalEvents> GetSettledEventCandidates(int secondsSettled)
+        public LocalEvents GetLocalEvent()
         {
-            List<LocalEvents> listEvents = new List<LocalEvents>();
             int result = -1;
-            string query = "SELECT * FROM " + EVENT_CANDIDATE_TABLE_NAME + ";";
+            string query = "SELECT * FROM " + EVENT_TABLE_NAME + " WHERE " + EVENT_ORIGIN + " = 'L' ORDER BY " + EVENT_INDEX + " LIMIT 1;";
             sqlCommand = new SQLiteCommand(query, sqlConnection);
-            LogWrapper.LogMessage("DBHandler - DeleteEventCandidate", "Running query: " + query);
+            LogWrapper.LogMessage("DBHandler - GetLocalEvent", "Running query: " + query);
+            LocalEvents item = new LocalEvents();
 
             result = sqlCommand.ExecuteNonQuery();
 
@@ -457,62 +490,20 @@ namespace Mezeo
                 sqlDataReader = sqlCommand.ExecuteReader();
                 while (sqlDataReader.Read())
                 {
-                    LocalEvents item = new LocalEvents();
-                    item.FileName = (string)sqlDataReader[EVENT_LOCAL_FILE_NAME];
-                    item.OldFileName = (string)sqlDataReader[EVENT_LOCAL_OLD_FILE_NAME];
-                    item.FullPath = (string)sqlDataReader[EVENT_LOCAL_FULL_PATH];
-                    item.OldFullPath = (string)sqlDataReader[EVENT_LOCAL_OLD_FULL_PATH];
-                    item.IsDirectory = (bool)sqlDataReader[EVENT_LOCAL_IS_DIRECTORY];
-                    item.IsFile = (bool)sqlDataReader[EVENT_LOCAL_IS_FILE];
-                    //item.EventTimeStamp = (DateTime)sqlDataReader[EVENT_LOCAL_TIMESTAMP];
-                    Int64 test = 0;
-                    if (false == Int64.TryParse((string)sqlDataReader[EVENT_LOCAL_FILE_ATTRIBUTES], out test))
-                        test = 0;
-                    System.IO.FileAttributes ftest = (System.IO.FileAttributes)test;
-                    if (0 != (ftest & System.IO.FileAttributes.Archive))
-                    {
-                    }
-                    //item.Attributes = (System.IO.FileAttributes)sqlDataReader[EVENT_LOCAL_FILE_ATTRIBUTES];
-                    //item.EventType = sqlDataReader[EVENT_LOCAL_TYPE];
+                    PopulateLocalEventFromReader(ref item, ref sqlDataReader);
+                    //DeleteEvent(item.EventDbId);  // Remove the item from the database.
                 }
             }
             catch (Exception ex)
             {
-                LogWrapper.LogMessage("DbHandler - GetString", "Caught exception: " + ex.Message);
-                sqlConnection.Close();
-                OpenConnection();
-                sqlCommand.Connection = sqlConnection;
-                sqlDataReader = sqlCommand.ExecuteReader();
-                while (sqlDataReader.Read())
-                {
-                    LocalEvents item = new LocalEvents();
-                    item.FileName = (string)sqlDataReader[EVENT_LOCAL_FILE_NAME];
-                    item.OldFileName = (string)sqlDataReader[EVENT_LOCAL_OLD_FILE_NAME];
-                    item.FullPath = (string)sqlDataReader[EVENT_LOCAL_FULL_PATH];
-                    item.OldFullPath = (string)sqlDataReader[EVENT_LOCAL_OLD_FULL_PATH];
-                    item.IsDirectory = (bool)sqlDataReader[EVENT_LOCAL_IS_DIRECTORY];
-                    item.IsFile = (bool)sqlDataReader[EVENT_LOCAL_IS_FILE];
-                    //item.Attributes = (System.IO.FileAttributes)sqlDataReader[EVENT_LOCAL_FILE_ATTRIBUTES];
-                    //item.EventTimeStamp = (DateTime)sqlDataReader[EVENT_LOCAL_TIMESTAMP];
-                    //item.EventType = sqlDataReader[EVENT_LOCAL_TYPE];
-                }
+                LogWrapper.LogMessage("DbHandler - GetLocalEvent", "Caught exception: " + ex.Message);
+                item = null;
             }
-
-#if MEZEO32
-            //result = sqlDataReader.GetString(0);
-#elif MEZEO64
-                //if (sqlDataReader.HasRows)
-                //        result = sqlDataReader.GetString(0);
-                //    else
-                //        result = "";
-#else
-                //result = sqlDataReader.GetString(0);
-#endif
 
             if (null != sqlDataReader)
                 sqlDataReader.Close();
 
-            return listEvents;
+            return item;
         }
 
         public int Update(string tableName, string newValues, string whereCondition)
