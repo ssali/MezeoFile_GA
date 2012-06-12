@@ -102,6 +102,9 @@ namespace Mezeo
         {
             string dbPath = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData) + "\\" + AboutBox.AssemblyTitle + "\\";
 
+            if(sqlConnection != null)
+                sqlConnection.Close();
+            
             if (System.IO.File.Exists(dbPath + DATABASE_NAME))
             {
                 System.IO.File.Delete(dbPath + DATABASE_NAME);

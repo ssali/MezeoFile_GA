@@ -144,9 +144,9 @@
   <data name="&gt;&gt;btnLogin.ZOrder" xml:space="preserve">
     <value>6</value>
   </data>
-  <data name="cmSystemTrayLogin.TrayLocation" type="System.Drawing.Point, System.Drawing">
+  <metadata name="cmSystemTrayLogin.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
     <value>257, 17</value>
-  </data>
+  </metadata>
   <data name="toolStripMenuItem6.BackgroundImageLayout" type="System.Windows.Forms.ImageLayout, System.Windows.Forms">
     <value>None</value>
   </data>
@@ -177,12 +177,12 @@
   <data name="&gt;&gt;cmSystemTrayLogin.Type" xml:space="preserve">
     <value>System.Windows.Forms.ContextMenuStrip, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
-  <data name="bwLogin.TrayLocation" type="System.Drawing.Point, System.Drawing">
+  <metadata name="bwLogin.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
     <value>417, 17</value>
-  </data>
-  <data name="cmSystemTraySyncMgr.TrayLocation" type="System.Drawing.Point, System.Drawing">
+  </metadata>
+  <metadata name="cmSystemTraySyncMgr.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
     <value>515, 17</value>
-  </data>
+  </metadata>
   <data name="toolStripMenuItem2.BackgroundImageLayout" type="System.Windows.Forms.ImageLayout, System.Windows.Forms">
     <value>None</value>
   </data>
@@ -190,49 +190,52 @@
     <value>Tahoma, 9.75pt, style=Bold</value>
   </data>
   <data name="toolStripMenuItem2.Size" type="System.Drawing.Size, System.Drawing">
-    <value>260, 22</value>
+    <value>152, 22</value>
   </data>
   <data name="toolStripMenuItem2.TextAlign" type="System.Drawing.ContentAlignment, System.Drawing">
     <value>MiddleLeft</value>
   </data>
   <data name="toolStripSeparator1.Size" type="System.Drawing.Size, System.Drawing">
-    <value>257, 6</value>
+    <value>149, 6</value>
   </data>
   <data name="msShowSyncMgr.Size" type="System.Drawing.Size, System.Drawing">
-    <value>260, 22</value>
+    <value>152, 22</value>
   </data>
   <data name="toolStripMenuItem4.Enabled" type="System.Boolean, mscorlib">
     <value>False</value>
   </data>
   <data name="toolStripMenuItem4.Size" type="System.Drawing.Size, System.Drawing">
-    <value>260, 22</value>
+    <value>152, 22</value>
   </data>
   <data name="toolStripSeparator2.Size" type="System.Drawing.Size, System.Drawing">
-    <value>257, 6</value>
+    <value>149, 6</value>
+  </data>
+  <data name="toolStripMenuItem7.Enabled" type="System.Boolean, mscorlib">
+    <value>False</value>
   </data>
   <data name="toolStripMenuItem7.Size" type="System.Drawing.Size, System.Drawing">
-    <value>260, 22</value>
+    <value>152, 22</value>
   </data>
   <data name="toolStripSeparator5.Size" type="System.Drawing.Size, System.Drawing">
-    <value>257, 6</value>
+    <value>149, 6</value>
   </data>
   <data name="toolStripMenuItem5.Size" type="System.Drawing.Size, System.Drawing">
-    <value>260, 22</value>
+    <value>152, 22</value>
   </data>
   <data name="toolStripSeparator3.Size" type="System.Drawing.Size, System.Drawing">
-    <value>257, 6</value>
+    <value>149, 6</value>
   </data>
   <data name="toolStripMenuItem3.Size" type="System.Drawing.Size, System.Drawing">
-    <value>260, 22</value>
+    <value>152, 22</value>
   </data>
   <data name="toolStripSeparator4.Size" type="System.Drawing.Size, System.Drawing">
-    <value>257, 6</value>
+    <value>149, 6</value>
   </data>
   <data name="msSyncMgrExit.Size" type="System.Drawing.Size, System.Drawing">
-    <value>260, 22</value>
+    <value>152, 22</value>
   </data>
   <data name="cmSystemTraySyncMgr.Size" type="System.Drawing.Size, System.Drawing">
-    <value>261, 188</value>
+    <value>153, 210</value>
   </data>
   <data name="&gt;&gt;cmSystemTraySyncMgr.Name" xml:space="preserve">
     <value>cmSystemTraySyncMgr</value>
@@ -297,15 +300,42 @@
   <data name="&gt;&gt;labelError.ZOrder" xml:space="preserve">
     <value>2</value>
   </data>
-  <data name="cmLogin.TrayLocation" type="System.Drawing.Point, System.Drawing">
+  <metadata name="cmLogin.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
     <value>159, 17</value>
+  </metadata>
+  <data name="menuItem1.Text" xml:space="preserve">
+    <value />
   </data>
-  <data name="cmSyncManager.TrayLocation" type="System.Drawing.Point, System.Drawing">
+  <data name="menuItem2.Text" xml:space="preserve">
+    <value />
+  </data>
+  <data name="menuItem3.Text" xml:space="preserve">
+    <value />
+  </data>
+  <metadata name="cmSyncManager.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
     <value>17, 17</value>
+  </metadata>
+  <data name="menuItem4.Text" xml:space="preserve">
+    <value />
   </data>
-  <data name="niSystemTray.TrayLocation" type="System.Drawing.Point, System.Drawing">
+  <data name="menuItem7.Text" xml:space="preserve">
+    <value />
+  </data>
+  <data name="menuItem5.Text" xml:space="preserve">
+    <value />
+  </data>
+  <data name="menuItem8.Text" xml:space="preserve">
+    <value />
+  </data>
+  <data name="menuItem9.Text" xml:space="preserve">
+    <value />
+  </data>
+  <data name="menuItem6.Text" xml:space="preserve">
+    <value />
+  </data>
+  <metadata name="niSystemTray.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
     <value>17, 56</value>
-  </data>
+  </metadata>
   <data name="niSystemTray.Icon" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
     <value>
         AAABAAsAMDAQAAEABABoBgAAtgAAACAgEAABAAQA6AIAAB4HAAAQEBAAAQAEACgBAAAGCgAAMDAAAAEA
@@ -952,9 +982,9 @@
   <data name="niSystemTray.Visible" type="System.Boolean, mscorlib">
     <value>True</value>
   </data>
-  <data name="bwCheckServerStatus.TrayLocation" type="System.Drawing.Point, System.Drawing">
+  <metadata name="bwCheckServerStatus.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
     <value>693, 17</value>
-  </data>
+  </metadata>
   <data name="txtServerUrl.Font" type="System.Drawing.Font, System.Drawing">
     <value>Microsoft Sans Serif, 12pt</value>
   </data>
@@ -1027,17 +1057,14 @@
   <data name="&gt;&gt;txtUserName.ZOrder" xml:space="preserve">
     <value>5</value>
   </data>
-  <data name="$this.Localizable" type="System.Boolean, mscorlib">
+  <metadata name="$this.Localizable" type="System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
     <value>True</value>
-  </data>
+  </metadata>
   <data name="$this.AutoScaleDimensions" type="System.Drawing.SizeF, System.Drawing">
     <value>6, 13</value>
   </data>
   <data name="$this.ClientSize" type="System.Drawing.Size, System.Drawing">
     <value>483, 289</value>
-  </data>
-  <data name="$this.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
-    <value>NoControl</value>
   </data>
   <data name="$this.StartPosition" type="System.Windows.Forms.FormStartPosition, System.Windows.Forms">
     <value>CenterScreen</value>

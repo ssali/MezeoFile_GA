@@ -853,6 +853,15 @@ namespace Mezeo.Resources.en {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Sync Paused.
+        /// </summary>
+        internal static string TrayBalloonSyncPauseText {
+            get {
+                return ResourceManager.GetString("TrayBalloonSyncPauseText", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Sync Status.
         /// </summary>
         internal static string TrayBalloonSyncStatusText {

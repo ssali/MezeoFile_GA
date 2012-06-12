@@ -381,6 +381,9 @@
   <data name="TrayBalloonSyncFolderUpToDate" xml:space="preserve">
     <value>Your sync folder is up-to-date.</value>
   </data>
+  <data name="TrayBalloonSyncPauseText" xml:space="preserve">
+    <value>Sync Paused</value>
+  </data>
   <data name="TrayBalloonSyncStatusText" xml:space="preserve">
     <value>Sync Status</value>
   </data>

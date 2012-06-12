@@ -567,8 +567,8 @@ namespace Mezeo
                     DialogResult checkDir;
 
                     string message = LanguageTranslator.GetValue("ExpectedLocation") + Environment.NewLine + BasicInfo.SyncDirPath + ". " + Environment.NewLine + Environment.NewLine + LanguageTranslator.GetValue("FolderMoved") + Environment.NewLine + Environment.NewLine + LanguageTranslator.GetValue("ClickNoExit") + Environment.NewLine + Environment.NewLine + LanguageTranslator.GetValue("ClickYesRestore");
-                    //string caption = "MezeoFile Setup";
                     string caption = LanguageTranslator.GetValue("CaptionFileMissingDialog");
+                 
                     MessageBoxButtons buttons = MessageBoxButtons.YesNo;
                     MessageBoxDefaultButton defaultbutton = MessageBoxDefaultButton.Button2;
 
@@ -578,6 +578,15 @@ namespace Mezeo
                     if (checkDir == DialogResult.Yes)
                     {
                         System.IO.Directory.CreateDirectory(dirName);
+                        
+                        //Adding Code to change folder icon
+                        string IniPath = dirName + @"\desktop.ini";
+                        string iconfile = Application.StartupPath + @"\app.ico";
+                        CreateFolderIcon(iconfile, IniPath);
+                        SetIniFileAttributes(IniPath);
+                        SetFolderAttributes(dirName);
+                       // System.IO.File.Delete(IniPath);
+
                         BasicInfo.IsInitialSync = true;
                         BasicInfo.SyncDirPath = dirName;
                         dbHandler.DeleteDb();
@@ -592,8 +601,18 @@ namespace Mezeo
                 {
                     isDbCreateNew = dbHandler.OpenConnection();
                     if (!isDirectoryExists)
+                    {
                         System.IO.Directory.CreateDirectory(dirName);
 
+                        //Adding Code to change folder icon
+                        string IniPath = dirName + @"\desktop.ini";
+                        string iconfile = Application.StartupPath + @"\app.ico";
+                        CreateFolderIcon(iconfile,IniPath);
+                        SetIniFileAttributes(IniPath);
+                        SetFolderAttributes(dirName);
+                     //   System.IO.File.Delete(IniPath);
+                   
+                    }
                     BasicInfo.IsInitialSync = true;
                     // Always set the BasicInfo.SyncDirPath value.
                     BasicInfo.SyncDirPath = dirName;
@@ -609,6 +628,55 @@ namespace Mezeo
 
             System.IO.Directory.SetCurrentDirectory(BasicInfo.SyncDirPath);
         }
+
+        # region FolderIconCode
+       
+        public void CreateFolderIcon(string iconFilePath, string IniPath)
+        {
+            CreateDesktopIniFile(iconFilePath, IniPath);
+        }
+
+
+        private void CreateDesktopIniFile(string iconFilePath, string IniPath)
+        {
+
+            int iconIndex = 0;
+            IniWriter.WriteValue(".ShellClassInfo", "IconFile", iconFilePath, IniPath);
+            IniWriter.WriteValue(".ShellClassInfo", "IconIndex", iconIndex.ToString(), IniPath);
+        }
+
+
+        //Function to change attributes for folder icon code 
+        private bool SetIniFileAttributes(string IniPath)
+        {
+
+            if ((System.IO.File.GetAttributes(IniPath) & FileAttributes.Hidden) != FileAttributes.Hidden)
+            {
+                System.IO.File.SetAttributes(IniPath, System.IO.File.GetAttributes(IniPath) | FileAttributes.Hidden);
+            }
+
+            if ((System.IO.File.GetAttributes(IniPath) & FileAttributes.System) != FileAttributes.System)
+            {
+                System.IO.File.SetAttributes(IniPath, System.IO.File.GetAttributes(IniPath) | FileAttributes.System);
+            }
+
+            return true;
+
+        }
+
+        //Function to change attributes for folder icon code 
+        private bool SetFolderAttributes(string dirName)
+        {
+
+            if ((System.IO.File.GetAttributes(dirName) & FileAttributes.System) != FileAttributes.System)
+            {
+                System.IO.File.SetAttributes(dirName, System.IO.File.GetAttributes(dirName) | FileAttributes.System);
+            }
+
+            return true;
+        }
+
+        #endregion 
 
         private void HandleUpdates()
         {
@@ -749,25 +817,25 @@ namespace Mezeo
             }
         }
 
+        public void EnablePauseText()
+        {
+            toolStripMenuItem7.Enabled = true;
+        }
+
         private void toolStripMenuItem7_Click(object sender, EventArgs e)
         {
-            changePauseText();
-            SyncPauseBalloonMessage();
+            if (syncManager.IsLocalEventInProgress())
+            {
+                syncManager.StopSync();
+                changePauseText();
+            }
+           
         }
 
         private void SyncEvaluatingBalloonMessage()
         {
             notificationManager.NotificationHandler.Icon = Properties.Resources.mezeosyncstatus_syncing;
             notificationManager.NotificationHandler.ShowBalloonTip(1, LanguageTranslator.GetValue("SyncStartMessage"),
-                                                                           LanguageTranslator.GetValue("EvaluatingLocalChanges"),
-                                                                          ToolTipIcon.None);
-            notificationManager.HoverText = global::Mezeo.Properties.Resources.BrSyncManagerTitle + " " + AboutBox.AssemblyVersion + "\n" + LanguageTranslator.GetValue("EvaluatingLocalChanges");
-        }
-
-        private void SyncPauseBalloonMessage()
-        {
-            notificationManager.NotificationHandler.Icon = Properties.Resources.app_icon_disabled;
-            notificationManager.NotificationHandler.ShowBalloonTip(1, LanguageTranslator.GetValue("PauseSync"),
                                                                            LanguageTranslator.GetValue("EvaluatingLocalChanges"),
                                                                           ToolTipIcon.None);
             notificationManager.HoverText = global::Mezeo.Properties.Resources.BrSyncManagerTitle + " " + AboutBox.AssemblyVersion + "\n" + LanguageTranslator.GetValue("EvaluatingLocalChanges");
@@ -800,6 +868,21 @@ namespace Mezeo
             else
             {
                 toolStripMenuItem7.Text = LanguageTranslator.GetValue("ResumeSyncText");
+            }
+        }
+
+        public void changeResumeText()
+        {
+            if (this.InvokeRequired)
+            {
+                this.Invoke((MethodInvoker)delegate
+                {
+                    toolStripMenuItem7.Text = LanguageTranslator.GetValue("PauseSync");
+                });
+            }
+            else
+            {
+                toolStripMenuItem7.Text = LanguageTranslator.GetValue("PauseSync");
             }
         }
 
