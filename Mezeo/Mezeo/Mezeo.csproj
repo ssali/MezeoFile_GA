@@ -120,6 +120,7 @@
     <Compile Include="DbHandler.cs" />
     <Compile Include="DbKeyModDate.cs" />
     <Compile Include="Debugger.cs" />
+    <Compile Include="IniWriter.cs" />
     <Compile Include="Resources\en\en.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
