@@ -846,7 +846,6 @@ namespace Mezeo
             SetIssueFound(false);
             //btnSyncNow.Text = this.btnSyncNow.Text = LanguageTranslator.GetValue("SyncManagerSyncStopButtonText");
             btnSyncNow.Text = this.btnSyncNow.Text = LanguageTranslator.GetValue("PauseSync");
-            frmParent.EnablePauseText();
             btnSyncNow.Refresh();
             isAnalysingStructure = true;
             isDownloadingFile = true;
@@ -1961,7 +1960,6 @@ namespace Mezeo
         {
             //btnSyncNow.Text = LanguageTranslator.GetValue("SyncManagerSyncStopButtonText");
             btnSyncNow.Text = LanguageTranslator.GetValue("PauseSync");
-            frmParent.EnablePauseText();
             cnotificationManager.NotificationHandler.Icon = Properties.Resources.mezeosyncstatus_syncing;
             cnotificationManager.HoverText = global::Mezeo.Properties.Resources.BrSyncManagerTitle + " " + AboutBox.AssemblyVersion + "\n" + LanguageTranslator.GetValue("TrayHoverSyncProgressText") +
                                             (int)0 + LanguageTranslator.GetValue("TrayHoverSyncProgressInitialText");
@@ -3612,7 +3610,6 @@ namespace Mezeo
                         iFound.IssueTitle = LanguageTranslator.GetValue("ConflictDetectedError");
 
                         Description += LanguageTranslator.GetValue("ErrorBlurbUpload1");
-                        //Description += AboutBox.AssemblyProduct;
                         Description += LanguageTranslator.GetValue("ErrorBlurbUpload2");
                         Description += LanguageTranslator.GetValue("ErrorBlurbUpload3");
 

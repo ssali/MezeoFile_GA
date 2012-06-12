@@ -51,8 +51,7 @@ namespace Mezeo
             notificationManager.NotificationHandler = this.niSystemTray;
 
             //niSystemTray.ContextMenuStrip = cmSystemTrayLogin;
-            SyncEvaluatingBalloonMessage();
-
+          
             mezeoFileCloud = new CloudService();
 
             LoadResources();
@@ -207,9 +206,7 @@ namespace Mezeo
             this.labelError.Text = "";
 
             //Loading resources at runtime for for context menu 
-            this.toolStripMenuItem6.Text = global::Mezeo.Properties.Resources.BrSyncManagerTitle + " " + AboutBox.AssemblyVersion;
             this.toolStripMenuItem2.Text = global::Mezeo.Properties.Resources.BrSyncManagerTitle + " " + AboutBox.AssemblyVersion;
-            this.niSystemTray.Text = global::Mezeo.Properties.Resources.BrSyncManagerTitle + " " + AboutBox.AssemblyVersion;
             
             this.btnLogin.Text = LanguageTranslator.GetValue("LoginButtonText");	
             this.exitToolStripMenuItem.Text	 = LanguageTranslator.GetValue("ExitSyncManager");
@@ -223,8 +220,8 @@ namespace Mezeo
             this.toolStripMenuItem3.Text = LanguageTranslator.GetValue("CheckforUpdate");
             this.toolStripMenuItem4.Text = LanguageTranslator.GetValue("SyncProgress");
             this.toolStripMenuItem5.Text = LanguageTranslator.GetValue("WebsiteUrl");
-            this.toolStripMenuItem7.Text = LanguageTranslator.GetValue("PauseSync");	
-
+            this.toolStripMenuItem7.Text = LanguageTranslator.GetValue("PauseSync");
+           
 
             isFromSyncMgrVerification = false;
 
@@ -249,6 +246,7 @@ namespace Mezeo
                     txtServerUrl.Enabled = false;
 
                     showLogin = false;
+                    SyncEvaluatingBalloonMessage();
                 }
             }
         }
@@ -436,6 +434,7 @@ namespace Mezeo
                 BasicInfo.ServiceUrl = txtServerUrl.Text;
 
                 isLoginSuccess = true;
+                SyncEvaluatingBalloonMessage();
             }
              
             if (showLogin)
