@@ -853,7 +853,7 @@ namespace Mezeo.Resources.en {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Sync Paused.
+        ///   Looks up a localized string similar to Sync is Paused.
         /// </summary>
         internal static string TrayBalloonSyncPauseText {
             get {
