@@ -68,6 +68,20 @@ namespace Mezeo
         public const string EVENT_NQ_PARENT_ID = "NQParentID";
         public const string EVENT_NQ_PARENT_URI = "NQParentURI";
 
+        // Conflict table columns/fields.
+        public const string CONFLICT_TABLE_NAME = "ConflictIssues";
+        public const string CONFLICT_INDEX = "EventIndex";
+        public const string CONFLICT_LOCAL_FILE_PATH = "FilePath";
+        public const string CONFLICT_ISSUE_TITLE = "IssueTitle";
+        public const string CONFLICT_ISSUE_DESC = "Description";
+        public const string CONFLICT_TYPE = "Type";
+        public const string CONFLICT_LOCAL_DATE = "LDate";
+        public const string CONFLICT_LOCAL_SIZE = "LSize";
+        public const string CONFLICT_SERVER_FILE_INFO = "FileInfo";
+        public const string CONFLICT_SERVER_DATE = "SDate";
+        public const string CONFLICT_SERVER_SIZE = "SSize";
+        public const string CONFLICT_TIME_STAMP = "Time";
+        public const string CONFLICT_URI = "Uri";
 
         private SQLiteConnection sqlConnection;
         private SQLiteCommand sqlCommand;
@@ -131,6 +145,7 @@ namespace Mezeo
 
             ExecuteNonQuery(query);
             CreateEventsTable();
+            CreateIssueTable();
         }
 
         public void CreateEventsTable()
@@ -193,6 +208,139 @@ namespace Mezeo
             // Since the database schema has changed, we need to get a new connection.
             sqlConnection.Close();
             OpenConnection();
+        }
+
+        public void CreateIssueTable()
+        {
+            if (null == sqlConnection)
+                OpenConnection();
+
+            // Create the conflict issues table if it doesn't already exist.
+            string queryConflicts = "CREATE TABLE IF NOT EXISTS " + CONFLICT_TABLE_NAME + " (" +
+                            CONFLICT_INDEX + " INTEGER PRIMARY KEY, " +
+                            CONFLICT_LOCAL_FILE_PATH + " TEXT, " +
+                            CONFLICT_ISSUE_TITLE + " TEXT, " +
+                            CONFLICT_ISSUE_DESC + " TEXT, " +
+                            CONFLICT_TYPE + " TEXT, " +
+                            CONFLICT_LOCAL_DATE + " INTEGER, " +
+                            CONFLICT_LOCAL_SIZE + " TEXT, " +
+                            CONFLICT_SERVER_FILE_INFO + " TEXT, " +
+                            CONFLICT_SERVER_DATE + " INTEGER, " +
+                            CONFLICT_SERVER_SIZE + " TEXT, " +
+                            CONFLICT_TIME_STAMP + " INTEGER, " +
+                            CONFLICT_URI + " TEXT);";
+
+            ExecuteNonQuery(queryConflicts);
+
+            // Since the database schema has changed, we need to get a new connection.
+            sqlConnection.Close();
+            OpenConnection();
+        }
+
+        public int StoreConflict(IssueFound issue)
+        {
+            int result = -1;
+            string query = "insert into " + CONFLICT_TABLE_NAME + " (" +
+                            CONFLICT_LOCAL_FILE_PATH + ", " +
+                            CONFLICT_ISSUE_TITLE + ", " +
+                            CONFLICT_ISSUE_DESC + ", " +
+                            CONFLICT_TYPE + ", " +
+                            CONFLICT_LOCAL_DATE + ", " +
+                            CONFLICT_LOCAL_SIZE + ", " +
+                            CONFLICT_SERVER_FILE_INFO + ", " +
+                            CONFLICT_SERVER_DATE + ", " +
+                            CONFLICT_SERVER_SIZE + ", " +
+                            CONFLICT_TIME_STAMP + ", " +
+                            CONFLICT_URI + ") values ('" +
+                            EscapeString(issue.LocalFilePath) + "','" +
+                            EscapeString(issue.IssueTitle) + "','" +
+                            EscapeString(issue.IssueDescripation) + "','" +
+                            issue.cType + "'," +
+                            issue.LocalIssueDT.Ticks + "," +
+                            issue.LocalSize + ",'" +
+                            EscapeString(issue.ServerFileInfo) + "'," +
+                            issue.ServerIssueDT.Ticks + "','" +
+                            issue.ServerSize + ",'" +
+                            issue.ConflictTimeStamp.Ticks + "','" +
+                            issue.ServerFileUri + "');";
+
+            sqlCommand = new SQLiteCommand(query, sqlConnection);
+            LogWrapper.LogMessage("DBHandler - StoreConflict", "Running query: " + query);
+
+            result = sqlCommand.ExecuteNonQuery();
+
+            // A result of 1 is success (# of rows affected and we should
+            // only have 1), not the index of the newly created entry.
+            return result;
+        }
+
+        public void PopulateConflictFromReader(ref IssueFound issue, ref SQLiteDataReader sqlDataReader)
+        {
+            issue.ConflictDbId = (Int64)sqlDataReader[CONFLICT_INDEX];
+            issue.LocalFilePath = (string)sqlDataReader[CONFLICT_LOCAL_FILE_PATH];
+            issue.IssueTitle = (string)sqlDataReader[CONFLICT_ISSUE_TITLE];
+            issue.IssueDescripation = (string)sqlDataReader[CONFLICT_ISSUE_DESC];
+            issue.LocalIssueDT.AddTicks((Int64)sqlDataReader[CONFLICT_LOCAL_DATE]);
+            issue.LocalSize = (string)sqlDataReader[CONFLICT_LOCAL_SIZE];
+            issue.ServerFileInfo = (string)sqlDataReader[CONFLICT_SERVER_FILE_INFO];
+            issue.ServerIssueDT.AddTicks((Int64)sqlDataReader[CONFLICT_SERVER_DATE]);
+            issue.ServerSize = (string)sqlDataReader[CONFLICT_SERVER_SIZE];
+            issue.ConflictTimeStamp.AddTicks((Int64)sqlDataReader[CONFLICT_TIME_STAMP]);
+            issue.ServerFileUri = (string)sqlDataReader[CONFLICT_URI];
+
+            switch ((string)sqlDataReader[EVENT_LOCAL_TYPE])
+            {
+                case "CONFLICT_UPLOAD":
+                    issue.cType = IssueFound.ConflictType.CONFLICT_UPLOAD;
+                    break;
+                case "CONFLICT_MODIFIED":
+                    issue.cType = IssueFound.ConflictType.CONFLICT_MODIFIED;
+                    break;
+            }
+        }
+
+        public List<IssueFound> GetConflicts()
+        {
+            string query = "SELECT * FROM " + CONFLICT_TABLE_NAME + ";";
+            LogWrapper.LogMessage("DBHandler - GetConflicts", "Running query: " + query);
+            List<IssueFound> issues = new List<IssueFound>();
+
+            sqlCommand = new SQLiteCommand();
+            sqlCommand.CommandText = query;
+            sqlCommand.Connection = sqlConnection;
+            try
+            {
+                sqlDataReader = sqlCommand.ExecuteReader();
+                while (sqlDataReader.Read())
+                {
+                    IssueFound item = new IssueFound();
+                    PopulateConflictFromReader(ref item, ref sqlDataReader);
+                    issues.Add(item);
+                }
+            }
+            catch (Exception ex)
+            {
+                LogWrapper.LogMessage("DbHandler - GetConflicts", "Caught exception: " + ex.Message);
+            }
+
+            if (null != sqlDataReader)
+                sqlDataReader.Close();
+
+            return issues;
+        }
+
+        public int DeleteConflict(Int64 eventID)
+        {
+            int result = -1;
+            string query = "DELETE FROM " + CONFLICT_TABLE_NAME + " WHERE EventIndex=" + eventID + ";";
+            sqlCommand = new SQLiteCommand(query, sqlConnection);
+            LogWrapper.LogMessage("DBHandler - DeleteConflict", "Running query: " + query);
+
+            result = sqlCommand.ExecuteNonQuery();
+
+            // A result of 1 is success (# of rows affected and we should
+            // only have 1), not the index of the newly created entry.
+            return result;
         }
 
         public SQLiteDataReader ExecuteQuery(string query)

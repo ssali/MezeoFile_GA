@@ -29,10 +29,17 @@ namespace Mezeo
 
         public string ServerFileUri { get; set; }
 
+        public Int64 ConflictDbId { get; set; }
+
         public enum ConflictType
         {
             CONFLICT_UPLOAD,
             CONFLICT_MODIFIED
+        }
+
+        public IssueFound()
+        {
+            ConflictDbId = -1;
         }
     }
 }
