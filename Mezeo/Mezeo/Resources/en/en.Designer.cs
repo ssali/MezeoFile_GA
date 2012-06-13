@@ -457,6 +457,15 @@ namespace Mezeo.Resources.en {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to No updates found.  You have the latest version..
+        /// </summary>
+        internal static string NoUpdateAvailable {
+            get {
+                return ResourceManager.GetString("NoUpdateAvailable", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Password.
         /// </summary>
         internal static string PasswordCueText {

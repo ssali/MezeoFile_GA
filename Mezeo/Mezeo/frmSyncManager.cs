@@ -512,14 +512,21 @@ namespace Mezeo
                                 }
                             }
                         }
-                       
+
                         // If an update is available, the show a pop
                         if ((null != strNewVersion) && (0 != strNewVersion.Length))
                         {
                             ShowUpdateAvailableBalloonMessage(strNewVersion);
                             BasicInfo.updateAvailable = true;
                             frmParent.changeUpdatesText(strNewVersion);
-                           // cnotificationManager.HoverText = "Install Update";
+                            // cnotificationManager.HoverText = "Install Update";
+                        }
+                        else
+                        {
+                            // The only time ignoreTime is true is when the user has clicked on 'check for new versions'.
+                            // Otherwise, we don't want to pop up a message box every time the timer activates.
+                            if (ignoreTime)
+                                ShowCurrentVersionBalloonMessage(strNewVersion);
                         }
 
                         // Update the time we last checked for an update.
@@ -1875,7 +1882,18 @@ namespace Mezeo
 
             cnotificationManager.HoverText = global::Mezeo.Properties.Resources.BrSyncManagerTitle + " " + AboutBox.AssemblyVersion + "\n" + LanguageTranslator.GetValue("UpdateAvailable");
         }
- 
+
+
+        private void ShowCurrentVersionBalloonMessage(string strNewVersion)
+        {
+            string strNoUpdateAvailable;
+            strNoUpdateAvailable = LanguageTranslator.GetValue("VersionText") + strNewVersion + LanguageTranslator.GetValue("AppAvailableMessage");
+            cnotificationManager.NotificationHandler.Icon = Properties.Resources.app_icon_upgrade;
+            cnotificationManager.NotificationHandler.ShowBalloonTip(1, LanguageTranslator.GetValue("NoUpdateAvailable"),
+                                                                      strNoUpdateAvailable,
+                                                                     ToolTipIcon.None);
+        }
+
         private void IssueFoundBalloonMessage()
         {
             SetIssueFound(true);
