@@ -117,8 +117,7 @@ namespace Mezeo
                         lEvent.EventTimeStamp = id.EventTimeStamp;
                         eventList.Add(lEvent);
                         eventsToRemove.Add(id);
-                        bNewEventExists = true;
-                        dbHandler.AddEvent(lEvent);
+                        //dbHandler.AddEvent(lEvent);
                     }
                 }
 
@@ -134,11 +133,20 @@ namespace Mezeo
                 // Collate the events before finally releasing them to be acted on.
                 CollateEvents();
 
-                // Move the events to the database.
-                //foreach (LocalEvents item in eventList)
-                //{
-                //    dbHandler.AddEvent(item);
-                //}
+                // If there is anything left after collating the events, then
+                // move them from the list to the database.
+                if (0 < eventList.Count())
+                {
+                    // Move the events to the database.
+                    foreach (LocalEvents item in eventList)
+                    {
+                        bNewEventExists = true;
+                        dbHandler.AddEvent(item);
+                    }
+
+                    // Empty the list.
+                    eventList.Clear();
+                }
             }
 
             // If something was added to the list, trigger the event.
@@ -158,40 +166,20 @@ namespace Mezeo
             return (jobCount > 0);
         }
 
-        public static int QueueCount()
+        public static LocalEvents GetCurrentQueueItem()
         {
-            int queueCount = 0;
+            LocalEvents localEvent = null;
             lock (thisLock)
             {
-                queueCount = eventList.Count();
+                localEvent = dbHandler.GetLocalEvent();
             }
-            return queueCount;
-        }
-
-        public static List<LocalEvents> GetCurrentQueue()
-        {
-            lock (thisLock)
-            {
-                List<LocalEvents> currentList = eventList;
-                eventList = new List<LocalEvents>();
-
-                ////----------------------------------------------------------------------
-                //// TODO: Remove this code since it's just for debugging.
-                ////----------------------------------------------------------------------
-                //int index = 0;
-                //foreach (LocalEvents item in currentList)
-                //{
-                //    index = index + 1;
-                //    LogWrapper.LogMessage("EventQueue - GetCurrentQueue", "(" + index + ") Event type: " + item.EventType + " - " + item.FullPath + " - (old path) " + item.OldFullPath);
-                //}
-                ////----------------------------------------------------------------------
-                LocalEvents item = dbHandler.GetLocalEvent();
-                if (null != item)
-                {
-                }
-
-                return currentList;
-            }
+            //----------------------------------------------------------------------
+            // TODO: Remove this code since it's just for debugging.
+            //----------------------------------------------------------------------
+            if (null != localEvent)
+                LogWrapper.LogMessage("EventQueue - GetCurrentQueue", "(" + localEvent.EventDbId + ") Event type: " + localEvent.EventType + " - " + localEvent.FullPath + " - (old path) " + localEvent.OldFullPath);
+            //----------------------------------------------------------------------
+            return localEvent;
         }
 
         public static void FillInFileInfo(ref LocalEvents theEvent)
@@ -432,21 +420,6 @@ namespace Mezeo
                     eventListCandidates.Add(newEvent);
                 }
             }
-        }
-
-        public static LocalEvents Pop()
-        {
-            LogWrapper.LogMessage("EventQueue - Pop", "Popping event.");
-            LocalEvents localEvent = null;
-            lock (thisLock)
-            {
-                if (eventList.Count() > 0)
-                {
-                    localEvent = eventList[0];
-                    eventList.RemoveAt(0);
-                }
-            }
-            return localEvent;
         }
     }
 }

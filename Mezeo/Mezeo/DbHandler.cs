@@ -340,6 +340,41 @@ namespace Mezeo
             result = sqlCommand.ExecuteNonQuery();
         }
 
+        public void ResetJobCount()
+        {
+            // See how many jobs are in the queue.
+            Int64 jobCount = 0;
+            string query = "SELECT COUNT(*) AS JobCount FROM " + EVENT_TABLE_NAME + ";";
+
+            sqlCommand = new SQLiteCommand();
+            sqlCommand.CommandText = query;
+            sqlCommand.Connection = sqlConnection;
+            try
+            {
+                sqlDataReader = sqlCommand.ExecuteReader();
+                while (sqlDataReader.Read())
+                {
+                    jobCount = (Int64)sqlDataReader["JobCount"];
+                }
+            }
+            catch (Exception ex)
+            {
+                LogWrapper.LogMessage("DbHandler - GetJobCount", "Caught exception: " + ex.Message);
+            }
+
+            string query2 = "UPDATE " + EVENT_QUEUE_INFO_TABLE_NAME + " SET " + EVENT_QUEUE_INFO_JOB_COUNT + " = " + jobCount + " WHERE " + EVENT_QUEUE_INFO_NAME + "='" + EVENT_TABLE_NAME + "';";
+            sqlCommand = new SQLiteCommand(query2, sqlConnection);
+            LogWrapper.LogMessage("DBHandler - ResetJobCount", "Running query: " + query2);
+            try
+            {
+                sqlCommand.ExecuteNonQuery();
+            }
+            catch (Exception ex)
+            {
+                LogWrapper.LogMessage("DbHandler - ResetJobCount", "Caught exception: " + ex.Message);
+            }
+        }
+
         public string EscapeString(string value)
         {
             return value.Replace("'", "''");
@@ -477,13 +512,9 @@ namespace Mezeo
 
         public LocalEvents GetLocalEvent()
         {
-            int result = -1;
             string query = "SELECT * FROM " + EVENT_TABLE_NAME + " WHERE " + EVENT_ORIGIN + " = 'L' ORDER BY " + EVENT_INDEX + " LIMIT 1;";
-            sqlCommand = new SQLiteCommand(query, sqlConnection);
             LogWrapper.LogMessage("DBHandler - GetLocalEvent", "Running query: " + query);
-            LocalEvents item = new LocalEvents();
-
-            result = sqlCommand.ExecuteNonQuery();
+            LocalEvents item = null;
 
             sqlCommand = new SQLiteCommand();
             sqlCommand.CommandText = query;
@@ -493,8 +524,8 @@ namespace Mezeo
                 sqlDataReader = sqlCommand.ExecuteReader();
                 while (sqlDataReader.Read())
                 {
+                    item = new LocalEvents();
                     PopulateLocalEventFromReader(ref item, ref sqlDataReader);
-                    //DeleteEvent(item.EventDbId);  // Remove the item from the database.
                 }
             }
             catch (Exception ex)

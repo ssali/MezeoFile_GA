@@ -661,6 +661,7 @@ namespace Mezeo
                 showProgress();
             }
             fileDownloadCount++;
+            messageValue++;
         }
 
         void stDownloader_downloadEvent(object sender, StructureDownloaderEvent e)
@@ -837,8 +838,6 @@ namespace Mezeo
         {
             lblPercentDone.Visible = true;
             lblPercentDone.Text = "";
-           // pbSyncProgress.Value = 0;
-            messageValue = 0;
         }
 
         private void SetUpControlForSync()
@@ -1092,7 +1091,7 @@ namespace Mezeo
             else
                 nNQLength = (nqLengthRes.nEnd + 1) - nqLengthRes.nStart;
 
-            messageMax = nNQLength;
+            messageMax += nNQLength;
 
             if (nNQLength > 0)
             {
@@ -1751,10 +1750,11 @@ namespace Mezeo
             if (fileDownloadCount > messageMax)
                 messageMax = fileDownloadCount;
 
-            if(fileDownloadCount <= messageMax)  
-                messageValue = fileDownloadCount;
+            //if(fileDownloadCount <= messageMax)  
+            //    messageValue = fileDownloadCount;
 
-            lblStatusL1.Text = LanguageTranslator.GetValue("SyncManagerDownloading") + " " + (fileDownloadCount) + " " + LanguageTranslator.GetValue("SyncManagerUsageOfLabel") + " " + messageMax;
+            //lblStatusL1.Text = LanguageTranslator.GetValue("SyncManagerDownloading") + " " + (fileDownloadCount) + " " + LanguageTranslator.GetValue("SyncManagerUsageOfLabel") + " " + messageMax;
+            lblStatusL1.Text = LanguageTranslator.GetValue("SyncManagerDownloading") + " " + messageValue + " " + LanguageTranslator.GetValue("SyncManagerUsageOfLabel") + " " + messageMax;
             //LogWrapper.LogMessage("frmSyncManager - showProgress", "leave");
         }
 
@@ -2582,326 +2582,348 @@ namespace Mezeo
 
         private int HandleEvents(BackgroundWorker caller)
         {
+            int returnCode = 1;
             LogWrapper.LogMessage("frmSyncManager - HandleEvents", "Enter");
+
+            // Initialize any counters.
+            fileDownloadCount = 0;
+            messageValue = 0;
 
             SetIsLocalEventInProgress(true);
 
-            List<int> RemoveIndexes = new List<int>();
-            List<LocalEvents> eModified = new List<LocalEvents>();
-            List<LocalEvents> eMove = new List<LocalEvents>();
-            List<LocalEvents> eAddEvents = new List<LocalEvents>();
+            LocalEvents localEvent = EventQueue.GetCurrentQueueItem();
+            List<LocalEvents> events = new List<LocalEvents>();
+            if (null != localEvent)
+                events.Add(localEvent);
 
-            List<LocalEvents> events = EventQueue.GetCurrentQueue();
-
-            foreach (LocalEvents lEvent in events)
+            while ((null != events) && (0 < events.Count))
             {
-                if (caller.CancellationPending)
+                messageValue++;
+                List<int> RemoveIndexes = new List<int>();
+                List<LocalEvents> eModified = new List<LocalEvents>();
+                List<LocalEvents> eMove = new List<LocalEvents>();
+                List<LocalEvents> eAddEvents = new List<LocalEvents>();
+
+                foreach (LocalEvents lEvent in events)
                 {
-                    LogWrapper.LogMessage("frmSyncManager - HandleEvents ", "Cancelled called");
-                    caller.CancelAsync();
-                    return USER_CANCELLED;
-                }
-
-                bool bRet = true;
-
-                LogWrapper.LogMessage("frmSyncManager - HandleEvents - lEvent - ", lEvent.FullPath);
-
-                FileAttributes attr = lEvent.Attributes;
-
-                bool isDirectory = lEvent.IsDirectory;
-                bool isFile = lEvent.IsFile;
-                if (!isFile && !isDirectory)
-                {
-                    // An optimization to keep from makinhg disk calls all the time.
-                    isFile = File.Exists(lEvent.FullPath);
-                    if (!isFile)
-                        isDirectory = Directory.Exists(lEvent.FullPath);
-                    if (isFile || isDirectory)
-                        attr = File.GetAttributes(lEvent.FullPath);
-                }
-
-                if (!isFile && !isDirectory)
-                {
-                    if (lEvent.EventType != LocalEvents.EventsType.FILE_ACTION_REMOVED)
+                    if (caller.CancellationPending)
                     {
-                        if (!RemoveIndexes.Contains(events.IndexOf(lEvent)))
-                            RemoveIndexes.Add(events.IndexOf(lEvent));
-                        continue;
-                    }
-                }
-                else if (isFile)
-                {
-                    // Make sure the attributes are up to date.
-                    FileInfo fileInfo = new FileInfo(lEvent.FullPath);
-                    if (fileInfo.Exists)
-                        attr = fileInfo.Attributes;
-                }
-
-                if (lEvent.EventType == LocalEvents.EventsType.FILE_ACTION_MODIFIED)
-                {
-                    LogWrapper.LogMessage("frmSyncManager - HandleEvents - lEvent - ", lEvent.FullPath + " - " + lEvent.EventType.ToString() + " - Enter");
-
-                    if ((attr & FileAttributes.Directory) == FileAttributes.Directory)
-                            bRet = false;
-                    else
-                    {
-                        int nRet = CheckForModifyEvent(lEvent);
-                        if (nRet == 0)
-                            bRet = false;
-                        else if (nRet == 1)
-                            bRet = true;
-                        else if (nRet == 2)
-                        {
-                            // If the event was queued up as a MODIFY instead
-                            // of an ADDED by mistake, then change it back.
-                            LogWrapper.LogMessage("frmSyncManager - HandleEvents - lEvent - ", lEvent.FullPath + " - Changed from FILE_ACTION_MODIFIED to " + lEvent.EventType.ToString());
-                            lEvent.EventType = LocalEvents.EventsType.FILE_ACTION_ADDED;
-                            bRet = false;
-                        }
-                    }
-                    LogWrapper.LogMessage("frmSyncManager - HandleEvents - lEvent - ", lEvent.FullPath + " - " + lEvent.EventType.ToString() + " - Leave");
-                }
-
-                if (lEvent.EventType == LocalEvents.EventsType.FILE_ACTION_ADDED || lEvent.EventType == LocalEvents.EventsType.FILE_ACTION_RENAMED)
-                {
-                    LogWrapper.LogMessage("frmSyncManager - HandleEvents - lEvent - ", lEvent.FullPath + " - " + lEvent.EventType.ToString() + " - Enter");
-                    //string strCheck = dbHandler.GetString(DbHandler.TABLE_NAME, DbHandler.CONTENT_URL, DbHandler.KEY + " = '" + lEvent.FileName + "' and " + DbHandler.STATUS + "='SUCCESS'");
-
-                    string strCheck = dbHandler.GetString(DbHandler.TABLE_NAME, DbHandler.CONTENT_URL, new string[] { DbHandler.KEY, DbHandler.STATUS }, new string[] { lEvent.FileName, DB_STATUS_SUCCESS }, new DbType[] { DbType.String, DbType.String });
-
-                    if (strCheck.Trim().Length == 0)
-                        bRet = true;
-                    else
-                        bRet = false;
-
-                    LogWrapper.LogMessage("frmSyncManager - HandleEvents - lEvent - ", lEvent.FullPath + " - " + lEvent.EventType.ToString() + " - Leave");
-                }
-
-                if (lEvent.EventType == LocalEvents.EventsType.FILE_ACTION_ADDED && bRet)
-                {
-                    LogWrapper.LogMessage("frmSyncManager - HandleEvents - lEvent - ", lEvent.FullPath + "- checking for move events - Enter");
-                    //string strNameAdd = lEvent.FileName.Substring(lEvent.FileName.LastIndexOf("\\") + 1);
-                    //foreach (LocalEvents id in events)
-                    //{
-                    //    if (id.EventType == LocalEvents.EventsType.FILE_ACTION_REMOVED)
-                    //    {
-                    //        // TODO: Move this code to the event queue Add() function.  Should help with defect 1648.  Test EXTENSIVLY afterwards.
-                    //        // Move this code to the event queue.
-                    //        DateTime dtCreate = lEvent.EventTimeStamp.AddMilliseconds(-id.EventTimeStamp.Millisecond);
-                    //        TimeSpan Diff = dtCreate - id.EventTimeStamp;
-                    //        if (Diff <= TimeSpan.FromSeconds(1))
-                    //        {
-                    //            string strNameComp = id.FileName.Substring(id.FileName.LastIndexOf("\\") + 1);
-                    //            if (strNameComp == strNameAdd)
-                    //            {
-                    //                if (!RemoveIndexes.Contains(events.IndexOf(id)))
-                    //                    RemoveIndexes.Add(events.IndexOf(id));
-
-                    //                bRet = false;
-
-                    //                LocalEvents levent = new LocalEvents();
-                    //                levent.FileName = lEvent.FileName;
-                    //                levent.FullPath = lEvent.FullPath;
-                    //                levent.OldFileName = id.FileName;
-                    //                levent.OldFullPath = id.FullPath;
-                    //                levent.EventType = LocalEvents.EventsType.FILE_ACTION_MOVE;
-
-                    //                eMove.Add(levent);
-                    //            }
-                    //        }
-                    //    }
-                    //}
-
-                    bool bIsMove = false;
-                    if ((attr & FileAttributes.Directory) == FileAttributes.Directory)
-                    {
-                        foreach (LocalEvents eMoveEvent in eMove)
-                        {
-                            if (eMoveEvent.FileName == lEvent.FileName)
-                                bIsMove = true;
-                        }
-
-                        if (!bIsMove)
-                        {
-                            WalkDirectoryTreeforAddFolder(new DirectoryInfo(lEvent.FullPath), lEvent.FileName, ref eAddEvents, ref events);
-                        }
+                        LogWrapper.LogMessage("frmSyncManager - HandleEvents ", "Cancelled called");
+                        caller.CancelAsync();
+                        return USER_CANCELLED;
                     }
 
-                    LogWrapper.LogMessage("frmSyncManager - HandleEvents - lEvent - ", lEvent.FullPath + "- checking for move events - Leave");
-                }
+                    bool bRet = true;
 
-                if (lEvent.EventType == LocalEvents.EventsType.FILE_ACTION_RENAMED)
-                {
-                    LogWrapper.LogMessage("frmSyncManager - HandleEvents - lEvent - ", lEvent.FullPath + " - " + lEvent.EventType.ToString() + " - Enter");
+                    LogWrapper.LogMessage("frmSyncManager - HandleEvents - lEvent - ", lEvent.FullPath);
 
-                    string strCheck = dbHandler.GetString(DbHandler.TABLE_NAME, DbHandler.CONTENT_URL, new string[] { DbHandler.KEY }, new string[] { lEvent.OldFileName }, new DbType[] { DbType.String });
-                    if (strCheck.Trim().Length == 0)
+                    FileAttributes attr = lEvent.Attributes;
+
+                    bool isDirectory = lEvent.IsDirectory;
+                    bool isFile = lEvent.IsFile;
+                    if (!isFile && !isDirectory)
                     {
-                        int nIndex = lEvent.FullPath.LastIndexOf(".");
-                        string strExtnsion = lEvent.FullPath.Substring(nIndex + 1);
-                        if (strExtnsion == "doc" ||
-                            strExtnsion == "docx" ||
-                            strExtnsion == "xls" ||
-                            strExtnsion == "xlsx" ||
-                            strExtnsion == "ppt" ||
-                            strExtnsion == "pptx" ||
-                            strExtnsion == "rtf")
-                        {
-                            LocalEvents levent = new LocalEvents();
-                            levent.FileName = lEvent.FileName;
-                            levent.FullPath = lEvent.FullPath;
-                            levent.EventType = LocalEvents.EventsType.FILE_ACTION_MODIFIED;
+                        // An optimization to keep from making disk calls all the time.
+                        isFile = File.Exists(lEvent.FullPath);
+                        if (!isFile)
+                            isDirectory = Directory.Exists(lEvent.FullPath);
+                        if (isFile || isDirectory)
+                            attr = File.GetAttributes(lEvent.FullPath);
+                    }
 
-                            eModified.Add(levent);
-                        }
-                        else
+                    if (!isFile && !isDirectory)
+                    {
+                        if (lEvent.EventType != LocalEvents.EventsType.FILE_ACTION_REMOVED)
                         {
-                            string strCheck1 = dbHandler.GetString(DbHandler.TABLE_NAME, DbHandler.CONTENT_URL, new string[] { DbHandler.KEY, DbHandler.STATUS }, new string[] { lEvent.FileName, DB_STATUS_SUCCESS }, new DbType[] { DbType.String, DbType.String });
-                            if (strCheck1.Trim().Length == 0)
+                            if (!RemoveIndexes.Contains(events.IndexOf(lEvent)))
                             {
-                                //LocalEvents lNewEvent = new LocalEvents();
-                                lEvent.EventType = LocalEvents.EventsType.FILE_ACTION_ADDED;
-                                if ((attr & FileAttributes.Directory) == FileAttributes.Directory)
-                                {
-                                    WalkDirectoryTreeforAddFolder(new DirectoryInfo(lEvent.FullPath), lEvent.FileName, ref eAddEvents, ref events);
-                                }
-                                //eAddEvents.Add(lNewEvent);
-                                //bRet = false;
+                                RemoveIndexes.Add(events.IndexOf(lEvent));
+                                dbHandler.DeleteEvent(lEvent.EventDbId);
                             }
+                            continue;
                         }
                     }
-
-                    LogWrapper.LogMessage("frmSyncManager - HandleEvents - lEvent - ", lEvent.FullPath + " - " + lEvent.EventType.ToString() + " - Leave");
-                }
-
-                if (lEvent.EventType == LocalEvents.EventsType.FILE_ACTION_REMOVED)
-                {
-                    LogWrapper.LogMessage("frmSyncManager - HandleEvents - lEvent - ", lEvent.FullPath + " - " + lEvent.EventType.ToString() + " - Enter");
-
-                    string strCheck = dbHandler.GetString(DbHandler.TABLE_NAME, DbHandler.CONTENT_URL, new string[] { DbHandler.KEY }, new string[] { lEvent.FileName }, new DbType[] { DbType.String });
-                    if (strCheck.Trim().Length == 0)
-                        bRet = false;
-                    else
-                        bRet = true;
-
-                    LogWrapper.LogMessage("frmSyncManager - HandleEvents - lEvent - ", lEvent.FullPath + " - " + lEvent.EventType.ToString() + " - Leave");
-                }
-
-               // if (lEvent.EventType != LocalEvents.EventsType.FILE_ACTION_REMOVED)
-              //  {
-                    if ((attr & FileAttributes.Hidden) == FileAttributes.Hidden || (attr & FileAttributes.Temporary) == FileAttributes.Temporary )
-                        bRet = false;
-               // }
-
-                if (bRet)
-                {
-                    LogWrapper.LogMessage("frmSyncManager - HandleEvents - lEvent - ", lEvent.FullPath + " - AddinDB Enter");
+                    else if (isFile)
+                    {
+                        // Make sure the attributes are up to date.
+                        FileInfo fileInfo = new FileInfo(lEvent.FullPath);
+                        if (fileInfo.Exists)
+                            attr = fileInfo.Attributes;
+                    }
 
                     if (lEvent.EventType == LocalEvents.EventsType.FILE_ACTION_MODIFIED)
                     {
-                        UpdateDBForStatus(lEvent, DB_STATUS_IN_PROGRESS);
+                        LogWrapper.LogMessage("frmSyncManager - HandleEvents - lEvent - ", lEvent.FullPath + " - " + lEvent.EventType.ToString() + " - Enter");
+
+                        if ((attr & FileAttributes.Directory) == FileAttributes.Directory)
+                            bRet = false;
+                        else
+                        {
+                            int nRet = CheckForModifyEvent(lEvent);
+                            if (nRet == 0)
+                                bRet = false;
+                            else if (nRet == 1)
+                                bRet = true;
+                            else if (nRet == 2)
+                            {
+                                // If the event was queued up as a MODIFY instead
+                                // of an ADDED by mistake, then change it back.
+                                LogWrapper.LogMessage("frmSyncManager - HandleEvents - lEvent - ", lEvent.FullPath + " - Changed from FILE_ACTION_MODIFIED to " + lEvent.EventType.ToString());
+                                lEvent.EventType = LocalEvents.EventsType.FILE_ACTION_ADDED;
+                                bRet = false;
+                            }
+                        }
+                        LogWrapper.LogMessage("frmSyncManager - HandleEvents - lEvent - ", lEvent.FullPath + " - " + lEvent.EventType.ToString() + " - Leave");
                     }
-                    else if (lEvent.EventType == LocalEvents.EventsType.FILE_ACTION_ADDED)
+
+                    if (lEvent.EventType == LocalEvents.EventsType.FILE_ACTION_ADDED || lEvent.EventType == LocalEvents.EventsType.FILE_ACTION_RENAMED)
                     {
-                        AddInDBForAdded(lEvent);
+                        LogWrapper.LogMessage("frmSyncManager - HandleEvents - lEvent - ", lEvent.FullPath + " - " + lEvent.EventType.ToString() + " - Enter");
+                        //string strCheck = dbHandler.GetString(DbHandler.TABLE_NAME, DbHandler.CONTENT_URL, DbHandler.KEY + " = '" + lEvent.FileName + "' and " + DbHandler.STATUS + "='SUCCESS'");
+
+                        string strCheck = dbHandler.GetString(DbHandler.TABLE_NAME, DbHandler.CONTENT_URL, new string[] { DbHandler.KEY, DbHandler.STATUS }, new string[] { lEvent.FileName, DB_STATUS_SUCCESS }, new DbType[] { DbType.String, DbType.String });
+
+                        if (strCheck.Trim().Length == 0)
+                            bRet = true;
+                        else
+                            bRet = false;
+
+                        LogWrapper.LogMessage("frmSyncManager - HandleEvents - lEvent - ", lEvent.FullPath + " - " + lEvent.EventType.ToString() + " - Leave");
                     }
-                    else if (lEvent.EventType == LocalEvents.EventsType.FILE_ACTION_RENAMED)
+
+                    if (lEvent.EventType == LocalEvents.EventsType.FILE_ACTION_ADDED && bRet)
                     {
-                        AddInDBForRename(lEvent);
+                        LogWrapper.LogMessage("frmSyncManager - HandleEvents - lEvent - ", lEvent.FullPath + "- checking for move events - Enter");
+                        //string strNameAdd = lEvent.FileName.Substring(lEvent.FileName.LastIndexOf("\\") + 1);
+                        //foreach (LocalEvents id in events)
+                        //{
+                        //    if (id.EventType == LocalEvents.EventsType.FILE_ACTION_REMOVED)
+                        //    {
+                        //        // TODO: Move this code to the event queue Add() function.  Should help with defect 1648.  Test EXTENSIVLY afterwards.
+                        //        // Move this code to the event queue.
+                        //        DateTime dtCreate = lEvent.EventTimeStamp.AddMilliseconds(-id.EventTimeStamp.Millisecond);
+                        //        TimeSpan Diff = dtCreate - id.EventTimeStamp;
+                        //        if (Diff <= TimeSpan.FromSeconds(1))
+                        //        {
+                        //            string strNameComp = id.FileName.Substring(id.FileName.LastIndexOf("\\") + 1);
+                        //            if (strNameComp == strNameAdd)
+                        //            {
+                        //                if (!RemoveIndexes.Contains(events.IndexOf(id)))
+                        //                    RemoveIndexes.Add(events.IndexOf(id));
+
+                        //                bRet = false;
+
+                        //                LocalEvents levent = new LocalEvents();
+                        //                levent.FileName = lEvent.FileName;
+                        //                levent.FullPath = lEvent.FullPath;
+                        //                levent.OldFileName = id.FileName;
+                        //                levent.OldFullPath = id.FullPath;
+                        //                levent.EventType = LocalEvents.EventsType.FILE_ACTION_MOVE;
+
+                        //                eMove.Add(levent);
+                        //            }
+                        //        }
+                        //    }
+                        //}
+
+                        bool bIsMove = false;
+                        if ((attr & FileAttributes.Directory) == FileAttributes.Directory)
+                        {
+                            foreach (LocalEvents eMoveEvent in eMove)
+                            {
+                                if (eMoveEvent.FileName == lEvent.FileName)
+                                    bIsMove = true;
+                            }
+
+                            if (!bIsMove)
+                            {
+                                WalkDirectoryTreeforAddFolder(new DirectoryInfo(lEvent.FullPath), lEvent.FileName, ref eAddEvents, ref events);
+                            }
+                        }
+
+                        LogWrapper.LogMessage("frmSyncManager - HandleEvents - lEvent - ", lEvent.FullPath + "- checking for move events - Leave");
                     }
 
-                    LogWrapper.LogMessage("frmSyncManager - HandleEvents - lEvent - ", lEvent.FullPath + " - AddinDB Leave");
-                }
-              
-                if (!bRet)
-                {
-                    if(!RemoveIndexes.Contains(events.IndexOf(lEvent)))
-                        RemoveIndexes.Add(events.IndexOf(lEvent));
-                }
-            }
-
-            RemoveIndexes.Sort();
-            for (int n = RemoveIndexes.Count - 1; n >= 0; n--)
-            {
-                events.RemoveAt(RemoveIndexes[n]);
-            }
-
-            RemoveIndexes.Clear();
-
-            messageMax = events.Count;
-
-            if (eModified.Count != 0)
-            {
-                LogWrapper.LogMessage("frmSyncManager - HandleEvents eModifiedList - ", eModified.Count.ToString() + " - Enter");
-
-                foreach (LocalEvents levent in eModified)
-                {
-                    UpdateDBForStatus(levent, DB_STATUS_IN_PROGRESS);
-                }
-                events.AddRange(eModified);
-                eModified.Clear();
-
-                LogWrapper.LogMessage("frmSyncManager - HandleEvents eModifiedList - ", eModified.Count.ToString() + " - Leave");
-            }
-
-            if (eAddEvents.Count != 0)
-            {
-                LogWrapper.LogMessage("frmSyncManager - HandleEvents eAddEventsList - ", eAddEvents.Count.ToString() + " - Enter");
-
-                foreach (LocalEvents levent in eAddEvents)
-                {
-                    AddInDBForAdded(levent);
-                }
-                events.AddRange(eAddEvents);
-                eAddEvents.Clear();
-
-                LogWrapper.LogMessage("frmSyncManager - HandleEvents eAddEventsList - ", eAddEvents.Count.ToString() + " - Leave");
-            }
-
-            if (eMove.Count != 0)
-            {
-                LogWrapper.LogMessage("frmSyncManager - HandleEvents eMoveList - ", eMove.Count.ToString() + " - Enter");
-                foreach (LocalEvents levent in eMove)
-                {
-                    UpdateKeyInDb(levent.OldFileName, levent.FileName);
-                    UpdateDBForStatus(levent, DB_STATUS_IN_PROGRESS);
-
-                    int sepIndex = levent.FileName.LastIndexOf("\\");
-                    string newParentDir = "\\";
-                    if (sepIndex >= 0)
+                    if (lEvent.EventType == LocalEvents.EventsType.FILE_ACTION_RENAMED)
                     {
-                        newParentDir = levent.FileName.Substring(0, sepIndex);
+                        LogWrapper.LogMessage("frmSyncManager - HandleEvents - lEvent - ", lEvent.FullPath + " - " + lEvent.EventType.ToString() + " - Enter");
+
+                        string strCheck = dbHandler.GetString(DbHandler.TABLE_NAME, DbHandler.CONTENT_URL, new string[] { DbHandler.KEY }, new string[] { lEvent.OldFileName }, new DbType[] { DbType.String });
+                        if (strCheck.Trim().Length == 0)
+                        {
+                            int nIndex = lEvent.FullPath.LastIndexOf(".");
+                            string strExtnsion = lEvent.FullPath.Substring(nIndex + 1);
+                            if (strExtnsion == "doc" ||
+                                strExtnsion == "docx" ||
+                                strExtnsion == "xls" ||
+                                strExtnsion == "xlsx" ||
+                                strExtnsion == "ppt" ||
+                                strExtnsion == "pptx" ||
+                                strExtnsion == "rtf")
+                            {
+                                LocalEvents levent = new LocalEvents();
+                                levent.FileName = lEvent.FileName;
+                                levent.FullPath = lEvent.FullPath;
+                                levent.EventType = LocalEvents.EventsType.FILE_ACTION_MODIFIED;
+
+                                eModified.Add(levent);
+                            }
+                            else
+                            {
+                                string strCheck1 = dbHandler.GetString(DbHandler.TABLE_NAME, DbHandler.CONTENT_URL, new string[] { DbHandler.KEY, DbHandler.STATUS }, new string[] { lEvent.FileName, DB_STATUS_SUCCESS }, new DbType[] { DbType.String, DbType.String });
+                                if (strCheck1.Trim().Length == 0)
+                                {
+                                    lEvent.EventType = LocalEvents.EventsType.FILE_ACTION_ADDED;
+                                    if ((attr & FileAttributes.Directory) == FileAttributes.Directory)
+                                    {
+                                        WalkDirectoryTreeforAddFolder(new DirectoryInfo(lEvent.FullPath), lEvent.FileName, ref eAddEvents, ref events);
+                                    }
+                                }
+                            }
+                        }
+
+                        LogWrapper.LogMessage("frmSyncManager - HandleEvents - lEvent - ", lEvent.FullPath + " - " + lEvent.EventType.ToString() + " - Leave");
                     }
 
-                    sepIndex = newParentDir.LastIndexOf("\\");
-                    newParentDir = newParentDir.Substring(sepIndex + 1);
-
-                    dbHandler.Update(DbHandler.TABLE_NAME, DbHandler.PARENT_DIR , newParentDir , DbHandler.KEY , levent.FileName);
-
-                    MarkParentsStatus(levent.FullPath, DB_STATUS_IN_PROGRESS);
-
-                    if (Directory.Exists(levent.FullPath))
+                    if (lEvent.EventType == LocalEvents.EventsType.FILE_ACTION_REMOVED)
                     {
-                        WalkDirectoryTreeForMove(new DirectoryInfo(levent.FullPath), levent.OldFullPath);
+                        LogWrapper.LogMessage("frmSyncManager - HandleEvents - lEvent - ", lEvent.FullPath + " - " + lEvent.EventType.ToString() + " - Enter");
+
+                        string strCheck = dbHandler.GetString(DbHandler.TABLE_NAME, DbHandler.CONTENT_URL, new string[] { DbHandler.KEY }, new string[] { lEvent.FileName }, new DbType[] { DbType.String });
+                        if (strCheck.Trim().Length == 0)
+                            bRet = false;
+                        else
+                            bRet = true;
+
+                        LogWrapper.LogMessage("frmSyncManager - HandleEvents - lEvent - ", lEvent.FullPath + " - " + lEvent.EventType.ToString() + " - Leave");
+                    }
+
+                    if ((attr & FileAttributes.Hidden) == FileAttributes.Hidden || (attr & FileAttributes.Temporary) == FileAttributes.Temporary)
+                        bRet = false;
+
+                    if (bRet)
+                    {
+                        LogWrapper.LogMessage("frmSyncManager - HandleEvents - lEvent - ", lEvent.FullPath + " - AddinDB Enter");
+
+                        if (lEvent.EventType == LocalEvents.EventsType.FILE_ACTION_MODIFIED)
+                        {
+                            UpdateDBForStatus(lEvent, DB_STATUS_IN_PROGRESS);
+                        }
+                        else if (lEvent.EventType == LocalEvents.EventsType.FILE_ACTION_ADDED)
+                        {
+                            AddInDBForAdded(lEvent);
+                        }
+                        else if (lEvent.EventType == LocalEvents.EventsType.FILE_ACTION_RENAMED)
+                        {
+                            AddInDBForRename(lEvent);
+                        }
+
+                        LogWrapper.LogMessage("frmSyncManager - HandleEvents - lEvent - ", lEvent.FullPath + " - AddinDB Leave");
+                    }
+
+                    if (!bRet)
+                    {
+                        if (!RemoveIndexes.Contains(events.IndexOf(lEvent)))
+                        {
+                            RemoveIndexes.Add(events.IndexOf(lEvent));
+                            if (lEvent.EventType == LocalEvents.EventsType.FILE_ACTION_REMOVED)
+                            {
+                                MarkParentsStatus(lEvent.FullPath, DB_STATUS_SUCCESS);
+                                UpdateDBForRemoveSuccess(lEvent);
+                            }
+                            dbHandler.DeleteEvent(lEvent.EventDbId);
+                        }
                     }
                 }
-                events.AddRange(eMove);
-                eMove.Clear();
 
-                LogWrapper.LogMessage("frmSyncManager - HandleEvents eMoveList - ", eMove.Count.ToString() + " - Leave");
+                RemoveIndexes.Sort();
+                for (int n = RemoveIndexes.Count - 1; n >= 0; n--)
+                {
+                    events.RemoveAt(RemoveIndexes[n]);
+                }
+
+                RemoveIndexes.Clear();
+
+                //messageMax = events.Count;
+                messageMax = (int)dbHandler.GetJobCount();
+
+                if (eModified.Count != 0)
+                {
+                    LogWrapper.LogMessage("frmSyncManager - HandleEvents eModifiedList - ", eModified.Count.ToString() + " - Enter");
+
+                    foreach (LocalEvents levent in eModified)
+                    {
+                        UpdateDBForStatus(levent, DB_STATUS_IN_PROGRESS);
+                    }
+                    events.AddRange(eModified);
+                    eModified.Clear();
+
+                    LogWrapper.LogMessage("frmSyncManager - HandleEvents eModifiedList - ", eModified.Count.ToString() + " - Leave");
+                }
+
+                if (eAddEvents.Count != 0)
+                {
+                    LogWrapper.LogMessage("frmSyncManager - HandleEvents eAddEventsList - ", eAddEvents.Count.ToString() + " - Enter");
+
+                    foreach (LocalEvents levent in eAddEvents)
+                    {
+                        AddInDBForAdded(levent);
+                    }
+                    events.AddRange(eAddEvents);
+                    eAddEvents.Clear();
+
+                    LogWrapper.LogMessage("frmSyncManager - HandleEvents eAddEventsList - ", eAddEvents.Count.ToString() + " - Leave");
+                }
+
+                if (eMove.Count != 0)
+                {
+                    LogWrapper.LogMessage("frmSyncManager - HandleEvents eMoveList - ", eMove.Count.ToString() + " - Enter");
+                    foreach (LocalEvents levent in eMove)
+                    {
+                        UpdateKeyInDb(levent.OldFileName, levent.FileName);
+                        UpdateDBForStatus(levent, DB_STATUS_IN_PROGRESS);
+
+                        int sepIndex = levent.FileName.LastIndexOf("\\");
+                        string newParentDir = "\\";
+                        if (sepIndex >= 0)
+                        {
+                            newParentDir = levent.FileName.Substring(0, sepIndex);
+                        }
+
+                        sepIndex = newParentDir.LastIndexOf("\\");
+                        newParentDir = newParentDir.Substring(sepIndex + 1);
+
+                        dbHandler.Update(DbHandler.TABLE_NAME, DbHandler.PARENT_DIR, newParentDir, DbHandler.KEY, levent.FileName);
+
+                        MarkParentsStatus(levent.FullPath, DB_STATUS_IN_PROGRESS);
+
+                        if (Directory.Exists(levent.FullPath))
+                        {
+                            WalkDirectoryTreeForMove(new DirectoryInfo(levent.FullPath), levent.OldFullPath);
+                        }
+                    }
+                    events.AddRange(eMove);
+                    eMove.Clear();
+
+                    LogWrapper.LogMessage("frmSyncManager - HandleEvents eMoveList - ", eMove.Count.ToString() + " - Leave");
+                }
+
+                if (caller != null)
+                {
+                    caller.ReportProgress(SYNC_STARTED);
+                }
+
+                LogWrapper.LogMessage("frmSyncManager - HandleEvents", " ProcessLocalEvents Going");
+
+                returnCode = ProcessLocalEvents(caller, ref events);
+
+                LogWrapper.LogMessage("frmSyncManager - HandleEvents", " ProcessLocalEvents Exit");
+
+                localEvent = EventQueue.GetCurrentQueueItem();
+                events.Clear();
+                if (null != localEvent)
+                    events.Add(localEvent);
             }
-            int returnCode = 1;
-
-            if (caller != null)
-            {
-                caller.ReportProgress(SYNC_STARTED);
-            }
-
-            LogWrapper.LogMessage("frmSyncManager - HandleEvents", " ProcessLocalEvents Going");
-
-            returnCode = ProcessLocalEvents(caller, ref events);
-
-            LogWrapper.LogMessage("frmSyncManager - HandleEvents", " ProcessLocalEvents Exit");
 
             SetIsLocalEventInProgress(false);
 
@@ -2996,8 +3018,6 @@ namespace Mezeo
                 caller.ReportProgress(PROCESS_LOCAL_EVENTS_STARTED, events.Count());
             }
 
-            fileDownloadCount = 1;
-
             List<int> SuccessIndexes = new List<int>();
 
             foreach (LocalEvents lEvent in events)
@@ -3048,7 +3068,11 @@ namespace Mezeo
                         isDirectory = lEvent.IsDirectory;
                     }
                     else if (lEvent.EventType != LocalEvents.EventsType.FILE_ACTION_REMOVED)
+                    {
+                        dbHandler.DeleteEvent(lEvent.EventDbId);
+                        LogWrapper.LogMessage("SyncManager - ProcessLocalEvents", "SKIPPING EVENT - For the path " + lEvent.FullPath + ".  Unable to find a file/directory at the given location for the event type " + lEvent.EventType + ".");
                         continue;
+                    }
                 }
                 //FileInfo fileInfo = new FileInfo(lEvent.FullPath);
                 //if (fileInfo.Exists)
@@ -3403,6 +3427,14 @@ namespace Mezeo
                                 if (nStatusCode == ResponseCode.LOGINFAILED1 || nStatusCode == ResponseCode.LOGINFAILED2)
                                 {
                                     return LOGIN_FAILED;
+                                }
+                                else if (nStatusCode == ResponseCode.NOTFOUND)
+                                {
+                                    // If it doesn't exist on the server, then it's the same thing as far as we're concerned.
+                                    SuccessIndexes.Add(events.IndexOf(lEvent));
+                                    MarkParentsStatus(lEvent.FullPath, DB_STATUS_SUCCESS);
+                                    UpdateDBForRemoveSuccess(lEvent);
+                                    dbHandler.DeleteEvent(lEvent.EventDbId);
                                 }
                                 else if (nStatusCode != ResponseCode.DELETE)
                                 {
@@ -3860,7 +3892,7 @@ namespace Mezeo
             int maxProgressValue = 0;
 
             int totalNQLength = (nqRangeEnd - nqRangeStart) + 1;
-            maxProgressValue = totalNQLength;
+            maxProgressValue += totalNQLength;
 
             ((BackgroundWorker)sender).ReportProgress(INITIAL_NQ_SYNC, maxProgressValue);
 
@@ -3873,6 +3905,7 @@ namespace Mezeo
 
             while (totalNQLength > 0)
             {
+                messageValue++;
                 IncrementTransferCount();
                 int NQnumToRequest = 0;
 
@@ -4104,6 +4137,7 @@ namespace Mezeo
         private void bwOffilneEvent_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
         {
             //LogWrapper.LogMessage("frmSyncManager - bwOffilneEvent_RunWorkerCompleted", "enter");
+            dbHandler.ResetJobCount();
             SetIsOfflineWorking(false);
             if ((int)e.Result == 1)
             {
@@ -4124,8 +4158,6 @@ namespace Mezeo
             else if ((int)e.Result == SERVER_INACCESSIBLE)
             {
                 ShowLocalEventsCompletedMessage();
-               // DisableSyncManager();
-               // ShowSyncManagerOffline();
                 //  CheckServerStatus(); TODO:check for offline (Modified for server status thread)
             }
             //LogWrapper.LogMessage("frmSyncManager - bwOffilneEvent_RunWorkerCompleted", "leave");
@@ -4241,6 +4273,55 @@ namespace Mezeo
             
             //Application.DoEvents();
             //LogWrapper.LogMessage("frmSyncManager - bwLocalEvents_ProgressChanged", "leave");
+        }
+
+        private void bwLocalEvents_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
+        {
+            dbHandler.ResetJobCount();
+
+            //LogWrapper.LogMessage("frmSyncManager - bwLocalEvents_RunWorkerCompleted", "enter");
+            if ((int)e.Result == 1)
+            {
+                ShowLocalEventsCompletedMessage();
+                if (IsCalledByNextSyncTmr())
+                {
+                    SetIsCalledByNextSyncTmr(false);
+
+                    if (!IsEventCanceled())
+                        UpdateNQ();
+                }
+            }
+            else if ((int)e.Result == USER_CANCELLED)
+            {
+                ShowSyncMessage(EventQueue.QueueNotEmpty());
+            }
+            else if ((int)e.Result == LOGIN_FAILED)
+            {
+                this.Hide();
+                frmParent.ShowLoginAgainFromSyncMgr();
+            }
+            else if ((int)e.Result == SERVER_INACCESSIBLE)
+            {
+
+                if (frmParent.checkReferenceCode() > 0)
+                {
+                    ShowLocalEventsCompletedMessage();
+                }
+                else
+                {
+                    DisableSyncManager();
+                    ShowOfflineAtStartUpSyncManager();
+                    ShowSyncManagerOffline();
+                    SetIsSyncInProgress(false);
+                    SyncOfflineMessage();
+                    return;
+                }
+
+                // CheckServerStatus(); TODO:check for offline (Modified for server status thread)
+                //DisableSyncManager();
+                //ShowSyncManagerOffline();
+            }
+            //LogWrapper.LogMessage("frmSyncManager - bwLocalEvents_RunWorkerCompleted", "leave");
         }
 
         public void SetMaxProgress(double fileSize, string fileName)
@@ -4434,7 +4515,7 @@ namespace Mezeo
         private void InitializeLocalEventsProcess(int progressMax)
         {
             //LogWrapper.LogMessage("frmSyncManager - InitializeLocalEventsProcess", "enter");
-            messageValue = 0;
+            //messageValue = 0;
             fileDownloadCount = 1;
 
             SetIssueFound(false);
@@ -4496,53 +4577,6 @@ namespace Mezeo
             //LogWrapper.LogMessage("frmSyncManager - bwUpdateUsage_RunWorkerCompleted", "enter");
             lblUsageDetails.Text = e.Result.ToString();
             //LogWrapper.LogMessage("frmSyncManager - bwUpdateUsage_RunWorkerCompleted", "leave");
-        }
-
-        private void bwLocalEvents_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
-        {
-            //LogWrapper.LogMessage("frmSyncManager - bwLocalEvents_RunWorkerCompleted", "enter");
-            if ((int)e.Result == 1)
-            {
-                ShowLocalEventsCompletedMessage();
-                if (IsCalledByNextSyncTmr())
-                {
-                    SetIsCalledByNextSyncTmr(false);
-
-                    if (!IsEventCanceled())
-                        UpdateNQ();
-                }
-            }
-            else if ((int)e.Result == USER_CANCELLED)
-            {
-                ShowSyncMessage(EventQueue.QueueNotEmpty());
-            }
-            else if ((int)e.Result == LOGIN_FAILED)
-            {
-                this.Hide();
-                frmParent.ShowLoginAgainFromSyncMgr();
-            }
-            else if ((int)e.Result == SERVER_INACCESSIBLE)
-            {
-
-                 if (frmParent.checkReferenceCode() > 0)
-                 {
-                     ShowLocalEventsCompletedMessage();
-                 }
-                 else
-                 {
-                     DisableSyncManager();
-                     ShowOfflineAtStartUpSyncManager();
-                     ShowSyncManagerOffline();
-                     SetIsSyncInProgress(false);
-                     SyncOfflineMessage();
-                     return;
-                 }
-                
-                // CheckServerStatus(); TODO:check for offline (Modified for server status thread)
-                //DisableSyncManager();
-                //ShowSyncManagerOffline();
-            }
-            //LogWrapper.LogMessage("frmSyncManager - bwLocalEvents_RunWorkerCompleted", "leave");
         }
 
         private void SendToRecycleBin(string strPath, bool isFile)
