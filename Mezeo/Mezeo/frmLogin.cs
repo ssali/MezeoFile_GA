@@ -278,7 +278,7 @@ namespace Mezeo
                 this.Close();
             }
 
-            mezeoFileCloud.AppEventViewer(AboutBox.AssemblyTitle, LanguageTranslator.GetValue("TrayAppOfflineText"), 3);
+           // mezeoFileCloud.AppEventViewer(AboutBox.AssemblyTitle, LanguageTranslator.GetValue("TrayAppOfflineText"), 3);
             niSystemTray.ContextMenuStrip = cmSystemTraySyncMgr;
 
             if (syncManager == null)
@@ -441,7 +441,7 @@ namespace Mezeo
             {
                 this.Close();
             }
-            mezeoFileCloud.AppEventViewer(AboutBox.AssemblyTitle, LanguageTranslator.GetValue("LoginSuccess"), 3);
+           // mezeoFileCloud.AppEventViewer(AboutBox.AssemblyTitle, LanguageTranslator.GetValue("LoginSuccess"), 3);
             niSystemTray.ContextMenuStrip = cmSystemTraySyncMgr;
 
             CheckAndCreateSyncDirectory();

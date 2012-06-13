@@ -3650,7 +3650,7 @@ namespace Mezeo
                     break;
             }
 
-            cMezeoFileCloud.AppEventViewer(AboutBox.AssemblyTitle, Description, 3);
+           // cMezeoFileCloud.AppEventViewer(AboutBox.AssemblyTitle, Description, 3);
 
             int nStatusCode = 0;
             string strContentURi = GetContentURI(lEvent.FileName);

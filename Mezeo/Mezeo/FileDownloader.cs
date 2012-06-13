@@ -249,7 +249,7 @@ namespace Mezeo
                            // Description += AboutBox.AssemblyProduct;
                             Description += LanguageTranslator.GetValue("ErrorBlurbDownload2");
                             Description += LanguageTranslator.GetValue("ErrorBlurbDownload3");
-                            cFileCloud.AppEventViewer(AboutBox.AssemblyTitle, Description, 3);
+                           // cFileCloud.AppEventViewer(AboutBox.AssemblyTitle, Description, 3);
                         }
                         else
                         {
