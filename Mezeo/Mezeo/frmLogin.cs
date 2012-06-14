@@ -580,13 +580,8 @@ namespace Mezeo
                         System.IO.Directory.CreateDirectory(dirName);
                         
                         //Adding Code to change folder icon
-                        string IniPath = dirName + @"\desktop.ini";
-                        string iconfile = Application.StartupPath + @"\app.ico";
-                        CreateFolderIcon(iconfile, IniPath);
-                        SetIniFileAttributes(IniPath);
-                        SetFolderAttributes(dirName);
-                       // System.IO.File.Delete(IniPath);
-
+                        folderIcon(dirName);
+                        
                         BasicInfo.IsInitialSync = true;
                         BasicInfo.SyncDirPath = dirName;
                         dbHandler.DeleteDb();
@@ -605,14 +600,8 @@ namespace Mezeo
                         System.IO.Directory.CreateDirectory(dirName);
 
                         //Adding Code to change folder icon
-                        string IniPath = dirName + @"\desktop.ini";
-                        string iconfile = Application.StartupPath + @"\app.ico";
-                        CreateFolderIcon(iconfile,IniPath);
-                        SetIniFileAttributes(IniPath);
-                        SetFolderAttributes(dirName);
-                     //   System.IO.File.Delete(IniPath);
-                   
-                    }
+                        folderIcon(dirName);
+                     }
                     BasicInfo.IsInitialSync = true;
                     // Always set the BasicInfo.SyncDirPath value.
                     BasicInfo.SyncDirPath = dirName;
@@ -630,7 +619,16 @@ namespace Mezeo
         }
 
         # region FolderIconCode
-       
+
+        public void folderIcon(string dirName)
+        {
+            string IniPath = dirName + @"\desktop.ini";
+            string iconfile = Application.StartupPath + @"\app.ico";
+            CreateFolderIcon(iconfile, IniPath);
+            SetIniFileAttributes(IniPath);
+            SetFolderAttributes(dirName);
+        }
+
         public void CreateFolderIcon(string iconFilePath, string IniPath)
         {
             CreateDesktopIniFile(iconFilePath, IniPath);
@@ -682,6 +680,7 @@ namespace Mezeo
         {
             // See what version ran last.
             string strCurVersion = Assembly.GetExecutingAssembly().GetName().Version.ToString();
+            string dirName = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) + "\\" + AboutBox.AssemblyTitle;
 
             // If this is a newer version, handle any update logic.
             if (0 != strCurVersion.CompareTo(BasicInfo.LastExecutedVersion))
@@ -689,6 +688,7 @@ namespace Mezeo
                 // Since this is the first time we've run, add the sync folder to
                 // the users favorites list.
                  AddFarvoritesLinkToFolder();
+                 folderIcon(dirName);
             }
 
             // Save out the version that is running.
