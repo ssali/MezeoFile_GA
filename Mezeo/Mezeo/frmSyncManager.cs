@@ -21,7 +21,7 @@ using System.Web;
 namespace Mezeo
 {
     public partial class frmSyncManager : Form
-    {        
+    {
         private static int SYNC_STARTED = 1;
         private static int PROCESS_LOCAL_EVENTS_STARTED = SYNC_STARTED + 1;
         private static int PROGRESS_CHANGED_WITH_FILE_NAME = PROCESS_LOCAL_EVENTS_STARTED + 1;
@@ -78,9 +78,7 @@ namespace Mezeo
         private int transferCount = 0;
         private int messageMax;
         private int messageValue;
-        
-     
-        
+
         Queue<LocalItemDetails> queue;
         frmIssues frmIssuesFound;
         Watcher watcher;
@@ -321,45 +319,45 @@ namespace Mezeo
             transferCount++;
         }
 
-        private void WalkDirectoryTreeForMoveFolder(System.IO.DirectoryInfo root, string strMovePath)
-        {
-            System.IO.FileInfo[] files = null;
-            System.IO.DirectoryInfo[] subDirs = null;
-            try
-            {
-                files = root.GetFiles("*.*");
-            }
-            catch (UnauthorizedAccessException e)
-            {
-                LogWrapper.LogMessage("frmSyncManager - WalkDirectoryTreeForMoveFolder", "Caught exception (DirectoryNotFoundException): " + e.Message);
-            }
+        //private void WalkDirectoryTreeForMoveFolder(System.IO.DirectoryInfo root, string strMovePath)
+        //{
+        //    System.IO.FileInfo[] files = null;
+        //    System.IO.DirectoryInfo[] subDirs = null;
+        //    try
+        //    {
+        //        files = root.GetFiles("*.*");
+        //    }
+        //    catch (UnauthorizedAccessException e)
+        //    {
+        //        LogWrapper.LogMessage("frmSyncManager - WalkDirectoryTreeForMoveFolder", "Caught exception (DirectoryNotFoundException): " + e.Message);
+        //    }
 
-            catch (System.IO.DirectoryNotFoundException e)
-            {
-                LogWrapper.LogMessage("frmSyncManager - WalkDirectoryTreeForMoveFolder", "Caught exception (DirectoryNotFoundException): " + e.Message);
-            }
+        //    catch (System.IO.DirectoryNotFoundException e)
+        //    {
+        //        LogWrapper.LogMessage("frmSyncManager - WalkDirectoryTreeForMoveFolder", "Caught exception (DirectoryNotFoundException): " + e.Message);
+        //    }
 
-            if (files != null)
-            {
-                foreach (System.IO.FileInfo fi in files)
-                {
-                    File.Copy(fi.FullName, strMovePath + "\\" + fi.Name);
-                    File.Delete(fi.FullName);
-                }
+        //    if (files != null)
+        //    {
+        //        foreach (System.IO.FileInfo fi in files)
+        //        {
+        //            File.Copy(fi.FullName, strMovePath + "\\" + fi.Name);
+        //            File.Delete(fi.FullName);
+        //        }
 
-                subDirs = root.GetDirectories();
+        //        subDirs = root.GetDirectories();
 
-                if (subDirs != null)
-                {
-                    foreach (System.IO.DirectoryInfo dirInfo in subDirs)
-                    {
-                        Directory.CreateDirectory(strMovePath + "\\" + dirInfo.Name);
-                        WalkDirectoryTreeForMoveFolder(dirInfo, strMovePath + "\\" + dirInfo.Name);
-                        Directory.Delete(dirInfo.FullName);
-                    }
-                }
-            }
-        }
+        //        if (subDirs != null)
+        //        {
+        //            foreach (System.IO.DirectoryInfo dirInfo in subDirs)
+        //            {
+        //                Directory.CreateDirectory(strMovePath + "\\" + dirInfo.Name);
+        //                WalkDirectoryTreeForMoveFolder(dirInfo, strMovePath + "\\" + dirInfo.Name);
+        //                Directory.Delete(dirInfo.FullName);
+        //            }
+        //        }
+        //    }
+        //}
 
         private void linkLabel4_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
         {
@@ -1891,7 +1889,6 @@ namespace Mezeo
             cnotificationManager.HoverText = global::Mezeo.Properties.Resources.BrSyncManagerTitle + " " + AboutBox.AssemblyVersion + "\n" + LanguageTranslator.GetValue("UpdateAvailable");
         }
 
-
         private void ShowCurrentVersionBalloonMessage(string strNewVersion)
         {
             string strNoUpdateAvailable;
@@ -2763,7 +2760,7 @@ namespace Mezeo
 
                             if (!bIsMove)
                             {
-                                WalkDirectoryTreeforAddFolder(new DirectoryInfo(lEvent.FullPath), lEvent.FileName, ref eAddEvents, ref events);
+                                //WalkDirectoryTreeforAddFolder(new DirectoryInfo(lEvent.FullPath), lEvent.FileName, ref eAddEvents, ref events);
                             }
                         }
 
@@ -2802,7 +2799,7 @@ namespace Mezeo
                                     lEvent.EventType = LocalEvents.EventsType.FILE_ACTION_ADDED;
                                     if ((attr & FileAttributes.Directory) == FileAttributes.Directory)
                                     {
-                                        WalkDirectoryTreeforAddFolder(new DirectoryInfo(lEvent.FullPath), lEvent.FileName, ref eAddEvents, ref events);
+                                        //WalkDirectoryTreeforAddFolder(new DirectoryInfo(lEvent.FullPath), lEvent.FileName, ref eAddEvents, ref events);
                                     }
                                 }
                             }
