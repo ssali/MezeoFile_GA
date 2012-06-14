@@ -16,6 +16,7 @@ using System.Net;
 using System.Xml;
 using System.Reflection;
 using Mezeo;
+using System.Web;
 
 namespace Mezeo
 {
@@ -1150,9 +1151,16 @@ namespace Mezeo
 
             int nStatusCode = 0;
             NSResult nsResult = null;
-            nsResult = cMezeoFileCloud.GetNamespaceResult(cLoginDetails.szNamespaceUri + "/" +
-                                                            nqDetail.StrMezeoExportedPath,
-                                                            nqDetail.StrObjectType, ref nStatusCode);
+
+            //Encoding uri for special character and then replacing "+" with "%20" if we have spaces in file name 
+            string uri = cLoginDetails.szNamespaceUri + "/" + HttpUtility.UrlEncode(nqDetail.StrMezeoExportedPath);
+            uri = uri.Replace("+", "%20");
+            
+            //nsResult = cMezeoFileCloud.GetNamespaceResult(cLoginDetails.szNamespaceUri + "/" +
+            //                                                nqDetail.StrMezeoExportedPath,
+            //                                                nqDetail.StrObjectType, ref nStatusCode);
+
+            nsResult = cMezeoFileCloud.GetNamespaceResult(uri, nqDetail.StrObjectType, ref nStatusCode);
             if (nStatusCode == ResponseCode.LOGINFAILED1 || nStatusCode == ResponseCode.LOGINFAILED2)
             {
                 return nStatusCode;
@@ -4217,7 +4225,7 @@ namespace Mezeo
                     else if (e.ProgressPercentage == PROGRESS_CHANGED_WITH_FILE_NAME)
                     {
                         showProgress();
-                        lblStatusL3.Text = e.UserState.ToString();
+                        //lblStatusL3.Text = e.UserState.ToString();
                     }
                     else if (e.ProgressPercentage == LOCAL_EVENTS_COMPLETED)
                     {
@@ -4264,7 +4272,7 @@ namespace Mezeo
                 else if (e.ProgressPercentage == PROGRESS_CHANGED_WITH_FILE_NAME)
                 {
                     showProgress();
-                    lblStatusL3.Text = e.UserState.ToString();
+                    //lblStatusL3.Text = e.UserState.ToString();
                 }
                 else if (e.ProgressPercentage == LOCAL_EVENTS_COMPLETED)
                 {
@@ -4349,7 +4357,14 @@ namespace Mezeo
                 this.Invoke((MethodInvoker)delegate
                 {
                     //LogWrapper.LogMessage("frmSyncManager - SetMaxProgress", "enter");
-                    lblStatusL3.Text = fileName;
+                    string syncPath;
+                    if (string.IsNullOrEmpty(fileName))
+                         syncPath = "";
+                    else
+                        syncPath = fileName.Substring(BasicInfo.SyncDirPath.Length + 1);
+
+                    lblStatusL3.Text = syncPath;
+                    
 
                     pbSyncProgress.Maximum = (int)fileSize;
                     pbSyncProgress.Value = 0;
@@ -4368,7 +4383,14 @@ namespace Mezeo
             else
             {
                 //LogWrapper.LogMessage("frmSyncManager - SetMaxProgress", "enter");
-                lblStatusL3.Text = fileName;
+                string syncPath;
+                if (string.IsNullOrEmpty(fileName))
+                    syncPath = "";
+                else
+                    syncPath = fileName.Substring(BasicInfo.SyncDirPath.Length + 1);
+
+                lblStatusL3.Text = syncPath;
+                    
 
                 pbSyncProgress.Maximum = (int)fileSize;
                 pbSyncProgress.Value = 0;
@@ -4393,6 +4415,7 @@ namespace Mezeo
                 {
                     //LogWrapper.LogMessage("frmSyncManager - ShowOtherProgressBar", "enter");
                     lblStatusL3.Text = fileName;
+                   
                     pbSyncProgress.Maximum = 1;
                     pbSyncProgress.Value = 0;
 
@@ -4413,6 +4436,7 @@ namespace Mezeo
             {
                 //LogWrapper.LogMessage("frmSyncManager - ShowOtherProgressBar", "enter");
                 lblStatusL3.Text = fileName;
+                    
                 pbSyncProgress.Maximum = 1;
                 pbSyncProgress.Value = 1;
 
