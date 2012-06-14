@@ -157,6 +157,7 @@ namespace MezeoFileSupport
         public String StrMezeoExportedPath;
         public String StrHash;
         public long lSize;
+        public Int64 EventDbId;
 
         public NQDetails()
         {
@@ -174,6 +175,7 @@ namespace MezeoFileSupport
             StrMezeoExportedPath = "";
             StrHash = "";
             lSize = 0;
+            EventDbId = -1;
         }
     };
 
