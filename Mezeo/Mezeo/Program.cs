@@ -53,6 +53,7 @@ namespace Mezeo
             // it is safe to make this call every time to be sure they exist.
             DbHandler dbHandler = new DbHandler();
             dbHandler.CreateEventsTable();
+            dbHandler.CreateIssueTable();
 
             // Clear any local events since the code will search for any local
             // changes and create events for them.
