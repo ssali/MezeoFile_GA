@@ -442,6 +442,21 @@ namespace Mezeo
         public NQLengthResult NQGetLength(string StrUri, string StrQueueName, ref int nStatusCode)
         {
             NQLengthResult nqLengthResult = fileCloud.NQGetLength(StrUri, StrQueueName, ref nStatusCode);
+            // If the notification queue doesn't exist, then create it.
+            if (nStatusCode == 404)
+            {
+                if (NQCreate(BasicInfo.ServiceUrl + BasicInfo.NQParentURI, BasicInfo.GetQueueName(), BasicInfo.NQParentURI, ref nStatusCode))
+                {
+                    nqLengthResult = fileCloud.NQGetLength(StrUri, StrQueueName, ref nStatusCode);
+                }
+                else
+                {
+                    // If the queue can't be created, then just return the result code instead of retrying
+                    // the NQGetLength request.
+                    return nqLengthResult;
+                }
+            }
+
             if (nStatusCode != ResponseCode.NQGETLENGTH)
             {
                 for (int n = 0; n < CloudService.NUMBER_OF_RETRIES; n++)

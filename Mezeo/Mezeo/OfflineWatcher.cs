@@ -11,12 +11,10 @@ namespace Mezeo
     {
         List<string> currentStructure = new List<string>();
         DbHandler dbHandler;
-     
 
         public OfflineWatcher(DbHandler dbHandler)
         {
             this.dbHandler = dbHandler;
-                       
         }
 
         public List<LocalEvents> PrepareStructureList()
@@ -75,7 +73,7 @@ namespace Mezeo
                             isModified = true;
                         }
                     }
-                
+
                     if (isModified)
                     {
                         LocalEvents lEvent = new LocalEvents();

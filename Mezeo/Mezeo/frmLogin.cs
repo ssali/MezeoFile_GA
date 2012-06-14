@@ -523,6 +523,7 @@ namespace Mezeo
             if (NQParentURI.Trim().Length != 0)
             {
                 loginDetails.szNQParentUri = NQParentURI;
+                BasicInfo.NQParentURI = NQParentURI;
 
                 NQLengthResult nqLengthRes = mezeoFileCloud.NQGetLength(BasicInfo.ServiceUrl + loginDetails.szNQParentUri, BasicInfo.GetQueueName(), ref nStatusCode);
                 if (nStatusCode == 404)

@@ -20,6 +20,7 @@ namespace Mezeo
         private static string syncDirPath="";
         private static string lastExecutedVersion="";
         private static bool isInitailSync = true;
+        private static string nqParentURI = "";
 
         //Flag for updates 
         public static bool updateAvailable = false;
@@ -148,6 +149,18 @@ namespace Mezeo
             get
             {
                 return userName.Trim().Length != 0 && password.Trim().Length != 0 && serviceUrl.Trim().Length != 0;
+            }
+        }
+
+        public static string NQParentURI
+        {
+            get
+            {
+                return nqParentURI;
+            }
+            set
+            {
+                nqParentURI = value;
             }
         }
 
