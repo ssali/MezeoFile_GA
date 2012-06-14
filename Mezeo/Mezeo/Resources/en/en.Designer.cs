@@ -493,6 +493,15 @@ namespace Mezeo.Resources.en {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Click to resume sync operations .
+        /// </summary>
+        internal static string ResumeSyncOprationText {
+            get {
+                return ResourceManager.GetString("ResumeSyncOprationText", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Resume Sync.
         /// </summary>
         internal static string ResumeSyncText {
@@ -862,11 +871,20 @@ namespace Mezeo.Resources.en {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Sync is Paused.
+        ///   Looks up a localized string similar to Sync has been paused.
         /// </summary>
         internal static string TrayBalloonSyncPauseText {
             get {
                 return ResourceManager.GetString("TrayBalloonSyncPauseText", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Sync has been resumed..
+        /// </summary>
+        internal static string TrayBalloonSyncResumeText {
+            get {
+                return ResourceManager.GetString("TrayBalloonSyncResumeText", resourceCulture);
             }
         }
         

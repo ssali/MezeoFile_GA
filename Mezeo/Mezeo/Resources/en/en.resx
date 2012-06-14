@@ -261,6 +261,9 @@
   <data name="ProgressBarComplete" xml:space="preserve">
     <value>100%</value>
   </data>
+  <data name="ResumeSyncOprationText" xml:space="preserve">
+    <value>Click to resume sync operations </value>
+  </data>
   <data name="ResumeSyncText" xml:space="preserve">
     <value>Resume Sync</value>
   </data>
@@ -385,7 +388,10 @@
     <value>Your sync folder is up-to-date.</value>
   </data>
   <data name="TrayBalloonSyncPauseText" xml:space="preserve">
-    <value>Sync is Paused</value>
+    <value>Sync has been paused</value>
+  </data>
+  <data name="TrayBalloonSyncResumeText" xml:space="preserve">
+    <value>Sync has been resumed.</value>
   </data>
   <data name="TrayBalloonSyncStatusText" xml:space="preserve">
     <value>Sync Status</value>

@@ -817,19 +817,64 @@ namespace Mezeo
             }
         }
 
-        public void EnablePauseText()
-        {
-            toolStripMenuItem7.Enabled = true;
-        }
-
         private void toolStripMenuItem7_Click(object sender, EventArgs e)
         {
-            if (syncManager.IsLocalEventInProgress())
+            if (!syncManager.IsSyncPaused())
             {
+                syncPausedOperation();
+                return;
+            }
+            if (syncManager.IsSyncPaused())
+            {
+                syncResumeOperation();
+                return;
+            }
+        }
+        
+        //Adding Function for click on context menu Pause button click
+        public void syncResumeOperation()
+        {
+            if (this.InvokeRequired)
+            {
+                this.Invoke((MethodInvoker)delegate
+                {
+                    syncManager.SetIsSyncPaused(false);
+                    syncManager.InitializeSync();
+                    changeResumeText();
+                    syncManager.SyncResumeBalloonMessage();
+                });
+            }
+            else
+            {
+                syncManager.SetIsSyncPaused(false);
+                syncManager.InitializeSync();
+                changeResumeText();
+                syncManager.SyncResumeBalloonMessage();
+            }
+        }
+
+        //Adding Function for click on context menu Resume button click
+        public void syncPausedOperation()
+        {
+            if (this.InvokeRequired)
+            {
+                this.Invoke((MethodInvoker)delegate
+                {
+                    syncManager.SetIsSyncPaused(true);
+                    syncManager.StopSync();
+                    changePauseText();
+                    syncManager.ChangeUIOnPause();
+                    syncManager.SyncPauseBalloonMessage();
+                });
+            }
+            else
+            {
+                syncManager.SetIsSyncPaused(true);
                 syncManager.StopSync();
                 changePauseText();
+                syncManager.ChangeUIOnPause();
+                syncManager.SyncPauseBalloonMessage();
             }
-           
         }
 
         private void SyncEvaluatingBalloonMessage()

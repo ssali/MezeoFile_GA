@@ -299,7 +299,7 @@ namespace Mezeo
 
         public bool IsInIdleState()
         {
-            if (!IsSyncInProgress() && !IsLocalEventInProgress() && !IsOfflineWorking())
+            if (!IsSyncInProgress() && !IsLocalEventInProgress() && !IsOfflineWorking() && !IsSyncPaused())
                 return true;
             return false;
         }
@@ -1921,14 +1921,24 @@ namespace Mezeo
             frmParent.toolStripMenuItem4.Text = LanguageTranslator.GetValue("TrayBalloonSyncStopText");
         }
 
-        private void SyncPauseBalloonMessage()
+        public void SyncPauseBalloonMessage()
         {
-            //cnotificationManager.NotificationHandler.Icon = Properties.Resources.app_icon_disabled;
+            cnotificationManager.NotificationHandler.Icon = Properties.Resources.app_icon_disabled;
             cnotificationManager.NotificationHandler.ShowBalloonTip(1, LanguageTranslator.GetValue("TrayBalloonSyncStatusText"),
                                                                            LanguageTranslator.GetValue("TrayBalloonSyncPauseText"),
                                                                           ToolTipIcon.None);
             cnotificationManager.HoverText = global::Mezeo.Properties.Resources.BrSyncManagerTitle + " " + AboutBox.AssemblyVersion + "\n" + LanguageTranslator.GetValue("TrayBalloonSyncPauseText");
             frmParent.toolStripMenuItem4.Text = LanguageTranslator.GetValue("TrayBalloonSyncPauseText");
+        }
+
+        public void SyncResumeBalloonMessage()
+        {
+            cnotificationManager.NotificationHandler.Icon = Properties.Resources.MezeoVault;
+            cnotificationManager.NotificationHandler.ShowBalloonTip(1, LanguageTranslator.GetValue("TrayBalloonSyncStatusText"),
+                                                                           LanguageTranslator.GetValue("TrayBalloonSyncResumeText"),
+                                                                          ToolTipIcon.None);
+            cnotificationManager.HoverText = global::Mezeo.Properties.Resources.BrSyncManagerTitle + " " + AboutBox.AssemblyVersion + "\n" + LanguageTranslator.GetValue("TrayBalloonSyncResumeText");
+            frmParent.toolStripMenuItem4.Text = LanguageTranslator.GetValue("TrayBalloonSyncResumeText");
         }
 
         private void InitialSyncBalloonMessage()
@@ -4560,6 +4570,17 @@ namespace Mezeo
             SetIssueFound(false);
             ShowNextSyncLabel(false);
             //LogWrapper.LogMessage("frmSyncManager - InitializeLocalEventsProcess", "leave");
+        }
+
+        public void ChangeUIOnPause()
+        {
+            lblStatusL1.Text = LanguageTranslator.GetValue("TrayBalloonSyncPauseText");
+            lblStatusL3.Text = LanguageTranslator.GetValue("SyncManagerStatusLastSyncLabel") + " " + lastSync.ToString("MMM d, yyyy h:mm tt");
+            label1.Text = LanguageTranslator.GetValue("ResumeSyncOprationText");
+            btnSyncNow.Text = this.btnSyncNow.Text = LanguageTranslator.GetValue("ResumeSyncText");
+            label1.BringToFront();
+            label1.Visible = true;
+            label1.Show();
         }
 
         public void ShowSyncManagerOffline()          
