@@ -583,8 +583,8 @@ namespace Mezeo
                             EVENT_NQ_NAME + ", " +
                             EVENT_NQ_OBJ_TYPE + ", " +
                             EVENT_NQ_PARENT_ID + ", " +
-                            EVENT_NQ_PARENT_URI + ") values ('N', '" +
-                            nqEvent.lSize + "','" +
+                            EVENT_NQ_PARENT_URI + ") values ('N', " +
+                            nqEvent.lSize + ",'" +
                             nqEvent.StrDomainUri + "','" +
                             nqEvent.StrEvent + "','" +
                             nqEvent.StrEventResult + "','" +
@@ -658,6 +658,25 @@ namespace Mezeo
             }
         }
 
+        public void PopulateNQEventFromReader(ref NQDetails item, ref SQLiteDataReader sqlDataReader)
+        {
+            item.EventDbId = (Int64)sqlDataReader[EVENT_INDEX];
+
+            item.lSize = (long)sqlDataReader[EVENT_NQ_SIZE];
+            item.StrDomainUri = (string)sqlDataReader[EVENT_NQ_DOMAIN_URI];
+            item.StrEvent = (string)sqlDataReader[EVENT_NQ_EVENT];
+            item.StrEventResult = (string)sqlDataReader[EVENT_NQ_RESULT];
+            item.StrEventTime = (string)sqlDataReader[EVENT_NQ_TIME];
+            item.StrEventUser = (string)sqlDataReader[EVENT_NQ_USER];
+            item.StrHash = (string)sqlDataReader[EVENT_NQ_HASH];
+            item.StrMezeoExportedPath = (string)sqlDataReader[EVENT_NQ_EXPORTED_PATH];
+            item.StrObjectID = (string)sqlDataReader[EVENT_NQ_ID];
+            item.StrObjectName = (string)sqlDataReader[EVENT_NQ_NAME];
+            item.StrObjectType = (string)sqlDataReader[EVENT_NQ_OBJ_TYPE];
+            item.StrParentID = (string)sqlDataReader[EVENT_NQ_PARENT_ID];
+            item.StrParentUri = (string)sqlDataReader[EVENT_NQ_PARENT_URI];
+        }
+
         public LocalEvents GetLocalEvent()
         {
             string query = "SELECT * FROM " + EVENT_TABLE_NAME + " WHERE " + EVENT_ORIGIN + " = 'L' ORDER BY " + EVENT_INDEX + " LIMIT 1;";
@@ -679,6 +698,36 @@ namespace Mezeo
             catch (Exception ex)
             {
                 LogWrapper.LogMessage("DbHandler - GetLocalEvent", "Caught exception: " + ex.Message);
+                item = null;
+            }
+
+            if (null != sqlDataReader)
+                sqlDataReader.Close();
+
+            return item;
+        }
+
+        public NQDetails GetNQEvent()
+        {
+            string query = "SELECT * FROM " + EVENT_TABLE_NAME + " WHERE " + EVENT_ORIGIN + " = 'N' ORDER BY " + EVENT_INDEX + " LIMIT 1;";
+            LogWrapper.LogMessage("DBHandler - GetNQEvent", "Running query: " + query);
+            NQDetails item = null;
+
+            sqlCommand = new SQLiteCommand();
+            sqlCommand.CommandText = query;
+            sqlCommand.Connection = sqlConnection;
+            try
+            {
+                sqlDataReader = sqlCommand.ExecuteReader();
+                while (sqlDataReader.Read())
+                {
+                    item = new NQDetails();
+                    PopulateNQEventFromReader(ref item, ref sqlDataReader);
+                }
+            }
+            catch (Exception ex)
+            {
+                LogWrapper.LogMessage("DbHandler - GetNQEvent", "Caught exception: " + ex.Message);
                 item = null;
             }
 

@@ -1018,7 +1018,7 @@ namespace Mezeo
                 {
                     ShowNextSyncLabel(false);
                     if (!bwLocalEvents.IsBusy)
-                        bwLocalEvents.RunWorkerAsync();                 
+                        bwLocalEvents.RunWorkerAsync();
                 }
                 else
                 {
@@ -1073,7 +1073,6 @@ namespace Mezeo
                 return;
             }
 
-
             NQLengthResult nqLengthRes = cMezeoFileCloud.NQGetLength(BasicInfo.ServiceUrl + cLoginDetails.szNQParentUri, BasicInfo.GetQueueName(), ref nStatusCode);
             if (nStatusCode == ResponseCode.LOGINFAILED1 || nStatusCode == ResponseCode.LOGINFAILED2)
             {
@@ -1102,7 +1101,6 @@ namespace Mezeo
             if (nNQLength > 0)
             {
                 //LogWrapper.LogMessage("frmSyncManager - UpdateNQ", "nNQLength" + nNQLength.ToString());
-                //ShowNextSyncLabel(false);
                 if (!bwNQUpdate.IsBusy)
                 {
                     //LogWrapper.LogMessage("frmSyncManager - UpdateNQ", "bwNQUpdate.RunWorkerAsync called");
@@ -1116,11 +1114,7 @@ namespace Mezeo
                 SetIsSyncInProgress(false);
                 ShowSyncMessage();
 
-                //if (BasicInfo.AutoSync)
-                //{
-                    tmrNextSync.Interval = FIVE_MINUTES;
-                  //  tmrNextSync.Enabled = true;
-                //}
+                tmrNextSync.Interval = FIVE_MINUTES;
 
                 if (frmIssuesFound != null && frmIssuesFound.GetItemsInList() > 0)
                 {
@@ -3480,7 +3474,6 @@ namespace Mezeo
                                     UpdateDBForRemoveSuccess(lEvent);
                                     dbHandler.DeleteEvent(lEvent.EventDbId);
                                 }
-                       
                             }
 
                             LogWrapper.LogMessage("SyncManager - ProcessLocalEvents", "FILE_ACTION_REMOVED - Leave for file path " + lEvent.FullPath);
@@ -3538,7 +3531,6 @@ namespace Mezeo
                                     UpdateDBForRenameSuccess(lEvent);
                                     dbHandler.DeleteEvent(lEvent.EventDbId);
                                 }
-                   
                             }
                             else
                             {
@@ -3589,7 +3581,6 @@ namespace Mezeo
                                         UpdateDBForRenameSuccess(lEvent);
                                         dbHandler.DeleteEvent(lEvent.EventDbId);
                                     }
-                
                                 }
                             }
                         }
@@ -3897,11 +3888,38 @@ namespace Mezeo
             //LogWrapper.LogMessage("frmSyncManager - queue_WatchCompletedEvent", "leave");
         }
 
+        private bool PopulateNQEvents()
+        {
+            int newEvents = 0;
+            int nStatusCode = 0;
+            NQDetails[] pNQDetails = null;
+
+            // Grab some events from the notification queue if any exist.
+            pNQDetails = cMezeoFileCloud.NQGetData(BasicInfo.ServiceUrl + cLoginDetails.szNQParentUri, BasicInfo.GetQueueName(), 10, ref nStatusCode);
+            if (nStatusCode == ResponseCode.NQGETDATA)
+            {
+                if (pNQDetails != null)
+                {
+                    foreach (NQDetails nq in pNQDetails)
+                    {
+                        // Populate the queue with any we got.
+                        dbHandler.AddNQEvent(nq);
+                        newEvents++;
+                    }
+                    cMezeoFileCloud.NQDeleteValue(BasicInfo.ServiceUrl + cLoginDetails.szNQParentUri, BasicInfo.GetQueueName(), newEvents, ref nStatusCode);
+                }
+            }
+
+            return (newEvents > 0);
+        }
+
         private void bwNQUpdate_DoWork(object sender, DoWorkEventArgs e)
         {
             //LogWrapper.LogMessage("frmSyncManager - bwNQUpdate_DoWork", "Enter");
 
             fileDownloadCount = 1;
+
+//            PopulateNQEvents();
 
             int nStatusCode = 0;
             NQDetails[] pNQDetails = null;
@@ -4158,6 +4176,41 @@ namespace Mezeo
             System.Diagnostics.Process.Start(BasicInfo.ServiceUrl);
         }
 
+        private void GetNextEvent(ref LocalEvents lEvent, ref NQDetails nqEvent)
+        {
+            // See if there are any events in the queue.  Local events take priority over NQ.
+            lEvent = dbHandler.GetLocalEvent();
+            if (lEvent == null)
+                nqEvent = dbHandler.GetNQEvent();
+        }
+
+        private void RunSyncLoop()
+        {
+            LocalEvents lEvent = null;
+            NQDetails nqEvent = null;
+            int result = 0;
+
+            // See if there are any events in the queue.  Local events take priority over NQ.
+            GetNextEvent(ref lEvent, ref nqEvent);
+            while ((lEvent != null) || (nqEvent != null))
+            {
+                if (lEvent != null)
+                {
+                }
+                else if (nqEvent != null)
+                {
+                    // Look for an NQ event.
+                    result = UpdateFromNQ(nqEvent);
+                    if (1 == result)
+                        dbHandler.DeleteEvent(nqEvent.EventDbId);
+                }
+
+                // Release the items so we can look for new ones.
+                lEvent = null;
+                nqEvent = null;
+            }
+        }
+
         private void bwOffilneEvent_DoWork(object sender, DoWorkEventArgs e)
         {
             //LogWrapper.LogMessage("frmSyncManager - bwOffilneEvent_DoWork", "enter");
@@ -4199,7 +4252,6 @@ namespace Mezeo
         private void bwLocalEvents_DoWork(object sender, DoWorkEventArgs e)
         {
             //LogWrapper.LogMessage("frmSyncManager - bwLocalEvents_DoWork", "enter");
-            // SetIsDisabledByConnection(false);
             int statusCode = HandleEvents((BackgroundWorker)sender);
             e.Result = statusCode;
             //LogWrapper.LogMessage("frmSyncManager - bwLocalEvents_DoWork", "leave");
