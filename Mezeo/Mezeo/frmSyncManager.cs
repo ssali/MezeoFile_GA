@@ -359,6 +359,50 @@ namespace Mezeo
         //    }
         //}
 
+        public void resetAllControls()
+        {
+            this.Text = AboutBox.AssemblyTitle;
+            this.lblFolder.Text = LanguageTranslator.GetValue("SyncManagerFolderLabel");
+            this.lblStatus.Text = LanguageTranslator.GetValue("SyncManagerStatusLabel");
+            this.lblUsage.Text = LanguageTranslator.GetValue("SyncManagerUsageLabel");
+
+            this.btnSyncNow.Text = LanguageTranslator.GetValue("SyncManagerSyncNowButtonText");
+            //this.btnIssuesFound.Text = LanguageTranslator.GetValue("SyncManagerIssueFoundButtonText");
+            this.lnkAbout.Text = LanguageTranslator.GetValue("SyncManagerAboutLinkText");
+            this.lnkHelp.Text = LanguageTranslator.GetValue("SyncManagerHelpLinkText");
+            this.btnIssuesFound.Visible = false;
+            //this.pbSyncProgress.Visible = false;
+            ShowSyncMessage();
+            this.lblUserName.Text = BasicInfo.UserName;
+            this.lnkServerUrl.Text = BasicInfo.ServiceUrl;
+            this.lnkFolderPath.Text = BasicInfo.SyncDirPath;
+
+            statusMessages[0] = LanguageTranslator.GetValue("SyncManagerAnalyseMessage1");
+            statusMessages[1] = LanguageTranslator.GetValue("SyncManagerAnalyseMessage2");
+            statusMessages[2] = LanguageTranslator.GetValue("SyncManagerAnalyseMessage3");
+
+            if (cLoginDetails != null)
+            {
+                string usedSize = FormatSizeString(cLoginDetails.dblStorage_Used);
+                string allocatedSize = "";
+
+                if (cLoginDetails.dblStorage_Allocated == -1)
+                {
+                    allocatedSize = LanguageTranslator.GetValue("SyncManagerUsageUnlimited");
+                }
+                else
+                {
+                    allocatedSize = FormatSizeString(cLoginDetails.dblStorage_Allocated);
+                }
+
+                allocatedSize += " " + LanguageTranslator.GetValue("SyncManagerUsageUsed");
+
+                this.lblUsageDetails.Text = usedSize + " " + LanguageTranslator.GetValue("SyncManagerUsageOfLabel") + " " + allocatedSize;
+            }
+            else
+                this.lblUsageDetails.Text = LanguageTranslator.GetValue("UsageNotAvailable");
+        }
+
         private void linkLabel4_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
         {
             AboutBox aboutBox = new AboutBox();
@@ -986,12 +1030,15 @@ namespace Mezeo
                 if (EventQueue.QueueNotEmpty())
                 {
                     ShowNextSyncLabel(false);
-                    if (!bwLocalEvents.IsBusy)
-                        bwLocalEvents.RunWorkerAsync();
+                    if (!bwSyncThread.IsBusy)
+                        bwSyncThread.RunWorkerAsync();
+                    //if (!bwLocalEvents.IsBusy)
+                    //    bwLocalEvents.RunWorkerAsync();
                 }
                 else
                 {
                     //UpdateNQ();
+                    resetAllControls();
                 }
             }
             //LogWrapper.LogMessage("frmSyncManager - SyncNow", "leave");
@@ -1001,8 +1048,9 @@ namespace Mezeo
         {
             //LogWrapper.LogMessage("frmSyncManager - ProcessOfflineEvents", "enter");
             // See if there are any offline events since the last time we ran.
+            SetIsOfflineWorking(true);
             offlineWatcher.PrepareStructureList();
-
+            SetIsOfflineWorking(false);
             if (false == EventQueue.QueueNotEmpty())
             {
                 PopulateNQEvents();
@@ -1010,11 +1058,14 @@ namespace Mezeo
 
             if (EventQueue.QueueNotEmpty())
             {
-                if (!bwOfflineEvent.IsBusy)
-                    bwOfflineEvent.RunWorkerAsync();
+                //if (!bwOfflineEvent.IsBusy)
+                //    bwOfflineEvent.RunWorkerAsync();
+                if (!bwSyncThread.IsBusy)
+                    bwSyncThread.RunWorkerAsync();
             }
             else
             {
+                resetAllControls();
                 //UpdateNQ();
             }
             //LogWrapper.LogMessage("frmSyncManager - ProcessOfflineEvents", "leave");
@@ -1820,7 +1871,7 @@ namespace Mezeo
             lastSync = DateTime.Now;
             BasicInfo.LastSyncAt = lastSync;
 
-            UpdateUsageLabel();
+           // UpdateUsageLabel();
 
             DisableProgress();
             this.btnSyncNow.Text = LanguageTranslator.GetValue("SyncManagerSyncNowButtonText");
@@ -3945,6 +3996,156 @@ namespace Mezeo
             //LogWrapper.LogMessage("frmSyncManager - bwNQUpdate_DoWork", "Leave");   
         }
 
+        private void bwSyncThread_DoWork(object sender, DoWorkEventArgs e)
+        {
+            //LogWrapper.LogMessage("frmSyncManager - bwOffilneEvent_DoWork", "enter");
+            SetIsOfflineWorking(true);
+            //int statusCode = HandleEvents((BackgroundWorker)sender);
+            int statusCode = RunSyncLoop(sender, e);
+            e.Result = statusCode;
+            //LogWrapper.LogMessage("frmSyncManager - bwOffilneEvent_DoWork", "leave");
+        }
+
+
+        private void bwSyncThread_ProgressChanged(object sender, ProgressChangedEventArgs e)
+        {
+                //LogWrapper.LogMessage("frmSyncManager - bwLocalEvents_ProgressChanged", "enter");
+                if (this.InvokeRequired)
+                {
+                    this.Invoke((MethodInvoker)delegate
+                    {
+                        label1.Visible = false;
+                        pbSyncProgress.Refresh();
+
+                        if (!lblPercentDone.Visible)
+                        {
+                            lblPercentDone.Text = "";
+                            Application.DoEvents();
+                        }
+
+                        if (e.ProgressPercentage == SYNC_STARTED)
+                        {
+                            ShowInitialSyncMessage();
+                        }
+                        else if (e.ProgressPercentage == PROCESS_LOCAL_EVENTS_STARTED)
+                        {
+                            InitializeLocalEventsProcess((int)e.UserState);
+                        }
+                        else if (e.ProgressPercentage == PROGRESS_CHANGED_WITH_FILE_NAME)
+                        {
+                            showProgress();
+                            //lblStatusL3.Text = e.UserState.ToString();
+                        }
+                        else if (e.ProgressPercentage == LOCAL_EVENTS_COMPLETED)
+                        {
+                            if (IsDisabledByConnection())
+                            {
+                                lastSync = DateTime.Now;
+                                BasicInfo.LastSyncAt = lastSync;
+
+                                //  CheckServerStatus(); *** TODO:check for offline (Modified for server status thread)
+                                // DisableProgress();
+                                // ShowSyncDisabledMessage();
+                                // ShowSyncManagerOffline();
+                            }
+                            else
+                            {
+                                ShowLocalEventsCompletedMessage();
+                            }
+                        }
+                        else if (e.ProgressPercentage == LOCAL_EVENTS_STOPPED)
+                        {
+                            ShowSyncMessage(EventQueue.QueueNotEmpty());
+                        }
+                    });
+                }
+                else
+                {
+                    label1.Visible = false;
+                    pbSyncProgress.Refresh();
+
+                    if (!lblPercentDone.Visible)
+                    {
+                        lblPercentDone.Text = "";
+                        Application.DoEvents();
+                    }
+
+                    if (e.ProgressPercentage == SYNC_STARTED)
+                    {
+                        ShowInitialSyncMessage();
+                    }
+                    else if (e.ProgressPercentage == PROCESS_LOCAL_EVENTS_STARTED)
+                    {
+                        InitializeLocalEventsProcess((int)e.UserState);
+                    }
+                    else if (e.ProgressPercentage == PROGRESS_CHANGED_WITH_FILE_NAME)
+                    {
+                        showProgress();
+                        //lblStatusL3.Text = e.UserState.ToString();
+                    }
+                    else if (e.ProgressPercentage == LOCAL_EVENTS_COMPLETED)
+                    {
+                        if (IsDisabledByConnection())
+                        {
+                            lastSync = DateTime.Now;
+                            BasicInfo.LastSyncAt = lastSync;
+
+                            //  CheckServerStatus(); *** TODO:check for offline (Modified for server status thread)
+                            // DisableProgress();
+                            // ShowSyncDisabledMessage();
+                            // ShowSyncManagerOffline();
+                        }
+                        else
+                        {
+                            ShowLocalEventsCompletedMessage();
+                        }
+                    }
+                    else if (e.ProgressPercentage == LOCAL_EVENTS_STOPPED)
+                    {
+                        ShowSyncMessage(EventQueue.QueueNotEmpty());
+                    }
+                }
+
+                //Application.DoEvents();
+                //LogWrapper.LogMessage("frmSyncManager - bwLocalEvents_ProgressChanged", "leave");
+            
+        }
+
+
+        private void bwSyncThread_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
+        {
+            //LogWrapper.LogMessage("frmSyncManager - bwNQUpdate_RunWorkerCompleted", "enter");
+            ShowSyncMessage(IsEventCanceled());
+            tmrNextSync.Interval = FIVE_MINUTES;
+            SetIsSyncInProgress(false);
+            SetIsEventCanceled(false);
+            try
+            {
+                if (e.Result != null && (CancelReason)e.Result == CancelReason.LOGIN_FAILED)
+                {
+                    this.Hide();
+                    frmParent.ShowLoginAgainFromSyncMgr();
+                }
+                else if (e.Result != null && (CancelReason)e.Result == CancelReason.SERVER_INACCESSIBLE)
+                {
+                    // DisableSyncManager();
+                    // ShowSyncManagerOffline();
+                    // CheckServerStatus(); TODO:check for offline (Modified for server status thread)
+                }
+                else
+                {
+                    queue_WatchCompletedEvent();
+                }
+            }
+            catch (Exception ex)
+            {
+                LogWrapper.LogMessage("frmSyncManager - bwNQUpdate_RunWorkerCompleted", "Caught exception: " + ex.Message);
+            }
+            //LogWrapper.LogMessage("frmSyncManager - bwNQUpdate_RunWorkerCompleted", "leave");
+        }
+
+
+
         private void bwNQUpdate_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
         {
             //LogWrapper.LogMessage("frmSyncManager - bwNQUpdate_RunWorkerCompleted", "enter");
@@ -3969,6 +4170,8 @@ namespace Mezeo
                 {
                     queue_WatchCompletedEvent();
                 }
+
+                resetAllControls();
             }
             catch(Exception ex)
             {

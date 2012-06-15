@@ -58,6 +58,7 @@
             this.lblStatusL3 = new System.Windows.Forms.Label();
             this.lblStatusL1 = new System.Windows.Forms.Label();
             this.imgStatus = new System.Windows.Forms.PictureBox();
+            this.bwSyncThread = new System.ComponentModel.BackgroundWorker();
             this.panel1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.eventLog1)).BeginInit();
@@ -152,6 +153,14 @@
             this.bwNQUpdate.DoWork += new System.ComponentModel.DoWorkEventHandler(this.bwNQUpdate_DoWork);
             this.bwNQUpdate.ProgressChanged += new System.ComponentModel.ProgressChangedEventHandler(this.bwNQUpdate_ProgressChanged);
             this.bwNQUpdate.RunWorkerCompleted += new System.ComponentModel.RunWorkerCompletedEventHandler(this.bwNQUpdate_RunWorkerCompleted);
+            // 
+            // bwSyncThread
+            // 
+            this.bwSyncThread.WorkerReportsProgress = true;
+            this.bwSyncThread.WorkerSupportsCancellation = true;
+            this.bwSyncThread.DoWork += new System.ComponentModel.DoWorkEventHandler(this.bwSyncThread_DoWork);
+            this.bwSyncThread.ProgressChanged += new System.ComponentModel.ProgressChangedEventHandler(this.bwSyncThread_ProgressChanged);
+            this.bwSyncThread.RunWorkerCompleted += new System.ComponentModel.RunWorkerCompletedEventHandler(this.bwSyncThread_RunWorkerCompleted);
             // 
             // bwOfflineEvent
             // 
@@ -352,7 +361,6 @@
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.frmSyncManager_FormClosing);
             this.Load += new System.EventHandler(this.frmSyncManager_Load);
             this.panel1.ResumeLayout(false);
-            this.panel1.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.eventLog1)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.imgStatus)).EndInit();
@@ -391,5 +399,6 @@
         private System.Windows.Forms.PictureBox imgStatus;
         private System.Windows.Forms.Label lblUsageDetails;
         private System.Windows.Forms.Label lblUsage;
+        private System.ComponentModel.BackgroundWorker bwSyncThread;
     }
 }
