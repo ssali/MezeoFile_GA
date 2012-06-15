@@ -17,17 +17,16 @@ namespace Mezeo
         { 
             return currentLanguage; 
         } 
-  
 
-        public static void SetLanguage(string language)
+        public static bool SetLanguage(string language)
         {
             currentLanguage=language;
             resManager=Language.GetResourceManager(language);
+            return (resManager != null);
         }
 
         public static string GetValue(string key) 
         {
-
             string keyValue;
 
             if (resManager == null)
@@ -51,13 +50,11 @@ namespace Mezeo
             catch (MissingManifestResourceException) 
             {
                 throw new System.IO.FileNotFoundException("Could not locate the resource file for the language " + currentLanguage); 
-                
             } 
             catch (NullReferenceException) 
             {
                 return originalKey; 
             }
-
         }
 
         public static string stringReplace(string KeyValue)

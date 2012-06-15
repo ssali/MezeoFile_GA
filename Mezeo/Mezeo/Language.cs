@@ -20,8 +20,6 @@ namespace Mezeo
                 string[] names = Assembly.GetExecutingAssembly().GetManifestResourceNames();
                 supportedLanguages = new List<string>();
 
-                 
-                
                 for (int i = 0; i < names.Length; i++)
                 {
                     if (Path.GetExtension(names[i]).Equals(".resources", StringComparison.OrdinalIgnoreCase))
@@ -50,6 +48,5 @@ namespace Mezeo
 
             return null; 
         } 
-
     }
 }
