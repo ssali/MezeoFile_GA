@@ -27,6 +27,18 @@
         }
         "Entry"
         {
+        "MsmKey" = "8:_13418A33E32975714F7C0FCF2A73FA95"
+        "OwnerKey" = "8:_C24133B41B021BDE44AA23A7106F1C67"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_13418A33E32975714F7C0FCF2A73FA95"
+        "OwnerKey" = "8:_7DB3EA15B50B4706BA49777840D2CEE3"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
         "MsmKey" = "8:_1E63C3C31F254E7D95C7751B5B7153A3"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
@@ -81,6 +93,12 @@
         }
         "Entry"
         {
+        "MsmKey" = "8:_7DB3EA15B50B4706BA49777840D2CEE3"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
         "MsmKey" = "8:_952769F1A4F84068BAC4DED1D5A461AD"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
@@ -88,6 +106,12 @@
         "Entry"
         {
         "MsmKey" = "8:_BFB501EDB203F8DC8C2A5E87806ECAE5"
+        "OwnerKey" = "8:_DFF7F401643C436EB485570961CD88CC"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_C24133B41B021BDE44AA23A7106F1C67"
         "OwnerKey" = "8:_DFF7F401643C436EB485570961CD88CC"
         "MsmSig" = "8:_UNDEFINED"
         }
@@ -136,25 +160,7 @@
         "Entry"
         {
         "MsmKey" = "8:_UNDEFINED"
-        "OwnerKey" = "8:_E66B53928F3AEA50BBBDD301CEA24A14"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_UNDEFINED"
-        "OwnerKey" = "8:_DFF7F401643C436EB485570961CD88CC"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_UNDEFINED"
-        "OwnerKey" = "8:_BFB501EDB203F8DC8C2A5E87806ECAE5"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_UNDEFINED"
-        "OwnerKey" = "8:_952769F1A4F84068BAC4DED1D5A461AD"
+        "OwnerKey" = "8:_3BC4E0234267039564392FB54A981313"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
@@ -166,7 +172,37 @@
         "Entry"
         {
         "MsmKey" = "8:_UNDEFINED"
-        "OwnerKey" = "8:_3BC4E0234267039564392FB54A981313"
+        "OwnerKey" = "8:_952769F1A4F84068BAC4DED1D5A461AD"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_UNDEFINED"
+        "OwnerKey" = "8:_BFB501EDB203F8DC8C2A5E87806ECAE5"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_UNDEFINED"
+        "OwnerKey" = "8:_C24133B41B021BDE44AA23A7106F1C67"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_UNDEFINED"
+        "OwnerKey" = "8:_DFF7F401643C436EB485570961CD88CC"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_UNDEFINED"
+        "OwnerKey" = "8:_E66B53928F3AEA50BBBDD301CEA24A14"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_UNDEFINED"
+        "OwnerKey" = "8:_7DB3EA15B50B4706BA49777840D2CEE3"
         "MsmSig" = "8:_UNDEFINED"
         }
     }
@@ -340,6 +376,26 @@
             "Register" = "3:1"
             "Exclude" = "11:FALSE"
             "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_13418A33E32975714F7C0FCF2A73FA95"
+            {
+            "SourcePath" = "8:wshom.ocx"
+            "TargetName" = "8:wshom.ocx"
+            "Tag" = "8:"
+            "Folder" = "8:_E2CA41781701484DA8E973D55A111194"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:TRUE"
             "IsolateTo" = "8:"
             }
             "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_1E63C3C31F254E7D95C7751B5B7153A3"
@@ -555,11 +611,42 @@
             "IsDependency" = "11:FALSE"
             "IsolateTo" = "8:"
             }
+            "{9F6F8455-1EF1-4B85-886A-4223BCC8E7F7}:_7DB3EA15B50B4706BA49777840D2CEE3"
+            {
+            "AssemblyRegister" = "3:1"
+            "AssemblyIsInGAC" = "11:FALSE"
+            "AssemblyAsmDisplayName" = "8:Interop.IWshRuntimeLibrary, Version=1.0.0.0, Culture=neutral, processorArchitecture=x86"
+                "ScatterAssemblies"
+                {
+                    "_7DB3EA15B50B4706BA49777840D2CEE3"
+                    {
+                    "Name" = "8:Interop.IWshRuntimeLibrary.dll"
+                    "Attributes" = "3:512"
+                    }
+                }
+            "SourcePath" = "8:Interop.IWshRuntimeLibrary.dll"
+            "TargetName" = "8:"
+            "Tag" = "8:"
+            "Folder" = "8:_E2CA41781701484DA8E973D55A111194"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
             "{9F6F8455-1EF1-4B85-886A-4223BCC8E7F7}:_952769F1A4F84068BAC4DED1D5A461AD"
             {
             "AssemblyRegister" = "3:1"
             "AssemblyIsInGAC" = "11:FALSE"
-            "AssemblyAsmDisplayName" = "8:MezeoFileSupport, Version=2.0.45.0, Culture=neutral, processorArchitecture=MSIL"
+            "AssemblyAsmDisplayName" = "8:MezeoFileSupport, Version=2.0.50.0, Culture=neutral, processorArchitecture=MSIL"
                 "ScatterAssemblies"
                 {
                     "_952769F1A4F84068BAC4DED1D5A461AD"
@@ -590,7 +677,7 @@
             {
             "AssemblyRegister" = "3:1"
             "AssemblyIsInGAC" = "11:FALSE"
-            "AssemblyAsmDisplayName" = "8:MezeoFileSupport, Version=2.0.45.0, Culture=neutral, processorArchitecture=MSIL"
+            "AssemblyAsmDisplayName" = "8:MezeoFileSupport, Version=2.0.50.0, Culture=neutral, processorArchitecture=MSIL"
                 "ScatterAssemblies"
                 {
                     "_BFB501EDB203F8DC8C2A5E87806ECAE5"
@@ -600,6 +687,37 @@
                     }
                 }
             "SourcePath" = "8:MezeoFileSupport.DLL"
+            "TargetName" = "8:"
+            "Tag" = "8:"
+            "Folder" = "8:_E2CA41781701484DA8E973D55A111194"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:TRUE"
+            "IsolateTo" = "8:"
+            }
+            "{9F6F8455-1EF1-4B85-886A-4223BCC8E7F7}:_C24133B41B021BDE44AA23A7106F1C67"
+            {
+            "AssemblyRegister" = "3:1"
+            "AssemblyIsInGAC" = "11:FALSE"
+            "AssemblyAsmDisplayName" = "8:Interop.IWshRuntimeLibrary, Version=1.0.0.0, Culture=neutral, processorArchitecture=x86"
+                "ScatterAssemblies"
+                {
+                    "_C24133B41B021BDE44AA23A7106F1C67"
+                    {
+                    "Name" = "8:Interop.IWshRuntimeLibrary.DLL"
+                    "Attributes" = "3:512"
+                    }
+                }
+            "SourcePath" = "8:Interop.IWshRuntimeLibrary.DLL"
             "TargetName" = "8:"
             "Tag" = "8:"
             "Folder" = "8:_E2CA41781701484DA8E973D55A111194"
@@ -661,7 +779,7 @@
             {
             "AssemblyRegister" = "3:1"
             "AssemblyIsInGAC" = "11:FALSE"
-            "AssemblyAsmDisplayName" = "8:MezeoFile, Version=2.0.45.0, Culture=neutral, processorArchitecture=x86"
+            "AssemblyAsmDisplayName" = "8:MezeoFile, Version=2.0.50.0, Culture=neutral, processorArchitecture=x86"
                 "ScatterAssemblies"
                 {
                     "_DFF7F401643C436EB485570961CD88CC"
@@ -900,15 +1018,15 @@
         {
         "Name" = "8:Microsoft Visual Studio"
         "ProductName" = "8:MezeoFile"
-        "ProductCode" = "8:{AC84B656-9676-414A-BAD9-2CDB40E94E14}"
-        "PackageCode" = "8:{C2CA9F8C-93B4-4603-A539-25E4D6C51515}"
+        "ProductCode" = "8:{3B301E16-B2A1-49C0-8741-89C8DB5792B1}"
+        "PackageCode" = "8:{52F371C5-54EA-470E-8697-5B89B91C548E}"
         "UpgradeCode" = "8:{9A686460-3EE8-42C7-987B-2AC187ED8477}"
         "AspNetVersion" = "8:4.0.30319.0"
         "RestartWWWService" = "11:FALSE"
         "RemovePreviousVersions" = "11:TRUE"
         "DetectNewerInstalledVersion" = "11:TRUE"
         "InstallAllUsers" = "11:FALSE"
-        "ProductVersion" = "8:2.0.45"
+        "ProductVersion" = "8:2.0.50"
         "Manufacturer" = "8:MezeoFile"
         "ARPHELPTELEPHONE" = "8:"
         "ARPHELPLINK" = "8:"
