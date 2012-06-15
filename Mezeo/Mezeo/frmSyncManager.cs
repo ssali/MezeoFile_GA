@@ -588,28 +588,6 @@ namespace Mezeo
             UpdateUsageLabel();
         }
 
-        private void rbSyncOn_Click(object sender, EventArgs e)
-        {
-            if (!BasicInfo.AutoSync)
-            {
-                BasicInfo.AutoSync = true;
-
-                if (IsInIdleState())
-                    InitializeSync();     
-            }
-        }
-
-        private void rbSyncOff_Click(object sender, EventArgs e)
-        {
-            if (BasicInfo.AutoSync)
-            {
-                BasicInfo.AutoSync = false;
-
-                if (IsInIdleState())
-                    ShowSyncMessage();
-            }
-        }
-
         #endregion
 
         #region Downloader Events
@@ -759,15 +737,10 @@ namespace Mezeo
         private void LoadResources()
         {
             this.Text = AboutBox.AssemblyTitle; 
-            //this.lblFileSync.Text = LanguageTranslator.GetValue("SyncManagerFileSyncLabel");
-            //this.rbSyncOff.Text = LanguageTranslator.GetValue("SyncManagerOffButtonText");
-            //this.rbSyncOn.Text = LanguageTranslator.GetValue("SyncManagerOnButtonText");
             this.lblFolder.Text = LanguageTranslator.GetValue("SyncManagerFolderLabel");
             this.lblStatus.Text = LanguageTranslator.GetValue("SyncManagerStatusLabel");
             this.lblUsage.Text = LanguageTranslator.GetValue("SyncManagerUsageLabel");
 
-            // this.btnMoveFolder.Text = LanguageTranslator.GetValue("SyncManagerMoveFolderButtonText");
-            // Commeted above line as move folder functinality disable 
             this.btnSyncNow.Text = LanguageTranslator.GetValue("SyncManagerSyncNowButtonText");
             this.btnIssuesFound.Text = LanguageTranslator.GetValue("SyncManagerIssueFoundButtonText");
             this.lnkAbout.Text = LanguageTranslator.GetValue("SyncManagerAboutLinkText");
@@ -781,15 +754,6 @@ namespace Mezeo
             statusMessages[0] = LanguageTranslator.GetValue("SyncManagerAnalyseMessage1");
             statusMessages[1]= LanguageTranslator.GetValue("SyncManagerAnalyseMessage2");
             statusMessages[2] = LanguageTranslator.GetValue("SyncManagerAnalyseMessage3");
-
-            if (BasicInfo.AutoSync)
-            {
-                //rbSyncOn.Checked = true;
-            }
-            else
-            {
-                //rbSyncOff.Checked = true;
-            }
 
             if (cLoginDetails != null)
             {
@@ -2126,25 +2090,11 @@ namespace Mezeo
             cnotificationManager.HoverText = LanguageTranslator.GetValue("TrayAppOnlineText");
             cnotificationManager.NotifyIcon = Properties.Resources.MezeoVault;
 
-           // pnlFileSyncOnOff.Enabled = true;
-
-            if (BasicInfo.AutoSync)
-            {
-               // rbSyncOn.Checked = true;
-            }
-            else
-            {
-              //  rbSyncOff.Checked = true;
-            }
-
+      
             SetIsDisabledByConnection(false);
-            //btnMoveFolder.Enabled = true;
-            //Commeted above line as move folder functinality disable 
-            btnSyncNow.Enabled = true;
+              btnSyncNow.Enabled = true;
             if(lockObject != null)
                 lockObject.StopThread = false;
-            //lnkFolderPath.Enabled = false;
-            //LogWrapper.LogMessage("frmSyncManager - EnableSyncManager", "leave");
         }
         #endregion
 

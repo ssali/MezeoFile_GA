@@ -35,10 +35,6 @@
             this.lnkHelp = new System.Windows.Forms.LinkLabel();
             this.lnkAbout = new System.Windows.Forms.LinkLabel();
             this.panel1 = new System.Windows.Forms.Panel();
-            //this.lblFileSync = new System.Windows.Forms.Label();
-            //this.pnlFileSyncOnOff = new System.Windows.Forms.Panel();
-            //this.rbSyncOff = new System.Windows.Forms.RadioButton();
-            //this.rbSyncOn = new System.Windows.Forms.RadioButton();
             this.pictureBox1 = new System.Windows.Forms.PictureBox();
             this.tmrSwapStatusMessage = new System.Windows.Forms.Timer(this.components);
             this.eventLog1 = new System.Diagnostics.EventLog();
@@ -49,7 +45,6 @@
             this.bwUpdateUsage = new System.ComponentModel.BackgroundWorker();
             this.shapeContainer1 = new Microsoft.VisualBasic.PowerPacks.ShapeContainer();
             this.lineShape1 = new Microsoft.VisualBasic.PowerPacks.LineShape();
-           // this.btnMoveFolder = new System.Windows.Forms.Button();
             this.lnkFolderPath = new System.Windows.Forms.LinkLabel();
             this.lblFolder = new System.Windows.Forms.Label();
             this.lblUsageDetails = new System.Windows.Forms.Label();
@@ -64,7 +59,6 @@
             this.lblStatusL1 = new System.Windows.Forms.Label();
             this.imgStatus = new System.Windows.Forms.PictureBox();
             this.panel1.SuspendLayout();
-            //this.pnlFileSyncOnOff.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.eventLog1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.imgStatus)).BeginInit();
@@ -118,63 +112,12 @@
             // panel1
             // 
             this.panel1.BackgroundImage = global::Mezeo.Properties.Resources.patch_green;
-            //this.panel1.Controls.Add(this.lblFileSync);
-            //this.panel1.Controls.Add(this.pnlFileSyncOnOff);
             this.panel1.Controls.Add(this.pictureBox1);
             this.panel1.Dock = System.Windows.Forms.DockStyle.Top;
             this.panel1.Location = new System.Drawing.Point(0, 0);
             this.panel1.Name = "panel1";
             this.panel1.Size = new System.Drawing.Size(650, 62);
             this.panel1.TabIndex = 0;
-            // 
-            // lblFileSync
-            // 
-            //this.lblFileSync.AutoSize = true;
-            //this.lblFileSync.BackColor = System.Drawing.Color.Transparent;
-            //this.lblFileSync.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            //this.lblFileSync.Location = new System.Drawing.Point(459, 22);
-            //this.lblFileSync.Name = "lblFileSync";
-            //this.lblFileSync.Size = new System.Drawing.Size(63, 13);
-            //this.lblFileSync.TabIndex = 2;
-            //this.lblFileSync.Text = "File Sync:";
-            //// 
-            //// pnlFileSyncOnOff
-            //// 
-            //this.pnlFileSyncOnOff.BackColor = System.Drawing.Color.Transparent;
-            //this.pnlFileSyncOnOff.Controls.Add(this.rbSyncOff);
-            //this.pnlFileSyncOnOff.Controls.Add(this.rbSyncOn);
-            //this.pnlFileSyncOnOff.Location = new System.Drawing.Point(528, 15);
-            //this.pnlFileSyncOnOff.Name = "pnlFileSyncOnOff";
-            //this.pnlFileSyncOnOff.Size = new System.Drawing.Size(108, 26);
-            //this.pnlFileSyncOnOff.TabIndex = 1;
-            //// 
-            //// rbSyncOff
-            //// 
-            //this.rbSyncOff.Appearance = System.Windows.Forms.Appearance.Button;
-            //this.rbSyncOff.Dock = System.Windows.Forms.DockStyle.Left;
-            //this.rbSyncOff.Location = new System.Drawing.Point(53, 0);
-            //this.rbSyncOff.Name = "rbSyncOff";
-            //this.rbSyncOff.Size = new System.Drawing.Size(53, 26);
-            //this.rbSyncOff.TabIndex = 3;
-            //this.rbSyncOff.TabStop = true;
-            //this.rbSyncOff.Text = "Off";
-            //this.rbSyncOff.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
-            //this.rbSyncOff.UseVisualStyleBackColor = true;
-            //this.rbSyncOff.Click += new System.EventHandler(this.rbSyncOff_Click);
-            //// 
-            //// rbSyncOn
-            //// 
-            //this.rbSyncOn.Appearance = System.Windows.Forms.Appearance.Button;
-            //this.rbSyncOn.Dock = System.Windows.Forms.DockStyle.Left;
-            //this.rbSyncOn.Location = new System.Drawing.Point(0, 0);
-            //this.rbSyncOn.Name = "rbSyncOn";
-            //this.rbSyncOn.Size = new System.Drawing.Size(53, 26);
-            //this.rbSyncOn.TabIndex = 1;
-            //this.rbSyncOn.TabStop = true;
-            //this.rbSyncOn.Text = "On";
-            //this.rbSyncOn.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
-            //this.rbSyncOn.UseVisualStyleBackColor = true;
-            //this.rbSyncOn.Click += new System.EventHandler(this.rbSyncOn_Click);
             // 
             // pictureBox1
             // 
@@ -253,18 +196,6 @@
             this.lineShape1.Y1 = 109;
             this.lineShape1.Y2 = 109;
             // 
-            /* btnMoveFolder
-            //
-            this.btnMoveFolder.Location = new System.Drawing.Point(540, 136);
-            this.btnMoveFolder.Name = "btnMoveFolder";
-            this.btnMoveFolder.Size = new System.Drawing.Size(96, 23);
-            this.btnMoveFolder.TabIndex = 12;
-            this.btnMoveFolder.Text = "Move Folder";
-            this.btnMoveFolder.UseVisualStyleBackColor = true;
-            this.btnMoveFolder.Visible = false;
-            this.btnMoveFolder.Click += new System.EventHandler(this.btnMoveFolder_Click);
-            //
- 		   */
             // lnkFolderPath
             // 
             this.lnkFolderPath.AutoEllipsis = true;
@@ -403,7 +334,6 @@
             this.Controls.Add(this.imgStatus);
             this.Controls.Add(this.lblUsageDetails);
             this.Controls.Add(this.lblUsage);
-            //this.Controls.Add(this.btnMoveFolder);
             this.Controls.Add(this.lnkFolderPath);
             this.Controls.Add(this.lblFolder);
             this.Controls.Add(this.lnkAbout);
@@ -423,7 +353,6 @@
             this.Load += new System.EventHandler(this.frmSyncManager_Load);
             this.panel1.ResumeLayout(false);
             this.panel1.PerformLayout();
-            //this.pnlFileSyncOnOff.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.eventLog1)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.imgStatus)).EndInit();
@@ -436,10 +365,6 @@
 
         private System.Windows.Forms.Panel panel1;
         private System.Windows.Forms.PictureBox pictureBox1;
-        //private System.Windows.Forms.Panel pnlFileSyncOnOff;
-        //private System.Windows.Forms.RadioButton rbSyncOn;
-        //private System.Windows.Forms.Label lblFileSync;
-        //private LabelEllipsis lblStatusL3;
         private System.Windows.Forms.Label lblUserName;
         private System.Windows.Forms.LinkLabel lnkServerUrl;
         private System.Windows.Forms.LinkLabel lnkHelp;
@@ -451,8 +376,6 @@
         private System.ComponentModel.BackgroundWorker bwOfflineEvent;
         private System.ComponentModel.BackgroundWorker bwLocalEvents;
         private System.ComponentModel.BackgroundWorker bwUpdateUsage;
-        //private System.Windows.Forms.RadioButton rbSyncOff;
-       // private System.Windows.Forms.Button btnMoveFolder;
         private System.Windows.Forms.LinkLabel lnkFolderPath;
         private System.Windows.Forms.Label lblFolder;
         private Microsoft.VisualBasic.PowerPacks.ShapeContainer shapeContainer1;

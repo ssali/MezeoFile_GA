@@ -17,8 +17,8 @@ namespace Mezeo
 {
     class DbHandler
     {
-        //private string ConnectionString = "Data Source=DemoT.s3db;Version=3;New=false;Compress=True;";
-        private const string DATABASE_NAME = "mezeoDb.s3db";
+        //private const string DATABASE_NAME = "mezeoDb.s3db";
+        private const string DATABASE_NAME = "SyncDb.s3db";
         public const string TABLE_NAME = "FileStructInfo";
 
         public const string KEY = "key";
@@ -99,7 +99,6 @@ namespace Mezeo
                 createNew = true;
             }
 
-            //sqlConnection = new SQLiteConnection("Data Source=" + dbPath + DATABASE_NAME + ";Version=3;New=" + createNew + ";Compress=True;DateTimeFormat=Ticks;");
             sqlConnection = new SQLiteConnection("Data Source=" + dbPath + DATABASE_NAME + ";Version=3;New=" + createNew + ";Compress=True;");
 
             sqlConnection.Open();

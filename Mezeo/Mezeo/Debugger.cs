@@ -8,7 +8,7 @@ namespace Mezeo
 {
     public class Debugger
     {
-        private static FileStream debugFile =null;// new FileStream(@"C:\MezeoFileLogs.txt", FileMode.Append, FileAccess.Write);
+        private static FileStream debugFile =null;
 
         public static Debugger calssInstance = null;
 

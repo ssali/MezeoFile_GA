@@ -243,10 +243,8 @@ namespace Mezeo
                         if (!bRet)
                         {
                             LogWrapper.LogMessage("FileDownloader - consume", "bRet FALSE, writing to cFileCloud.AppEventViewer");
-                            string Description = "";//AboutBox.AssemblyTitle;
-
+                            string Description = "";
                             Description += LanguageTranslator.GetValue("ErrorBlurbDownload1");
-                           // Description += AboutBox.AssemblyProduct;
                             Description += LanguageTranslator.GetValue("ErrorBlurbDownload2");
                             Description += LanguageTranslator.GetValue("ErrorBlurbDownload3");
                            // cFileCloud.AppEventViewer(AboutBox.AssemblyTitle, Description, 3);
