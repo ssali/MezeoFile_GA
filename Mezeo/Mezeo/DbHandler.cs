@@ -164,49 +164,56 @@ namespace Mezeo
             //    }
             //}
 
-            // Create the events table if it doesn't already exist.
-            string queryEvents = "CREATE TABLE IF NOT EXISTS " + EVENT_TABLE_NAME + " (" +
-                            EVENT_INDEX + " INTEGER PRIMARY KEY, " +
-                            EVENT_ORIGIN + " TEXT, " +
-                            EVENT_LOCAL_FILE_NAME + " TEXT, " +
-                            EVENT_LOCAL_OLD_FILE_NAME + " TEXT, " +
-                            EVENT_LOCAL_FULL_PATH + " TEXT, " +
-                            EVENT_LOCAL_OLD_FULL_PATH + " TEXT, " +
-                            EVENT_LOCAL_TYPE + " TEXT, " +
-                            EVENT_LOCAL_TIMESTAMP + " INTEGER, " +
-                            EVENT_LOCAL_IS_DIRECTORY + " BOOL, " +
-                            EVENT_LOCAL_IS_FILE + " BOOL, " +
-                            EVENT_LOCAL_FILE_ATTRIBUTES + " INTEGER, " +
-                            EVENT_NQ_SIZE + " INTEGER, " +
-                            EVENT_NQ_DOMAIN_URI + " TEXT, " +
-                            EVENT_NQ_EVENT + " TEXT, " +
-                            EVENT_NQ_RESULT + " TEXT, " +
-                            EVENT_NQ_TIME + " TEXT, " +
-                            EVENT_NQ_USER + " TEXT, " +
-                            EVENT_NQ_HASH + " TEXT, " +
-                            EVENT_NQ_EXPORTED_PATH + " TEXT, " +
-                            EVENT_NQ_ID + " TEXT, " +
-                            EVENT_NQ_NAME + " TEXT, " +
-                            EVENT_NQ_OBJ_TYPE + " TEXT, " +
-                            EVENT_NQ_PARENT_ID + " TEXT, " +
-                            EVENT_NQ_PARENT_URI + " TEXT)";
+            try
+            {
+                // Create the events table if it doesn't already exist.
+                string queryEvents = "CREATE TABLE IF NOT EXISTS " + EVENT_TABLE_NAME + " (" +
+                                EVENT_INDEX + " INTEGER PRIMARY KEY, " +
+                                EVENT_ORIGIN + " TEXT, " +
+                                EVENT_LOCAL_FILE_NAME + " TEXT, " +
+                                EVENT_LOCAL_OLD_FILE_NAME + " TEXT, " +
+                                EVENT_LOCAL_FULL_PATH + " TEXT, " +
+                                EVENT_LOCAL_OLD_FULL_PATH + " TEXT, " +
+                                EVENT_LOCAL_TYPE + " TEXT, " +
+                                EVENT_LOCAL_TIMESTAMP + " INTEGER, " +
+                                EVENT_LOCAL_IS_DIRECTORY + " BOOL, " +
+                                EVENT_LOCAL_IS_FILE + " BOOL, " +
+                                EVENT_LOCAL_FILE_ATTRIBUTES + " INTEGER, " +
+                                EVENT_NQ_SIZE + " INTEGER, " +
+                                EVENT_NQ_DOMAIN_URI + " TEXT, " +
+                                EVENT_NQ_EVENT + " TEXT, " +
+                                EVENT_NQ_RESULT + " TEXT, " +
+                                EVENT_NQ_TIME + " TEXT, " +
+                                EVENT_NQ_USER + " TEXT, " +
+                                EVENT_NQ_HASH + " TEXT, " +
+                                EVENT_NQ_EXPORTED_PATH + " TEXT, " +
+                                EVENT_NQ_ID + " TEXT, " +
+                                EVENT_NQ_NAME + " TEXT, " +
+                                EVENT_NQ_OBJ_TYPE + " TEXT, " +
+                                EVENT_NQ_PARENT_ID + " TEXT, " +
+                                EVENT_NQ_PARENT_URI + " TEXT)";
 
-            ExecuteNonQuery(queryEvents);
+                ExecuteNonQuery(queryEvents);
 
-            // Since the database schema has changed, we need to get a new connection.
-            sqlConnection.Close();
-            OpenConnection();
+                // Since the database schema has changed, we need to get a new connection.
+                sqlConnection.Close();
+                OpenConnection();
 
-            // Create the events table if it doesn't already exist.
-            string queryEventInfo = "CREATE TABLE IF NOT EXISTS " + EVENT_QUEUE_INFO_TABLE_NAME + " (" +
-                            EVENT_QUEUE_INFO_NAME + " TEXT, " +
-                            EVENT_QUEUE_INFO_JOB_COUNT + " INTEGER);";
+                // Create the events table if it doesn't already exist.
+                string queryEventInfo = "CREATE TABLE IF NOT EXISTS " + EVENT_QUEUE_INFO_TABLE_NAME + " (" +
+                                EVENT_QUEUE_INFO_NAME + " TEXT, " +
+                                EVENT_QUEUE_INFO_JOB_COUNT + " INTEGER);";
 
-            ExecuteNonQuery(queryEventInfo);
+                ExecuteNonQuery(queryEventInfo);
 
-            // Since the database schema has changed, we need to get a new connection.
-            sqlConnection.Close();
-            OpenConnection();
+                // Since the database schema has changed, we need to get a new connection.
+                sqlConnection.Close();
+                OpenConnection();
+            }
+            catch (Exception ex)
+            {
+                LogWrapper.LogMessage("DbHandler - CreateEventsTable", "Caught exception: " + ex.Message);
+            }
         }
 
         public void CreateIssueTable()
@@ -214,26 +221,33 @@ namespace Mezeo
             if (null == sqlConnection)
                 OpenConnection();
 
-            // Create the conflict issues table if it doesn't already exist.
-            string queryConflicts = "CREATE TABLE IF NOT EXISTS " + CONFLICT_TABLE_NAME + " (" +
-                            CONFLICT_INDEX + " INTEGER PRIMARY KEY, " +
-                            CONFLICT_LOCAL_FILE_PATH + " TEXT, " +
-                            CONFLICT_ISSUE_TITLE + " TEXT, " +
-                            CONFLICT_ISSUE_DESC + " TEXT, " +
-                            CONFLICT_TYPE + " TEXT, " +
-                            CONFLICT_LOCAL_DATE + " INTEGER, " +
-                            CONFLICT_LOCAL_SIZE + " TEXT, " +
-                            CONFLICT_SERVER_FILE_INFO + " TEXT, " +
-                            CONFLICT_SERVER_DATE + " INTEGER, " +
-                            CONFLICT_SERVER_SIZE + " TEXT, " +
-                            CONFLICT_TIME_STAMP + " INTEGER, " +
-                            CONFLICT_URI + " TEXT);";
+            try
+            {
+                // Create the conflict issues table if it doesn't already exist.
+                string queryConflicts = "CREATE TABLE IF NOT EXISTS " + CONFLICT_TABLE_NAME + " (" +
+                                CONFLICT_INDEX + " INTEGER PRIMARY KEY, " +
+                                CONFLICT_LOCAL_FILE_PATH + " TEXT, " +
+                                CONFLICT_ISSUE_TITLE + " TEXT, " +
+                                CONFLICT_ISSUE_DESC + " TEXT, " +
+                                CONFLICT_TYPE + " TEXT, " +
+                                CONFLICT_LOCAL_DATE + " INTEGER, " +
+                                CONFLICT_LOCAL_SIZE + " TEXT, " +
+                                CONFLICT_SERVER_FILE_INFO + " TEXT, " +
+                                CONFLICT_SERVER_DATE + " INTEGER, " +
+                                CONFLICT_SERVER_SIZE + " TEXT, " +
+                                CONFLICT_TIME_STAMP + " INTEGER, " +
+                                CONFLICT_URI + " TEXT);";
 
-            ExecuteNonQuery(queryConflicts);
+                ExecuteNonQuery(queryConflicts);
 
-            // Since the database schema has changed, we need to get a new connection.
-            sqlConnection.Close();
-            OpenConnection();
+                // Since the database schema has changed, we need to get a new connection.
+                sqlConnection.Close();
+                OpenConnection();
+            }
+            catch (Exception ex)
+            {
+                LogWrapper.LogMessage("DbHandler - CreateEventsTable", "Caught exception: " + ex.Message);
+            }
         }
 
         public int StoreConflict(IssueFound issue)
