@@ -978,6 +978,11 @@ namespace Mezeo
             }
             else
             {
+                if (false == EventQueue.QueueNotEmpty())
+                {
+                    PopulateNQEvents();
+                }
+
                 if (EventQueue.QueueNotEmpty())
                 {
                     ShowNextSyncLabel(false);
@@ -986,7 +991,7 @@ namespace Mezeo
                 }
                 else
                 {
-                    UpdateNQ();
+                    //UpdateNQ();
                 }
             }
             //LogWrapper.LogMessage("frmSyncManager - SyncNow", "leave");
@@ -998,6 +1003,11 @@ namespace Mezeo
             // See if there are any offline events since the last time we ran.
             offlineWatcher.PrepareStructureList();
 
+            if (false == EventQueue.QueueNotEmpty())
+            {
+                PopulateNQEvents();
+            }
+
             if (EventQueue.QueueNotEmpty())
             {
                 if (!bwOfflineEvent.IsBusy)
@@ -1005,7 +1015,7 @@ namespace Mezeo
             }
             else
             {
-                UpdateNQ();
+                //UpdateNQ();
             }
             //LogWrapper.LogMessage("frmSyncManager - ProcessOfflineEvents", "leave");
         }
@@ -1416,7 +1426,6 @@ namespace Mezeo
             }
             else
             {
-           
                 SendToRecycleBin(strPath, true);
                 //File.Delete(strPath);
                 dbHandler.Delete(DbHandler.TABLE_NAME, DbHandler.KEY, strKey);
@@ -4764,6 +4773,20 @@ namespace Mezeo
             int nStatusCode = 0;
             NQDetails[] pNQDetails = null;
 
+            if (IsSyncPaused())
+                return false;
+
+            lblStatusL1.Text = LanguageTranslator.GetValue("SyncManagerCheckingServer");
+            lblStatusL3.Text = "";
+
+            NQLengthResult nqLengthRes = cMezeoFileCloud.NQGetLength(BasicInfo.ServiceUrl + cLoginDetails.szNQParentUri, BasicInfo.GetQueueName(), ref nStatusCode);
+            if (nStatusCode == ResponseCode.LOGINFAILED1 || nStatusCode == ResponseCode.LOGINFAILED2)
+            {
+                this.Hide();
+                frmParent.ShowLoginAgainFromSyncMgr();
+                return false;
+            }
+
             // Grab some events from the notification queue if any exist.
             pNQDetails = cMezeoFileCloud.NQGetData(BasicInfo.ServiceUrl + cLoginDetails.szNQParentUri, BasicInfo.GetQueueName(), 10, ref nStatusCode);
             if (nStatusCode == ResponseCode.NQGETDATA)
@@ -4821,6 +4844,9 @@ namespace Mezeo
                 }
                 else if (nqEvent != null)
                 {
+                    ShowOtherProgressBar(nqEvent.StrObjectName);
+                    showProgress();
+
                     // Look for an NQ event.
                     nStatus = UpdateFromNQ(nqEvent);
                     if (nStatus == ResponseCode.LOGINFAILED1 || nStatus == ResponseCode.LOGINFAILED2)
@@ -4877,8 +4903,8 @@ namespace Mezeo
             {
                 ShowLocalEventsCompletedMessage();
 
-                if (!IsEventCanceled())
-                    UpdateNQ();
+                //if (!IsEventCanceled())
+                //    UpdateNQ();
             }
             else if ((int)e.Result == USER_CANCELLED)
             {
@@ -5021,8 +5047,8 @@ namespace Mezeo
                 {
                     SetIsCalledByNextSyncTmr(false);
 
-                    if (!IsEventCanceled())
-                        UpdateNQ();
+                    //if (!IsEventCanceled())
+                    //    UpdateNQ();
                 }
             }
             else if ((int)e.Result == USER_CANCELLED)
