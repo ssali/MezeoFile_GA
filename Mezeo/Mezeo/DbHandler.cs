@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using MezeoFileSupport;
+using System.Threading;
 
 
 #if MEZEO32
@@ -83,16 +84,13 @@ namespace Mezeo
         public const string CONFLICT_TIME_STAMP = "Time";
         public const string CONFLICT_URI = "Uri";
 
-        private SQLiteConnection sqlConnection;
-        private SQLiteCommand sqlCommand;
-        private SQLiteDataReader sqlDataReader;
-
-        public bool OpenConnection()
+        public bool CreatedNewDatabase()
         {
+            SQLiteConnection sqlConnection;
             string dbPath = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData) + "\\" + AboutBox.AssemblyTitle + "\\";
-            
+
             bool createNew = false;
-            
+
             if (!System.IO.File.Exists(dbPath + DATABASE_NAME))
             {
                 System.IO.Directory.CreateDirectory(dbPath);
@@ -111,13 +109,57 @@ namespace Mezeo
             return createNew;
         }
 
+        public SQLiteConnection OpenConnection()
+        {
+            SQLiteConnection sqlConnection = null;
+            string dbPath = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData) + "\\" + AboutBox.AssemblyTitle + "\\";
+            
+            bool createNew = false;
+            
+            if (!System.IO.File.Exists(dbPath + DATABASE_NAME))
+            {
+                System.IO.Directory.CreateDirectory(dbPath);
+                createNew = true;
+            }
+
+            int nRetries = 0;
+            while (nRetries < 3)
+            {
+                try
+                {
+                    sqlConnection = new SQLiteConnection("Data Source=" + dbPath + DATABASE_NAME + ";Version=3;New=" + createNew + ";Compress=True;");
+                    sqlConnection.Open();
+                    // If we got a successfull open, then we're done.
+                    break;
+                }
+                catch (Exception ex)
+                {
+                    Thread.Sleep(50);
+                    nRetries++;
+                    sqlConnection = null;
+                    LogWrapper.LogMessage("DbHandler - OpenConnection", "Caught exception: " + ex.Message);
+                }
+            }
+
+            if (nRetries < 4)
+            {
+                if (createNew)
+                {
+                    CreateTables();
+                }
+            }
+
+            return sqlConnection;
+        }
+
         public void DeleteDb()
         {
             string dbPath = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData) + "\\" + AboutBox.AssemblyTitle + "\\";
 
-            if(sqlConnection != null)
-                sqlConnection.Close();
-            
+            // Make sure all of the connections are closed.
+            //if(sqlConnection != null)
+            //    sqlConnection.Close();
+
             if (System.IO.File.Exists(dbPath + DATABASE_NAME))
             {
                 System.IO.File.Delete(dbPath + DATABASE_NAME);
@@ -150,8 +192,6 @@ namespace Mezeo
         public void CreateEventsTable()
         {
             // See if the table already exists.
-            if (null == sqlConnection)
-                OpenConnection();
             //if (null != sqlConnection)
             //{
             //    string query = "SELECT count(*) FROM sqlite_master WHERE type='table' AND name='" + EVENT_TABLE_NAME + "';";
@@ -196,8 +236,8 @@ namespace Mezeo
                 ExecuteNonQuery(queryEvents);
 
                 // Since the database schema has changed, we need to get a new connection.
-                sqlConnection.Close();
-                OpenConnection();
+                //sqlConnection.Close();
+                //OpenConnection();
 
                 // Create the events table if it doesn't already exist.
                 string queryEventInfo = "CREATE TABLE IF NOT EXISTS " + EVENT_QUEUE_INFO_TABLE_NAME + " (" +
@@ -207,8 +247,8 @@ namespace Mezeo
                 ExecuteNonQuery(queryEventInfo);
 
                 // Since the database schema has changed, we need to get a new connection.
-                sqlConnection.Close();
-                OpenConnection();
+                //sqlConnection.Close();
+                //OpenConnection();
             }
             catch (Exception ex)
             {
@@ -218,9 +258,6 @@ namespace Mezeo
 
         public void CreateIssueTable()
         {
-            if (null == sqlConnection)
-                OpenConnection();
-
             try
             {
                 // Create the conflict issues table if it doesn't already exist.
@@ -241,8 +278,8 @@ namespace Mezeo
                 ExecuteNonQuery(queryConflicts);
 
                 // Since the database schema has changed, we need to get a new connection.
-                sqlConnection.Close();
-                OpenConnection();
+                //sqlConnection.Close();
+                //OpenConnection();
             }
             catch (Exception ex)
             {
@@ -277,10 +314,13 @@ namespace Mezeo
                             issue.ConflictTimeStamp.Ticks + "','" +
                             issue.ServerFileUri + "');";
 
-            sqlCommand = new SQLiteCommand(query, sqlConnection);
+            SQLiteConnection sqlConnection = OpenConnection();
+            SQLiteCommand sqlCommand = new SQLiteCommand(query, sqlConnection);
+
             LogWrapper.LogMessage("DBHandler - StoreConflict", "Running query: " + query);
 
             result = sqlCommand.ExecuteNonQuery();
+            sqlConnection.Close();
 
             // A result of 1 is success (# of rows affected and we should
             // only have 1), not the index of the newly created entry.
@@ -317,8 +357,10 @@ namespace Mezeo
             string query = "SELECT * FROM " + CONFLICT_TABLE_NAME + ";";
             LogWrapper.LogMessage("DBHandler - GetConflicts", "Running query: " + query);
             List<IssueFound> issues = new List<IssueFound>();
+            SQLiteDataReader sqlDataReader = null;
 
-            sqlCommand = new SQLiteCommand();
+            SQLiteConnection sqlConnection = OpenConnection();
+            SQLiteCommand sqlCommand = new SQLiteCommand();
             sqlCommand.CommandText = query;
             sqlCommand.Connection = sqlConnection;
             try
@@ -338,6 +380,7 @@ namespace Mezeo
 
             if (null != sqlDataReader)
                 sqlDataReader.Close();
+            sqlConnection.Close();
 
             return issues;
         }
@@ -346,23 +389,24 @@ namespace Mezeo
         {
             int result = -1;
             string query = "DELETE FROM " + CONFLICT_TABLE_NAME + " WHERE EventIndex=" + eventID + ";";
-            sqlCommand = new SQLiteCommand(query, sqlConnection);
+            SQLiteConnection sqlConnection = OpenConnection();
+            SQLiteCommand sqlCommand = new SQLiteCommand(query, sqlConnection);
             LogWrapper.LogMessage("DBHandler - DeleteConflict", "Running query: " + query);
 
             result = sqlCommand.ExecuteNonQuery();
+            sqlConnection.Close();
 
             // A result of 1 is success (# of rows affected and we should
             // only have 1), not the index of the newly created entry.
             return result;
         }
 
-        public SQLiteDataReader ExecuteQuery(string query)
-        {
-            sqlCommand = new SQLiteCommand(query, sqlConnection);
-            sqlDataReader = sqlCommand.ExecuteReader();
-
-            return sqlDataReader;
-        }
+        //public SQLiteDataReader ExecuteQuery(string query)
+        //{
+        //    SQLiteConnection sqlConnection = OpenConnection();
+        //    SQLiteCommand sqlCommand = new SQLiteCommand(query, sqlConnection);
+        //    return sqlCommand.ExecuteReader();
+        //}
 
         public bool ExecuteNonQuery(string query)
         {
@@ -371,8 +415,10 @@ namespace Mezeo
                 //query=query.Replace("\\","/");
                 //query = query.Replace("/", "//");
                 //query = query.Replace(":", "");
-                sqlCommand = new SQLiteCommand(query, sqlConnection);
+                SQLiteConnection sqlConnection = OpenConnection();
+                SQLiteCommand sqlCommand = new SQLiteCommand(query, sqlConnection);
                 sqlCommand.ExecuteNonQuery();
+                sqlConnection.Close();
                 return true;
             }
             catch (Exception ex)
@@ -402,7 +448,8 @@ namespace Mezeo
                                 "@Type , " +
                                 "@ParentDir )";
 
-                sqlCommand = new SQLiteCommand(query, sqlConnection);
+                SQLiteConnection sqlConnection = OpenConnection();
+                SQLiteCommand sqlCommand = new SQLiteCommand(query, sqlConnection);
 
                 sqlCommand.Parameters.Add(new SQLiteParameter("@Key",System.Data.DbType.String));
                 sqlCommand.Parameters.Add(new SQLiteParameter("@ModifiedDate",System.Data.DbType.DateTime));
@@ -435,6 +482,7 @@ namespace Mezeo
                 sqlCommand.Parameters["@ETag"].Value = fileFolderInfo.ETag;
 
                 sqlCommand.ExecuteNonQuery();
+                sqlConnection.Close();
                 return true;
             }
             catch (Exception ex)
@@ -448,41 +496,46 @@ namespace Mezeo
         {
             int result = -1;
 
-            // Make sure we have a connection.
-            if (null == sqlConnection)
-                OpenConnection();
-
             string query = "DELETE FROM " + EVENT_TABLE_NAME + " WHERE " + EVENT_ORIGIN + "='L';";
-            sqlCommand = new SQLiteCommand(query, sqlConnection);
+            SQLiteConnection sqlConnection = OpenConnection();
+            SQLiteCommand sqlCommand = new SQLiteCommand(query, sqlConnection);
             LogWrapper.LogMessage("DBHandler - ClearLocalEvents", "Running query: " + query);
             result = sqlCommand.ExecuteNonQuery();
+            sqlConnection.Close();
 
             string query2 = "DELETE FROM " + EVENT_QUEUE_INFO_TABLE_NAME + ";";
-            sqlCommand = new SQLiteCommand(query2, sqlConnection);
+            SQLiteConnection sqlConnection2 = OpenConnection();
+            SQLiteCommand sqlCommand2 = new SQLiteCommand(query2, sqlConnection2);
             LogWrapper.LogMessage("DBHandler - ClearLocalEvents", "Running query: " + query2);
-            result = sqlCommand.ExecuteNonQuery();
+            result = sqlCommand2.ExecuteNonQuery();
+            sqlConnection2.Close();
 
             string query3 = "INSERT INTO " + EVENT_QUEUE_INFO_TABLE_NAME + " (" + EVENT_QUEUE_INFO_NAME + ", " + EVENT_QUEUE_INFO_JOB_COUNT + ") VALUES ('" + EVENT_TABLE_NAME + "', 0);";
-            sqlCommand = new SQLiteCommand(query3, sqlConnection);
+            SQLiteConnection sqlConnection3 = OpenConnection();
+            SQLiteCommand sqlCommand3 = new SQLiteCommand(query3, sqlConnection3);
             LogWrapper.LogMessage("DBHandler - ClearLocalEvents", "Running query: " + query3);
-            result = sqlCommand.ExecuteNonQuery();
+            result = sqlCommand3.ExecuteNonQuery();
+            sqlConnection3.Close();
         }
 
         public Int64 GetJobCount()
         {
             Int64 jobCount = 0;
             string query = "SELECT " + EVENT_QUEUE_INFO_JOB_COUNT + " FROM " + EVENT_QUEUE_INFO_TABLE_NAME + " WHERE " + EVENT_QUEUE_INFO_NAME + "='" + EVENT_TABLE_NAME + "';";
+            SQLiteConnection sqlConnection = OpenConnection();
+            SQLiteCommand sqlCommand = new SQLiteCommand(query, sqlConnection);
 
-            sqlCommand = new SQLiteCommand();
-            sqlCommand.CommandText = query;
-            sqlCommand.Connection = sqlConnection;
+            //sqlCommand.CommandText = query;
+            //sqlCommand.Connection = sqlConnection;
             try
             {
-                sqlDataReader = sqlCommand.ExecuteReader();
+                SQLiteDataReader sqlDataReader = sqlCommand.ExecuteReader();
                 while (sqlDataReader.Read())
                 {
                     jobCount = (Int64)sqlDataReader[EVENT_QUEUE_INFO_JOB_COUNT];
                 }
+                sqlDataReader.Close();
+                sqlConnection.Close();
             }
             catch (Exception ex)
             {
@@ -496,9 +549,11 @@ namespace Mezeo
         {
             int result = -1;
             string query = "UPDATE " + EVENT_QUEUE_INFO_TABLE_NAME + " SET " + EVENT_QUEUE_INFO_JOB_COUNT + " = (SELECT " + EVENT_QUEUE_INFO_JOB_COUNT + "+1 FROM " + EVENT_QUEUE_INFO_TABLE_NAME + " WHERE " + EVENT_QUEUE_INFO_NAME + "='" + EVENT_TABLE_NAME + "') WHERE " + EVENT_QUEUE_INFO_NAME + "='" + EVENT_TABLE_NAME + "';";
-            sqlCommand = new SQLiteCommand(query, sqlConnection);
+            SQLiteConnection sqlConnection = OpenConnection();
+            SQLiteCommand sqlCommand = new SQLiteCommand(query, sqlConnection);
             LogWrapper.LogMessage("DBHandler - IncrementJobCount", "Running query: " + query);
             result = sqlCommand.ExecuteNonQuery();
+            sqlConnection.Close();
         }
 
         public void ResetJobCount()
@@ -506,29 +561,35 @@ namespace Mezeo
             // See how many jobs are in the queue.
             Int64 jobCount = 0;
             string query = "SELECT COUNT(*) AS JobCount FROM " + EVENT_TABLE_NAME + ";";
+            SQLiteConnection sqlConnection = OpenConnection();
+            SQLiteCommand sqlCommand = new SQLiteCommand(query, sqlConnection);
 
-            sqlCommand = new SQLiteCommand();
-            sqlCommand.CommandText = query;
-            sqlCommand.Connection = sqlConnection;
+            //sqlCommand.CommandText = query;
+            //sqlCommand.Connection = sqlConnection;
             try
             {
-                sqlDataReader = sqlCommand.ExecuteReader();
+                SQLiteDataReader sqlDataReader = sqlCommand.ExecuteReader();
                 while (sqlDataReader.Read())
                 {
                     jobCount = (Int64)sqlDataReader["JobCount"];
                 }
+                sqlDataReader.Close();
             }
             catch (Exception ex)
             {
                 LogWrapper.LogMessage("DbHandler - GetJobCount", "Caught exception: " + ex.Message);
             }
+            sqlConnection.Close();
 
             string query2 = "UPDATE " + EVENT_QUEUE_INFO_TABLE_NAME + " SET " + EVENT_QUEUE_INFO_JOB_COUNT + " = " + jobCount + " WHERE " + EVENT_QUEUE_INFO_NAME + "='" + EVENT_TABLE_NAME + "';";
-            sqlCommand = new SQLiteCommand(query2, sqlConnection);
+            SQLiteConnection sqlConnection2 = OpenConnection();
+            SQLiteCommand sqlCommand2 = new SQLiteCommand(query2, sqlConnection2);
+
             LogWrapper.LogMessage("DBHandler - ResetJobCount", "Running query: " + query2);
             try
             {
-                sqlCommand.ExecuteNonQuery();
+                sqlCommand2.ExecuteNonQuery();
+                sqlConnection2.Close();
             }
             catch (Exception ex)
             {
@@ -565,10 +626,12 @@ namespace Mezeo
                             newEvent.IsFile + "','" +
                             (long)newEvent.Attributes + "');";
 
-            sqlCommand = new SQLiteCommand(query, sqlConnection);
+            SQLiteConnection sqlConnection = OpenConnection();
+            SQLiteCommand sqlCommand = new SQLiteCommand(query, sqlConnection);
             LogWrapper.LogMessage("DBHandler - AddEvent", "Running query: " + query);
 
             result = sqlCommand.ExecuteNonQuery();
+            sqlConnection.Close();
 
             // Increment the job count.
             if (0 < result)
@@ -611,10 +674,12 @@ namespace Mezeo
                             nqEvent.StrParentID + "','" +
                             nqEvent.StrParentUri + "');";
 
-            sqlCommand = new SQLiteCommand(query, sqlConnection);
+            SQLiteConnection sqlConnection = OpenConnection();
+            SQLiteCommand sqlCommand = new SQLiteCommand(query, sqlConnection);
             LogWrapper.LogMessage("DBHandler - AddNQEvent", "Running query: " + query);
 
             result = sqlCommand.ExecuteNonQuery();
+            sqlConnection.Close();
 
             // Increment the job count.
             if (0 < result)
@@ -629,10 +694,12 @@ namespace Mezeo
         {
             int result = -1;
             string query = "DELETE FROM " + EVENT_TABLE_NAME + " WHERE EventIndex=" + eventID + ";";
-            sqlCommand = new SQLiteCommand(query, sqlConnection);
+            SQLiteConnection sqlConnection = OpenConnection();
+            SQLiteCommand sqlCommand = new SQLiteCommand(query, sqlConnection);
             LogWrapper.LogMessage("DBHandler - DeleteEvent", "Running query: " + query);
 
             result = sqlCommand.ExecuteNonQuery();
+            sqlConnection.Close();
 
             // A result of 1 is success (# of rows affected and we should
             // only have 1), not the index of the newly created entry.
@@ -696,9 +763,12 @@ namespace Mezeo
             LogWrapper.LogMessage("DBHandler - GetLocalEvent", "Running query: " + query);
             LocalEvents item = null;
 
-            sqlCommand = new SQLiteCommand();
-            sqlCommand.CommandText = query;
-            sqlCommand.Connection = sqlConnection;
+            SQLiteConnection sqlConnection = OpenConnection();
+            SQLiteCommand sqlCommand = new SQLiteCommand(query, sqlConnection);
+            SQLiteDataReader sqlDataReader = null;
+            //sqlCommand = new SQLiteCommand();
+            //sqlCommand.CommandText = query;
+            //sqlCommand.Connection = sqlConnection;
             try
             {
                 sqlDataReader = sqlCommand.ExecuteReader();
@@ -716,6 +786,7 @@ namespace Mezeo
 
             if (null != sqlDataReader)
                 sqlDataReader.Close();
+            sqlConnection.Close();
 
             return item;
         }
@@ -726,9 +797,11 @@ namespace Mezeo
             LogWrapper.LogMessage("DBHandler - GetNQEvent", "Running query: " + query);
             NQDetails item = null;
 
-            sqlCommand = new SQLiteCommand();
-            sqlCommand.CommandText = query;
-            sqlCommand.Connection = sqlConnection;
+            SQLiteConnection sqlConnection = OpenConnection();
+            SQLiteCommand sqlCommand = new SQLiteCommand(query, sqlConnection);
+            SQLiteDataReader sqlDataReader = null;
+            //sqlCommand.CommandText = query;
+            //sqlCommand.Connection = sqlConnection;
             try
             {
                 sqlDataReader = sqlCommand.ExecuteReader();
@@ -746,6 +819,7 @@ namespace Mezeo
 
             if (null != sqlDataReader)
                 sqlDataReader.Close();
+            sqlConnection.Close();
 
             return item;
         }
@@ -755,12 +829,10 @@ namespace Mezeo
             string query = "update " + tableName + " set " + newValues + " where " + whereCondition;
             int result = -1;
 
-            sqlCommand = new SQLiteCommand(query, sqlConnection);
-
-            //sqlCommand.Parameters.Add("@NewValues", newValues);
-            //sqlCommand.Parameters.Add("@WhereCondition", whereCondition);
-
+            SQLiteConnection sqlConnection = OpenConnection();
+            SQLiteCommand sqlCommand = new SQLiteCommand(query, sqlConnection);
             result = sqlCommand.ExecuteNonQuery();
+            sqlConnection.Close();
 
             return result;
         }
@@ -768,11 +840,9 @@ namespace Mezeo
         public int Update(string tableName, string fieldName, string newValues, string whereFields,string whereValues)
         {
             int result = -1;
-            string query = "";
-
-            sqlCommand = new SQLiteCommand();
-
-            query = "update " + tableName + " set " + fieldName + "=@newValue where " + whereFields + "=@whereValue";
+            string query = "update " + tableName + " set " + fieldName + "=@newValue where " + whereFields + "=@whereValue";
+            SQLiteConnection sqlConnection = OpenConnection();
+            SQLiteCommand sqlCommand = new SQLiteCommand(query, sqlConnection);
 
             sqlCommand.Parameters.Add("@newValue" , System.Data.DbType.String);
             sqlCommand.Parameters["@newValue" ].Value = newValues;
@@ -780,10 +850,11 @@ namespace Mezeo
             sqlCommand.Parameters.Add("@whereValue", System.Data.DbType.String);
             sqlCommand.Parameters["@whereValue"].Value = whereValues;
             
-            sqlCommand.CommandText = query;
-            sqlCommand.Connection = sqlConnection;
+            //sqlCommand.CommandText = query;
+            //sqlCommand.Connection = sqlConnection;
 
             result = sqlCommand.ExecuteNonQuery();
+            sqlConnection.Close();
 
             return result;
         }
@@ -791,11 +862,9 @@ namespace Mezeo
         public int Update(string tableName, string fieldName, bool newValues, string whereFields, string whereValues)
         {
             int result = -1;
-            string query = "";
-
-            sqlCommand = new SQLiteCommand();
-
-            query = "update " + tableName + " set " + fieldName + "=@newValue where " + whereFields + "=@whereValue";
+            string query = "update " + tableName + " set " + fieldName + "=@newValue where " + whereFields + "=@whereValue";
+            SQLiteConnection sqlConnection = OpenConnection();
+            SQLiteCommand sqlCommand = new SQLiteCommand(query, sqlConnection);
 
             sqlCommand.Parameters.Add("@newValue", System.Data.DbType.Boolean);
             sqlCommand.Parameters["@newValue"].Value = newValues;
@@ -803,10 +872,11 @@ namespace Mezeo
             sqlCommand.Parameters.Add("@whereValue", System.Data.DbType.String);
             sqlCommand.Parameters["@whereValue"].Value = whereValues;
 
-            sqlCommand.CommandText = query;
-            sqlCommand.Connection = sqlConnection;
+            //sqlCommand.CommandText = query;
+            //sqlCommand.Connection = sqlConnection;
 
             result = sqlCommand.ExecuteNonQuery();
+            sqlConnection.Close();
 
             return result;
         }
@@ -816,12 +886,14 @@ namespace Mezeo
             string query = "delete from " + tableName + " where " + wherefield + "=@whereValue";
             int result = -1;
 
-            sqlCommand = new SQLiteCommand(query, sqlConnection);
+            SQLiteConnection sqlConnection = OpenConnection();
+            SQLiteCommand sqlCommand = new SQLiteCommand(query, sqlConnection);
             //sqlCommand.Parameters.Add("@WhereCondition", whereCondition);
             sqlCommand.Parameters.Add("@whereValue", System.Data.DbType.String);
             sqlCommand.Parameters["@whereValue"].Value = whereValue;
 
             result = sqlCommand.ExecuteNonQuery();
+            sqlConnection.Close();
 
             return result;
         }
@@ -831,13 +903,15 @@ namespace Mezeo
             string query = "select " + fieldName + " from " + tableName;
             string result = "";
 
-            sqlCommand = new SQLiteCommand(query, sqlConnection);
-            sqlDataReader = sqlCommand.ExecuteReader();
+            SQLiteConnection sqlConnection = OpenConnection();
+            SQLiteCommand sqlCommand = new SQLiteCommand(query, sqlConnection);
+            SQLiteDataReader sqlDataReader = sqlCommand.ExecuteReader();
             sqlDataReader.Read();
 
             result = sqlDataReader.GetString(0);
 
             sqlDataReader.Close();
+            sqlConnection.Close();
             
             return result;
         }
@@ -849,13 +923,15 @@ namespace Mezeo
 
             //query = HandleSpecialCharacter(query);
 
-            sqlCommand = new SQLiteCommand(query, sqlConnection);
-            sqlDataReader = sqlCommand.ExecuteReader();
+            SQLiteConnection sqlConnection = OpenConnection();
+            SQLiteCommand sqlCommand = new SQLiteCommand(query, sqlConnection);
+            SQLiteDataReader sqlDataReader = sqlCommand.ExecuteReader();
             sqlDataReader.Read();
 
             result = sqlDataReader.GetString(0);
 
             sqlDataReader.Close();
+            sqlConnection.Close();
 
             return result;
         }
@@ -866,7 +942,9 @@ namespace Mezeo
             string query = "";// "select " + fieldName + " from " + tableName + " where " + WhereCondition;
             string result = "";
 
-            sqlCommand = new SQLiteCommand();
+            SQLiteConnection sqlConnection = OpenConnection();
+            SQLiteCommand sqlCommand = new SQLiteCommand();
+            SQLiteDataReader sqlDataReader = null;
 
             if (whereFields == null || whereValues == null)
             {
@@ -903,7 +981,7 @@ namespace Mezeo
             {
                 LogWrapper.LogMessage("DbHandler - GetString", "Caught exception: " + ex.Message);
                 sqlConnection.Close();
-                OpenConnection();
+                sqlConnection = OpenConnection();
                 sqlCommand.Connection = sqlConnection;
                 sqlDataReader = sqlCommand.ExecuteReader();
                 sqlDataReader.Read();
@@ -923,6 +1001,7 @@ namespace Mezeo
             result = sqlDataReader.GetString(0);
 
             sqlDataReader.Close();
+            sqlConnection.Close();
 
             return result;
         }
@@ -931,14 +1010,15 @@ namespace Mezeo
         {
             string query = "select " + fieldName + " from " + tableName;
             int result = -1;
-
-            sqlCommand = new SQLiteCommand(query, sqlConnection);
-            sqlDataReader = sqlCommand.ExecuteReader();
+            SQLiteConnection sqlConnection = OpenConnection();
+            SQLiteCommand sqlCommand = new SQLiteCommand(query, sqlConnection);
+            SQLiteDataReader sqlDataReader = sqlCommand.ExecuteReader();
             sqlDataReader.Read();
 
             result = sqlDataReader.GetInt32(0);
 
             sqlDataReader.Close();
+            sqlConnection.Close();
 
             return result;
         }
@@ -960,13 +1040,15 @@ namespace Mezeo
             string query = "select " + fieldName + " from " + tableName;
             decimal result = -1;
 
-            sqlCommand = new SQLiteCommand(query, sqlConnection);
-            sqlDataReader = sqlCommand.ExecuteReader();
+            SQLiteConnection sqlConnection = OpenConnection();
+            SQLiteCommand sqlCommand = new SQLiteCommand(query, sqlConnection);
+            SQLiteDataReader sqlDataReader = sqlCommand.ExecuteReader();
             sqlDataReader.Read();
 
             result = sqlDataReader.GetDecimal(0);
 
             sqlDataReader.Close();
+            sqlConnection.Close();
 
             return result;
         }
@@ -975,14 +1057,16 @@ namespace Mezeo
         {
             string query = "select " + fieldName + " from " + tableName + " where " + WhereCondition;
             bool result = false;
+            SQLiteConnection sqlConnection = OpenConnection();
+            SQLiteCommand sqlCommand = new SQLiteCommand(query, sqlConnection);
+            SQLiteDataReader sqlDataReader = sqlCommand.ExecuteReader();
 
-            sqlCommand = new SQLiteCommand(query, sqlConnection);
-            sqlDataReader = sqlCommand.ExecuteReader();
             sqlDataReader.Read();
 
             result = sqlDataReader.GetBoolean(0);
 
             sqlDataReader.Close();
+            sqlConnection.Close();
 
             return result;
         }
@@ -991,18 +1075,19 @@ namespace Mezeo
         {
             string query = "select " + fieldName + " from " + tableName + " where " + WhereField + "=@whereValue";
             DateTime result;
-
-            sqlCommand = new SQLiteCommand(query, sqlConnection);
+            SQLiteConnection sqlConnection = OpenConnection();
+            SQLiteCommand sqlCommand = new SQLiteCommand(query, sqlConnection);
 
             sqlCommand.Parameters.Add("@whereValue", System.Data.DbType.String);
             sqlCommand.Parameters["@whereValue"].Value = whereValue;
 
-            sqlDataReader = sqlCommand.ExecuteReader();
+            SQLiteDataReader sqlDataReader = sqlCommand.ExecuteReader();
             sqlDataReader.Read();
 
             result = sqlDataReader.GetDateTime(0);
 
             sqlDataReader.Close();
+            sqlConnection.Close();
 
             return result;
         }
@@ -1011,18 +1096,19 @@ namespace Mezeo
         {
             string query = "select " + fieldName + " from " + tableName + " where " + WhereField + "=@whereValue"; 
             List<string> result =new List<string>();
-
-            sqlCommand = new SQLiteCommand(query, sqlConnection);
+            SQLiteConnection sqlConnection = OpenConnection();
+            SQLiteCommand sqlCommand = new SQLiteCommand(query, sqlConnection);
             
             sqlCommand.Parameters.Add("@whereValue", System.Data.DbType.String);
             sqlCommand.Parameters["@whereValue"].Value = whereValue;
 
-            sqlDataReader = sqlCommand.ExecuteReader();
+            SQLiteDataReader sqlDataReader = sqlCommand.ExecuteReader();
             while (sqlDataReader.Read())
             {
                 result.Add(sqlDataReader.GetString(0));
             }
             sqlDataReader.Close();
+            sqlConnection.Close();
 
             return result;
         }
@@ -1031,14 +1117,15 @@ namespace Mezeo
         {
             string query = "select " + fieldName + " from " + tableName;
             List<int> result = new List<int>();
-
-            sqlCommand = new SQLiteCommand(query, sqlConnection);
-            sqlDataReader = sqlCommand.ExecuteReader();
+            SQLiteConnection sqlConnection = OpenConnection();
+            SQLiteCommand sqlCommand = new SQLiteCommand(query, sqlConnection);
+            SQLiteDataReader sqlDataReader = sqlCommand.ExecuteReader();
             while(sqlDataReader.Read())
             {
                 result.Add(sqlDataReader.GetInt32(0));
             }
             sqlDataReader.Close();
+            sqlConnection.Close();
 
             return result;
         }
@@ -1047,14 +1134,15 @@ namespace Mezeo
         {
             string query = "select " + fieldName + " from " + tableName;
             List<decimal> result = new List<decimal>();
-
-            sqlCommand = new SQLiteCommand(query, sqlConnection);
-            sqlDataReader = sqlCommand.ExecuteReader();
+            SQLiteConnection sqlConnection = OpenConnection();
+            SQLiteCommand sqlCommand = new SQLiteCommand(query, sqlConnection);
+            SQLiteDataReader sqlDataReader = sqlCommand.ExecuteReader();
             while(sqlDataReader.Read())
             {
                 result.Add(sqlDataReader.GetDecimal(0));
             }
             sqlDataReader.Close();
+            sqlConnection.Close();
 
             return result;
         }
@@ -1063,14 +1151,16 @@ namespace Mezeo
         {
             string query = "select " + fieldName + " from " + tableName;
             List<bool> result = new List<bool>();
+            SQLiteConnection sqlConnection = OpenConnection();
+            SQLiteCommand sqlCommand = new SQLiteCommand(query, sqlConnection);
+            SQLiteDataReader sqlDataReader = sqlCommand.ExecuteReader();
 
-            sqlCommand = new SQLiteCommand(query, sqlConnection);
-            sqlDataReader = sqlCommand.ExecuteReader();
             while (sqlDataReader.Read())
             {
                 result.Add(sqlDataReader.GetBoolean(0));
             }
             sqlDataReader.Close();
+            sqlConnection.Close();
 
             return result;
         }
@@ -1079,14 +1169,16 @@ namespace Mezeo
         {
             string query = "select " + fieldName + " from " + tableName;
             List<DateTime> result=new List<DateTime>();
+            SQLiteConnection sqlConnection = OpenConnection();
+            SQLiteCommand sqlCommand = new SQLiteCommand(query, sqlConnection);
+            SQLiteDataReader sqlDataReader = sqlCommand.ExecuteReader();
 
-            sqlCommand = new SQLiteCommand(query, sqlConnection);
-            sqlDataReader = sqlCommand.ExecuteReader();
             while (sqlDataReader.Read())
             {
                 result.Add(sqlDataReader.GetDateTime(0));
             }
             sqlDataReader.Close();
+            sqlConnection.Close();
 
             return result;
         }
@@ -1100,8 +1192,8 @@ namespace Mezeo
         {
             string query = "update " + TABLE_NAME + " set " + MODIFIED_DATE + "= @modifiedDate where " + KEY + "=@key";
             int result = -1;
-
-            sqlCommand = new SQLiteCommand(query, sqlConnection);
+            SQLiteConnection sqlConnection = OpenConnection();
+            SQLiteCommand sqlCommand = new SQLiteCommand(query, sqlConnection);
 
             sqlCommand.Parameters.Add("@modifiedDate",System.Data.DbType.DateTime);
             sqlCommand.Parameters["@modifiedDate"].Value = newDate;
@@ -1110,6 +1202,7 @@ namespace Mezeo
             sqlCommand.Parameters["@key"].Value = key;
 
             result = sqlCommand.ExecuteNonQuery();
+            sqlConnection.Close();
 
             return result;
         }
@@ -1117,10 +1210,10 @@ namespace Mezeo
         public List<DbKeyModDate> GetStructureList()
         {
             List<DbKeyModDate> keyList = new List<DbKeyModDate>();
-
             string query = "select " + KEY + "," + MODIFIED_DATE + " from " + TABLE_NAME;
-            sqlCommand = new SQLiteCommand(query, sqlConnection);
-            sqlDataReader = sqlCommand.ExecuteReader();
+            SQLiteConnection sqlConnection = OpenConnection();
+            SQLiteCommand sqlCommand = new SQLiteCommand(query, sqlConnection);
+            SQLiteDataReader sqlDataReader = sqlCommand.ExecuteReader();
             
             while(sqlDataReader.Read())
             {
@@ -1131,16 +1224,17 @@ namespace Mezeo
             }
 
             sqlDataReader.Close();
+            sqlConnection.Close();
             return keyList;
         }
 
         public List<string> GetKeyList()
         {
             List<string> keys = new List<string>();
-
             string query = "select " + KEY +  " from " + TABLE_NAME;
-            sqlCommand = new SQLiteCommand(query, sqlConnection);
-            sqlDataReader = sqlCommand.ExecuteReader();
+            SQLiteConnection sqlConnection = OpenConnection();
+            SQLiteCommand sqlCommand = new SQLiteCommand(query, sqlConnection);
+            SQLiteDataReader sqlDataReader = sqlCommand.ExecuteReader();
 
             while (sqlDataReader.Read())
             {
@@ -1149,6 +1243,7 @@ namespace Mezeo
             }
 
             sqlDataReader.Close();
+            sqlConnection.Close();
             return keys;
         }
     }
