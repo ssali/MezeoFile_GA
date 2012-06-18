@@ -39,9 +39,6 @@
             this.tmrSwapStatusMessage = new System.Windows.Forms.Timer(this.components);
             this.eventLog1 = new System.Diagnostics.EventLog();
             this.tmrNextSync = new System.Windows.Forms.Timer(this.components);
-            this.bwNQUpdate = new System.ComponentModel.BackgroundWorker();
-            this.bwOfflineEvent = new System.ComponentModel.BackgroundWorker();
-            this.bwLocalEvents = new System.ComponentModel.BackgroundWorker();
             this.bwUpdateUsage = new System.ComponentModel.BackgroundWorker();
             this.shapeContainer1 = new Microsoft.VisualBasic.PowerPacks.ShapeContainer();
             this.lineShape1 = new Microsoft.VisualBasic.PowerPacks.LineShape();
@@ -145,38 +142,6 @@
             this.tmrNextSync.Enabled = true;
             this.tmrNextSync.Interval = 300000;
             this.tmrNextSync.Tick += new System.EventHandler(this.tmrNextSync_Tick);
-            // 
-            // bwNQUpdate
-            // 
-            this.bwNQUpdate.WorkerReportsProgress = true;
-            this.bwNQUpdate.WorkerSupportsCancellation = true;
-            this.bwNQUpdate.DoWork += new System.ComponentModel.DoWorkEventHandler(this.bwNQUpdate_DoWork);
-            this.bwNQUpdate.ProgressChanged += new System.ComponentModel.ProgressChangedEventHandler(this.bwNQUpdate_ProgressChanged);
-            this.bwNQUpdate.RunWorkerCompleted += new System.ComponentModel.RunWorkerCompletedEventHandler(this.bwNQUpdate_RunWorkerCompleted);
-            // 
-            // bwSyncThread
-            // 
-            this.bwSyncThread.WorkerReportsProgress = true;
-            this.bwSyncThread.WorkerSupportsCancellation = true;
-            this.bwSyncThread.DoWork += new System.ComponentModel.DoWorkEventHandler(this.bwSyncThread_DoWork);
-            this.bwSyncThread.ProgressChanged += new System.ComponentModel.ProgressChangedEventHandler(this.bwSyncThread_ProgressChanged);
-            this.bwSyncThread.RunWorkerCompleted += new System.ComponentModel.RunWorkerCompletedEventHandler(this.bwSyncThread_RunWorkerCompleted);
-            // 
-            // bwOfflineEvent
-            // 
-            this.bwOfflineEvent.WorkerReportsProgress = true;
-            this.bwOfflineEvent.WorkerSupportsCancellation = true;
-            this.bwOfflineEvent.DoWork += new System.ComponentModel.DoWorkEventHandler(this.bwOffilneEvent_DoWork);
-            this.bwOfflineEvent.ProgressChanged += new System.ComponentModel.ProgressChangedEventHandler(this.bwLocalEvents_ProgressChanged);
-            this.bwOfflineEvent.RunWorkerCompleted += new System.ComponentModel.RunWorkerCompletedEventHandler(this.bwOffilneEvent_RunWorkerCompleted);
-            // 
-            // bwLocalEvents
-            // 
-            this.bwLocalEvents.WorkerReportsProgress = true;
-            this.bwLocalEvents.WorkerSupportsCancellation = true;
-            this.bwLocalEvents.DoWork += new System.ComponentModel.DoWorkEventHandler(this.bwLocalEvents_DoWork);
-            this.bwLocalEvents.ProgressChanged += new System.ComponentModel.ProgressChangedEventHandler(this.bwLocalEvents_ProgressChanged);
-            this.bwLocalEvents.RunWorkerCompleted += new System.ComponentModel.RunWorkerCompletedEventHandler(this.bwLocalEvents_RunWorkerCompleted);
             // 
             // bwUpdateUsage
             // 
@@ -327,6 +292,14 @@
             this.imgStatus.TabIndex = 16;
             this.imgStatus.TabStop = false;
             // 
+            // bwSyncThread
+            // 
+            this.bwSyncThread.WorkerReportsProgress = true;
+            this.bwSyncThread.WorkerSupportsCancellation = true;
+            this.bwSyncThread.DoWork += new System.ComponentModel.DoWorkEventHandler(this.bwSyncThread_DoWork);
+            this.bwSyncThread.ProgressChanged += new System.ComponentModel.ProgressChangedEventHandler(this.bwSyncThread_ProgressChanged);
+            this.bwSyncThread.RunWorkerCompleted += new System.ComponentModel.RunWorkerCompletedEventHandler(this.bwSyncThread_RunWorkerCompleted);
+            // 
             // frmSyncManager
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -380,9 +353,6 @@
         private System.Windows.Forms.Timer tmrSwapStatusMessage;
         private System.Diagnostics.EventLog eventLog1;
         private System.Windows.Forms.Timer tmrNextSync;
-        private System.ComponentModel.BackgroundWorker bwNQUpdate;
-        private System.ComponentModel.BackgroundWorker bwOfflineEvent;
-        private System.ComponentModel.BackgroundWorker bwLocalEvents;
         private System.ComponentModel.BackgroundWorker bwUpdateUsage;
         private System.Windows.Forms.LinkLabel lnkFolderPath;
         private System.Windows.Forms.Label lblFolder;

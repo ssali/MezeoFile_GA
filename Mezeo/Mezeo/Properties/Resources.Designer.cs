@@ -152,7 +152,7 @@ namespace Mezeo.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to 5.
+        ///   Looks up a localized string similar to 2.
         /// </summary>
         internal static string BrSyncTimer {
             get {

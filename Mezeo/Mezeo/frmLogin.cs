@@ -101,7 +101,7 @@ namespace Mezeo
         private void exitToolStripMenuItem_Click(object sender, EventArgs e)
         {
           
-            if (syncManager != null && (syncManager.isSyncInProgress || syncManager.isLocalEventInProgress || syncManager.isOfflineWorking))
+            if (syncManager != null && (syncManager.isSyncThreadInProgress))
             {
                 DialogResult dResult = MessageBox.Show(LanguageTranslator.GetValue("MezeoExitString1") + "\n" + LanguageTranslator.GetValue("MezeoExitString2"), AboutBox.AssemblyTitle, MessageBoxButtons.OKCancel);
                 if (dResult == DialogResult.Cancel)
@@ -278,7 +278,6 @@ namespace Mezeo
                 this.Close();
             }
 
-           // mezeoFileCloud.AppEventViewer(AboutBox.AssemblyTitle, LanguageTranslator.GetValue("TrayAppOfflineText"), 3);
             niSystemTray.ContextMenuStrip = cmSystemTraySyncMgr;
 
             if (syncManager == null)
@@ -292,21 +291,17 @@ namespace Mezeo
 
             if (checkReferenceCode() > 0)
             {
-                //syncManager.CheckServerStatus();
+                //If we are login and talk with server do not do anything 
             }
             else
             {
+                //If we are login and can not talk with server show app is offline
                  syncManager.DisableSyncManager();
-                 syncManager.ShowOfflineAtStartUpSyncManager();
                  syncManager.ShowSyncManagerOffline();
-                 syncManager.SetIsSyncInProgress(false);
+                 syncManager.SetSyncThreadInProgress(false);
             }
-            notificationManager.NotificationHandler.ShowBalloonTip(1, LanguageTranslator.GetValue("TrayBalloonSyncStatusText"),
-                                                                                LanguageTranslator.GetValue("TrayAppOfflineText"), ToolTipIcon.None);
 
-            notificationManager.HoverText = LanguageTranslator.GetValue("TrayAppOfflineText");
-            notificationManager.NotifyIcon = Properties.Resources.app_offline;
-            toolStripMenuItem4.Text = LanguageTranslator.GetValue("AppOfflineMenu");
+            syncManager.SyncOfflineMessage();
         }
 
         public void VerifyCredentialsAgainFromSyncMgr()
@@ -838,7 +833,7 @@ namespace Mezeo
             {
                 this.Invoke((MethodInvoker)delegate
                 {
-                    syncManager.SetIsSyncPaused(false);
+                    syncManager.SetSyncPaused(false);
                     syncManager.InitializeSync();
                     changeResumeText();
                     syncManager.SyncResumeBalloonMessage();
@@ -846,7 +841,7 @@ namespace Mezeo
             }
             else
             {
-                syncManager.SetIsSyncPaused(false);
+                syncManager.SetSyncPaused(false);
                 syncManager.InitializeSync();
                 changeResumeText();
                 syncManager.SyncResumeBalloonMessage();
@@ -860,7 +855,7 @@ namespace Mezeo
             {
                 this.Invoke((MethodInvoker)delegate
                 {
-                    syncManager.SetIsSyncPaused(true);
+                    syncManager.SetSyncPaused(true);
                     syncManager.StopSync();
                     changePauseText();
                     syncManager.ChangeUIOnPause();
@@ -869,7 +864,7 @@ namespace Mezeo
             }
             else
             {
-                syncManager.SetIsSyncPaused(true);
+                syncManager.SetSyncPaused(true);
                 syncManager.StopSync();
                 changePauseText();
                 syncManager.ChangeUIOnPause();
