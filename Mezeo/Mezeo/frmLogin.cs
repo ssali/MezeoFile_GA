@@ -589,7 +589,7 @@ namespace Mezeo
                 }
                 else
                 {
-                    isDbCreateNew = dbHandler.OpenConnection();
+                    isDbCreateNew = dbHandler.CreatedNewDatabase(); 
                     if (!isDirectoryExists)
                     {
                         System.IO.Directory.CreateDirectory(dirName);
@@ -605,7 +605,7 @@ namespace Mezeo
             else
             {
                 //if directory exits checking whether we have new database or not 
-                isDbCreateNew = dbHandler.OpenConnection();
+                isDbCreateNew = dbHandler.CreatedNewDatabase();
                 BasicInfo.AutoSync = true;
                 BasicInfo.SyncDirPath = dirName;
             }
