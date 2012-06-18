@@ -4,15 +4,16 @@ using System.Linq;
 using System.Text;
 using MezeoFileSupport;
 using System.Threading;
-
-
-#if MEZEO32
-using Finisar.SQLite;
-#elif MEZEO64
+using System.Data;
 using System.Data.SQLite;
-#else
-using Finisar.SQLite;
-#endif
+
+//#if MEZEO32
+//using Finisar.SQLite;
+//#elif MEZEO64
+//using System.Data.SQLite;
+//#else
+//using Finisar.SQLite;
+//#endif
 
 namespace Mezeo
 {
@@ -97,7 +98,7 @@ namespace Mezeo
                 createNew = true;
             }
 
-            sqlConnection = new SQLiteConnection("Data Source=" + dbPath + DATABASE_NAME + ";Version=3;New=" + createNew + ";Compress=True;");
+            sqlConnection = new SQLiteConnection("Data Source=" + dbPath + DATABASE_NAME + ";Version=3;New=" + createNew + ";Compress=True;Pooling=True");
 
             sqlConnection.Open();
 
@@ -987,18 +988,23 @@ namespace Mezeo
                 sqlDataReader.Read();
             }
 
-            #if MEZEO32
-                result = sqlDataReader.GetString(0);
-            #elif MEZEO64
-                if (sqlDataReader.HasRows)
-                        result = sqlDataReader.GetString(0);
-                    else
-                        result = "";
-            #else
-                result = sqlDataReader.GetString(0);
-            #endif
+            //#if MEZEO32
+            //    result = sqlDataReader.GetString(0);
+            //#elif MEZEO64
+            //    if (sqlDataReader.HasRows)
+            //            result = sqlDataReader.GetString(0);
+            //        else
+            //            result = "";
+            //#else
+            //    result = sqlDataReader.GetString(0);
+            //#endif
 
-            result = sqlDataReader.GetString(0);
+            //result = sqlDataReader.GetString(0);
+
+            if (sqlDataReader.HasRows)
+                result = sqlDataReader.GetString(0);
+            else
+                result = "";
 
             sqlDataReader.Close();
             sqlConnection.Close();
