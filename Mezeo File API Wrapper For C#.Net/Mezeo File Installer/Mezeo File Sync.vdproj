@@ -393,11 +393,6 @@
             "AssemblyAsmDisplayName" = "8:MezeoFileSupport, Version=2.0.51.0, Culture=neutral, processorArchitecture=MSIL"
                 "ScatterAssemblies"
                 {
-                    "_952769F1A4F84068BAC4DED1D5A461AD"
-                    {
-                    "Name" = "8:MezeoFileSupport.dll"
-                    "Attributes" = "3:512"
-                    }
                 }
             "SourcePath" = "8:MezeoFileSupport.dll"
             "TargetName" = "8:"
@@ -444,11 +439,6 @@
             "AssemblyAsmDisplayName" = "8:MezeoFile, Version=2.0.51.0, Culture=neutral, processorArchitecture=x86"
                 "ScatterAssemblies"
                 {
-                    "_DFF7F401643C436EB485570961CD88CC"
-                    {
-                    "Name" = "8:MezeoFile.exe"
-                    "Attributes" = "3:512"
-                    }
                 }
             "SourcePath" = "8:MezeoFile.exe"
             "TargetName" = "8:"
@@ -698,50 +688,6 @@
                                             "Transitive" = "11:FALSE"
                                                 "Keys"
                                                 {
-                                                    "{60EA8692-D2D5-43EB-80DC-7906BF13D6EF}:_3FA61C3574EE4F3DB6BB34C3C955DC9C"
-                                                    {
-                                                    "Name" = "8:MezeoFile"
-                                                    "Condition" = "8:"
-                                                    "AlwaysCreate" = "11:TRUE"
-                                                    "DeleteAtUninstall" = "11:TRUE"
-                                                    "Transitive" = "11:FALSE"
-                                                        "Keys"
-                                                        {
-                                                            "{60EA8692-D2D5-43EB-80DC-7906BF13D6EF}:_1EA735C707514E19AE8B52AFB16CA51A"
-                                                            {
-                                                            "Name" = "8:MezeoFile"
-                                                            "Condition" = "8:"
-                                                            "AlwaysCreate" = "11:TRUE"
-                                                            "DeleteAtUninstall" = "11:FALSE"
-                                                            "Transitive" = "11:FALSE"
-                                                                "Keys"
-                                                                {
-                                                                }
-                                                                "Values"
-                                                                {
-                                                                }
-                                                            }
-                                                        }
-                                                        "Values"
-                                                        {
-                                                            "{ADCFDA98-8FDD-45E4-90BC-E3D20B029870}:_A42B6807A0824CF3A18E11814CAEC49A"
-                                                            {
-                                                            "Name" = "8:MaxSize"
-                                                            "Condition" = "8:"
-                                                            "Transitive" = "11:FALSE"
-                                                            "ValueTypes" = "3:3"
-                                                            "Value" = "3:524288"
-                                                            }
-                                                            "{ADCFDA98-8FDD-45E4-90BC-E3D20B029870}:_A5B26884B0954FA59EAA42BA198918A6"
-                                                            {
-                                                            "Name" = "8:AutoBackupLogFiles"
-                                                            "Condition" = "8:"
-                                                            "Transitive" = "11:FALSE"
-                                                            "ValueTypes" = "3:3"
-                                                            "Value" = "3:0"
-                                                            }
-                                                        }
-                                                    }
                                                 }
                                                 "Values"
                                                 {
