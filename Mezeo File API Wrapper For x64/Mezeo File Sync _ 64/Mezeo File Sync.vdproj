@@ -21,19 +21,7 @@
         }
         "Entry"
         {
-        "MsmKey" = "8:_08C7D0BE92F0466080E6D06285D78E0B"
-        "OwnerKey" = "8:_UNDEFINED"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
         "MsmKey" = "8:_0C381535521C4DF2939A9E4CC4B67A49"
-        "OwnerKey" = "8:_UNDEFINED"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_0D77CD69F6B14700BC3CA8E84F59D5C0"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
         }
@@ -52,12 +40,6 @@
         "Entry"
         {
         "MsmKey" = "8:_15BADCF563354F80B661C5CD699A86A7"
-        "OwnerKey" = "8:_UNDEFINED"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_1E63C3C31F254E7D95C7751B5B7153A3"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
         }
@@ -124,12 +106,6 @@
         "Entry"
         {
         "MsmKey" = "8:_952769F1A4F84068BAC4DED1D5A461AD"
-        "OwnerKey" = "8:_UNDEFINED"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_C5B453409FC34212ADBAFA2894380A96"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
         }
@@ -346,26 +322,6 @@
             "IsDependency" = "11:FALSE"
             "IsolateTo" = "8:"
             }
-            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_08C7D0BE92F0466080E6D06285D78E0B"
-            {
-            "SourcePath" = "8:Complete.ico"
-            "TargetName" = "8:Complete.ico"
-            "Tag" = "8:"
-            "Folder" = "8:_DFC910B380794F979C49C04474AA03A8"
-            "Condition" = "8:"
-            "Transitive" = "11:FALSE"
-            "Vital" = "11:TRUE"
-            "ReadOnly" = "11:FALSE"
-            "Hidden" = "11:FALSE"
-            "System" = "11:FALSE"
-            "Permanent" = "11:FALSE"
-            "SharedLegacy" = "11:FALSE"
-            "PackageAs" = "3:1"
-            "Register" = "3:1"
-            "Exclude" = "11:FALSE"
-            "IsDependency" = "11:FALSE"
-            "IsolateTo" = "8:"
-            }
             "{9F6F8455-1EF1-4B85-886A-4223BCC8E7F7}:_0C381535521C4DF2939A9E4CC4B67A49"
             {
             "AssemblyRegister" = "3:1"
@@ -383,26 +339,6 @@
             "TargetName" = "8:"
             "Tag" = "8:"
             "Folder" = "8:_E2CA41781701484DA8E973D55A111194"
-            "Condition" = "8:"
-            "Transitive" = "11:FALSE"
-            "Vital" = "11:TRUE"
-            "ReadOnly" = "11:FALSE"
-            "Hidden" = "11:FALSE"
-            "System" = "11:FALSE"
-            "Permanent" = "11:FALSE"
-            "SharedLegacy" = "11:FALSE"
-            "PackageAs" = "3:1"
-            "Register" = "3:1"
-            "Exclude" = "11:FALSE"
-            "IsDependency" = "11:FALSE"
-            "IsolateTo" = "8:"
-            }
-            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_0D77CD69F6B14700BC3CA8E84F59D5C0"
-            {
-            "SourcePath" = "8:Processes.ico"
-            "TargetName" = "8:Processes.ico"
-            "Tag" = "8:"
-            "Folder" = "8:_DFC910B380794F979C49C04474AA03A8"
             "Condition" = "8:"
             "Transitive" = "11:FALSE"
             "Vital" = "11:TRUE"
@@ -443,26 +379,6 @@
             "TargetName" = "8:msiexec.exe"
             "Tag" = "8:"
             "Folder" = "8:_E2CA41781701484DA8E973D55A111194"
-            "Condition" = "8:"
-            "Transitive" = "11:FALSE"
-            "Vital" = "11:TRUE"
-            "ReadOnly" = "11:FALSE"
-            "Hidden" = "11:FALSE"
-            "System" = "11:FALSE"
-            "Permanent" = "11:FALSE"
-            "SharedLegacy" = "11:FALSE"
-            "PackageAs" = "3:1"
-            "Register" = "3:1"
-            "Exclude" = "11:FALSE"
-            "IsDependency" = "11:FALSE"
-            "IsolateTo" = "8:"
-            }
-            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_1E63C3C31F254E7D95C7751B5B7153A3"
-            {
-            "SourcePath" = "8:Error.ico"
-            "TargetName" = "8:Error.ico"
-            "Tag" = "8:"
-            "Folder" = "8:_DFC910B380794F979C49C04474AA03A8"
             "Condition" = "8:"
             "Transitive" = "11:FALSE"
             "Vital" = "11:TRUE"
@@ -774,26 +690,6 @@
             "IsDependency" = "11:FALSE"
             "IsolateTo" = "8:"
             }
-            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_C5B453409FC34212ADBAFA2894380A96"
-            {
-            "SourcePath" = "8:User.ico"
-            "TargetName" = "8:User.ico"
-            "Tag" = "8:"
-            "Folder" = "8:_DFC910B380794F979C49C04474AA03A8"
-            "Condition" = "8:"
-            "Transitive" = "11:FALSE"
-            "Vital" = "11:TRUE"
-            "ReadOnly" = "11:FALSE"
-            "Hidden" = "11:FALSE"
-            "System" = "11:FALSE"
-            "Permanent" = "11:FALSE"
-            "SharedLegacy" = "11:FALSE"
-            "PackageAs" = "3:1"
-            "Register" = "3:1"
-            "Exclude" = "11:FALSE"
-            "IsDependency" = "11:FALSE"
-            "IsolateTo" = "8:"
-            }
             "{9F6F8455-1EF1-4B85-886A-4223BCC8E7F7}:_E66B53928F3AEA50BBBDD301CEA24A14"
             {
             "AssemblyRegister" = "3:1"
@@ -960,7 +856,7 @@
         "Name" = "8:Microsoft Visual Studio"
         "ProductName" = "8:MezeoFile"
         "ProductCode" = "8:{ED065000-FF56-40C6-866D-252D79F49B5F}"
-        "PackageCode" = "8:{82BA5B7B-CD6A-4A5A-94B8-4F759F9F93C4}"
+        "PackageCode" = "8:{41F5EB56-5E5B-4096-82CD-F8F992066F00}"
         "UpgradeCode" = "8:{9A686460-3EE8-42C7-987B-2AC187ED8477}"
         "AspNetVersion" = "8:4.0.30319.0"
         "RestartWWWService" = "11:FALSE"
@@ -1001,140 +897,6 @@
                     "Transitive" = "11:FALSE"
                         "Keys"
                         {
-                            "{60EA8692-D2D5-43EB-80DC-7906BF13D6EF}:_4906723001DF4B069B45B405D84F304F"
-                            {
-                            "Name" = "8:MezeoFileOverlay"
-                            "Condition" = "8:"
-                            "AlwaysCreate" = "11:FALSE"
-                            "DeleteAtUninstall" = "11:TRUE"
-                            "Transitive" = "11:FALSE"
-                                "Keys"
-                                {
-                                    "{60EA8692-D2D5-43EB-80DC-7906BF13D6EF}:_3ED4A7A8A09248D2BAC010730C6D3AF3"
-                                    {
-                                    "Name" = "8:Complete"
-                                    "Condition" = "8:"
-                                    "AlwaysCreate" = "11:FALSE"
-                                    "DeleteAtUninstall" = "11:FALSE"
-                                    "Transitive" = "11:FALSE"
-                                        "Keys"
-                                        {
-                                        }
-                                        "Values"
-                                        {
-                                            "{ADCFDA98-8FDD-45E4-90BC-E3D20B029870}:_BD236E6BDF4747AC95BDD3DA2B81EC03"
-                                            {
-                                            "Name" = "8:MEZ"
-                                            "Condition" = "8:"
-                                            "Transitive" = "11:FALSE"
-                                            "ValueTypes" = "3:1"
-                                            "Value" = "8:{BB89088F-C5AC-441e-957E-C62F25FDC3E7}"
-                                            }
-                                        }
-                                    }
-                                    "{60EA8692-D2D5-43EB-80DC-7906BF13D6EF}:_93D1C9F9F05F47C3A92717C9E178500F"
-                                    {
-                                    "Name" = "8:Processes"
-                                    "Condition" = "8:"
-                                    "AlwaysCreate" = "11:FALSE"
-                                    "DeleteAtUninstall" = "11:FALSE"
-                                    "Transitive" = "11:FALSE"
-                                        "Keys"
-                                        {
-                                        }
-                                        "Values"
-                                        {
-                                            "{ADCFDA98-8FDD-45E4-90BC-E3D20B029870}:_459EDBEC0C7745779BD8F8E2754782AF"
-                                            {
-                                            "Name" = "8:MEZ"
-                                            "Condition" = "8:"
-                                            "Transitive" = "11:FALSE"
-                                            "ValueTypes" = "3:1"
-                                            "Value" = "8:{5C7B32FB-C218-4501-918D-4DF737F5A61D}"
-                                            }
-                                        }
-                                    }
-                                    "{60EA8692-D2D5-43EB-80DC-7906BF13D6EF}:_B1F7A0F1B24847FD9BAC328385B968CE"
-                                    {
-                                    "Name" = "8:Error"
-                                    "Condition" = "8:"
-                                    "AlwaysCreate" = "11:FALSE"
-                                    "DeleteAtUninstall" = "11:FALSE"
-                                    "Transitive" = "11:FALSE"
-                                        "Keys"
-                                        {
-                                        }
-                                        "Values"
-                                        {
-                                            "{ADCFDA98-8FDD-45E4-90BC-E3D20B029870}:_F0DE837A27AD426F9E2C831FA4E0387C"
-                                            {
-                                            "Name" = "8:MEZ"
-                                            "Condition" = "8:"
-                                            "Transitive" = "11:FALSE"
-                                            "ValueTypes" = "3:1"
-                                            "Value" = "8:{3CC2CD2A-F0EB-436f-92B9-0BCA270A3BCB}"
-                                            }
-                                        }
-                                    }
-                                    "{60EA8692-D2D5-43EB-80DC-7906BF13D6EF}:_F9A895750B89461E98228CB68EE2FB0F"
-                                    {
-                                    "Name" = "8:User"
-                                    "Condition" = "8:"
-                                    "AlwaysCreate" = "11:FALSE"
-                                    "DeleteAtUninstall" = "11:FALSE"
-                                    "Transitive" = "11:FALSE"
-                                        "Keys"
-                                        {
-                                        }
-                                        "Values"
-                                        {
-                                            "{ADCFDA98-8FDD-45E4-90BC-E3D20B029870}:_5A5527EA3B1D4225807652D7FA4FE67F"
-                                            {
-                                            "Name" = "8:MEZ"
-                                            "Condition" = "8:"
-                                            "Transitive" = "11:FALSE"
-                                            "ValueTypes" = "3:1"
-                                            "Value" = "8:{86835AFC-B00E-4f02-BD43-7597D236430C}"
-                                            }
-                                        }
-                                    }
-                                }
-                                "Values"
-                                {
-                                    "{ADCFDA98-8FDD-45E4-90BC-E3D20B029870}:_2D2B4C1B2FA54552A25DC8E080B1BA21"
-                                    {
-                                    "Name" = "8:CompleteIcon"
-                                    "Condition" = "8:"
-                                    "Transitive" = "11:FALSE"
-                                    "ValueTypes" = "3:1"
-                                    "Value" = "8:[CommonFiles64Folder]MezeoFile Overlay\\Icons\\Complete.ico"
-                                    }
-                                    "{ADCFDA98-8FDD-45E4-90BC-E3D20B029870}:_5EEA40EA8FFF4E52A6F87C003A2E4DC9"
-                                    {
-                                    "Name" = "8:ProcessesIcon"
-                                    "Condition" = "8:"
-                                    "Transitive" = "11:FALSE"
-                                    "ValueTypes" = "3:1"
-                                    "Value" = "8:[CommonFiles64Folder]MezeoFile Overlay\\Icons\\Processes.ico"
-                                    }
-                                    "{ADCFDA98-8FDD-45E4-90BC-E3D20B029870}:_876272E2BCAD4B12B892A158AD9C9F19"
-                                    {
-                                    "Name" = "8:ErrorIcon"
-                                    "Condition" = "8:"
-                                    "Transitive" = "11:FALSE"
-                                    "ValueTypes" = "3:1"
-                                    "Value" = "8:[CommonFiles64Folder]MezeoFile Overlay\\Icons\\Error.ico"
-                                    }
-                                    "{ADCFDA98-8FDD-45E4-90BC-E3D20B029870}:_E77767BCAED442E49D555DC4B0023453"
-                                    {
-                                    "Name" = "8:UserIcon"
-                                    "Condition" = "8:"
-                                    "Transitive" = "11:FALSE"
-                                    "ValueTypes" = "3:1"
-                                    "Value" = "8:[CommonFiles64Folder]MezeoFile Overlay\\Icons\\User.ico"
-                                    }
-                                }
-                            }
                             "{60EA8692-D2D5-43EB-80DC-7906BF13D6EF}:_4D7A77E22D184683AE5BE3C1F23DA297"
                             {
                             "Name" = "8:Classes"
@@ -1401,38 +1163,6 @@
                                                                 }
                                                                 "Values"
                                                                 {
-                                                                    "{ADCFDA98-8FDD-45E4-90BC-E3D20B029870}:_443F80B8585849FE9B2A455767E870D4"
-                                                                    {
-                                                                    "Name" = "8:{86835AFC-B00E-4f02-BD43-7597D236430C}"
-                                                                    "Condition" = "8:"
-                                                                    "Transitive" = "11:FALSE"
-                                                                    "ValueTypes" = "3:1"
-                                                                    "Value" = "8:MezeoFileOverlay"
-                                                                    }
-                                                                    "{ADCFDA98-8FDD-45E4-90BC-E3D20B029870}:_8DDBB3AB4B6E4497B70AD96DFA7239C7"
-                                                                    {
-                                                                    "Name" = "8:{5C7B32FB-C218-4501-918D-4DF737F5A61D}"
-                                                                    "Condition" = "8:"
-                                                                    "Transitive" = "11:FALSE"
-                                                                    "ValueTypes" = "3:1"
-                                                                    "Value" = "8:MezeoFileOverlay"
-                                                                    }
-                                                                    "{ADCFDA98-8FDD-45E4-90BC-E3D20B029870}:_A22AE00EAB914F5C80B0E38B153105DD"
-                                                                    {
-                                                                    "Name" = "8:{3CC2CD2A-F0EB-436f-92B9-0BCA270A3BCB}"
-                                                                    "Condition" = "8:"
-                                                                    "Transitive" = "11:FALSE"
-                                                                    "ValueTypes" = "3:1"
-                                                                    "Value" = "8:MezeoFileOverlay"
-                                                                    }
-                                                                    "{ADCFDA98-8FDD-45E4-90BC-E3D20B029870}:_BC88115F848B43548D48A2F2C72C8344"
-                                                                    {
-                                                                    "Name" = "8:{BB89088F-C5AC-441e-957E-C62F25FDC3E7}"
-                                                                    "Condition" = "8:"
-                                                                    "Transitive" = "11:FALSE"
-                                                                    "ValueTypes" = "3:1"
-                                                                    "Value" = "8:MezeoFileOverlay"
-                                                                    }
                                                                 }
                                                             }
                                                         }
@@ -1458,94 +1188,6 @@
                                                             "Transitive" = "11:FALSE"
                                                                 "Keys"
                                                                 {
-                                                                    "{60EA8692-D2D5-43EB-80DC-7906BF13D6EF}:_393305723D5E4B3DBA7619823FE345C2"
-                                                                    {
-                                                                    "Name" = "8:MezeoFileUser"
-                                                                    "Condition" = "8:"
-                                                                    "AlwaysCreate" = "11:FALSE"
-                                                                    "DeleteAtUninstall" = "11:TRUE"
-                                                                    "Transitive" = "11:FALSE"
-                                                                        "Keys"
-                                                                        {
-                                                                        }
-                                                                        "Values"
-                                                                        {
-                                                                            "{ADCFDA98-8FDD-45E4-90BC-E3D20B029870}:_98F16A424515427BBCE0537DF16C268B"
-                                                                            {
-                                                                            "Name" = "8:"
-                                                                            "Condition" = "8:"
-                                                                            "Transitive" = "11:FALSE"
-                                                                            "ValueTypes" = "3:1"
-                                                                            "Value" = "8:{86835AFC-B00E-4f02-BD43-7597D236430C}"
-                                                                            }
-                                                                        }
-                                                                    }
-                                                                    "{60EA8692-D2D5-43EB-80DC-7906BF13D6EF}:_C4D4EA083BFA482284C5DBC2E482FC94"
-                                                                    {
-                                                                    "Name" = "8:MezeoFileError"
-                                                                    "Condition" = "8:"
-                                                                    "AlwaysCreate" = "11:FALSE"
-                                                                    "DeleteAtUninstall" = "11:TRUE"
-                                                                    "Transitive" = "11:FALSE"
-                                                                        "Keys"
-                                                                        {
-                                                                        }
-                                                                        "Values"
-                                                                        {
-                                                                            "{ADCFDA98-8FDD-45E4-90BC-E3D20B029870}:_06C4A55095A24357867CB66475A6A13C"
-                                                                            {
-                                                                            "Name" = "8:"
-                                                                            "Condition" = "8:"
-                                                                            "Transitive" = "11:FALSE"
-                                                                            "ValueTypes" = "3:1"
-                                                                            "Value" = "8:{3CC2CD2A-F0EB-436f-92B9-0BCA270A3BCB}"
-                                                                            }
-                                                                        }
-                                                                    }
-                                                                    "{60EA8692-D2D5-43EB-80DC-7906BF13D6EF}:_D8C1B86DA38C4A06879433C3B46097CC"
-                                                                    {
-                                                                    "Name" = "8:MezeoFileComplete"
-                                                                    "Condition" = "8:"
-                                                                    "AlwaysCreate" = "11:FALSE"
-                                                                    "DeleteAtUninstall" = "11:TRUE"
-                                                                    "Transitive" = "11:FALSE"
-                                                                        "Keys"
-                                                                        {
-                                                                        }
-                                                                        "Values"
-                                                                        {
-                                                                            "{ADCFDA98-8FDD-45E4-90BC-E3D20B029870}:_F667E60C8B964D158874A24945B2993D"
-                                                                            {
-                                                                            "Name" = "8:"
-                                                                            "Condition" = "8:"
-                                                                            "Transitive" = "11:FALSE"
-                                                                            "ValueTypes" = "3:1"
-                                                                            "Value" = "8:{BB89088F-C5AC-441e-957E-C62F25FDC3E7}"
-                                                                            }
-                                                                        }
-                                                                    }
-                                                                    "{60EA8692-D2D5-43EB-80DC-7906BF13D6EF}:_E47980B5FCFA4607A9912D3225F18D7F"
-                                                                    {
-                                                                    "Name" = "8:MezeoFileProcesses"
-                                                                    "Condition" = "8:"
-                                                                    "AlwaysCreate" = "11:FALSE"
-                                                                    "DeleteAtUninstall" = "11:TRUE"
-                                                                    "Transitive" = "11:FALSE"
-                                                                        "Keys"
-                                                                        {
-                                                                        }
-                                                                        "Values"
-                                                                        {
-                                                                            "{ADCFDA98-8FDD-45E4-90BC-E3D20B029870}:_5CCD1696F2F34BA9ABDE0E5AAB9CA2A0"
-                                                                            {
-                                                                            "Name" = "8:"
-                                                                            "Condition" = "8:"
-                                                                            "Transitive" = "11:FALSE"
-                                                                            "ValueTypes" = "3:1"
-                                                                            "Value" = "8:{5C7B32FB-C218-4501-918D-4DF737F5A61D}"
-                                                                            }
-                                                                        }
-                                                                    }
                                                                 }
                                                                 "Values"
                                                                 {
