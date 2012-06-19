@@ -15,12 +15,6 @@
     {
         "Entry"
         {
-        "MsmKey" = "8:_03758B4AE8164D6C854AB9204DDE0387"
-        "OwnerKey" = "8:_UNDEFINED"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
         "MsmKey" = "8:_0448F7F97B2E479DAEEB5F1F32215051"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
@@ -46,13 +40,13 @@
         "Entry"
         {
         "MsmKey" = "8:_13418A33E32975714F7C0FCF2A73FA95"
-        "OwnerKey" = "8:_922E390C84024A02460A215057821858"
+        "OwnerKey" = "8:_0C381535521C4DF2939A9E4CC4B67A49"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
         {
         "MsmKey" = "8:_13418A33E32975714F7C0FCF2A73FA95"
-        "OwnerKey" = "8:_0C381535521C4DF2939A9E4CC4B67A49"
+        "OwnerKey" = "8:_922E390C84024A02460A215057821858"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
@@ -87,13 +81,13 @@
         }
         "Entry"
         {
-        "MsmKey" = "8:_734D77F3C8114BCD8042B16AD660E692"
-        "OwnerKey" = "8:_UNDEFINED"
+        "MsmKey" = "8:_63419FE2806E7CB0C7D8E10355AED835"
+        "OwnerKey" = "8:_7534F32F1B53476FAA72264608D6113B"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
         {
-        "MsmKey" = "8:_743DD50A6C2F4BC5B9E5356432E42A5B"
+        "MsmKey" = "8:_734D77F3C8114BCD8042B16AD660E692"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
         }
@@ -111,7 +105,7 @@
         }
         "Entry"
         {
-        "MsmKey" = "8:_78343A559D554A6B92989F0BBF67D367"
+        "MsmKey" = "8:_8245758EFEF24DF7A5BCFF2B7DC0F15E"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
         }
@@ -135,12 +129,6 @@
         }
         "Entry"
         {
-        "MsmKey" = "8:_B87D71DB35DC487C9156EBA6DDFD9C7B"
-        "OwnerKey" = "8:_UNDEFINED"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
         "MsmKey" = "8:_C5B453409FC34212ADBAFA2894380A96"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
@@ -153,12 +141,6 @@
         }
         "Entry"
         {
-        "MsmKey" = "8:_F1636F102AE448F70DF6C1A91AFA84B4"
-        "OwnerKey" = "8:_7534F32F1B53476FAA72264608D6113B"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
         "MsmKey" = "8:_UNDEFINED"
         "OwnerKey" = "8:_952769F1A4F84068BAC4DED1D5A461AD"
         "MsmSig" = "8:_UNDEFINED"
@@ -166,31 +148,7 @@
         "Entry"
         {
         "MsmKey" = "8:_UNDEFINED"
-        "OwnerKey" = "8:_2B48656010A15B81D2632FA65A68BD24"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_UNDEFINED"
-        "OwnerKey" = "8:_922E390C84024A02460A215057821858"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_UNDEFINED"
-        "OwnerKey" = "8:_7534F32F1B53476FAA72264608D6113B"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_UNDEFINED"
-        "OwnerKey" = "8:_78343A559D554A6B92989F0BBF67D367"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_UNDEFINED"
-        "OwnerKey" = "8:_90A85F1D4C3A7F43DDC86B9F5133E1AF"
+        "OwnerKey" = "8:_8245758EFEF24DF7A5BCFF2B7DC0F15E"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
@@ -202,7 +160,31 @@
         "Entry"
         {
         "MsmKey" = "8:_UNDEFINED"
-        "OwnerKey" = "8:_F1636F102AE448F70DF6C1A91AFA84B4"
+        "OwnerKey" = "8:_922E390C84024A02460A215057821858"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_UNDEFINED"
+        "OwnerKey" = "8:_90A85F1D4C3A7F43DDC86B9F5133E1AF"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_UNDEFINED"
+        "OwnerKey" = "8:_7534F32F1B53476FAA72264608D6113B"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_UNDEFINED"
+        "OwnerKey" = "8:_63419FE2806E7CB0C7D8E10355AED835"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_UNDEFINED"
+        "OwnerKey" = "8:_2B48656010A15B81D2632FA65A68BD24"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
@@ -344,26 +326,6 @@
         }
         "File"
         {
-            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_03758B4AE8164D6C854AB9204DDE0387"
-            {
-            "SourcePath" = "8:SQLite3.dll"
-            "TargetName" = "8:SQLite3.dll"
-            "Tag" = "8:"
-            "Folder" = "8:_E2CA41781701484DA8E973D55A111194"
-            "Condition" = "8:"
-            "Transitive" = "11:FALSE"
-            "Vital" = "11:TRUE"
-            "ReadOnly" = "11:FALSE"
-            "Hidden" = "11:FALSE"
-            "System" = "11:FALSE"
-            "Permanent" = "11:FALSE"
-            "SharedLegacy" = "11:FALSE"
-            "PackageAs" = "3:1"
-            "Register" = "3:1"
-            "Exclude" = "11:FALSE"
-            "IsDependency" = "11:FALSE"
-            "IsolateTo" = "8:"
-            }
             "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_0448F7F97B2E479DAEEB5F1F32215051"
             {
             "SourcePath" = "8:rbmez.bat"
@@ -539,7 +501,7 @@
             {
             "AssemblyRegister" = "3:1"
             "AssemblyIsInGAC" = "11:FALSE"
-            "AssemblyAsmDisplayName" = "8:MezeoFileSupport, Version=2.0.50.0, Culture=neutral, processorArchitecture=MSIL"
+            "AssemblyAsmDisplayName" = "8:MezeoFileSupport, Version=2.0.51.0, Culture=neutral, processorArchitecture=MSIL"
                 "ScatterAssemblies"
                 {
                     "_2B48656010A15B81D2632FA65A68BD24"
@@ -586,10 +548,21 @@
             "IsDependency" = "11:FALSE"
             "IsolateTo" = "8:"
             }
-            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_734D77F3C8114BCD8042B16AD660E692"
+            "{9F6F8455-1EF1-4B85-886A-4223BCC8E7F7}:_63419FE2806E7CB0C7D8E10355AED835"
             {
-            "SourcePath" = "8:patch_green.jpg"
-            "TargetName" = "8:patch_green.jpg"
+            "AssemblyRegister" = "3:1"
+            "AssemblyIsInGAC" = "11:FALSE"
+            "AssemblyAsmDisplayName" = "8:System.Data.SQLite, Version=1.0.81.0, Culture=neutral, PublicKeyToken=db937bc2d44ff139, processorArchitecture=x86"
+                "ScatterAssemblies"
+                {
+                    "_63419FE2806E7CB0C7D8E10355AED835"
+                    {
+                    "Name" = "8:System.Data.SQLite.DLL"
+                    "Attributes" = "3:512"
+                    }
+                }
+            "SourcePath" = "8:System.Data.SQLite.DLL"
+            "TargetName" = "8:"
             "Tag" = "8:"
             "Folder" = "8:_E2CA41781701484DA8E973D55A111194"
             "Condition" = "8:"
@@ -603,13 +576,13 @@
             "PackageAs" = "3:1"
             "Register" = "3:1"
             "Exclude" = "11:FALSE"
-            "IsDependency" = "11:FALSE"
+            "IsDependency" = "11:TRUE"
             "IsolateTo" = "8:"
             }
-            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_743DD50A6C2F4BC5B9E5356432E42A5B"
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_734D77F3C8114BCD8042B16AD660E692"
             {
-            "SourcePath" = "8:SQLite.dll"
-            "TargetName" = "8:SQLite.dll"
+            "SourcePath" = "8:patch_green.jpg"
+            "TargetName" = "8:patch_green.jpg"
             "Tag" = "8:"
             "Folder" = "8:_E2CA41781701484DA8E973D55A111194"
             "Condition" = "8:"
@@ -650,7 +623,7 @@
             {
             "AssemblyRegister" = "3:1"
             "AssemblyIsInGAC" = "11:FALSE"
-            "AssemblyAsmDisplayName" = "8:MezeoFile, Version=2.0.50.0, Culture=neutral, processorArchitecture=x86"
+            "AssemblyAsmDisplayName" = "8:MezeoFile, Version=2.0.51.0, Culture=neutral, processorArchitecture=x86"
                 "ScatterAssemblies"
                 {
                     "_7534F32F1B53476FAA72264608D6113B"
@@ -677,20 +650,20 @@
             "IsDependency" = "11:FALSE"
             "IsolateTo" = "8:"
             }
-            "{9F6F8455-1EF1-4B85-886A-4223BCC8E7F7}:_78343A559D554A6B92989F0BBF67D367"
+            "{9F6F8455-1EF1-4B85-886A-4223BCC8E7F7}:_8245758EFEF24DF7A5BCFF2B7DC0F15E"
             {
             "AssemblyRegister" = "3:1"
             "AssemblyIsInGAC" = "11:FALSE"
-            "AssemblyAsmDisplayName" = "8:SQLite.NET, Version=0.21.1869.3794, Culture=neutral, PublicKeyToken=c273bd375e695f9c"
+            "AssemblyAsmDisplayName" = "8:System.Data.SQLite, Version=1.0.81.0, Culture=neutral, PublicKeyToken=db937bc2d44ff139, processorArchitecture=x86"
                 "ScatterAssemblies"
                 {
-                    "_78343A559D554A6B92989F0BBF67D367"
+                    "_8245758EFEF24DF7A5BCFF2B7DC0F15E"
                     {
-                    "Name" = "8:SQLite.NET.dll"
+                    "Name" = "8:System.Data.SQLite.dll"
                     "Attributes" = "3:512"
                     }
                 }
-            "SourcePath" = "8:SQLite.NET.dll"
+            "SourcePath" = "8:System.Data.SQLite.dll"
             "TargetName" = "8:"
             "Tag" = "8:"
             "Folder" = "8:_E2CA41781701484DA8E973D55A111194"
@@ -774,7 +747,7 @@
             {
             "AssemblyRegister" = "3:1"
             "AssemblyIsInGAC" = "11:FALSE"
-            "AssemblyAsmDisplayName" = "8:MezeoFileSupport, Version=2.0.50.0, Culture=neutral, processorArchitecture=MSIL"
+            "AssemblyAsmDisplayName" = "8:MezeoFileSupport, Version=2.0.51.0, Culture=neutral, processorArchitecture=MSIL"
                 "ScatterAssemblies"
                 {
                     "_952769F1A4F84068BAC4DED1D5A461AD"
@@ -787,26 +760,6 @@
             "TargetName" = "8:"
             "Tag" = "8:"
             "Folder" = "8:_E2CA41781701484DA8E973D55A111194"
-            "Condition" = "8:"
-            "Transitive" = "11:FALSE"
-            "Vital" = "11:TRUE"
-            "ReadOnly" = "11:FALSE"
-            "Hidden" = "11:FALSE"
-            "System" = "11:FALSE"
-            "Permanent" = "11:FALSE"
-            "SharedLegacy" = "11:FALSE"
-            "PackageAs" = "3:1"
-            "Register" = "3:1"
-            "Exclude" = "11:FALSE"
-            "IsDependency" = "11:FALSE"
-            "IsolateTo" = "8:"
-            }
-            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_B87D71DB35DC487C9156EBA6DDFD9C7B"
-            {
-            "SourcePath" = "8:sqlite03.dll"
-            "TargetName" = "8:sqlite03.dll"
-            "Tag" = "8:"
-            "Folder" = "8:_AEC52BA4E85C4C629254310955D39374"
             "Condition" = "8:"
             "Transitive" = "11:FALSE"
             "Vital" = "11:TRUE"
@@ -855,37 +808,6 @@
                     }
                 }
             "SourcePath" = "8:Microsoft.VisualBasic.PowerPacks.Vs.dll"
-            "TargetName" = "8:"
-            "Tag" = "8:"
-            "Folder" = "8:_E2CA41781701484DA8E973D55A111194"
-            "Condition" = "8:"
-            "Transitive" = "11:FALSE"
-            "Vital" = "11:TRUE"
-            "ReadOnly" = "11:FALSE"
-            "Hidden" = "11:FALSE"
-            "System" = "11:FALSE"
-            "Permanent" = "11:FALSE"
-            "SharedLegacy" = "11:FALSE"
-            "PackageAs" = "3:1"
-            "Register" = "3:1"
-            "Exclude" = "11:FALSE"
-            "IsDependency" = "11:TRUE"
-            "IsolateTo" = "8:"
-            }
-            "{9F6F8455-1EF1-4B85-886A-4223BCC8E7F7}:_F1636F102AE448F70DF6C1A91AFA84B4"
-            {
-            "AssemblyRegister" = "3:1"
-            "AssemblyIsInGAC" = "11:FALSE"
-            "AssemblyAsmDisplayName" = "8:SQLite.NET, Version=0.21.1869.3794, Culture=neutral, PublicKeyToken=c273bd375e695f9c"
-                "ScatterAssemblies"
-                {
-                    "_F1636F102AE448F70DF6C1A91AFA84B4"
-                    {
-                    "Name" = "8:SQLite.NET.DLL"
-                    "Attributes" = "3:512"
-                    }
-                }
-            "SourcePath" = "8:SQLite.NET.DLL"
             "TargetName" = "8:"
             "Tag" = "8:"
             "Folder" = "8:_E2CA41781701484DA8E973D55A111194"

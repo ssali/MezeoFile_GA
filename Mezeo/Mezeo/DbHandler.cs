@@ -7,19 +7,11 @@ using System.Threading;
 using System.Data;
 using System.Data.SQLite;
 
-//#if MEZEO32
-//using Finisar.SQLite;
-//#elif MEZEO64
-//using System.Data.SQLite;
-//#else
-//using Finisar.SQLite;
-//#endif
 
 namespace Mezeo
 {
     class DbHandler
     {
-        //private const string DATABASE_NAME = "mezeoDb.s3db";
         private const string DATABASE_NAME = "SyncDb.s3db";
         public const string TABLE_NAME = "FileStructInfo";
 
@@ -98,7 +90,7 @@ namespace Mezeo
                 createNew = true;
             }
 
-            sqlConnection = new SQLiteConnection("Data Source=" + dbPath + DATABASE_NAME + ";Version=3;New=" + createNew + ";Compress=True;Pooling=True");
+            sqlConnection = new SQLiteConnection("Data Source=" + dbPath + DATABASE_NAME + ";Version=3;New=" + createNew + ";Compress=True;Pooling=True;");
 
             sqlConnection.Open();
 
@@ -128,7 +120,7 @@ namespace Mezeo
             {
                 try
                 {
-                    sqlConnection = new SQLiteConnection("Data Source=" + dbPath + DATABASE_NAME + ";Version=3;New=" + createNew + ";Compress=True;");
+                    sqlConnection = new SQLiteConnection("Data Source=" + dbPath + DATABASE_NAME + ";Version=3;New=" + createNew + ";Compress=True;Pooling=True;");
                     sqlConnection.Open();
                     // If we got a successfull open, then we're done.
                     break;
@@ -987,19 +979,6 @@ namespace Mezeo
                 sqlDataReader = sqlCommand.ExecuteReader();
                 sqlDataReader.Read();
             }
-
-            //#if MEZEO32
-            //    result = sqlDataReader.GetString(0);
-            //#elif MEZEO64
-            //    if (sqlDataReader.HasRows)
-            //            result = sqlDataReader.GetString(0);
-            //        else
-            //            result = "";
-            //#else
-            //    result = sqlDataReader.GetString(0);
-            //#endif
-
-            //result = sqlDataReader.GetString(0);
 
             if (sqlDataReader.HasRows)
                 result = sqlDataReader.GetString(0);
