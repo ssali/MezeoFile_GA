@@ -53,6 +53,7 @@ namespace Mezeo
             // The tables are only created if they don't already exist so
             // it is safe to make this call every time to be sure they exist.
             DbHandler dbHandler = new DbHandler();
+            dbHandler.CreatedNewDatabase();
             dbHandler.CreateEventsTable();
             dbHandler.CreateIssueTable();
 

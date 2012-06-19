@@ -98,7 +98,7 @@ namespace Mezeo
                 createNew = true;
             }
 
-            sqlConnection = new SQLiteConnection("Data Source=" + dbPath + DATABASE_NAME + ";Version=3;New=" + createNew + ";Compress=True;Pooling=True");
+            sqlConnection = new SQLiteConnection("Data Source=" + dbPath + DATABASE_NAME + ";Version=3;New=" + createNew + ";Compress=True;Pooling=True;");
 
             sqlConnection.Open();
 
@@ -115,20 +115,12 @@ namespace Mezeo
             SQLiteConnection sqlConnection = null;
             string dbPath = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData) + "\\" + AboutBox.AssemblyTitle + "\\";
             
-            bool createNew = false;
-            
-            if (!System.IO.File.Exists(dbPath + DATABASE_NAME))
-            {
-                System.IO.Directory.CreateDirectory(dbPath);
-                createNew = true;
-            }
-
             int nRetries = 0;
             while (nRetries < 3)
             {
                 try
                 {
-                    sqlConnection = new SQLiteConnection("Data Source=" + dbPath + DATABASE_NAME + ";Version=3;New=" + createNew + ";Compress=True;");
+                    sqlConnection = new SQLiteConnection("Data Source=" + dbPath + DATABASE_NAME + ";Version=3;New=False;Compress=True;Pooling=True;");
                     sqlConnection.Open();
                     // If we got a successfull open, then we're done.
                     break;
@@ -139,14 +131,6 @@ namespace Mezeo
                     nRetries++;
                     sqlConnection = null;
                     LogWrapper.LogMessage("DbHandler - OpenConnection", "Caught exception: " + ex.Message);
-                }
-            }
-
-            if (nRetries < 4)
-            {
-                if (createNew)
-                {
-                    CreateTables();
                 }
             }
 

@@ -43,7 +43,6 @@ namespace Mezeo
             LogWrapper.LogMessage("FileDownloader - Constructor", "Opening DB connection");
             dbhandler.OpenConnection();
             LogWrapper.LogMessage("FileDownloader - Constructor", "Leave");
-            
         }
 
         public void consume()
@@ -339,6 +338,5 @@ namespace Mezeo
                 cancelDownloadEvent(reason);
             }
         }
-
     }
 }

@@ -49,7 +49,6 @@ namespace Mezeo
 
         #endregion
 
-
         #region Delegates for callback
 
         public MezeoFileSupport.CallbackIncrementProgress myDelegate;
@@ -57,7 +56,6 @@ namespace Mezeo
         public MezeoFileSupport.CallbackContinueRunning ContinueRunningDelegate;
 
         #endregion
-
 
         #region Private Members and objects
 
@@ -352,7 +350,7 @@ namespace Mezeo
                 showProgress();
             }
             fileDownloadCount++;
-            //messageValue++;
+            messageValue++;
         }
 
         void stDownloader_downloadEvent(object sender, StructureDownloaderEvent e)
@@ -834,9 +832,7 @@ namespace Mezeo
             }
         }
 
-
         #endregion
-
 
         #region Functions and Methods
 
@@ -3373,7 +3369,6 @@ namespace Mezeo
 
         public void SyncOnlineMessage()
         {
-         
             cnotificationManager.NotificationHandler.ShowBalloonTip(1, LanguageTranslator.GetValue("TrayBalloonSyncStatusText"),
                                                                             LanguageTranslator.GetValue("TrayAppOnlineText"), ToolTipIcon.None);
 
@@ -3995,7 +3990,6 @@ namespace Mezeo
             //LogWrapper.LogMessage("frmSyncManager - bwOffilneEvent_DoWork", "leave");
         }
 
-
         private void bwSyncThread_ProgressChanged(object sender, ProgressChangedEventArgs e)
         {
                 //LogWrapper.LogMessage("frmSyncManager - bwLocalEvents_ProgressChanged", "enter");
@@ -4100,13 +4094,17 @@ namespace Mezeo
             
         }
 
-
         private void bwSyncThread_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
         {
             //LogWrapper.LogMessage("frmSyncManager - bwNQUpdate_RunWorkerCompleted", "enter");
             //ShowSyncMessage(IsEventCanceled());
             tmrNextSync.Interval = getSynNextCycleTimer();
             SetSyncThreadInProgress(false);
+
+            // Set the job count to whatever is left in the queue.
+            // May not be 0 if the sync was paused/stopped.
+            dbHandler.ResetJobCount();
+
             //SetIsEventCanceled(false);
             try
             {
@@ -4154,7 +4152,5 @@ namespace Mezeo
         }
 
         #endregion
-
-      
     }
 }

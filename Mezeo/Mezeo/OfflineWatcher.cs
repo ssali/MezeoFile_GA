@@ -17,7 +17,8 @@ namespace Mezeo
             this.dbHandler = dbHandler;
         }
 
-        public List<LocalEvents> PrepareStructureList()
+        //public List<LocalEvents> PrepareStructureList()
+        public void PrepareStructureList()
         {
             foreach(string dirs in Directory.GetDirectories(BasicInfo.SyncDirPath, "*.*", SearchOption.AllDirectories))
             {
@@ -140,7 +141,7 @@ namespace Mezeo
                 }
             }
 
-            return new List<LocalEvents>();
+            //return new List<LocalEvents>();
         }
     }
 }
