@@ -71,7 +71,6 @@ namespace Mezeo
         public void startAnalyseItemDetails()
         {
             LogWrapper.LogMessage("StructureDownloader - startAnalyseItemDetails", "Enter");
-
             int refCode=0;
             ItemDetails[] contents = cFileCloud.DownloadItemDetails(cRootContainerUrl, ref refCode, null);
 

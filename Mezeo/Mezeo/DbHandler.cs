@@ -1272,9 +1272,9 @@ namespace Mezeo
             return result;
         }
 
-        public void Write(FileFolderInfo fileFolderInfo)
+        public bool Write(FileFolderInfo fileFolderInfo)
         {
-            ExecuteNonQuery(fileFolderInfo);
+            return ExecuteNonQuery(fileFolderInfo);
         }
 
         public int UpdateModifiedDate(DateTime newDate, string key)

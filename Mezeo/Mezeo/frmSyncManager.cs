@@ -64,13 +64,14 @@ namespace Mezeo
         private frmLogin frmParent;
         private string[] statusMessages = new string[3];
         private int statusMessageCounter = 0;
-        private bool isAnalysingStructure = false;
-        private bool isAnalysisCompleted = false;
+        //private bool isAnalysingStructure = false;
+        //private bool isAnalysisCompleted = false;
+        private bool analysisIsComplete = false;
         public bool isSyncThreadInProgress = false;
         public bool isSyncPause = false; // Check sync is pause or not
         // public bool isEventCanceled = false;
         public bool isSyncGenerateLocalEvents = false;
-        private FileDownloader fileDownloder;
+      //  private FileDownloader fileDownloder;
         private bool isDownloadingFile = false;
         private StructureDownloader stDownloader;
         private int fileDownloadCount = 1;
@@ -236,6 +237,16 @@ namespace Mezeo
 
         #region Flag Events
 
+        public bool IsAnalysisCompleted()
+        {
+            return analysisIsComplete;
+        }
+
+        public void SetAnalysisIsCompleted(bool analysis)
+        {
+            analysisIsComplete = analysis;
+        }
+
         /*This will check sync is in progress or not 
         (It will tell offlineEvents or localevents or notification queue is in progress) 
         Sync Thread is in progress
@@ -283,7 +294,7 @@ namespace Mezeo
 
         public bool IsInIdleState()
         {
-            if (!IsSyncThreadInProgress() && !IsSyncPaused())
+            if (!IsSyncThreadInProgress() && !IsSyncPaused() && IsAnalysisCompleted())
                 return true;
             return false;
         }
@@ -315,7 +326,7 @@ namespace Mezeo
                 SetSyncThreadInProgress(false);
 
                 BasicInfo.IsInitialSync = false;
-                ShowSyncMessage();
+               // ShowSyncMessage();
 
                 InitialSyncUptodateMessage();
 
@@ -340,44 +351,36 @@ namespace Mezeo
             }
         }
 
-        void fileDownloder_downloadEvent(object sender, FileDownloaderEvents e)
-        {
-            if (isAnalysisCompleted)
-            {
-                showProgress();
-            }
-            fileDownloadCount++;
-            messageValue++;
-        }
+        //void fileDownloder_downloadEvent(object sender, FileDownloaderEvents e)
+        //{
+        //    if (isAnalysisCompleted)
+        //    {
+        //        showProgress();
+        //    }
+        //    fileDownloadCount++;
+        //    messageValue++;
+        //}
 
         void stDownloader_downloadEvent(object sender, StructureDownloaderEvent e)
         {
             if (e.IsCompleted && !lockObject.StopThread)
             {
-                isAnalysingStructure = false;
                 tmrSwapStatusMessage.Enabled = false;
+                BasicInfo.IsInitialSync = false;
+                SetAnalysisIsCompleted(true);
+                resetAllControls();
+                SyncNow();
+                //if (pbSyncProgress.Maximum > 0)
+                //{
+                //    fileDownloadCount = 1;
+                //    lblPercentDone.Text = "";
+                //    lblPercentDone.Visible = true;
 
-                isAnalysisCompleted = true;
-                fileDownloder.IsAnalysisCompleted = true;
-                lock (lockObject)
-                {
-                    Monitor.PulseAll(lockObject);
-                }
-
-                if (stDownloader.TotalFileCount > 0)
-                {
-                   messageMax = stDownloader.TotalFileCount - (fileDownloadCount -1);
-                }
-
-                if (pbSyncProgress.Maximum > 0)
-                {
-                    fileDownloadCount = 1;
-                    lblPercentDone.Text = "";
-                    lblPercentDone.Visible = true;
-
-                    showProgress();
-                }
+                //    showProgress();
+                //}
             }
+            else
+                SetAnalysisIsCompleted(false);
         }
 
         void fileDownloder_cancelDownloadEvent(CancelReason reason)
@@ -395,7 +398,7 @@ namespace Mezeo
 
         void stDownloader_cancelDownloadEvent(CancelReason reason)
         {
-            isAnalysingStructure = false;
+            //isAnalysingStructure = false;
             tmrSwapStatusMessage.Enabled = false;
             OnThreadCancel(reason);
         }
@@ -421,18 +424,18 @@ namespace Mezeo
 
             this.btnSyncNow.Text = LanguageTranslator.GetValue("SyncManagerSyncNowButtonText");
             //this.btnIssuesFound.Text = LanguageTranslator.GetValue("SyncManagerIssueFoundButtonText");
-            this.lnkAbout.Text = LanguageTranslator.GetValue("SyncManagerAboutLinkText");
-            this.lnkHelp.Text = LanguageTranslator.GetValue("SyncManagerHelpLinkText");
+           // this.lnkAbout.Text = LanguageTranslator.GetValue("SyncManagerAboutLinkText");
+           // this.lnkHelp.Text = LanguageTranslator.GetValue("SyncManagerHelpLinkText");
             this.btnIssuesFound.Visible = false;
             //this.pbSyncProgress.Visible = false;
-            ShowSyncMessage();
+          //  ShowSyncMessage();
             this.lblUserName.Text = BasicInfo.UserName;
             this.lnkServerUrl.Text = BasicInfo.ServiceUrl;
             this.lnkFolderPath.Text = BasicInfo.SyncDirPath;
 
-            statusMessages[0] = LanguageTranslator.GetValue("SyncManagerAnalyseMessage1");
-            statusMessages[1] = LanguageTranslator.GetValue("SyncManagerAnalyseMessage2");
-            statusMessages[2] = LanguageTranslator.GetValue("SyncManagerAnalyseMessage3");
+            //statusMessages[0] = LanguageTranslator.GetValue("SyncManagerAnalyseMessage1");
+            //statusMessages[1] = LanguageTranslator.GetValue("SyncManagerAnalyseMessage2");
+            //statusMessages[2] = LanguageTranslator.GetValue("SyncManagerAnalyseMessage3");
 
             if (cLoginDetails != null)
             {
@@ -478,13 +481,13 @@ namespace Mezeo
         private void SetUpControlForSync()
         {
             SetIssueFound(false);
-            btnSyncNow.Text = this.btnSyncNow.Text = LanguageTranslator.GetValue("PauseSync");
+           // btnSyncNow.Text = this.btnSyncNow.Text = LanguageTranslator.GetValue("PauseSync");
             btnSyncNow.Refresh();
-            isAnalysingStructure = true;
+           // isAnalysingStructure = true;
             isDownloadingFile = true;
             //SetIsSyncInProgress(true);
             ShowNextSyncLabel(false);
-            isAnalysisCompleted = false;
+          //  isAnalysisCompleted = false;
             // tmrNextSync.Enabled = false;
             // pbSyncProgress.Visible = true;
             // btnMoveFolder.Enabled = false;
@@ -562,7 +565,7 @@ namespace Mezeo
 
             lblStatusL3.Text = "";
             lblStatusL3.Visible = true;
-
+            pbSyncProgress.Visible = false;
             tmrSwapStatusMessage.Enabled = true;
         }
 
@@ -575,7 +578,7 @@ namespace Mezeo
             // UpdateUsageLabel();
 
             DisableProgress();
-            this.btnSyncNow.Text = LanguageTranslator.GetValue("SyncManagerSyncNowButtonText");
+           // this.btnSyncNow.Text = LanguageTranslator.GetValue("SyncManagerSyncNowButtonText");
             this.btnSyncNow.Enabled = true;
 
             if (BasicInfo.AutoSync)
@@ -980,7 +983,7 @@ namespace Mezeo
 
         private void OnThreadCancel(CancelReason reason)
         {
-            if (!isAnalysingStructure && !isDownloadingFile)
+            if (!IsAnalysisCompleted() && !isDownloadingFile)
             {
                 if (lockObject.ExitApplication)
                     System.Environment.Exit(0);
@@ -1192,20 +1195,22 @@ namespace Mezeo
                 lockObject = new ThreadLockObject();
                 lockObject.StopThread = false;
                 stDownloader = new StructureDownloader(queue, lockObject, cLoginDetails.szContainerContentsUri, cMezeoFileCloud);
-                fileDownloder = new FileDownloader(queue, lockObject, cMezeoFileCloud, isAnalysisCompleted);
+             //   fileDownloder = new FileDownloader(queue, lockObject, cMezeoFileCloud, isAnalysisCompleted);
                 stDownloader.downloadEvent += new StructureDownloader.StructureDownloadEvent(stDownloader_downloadEvent);
-                fileDownloder.downloadEvent += new FileDownloader.FileDownloadEvent(fileDownloder_downloadEvent);
-                fileDownloder.fileDownloadCompletedEvent += new FileDownloader.FileDownloadCompletedEvent(fileDownloder_fileDownloadCompleted);
+           ////     fileDownloder.downloadEvent += new FileDownloader.FileDownloadEvent(fileDownloder_downloadEvent);
+           ////     fileDownloder.fileDownloadCompletedEvent += new FileDownloader.FileDownloadCompletedEvent(fileDownloder_fileDownloadCompleted);
 
-                stDownloader.cancelDownloadEvent += new StructureDownloader.CancelDownLoadEvent(stDownloader_cancelDownloadEvent);
+           //     stDownloader.cancelDownloadEvent += new StructureDownloader.CancelDownLoadEvent(stDownloader_cancelDownloadEvent);
 
-                stDownloader.startDownloaderEvent += new StructureDownloader.StartDownLoaderEvent(stDownloader_startDownloaderEvent);
+           //     stDownloader.startDownloaderEvent += new StructureDownloader.StartDownLoaderEvent(stDownloader_startDownloaderEvent);
 
-                fileDownloder.cancelDownloadEvent += new FileDownloader.CancelDownLoadEvent(fileDownloder_cancelDownloadEvent);
+          //      fileDownloder.cancelDownloadEvent += new FileDownloader.CancelDownLoadEvent(fileDownloder_cancelDownloadEvent);
+             
                 analyseThread = new Thread(stDownloader.startAnalyseItemDetails);
-                downloadingThread = new Thread(fileDownloder.consume);
+              //  downloadingThread = new Thread(fileDownloder.consume);
 
                 setUpControls();
+                SetAnalysisIsCompleted(false);
                 analyseThread.Start();
             }
             else
@@ -1860,15 +1865,15 @@ namespace Mezeo
             return nStatus;
         }
 
-        void stDownloader_startDownloaderEvent(bool bStart)
-        {
-            //LogWrapper.LogMessage("frmSyncManager - stDownloader_startDownloaderEvent", "enter");
-            if (bStart)
-                downloadingThread.Start();
-            else
-                fileDownloder.ForceComplete();
-            //LogWrapper.LogMessage("frmSyncManager - stDownloader_startDownloaderEvent", "leave");
-        } 
+        //void stDownloader_startDownloaderEvent(bool bStart)
+        //{
+        //    //LogWrapper.LogMessage("frmSyncManager - stDownloader_startDownloaderEvent", "enter");
+        //    if (bStart)
+        //        downloadingThread.Start();
+        //    //else
+        //    //    fileDownloder.ForceComplete();
+        //    ////LogWrapper.LogMessage("frmSyncManager - stDownloader_startDownloaderEvent", "leave");
+        //} 
 
         private string FormatSizeString(double dblSize)
         {
@@ -3139,7 +3144,8 @@ namespace Mezeo
                 }
 
                 LogWrapper.LogMessage("frmSyncManager - consume", "writing file folder info for " + id.strName + " in DB");
-                dbHandler.Write(fileFolderInfo);
+                if (!dbHandler.Write(fileFolderInfo))
+                    return 1;
 
                 string downloadObjectName = BasicInfo.SyncDirPath + "\\" + itemDetail.Path;
 
@@ -3358,7 +3364,11 @@ namespace Mezeo
                 if (localItemDetails != null)
                 {
                     nStatus = ConsumeLocalItemDetail(localItemDetails);
-                    if (nStatus == ResponseCode.LOGINFAILED1 || nStatus == ResponseCode.LOGINFAILED2)
+                    if (nStatus == 1)
+                    {
+                        dbHandler.DeleteEvent(localItemDetails.EventDbId);
+                    }
+                    else if (nStatus == ResponseCode.LOGINFAILED1 || nStatus == ResponseCode.LOGINFAILED2)
                     {
                         //e.Result = CancelReason.LOGIN_FAILED;
                         break;
@@ -3368,11 +3378,7 @@ namespace Mezeo
                         //e.Result = CancelReason.SERVER_INACCESSIBLE;
                         break;
                     }
-                    if (nStatus == 1)
-                    {
-                        dbHandler.DeleteEvent(localItemDetails.EventDbId);
-                    }
-                }
+                 }
                 else if (lEvent != null)
                 {
                     nStatus = HandleEvent((BackgroundWorker)sender, lEvent);
@@ -3385,7 +3391,11 @@ namespace Mezeo
 
                     // Look for an NQ event.
                     nStatus = UpdateFromNQ(nqEvent);
-                    if (nStatus == ResponseCode.LOGINFAILED1 || nStatus == ResponseCode.LOGINFAILED2)
+                    if (nStatus == 1)
+                    {
+                        dbHandler.DeleteEvent(nqEvent.EventDbId);
+                    }
+                    else if (nStatus == ResponseCode.LOGINFAILED1 || nStatus == ResponseCode.LOGINFAILED2)
                     {
                         //e.Result = CancelReason.LOGIN_FAILED;
                         break;
@@ -3394,10 +3404,6 @@ namespace Mezeo
                     {
                         //e.Result = CancelReason.SERVER_INACCESSIBLE;
                         break;
-                    }
-                    if (nStatus == 1)
-                    {
-                        dbHandler.DeleteEvent(nqEvent.EventDbId);
                     }
                 }
 
@@ -4348,6 +4354,7 @@ namespace Mezeo
                 {
                     queue_WatchCompletedEvent();
                 }
+                resetAllControls();
             }
             catch (Exception ex)
             {
