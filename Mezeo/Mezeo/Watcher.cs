@@ -19,12 +19,13 @@ namespace Mezeo
             this.lockObject = lockObject;
             this.folderToWatch = folder;
             fileWatcher = new FileSystemWatcher(folderToWatch);
-            
+
+            fileWatcher.InternalBufferSize = 64 * 1024;
             fileWatcher.EnableRaisingEvents = false;
             fileWatcher.Filter = "*.*";
             fileWatcher.IncludeSubdirectories = true;
             fileWatcher.NotifyFilter = NotifyFilters.Attributes | NotifyFilters.LastWrite | NotifyFilters.DirectoryName | NotifyFilters.FileName;
-            
+
             fileWatcher.Changed += new FileSystemEventHandler(fileWatcher_Changed);
             fileWatcher.Created += new FileSystemEventHandler(fileWatcher_Created);
             fileWatcher.Deleted += new FileSystemEventHandler(fileWatcher_Deleted);
