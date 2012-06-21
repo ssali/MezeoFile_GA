@@ -203,12 +203,16 @@ namespace Mezeo
             }
             else
             {
-                resultItemDetails = fileCloud.DownloadItemDetails(strContainer, ref nStatusCode, null);
+                FilterDetails filterDetails = new FilterDetails();
+                filterDetails.szFieldValue = strFilterName;
+                filterDetails.nStartPosition = 0;
+
+                resultItemDetails = fileCloud.DownloadItemDetails(strContainer, ref nStatusCode, filterDetails);
                 if (nStatusCode != ResponseCode.DOWNLOADITEMDETAILS)
                 {
                     for (int n = 0; n < CloudService.NUMBER_OF_RETRIES; n++)
                     {
-                        resultItemDetails = fileCloud.DownloadItemDetails(strContainer, ref nStatusCode, null);
+                        resultItemDetails = fileCloud.DownloadItemDetails(strContainer, ref nStatusCode, filterDetails);
                         if (nStatusCode == ResponseCode.DOWNLOADITEMDETAILS)
                             return resultItemDetails;
                     }
