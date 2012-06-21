@@ -522,17 +522,37 @@ namespace Mezeo
 
         private void showProgress()
         {
-            //LogWrapper.LogMessage("frmSyncManager - showProgress", "enter");
-            double progress = 100.0;
-            if (pbSyncProgress.Maximum > 0)
-                progress = ((double)pbSyncProgress.Value / pbSyncProgress.Maximum) * 100.0;
-            cnotificationManager.HoverText = global::Mezeo.Properties.Resources.BrSyncManagerTitle + " " + AboutBox.AssemblyVersion + "\n" + LanguageTranslator.GetValue("TrayHoverSyncProgressText") + (int)progress + LanguageTranslator.GetValue("TrayHoverSyncProgressInitialText");
+            if (this.InvokeRequired)
+            {
+                this.Invoke((MethodInvoker)delegate
+                {
+                    //LogWrapper.LogMessage("frmSyncManager - showProgress", "enter");
+                    double progress = 100.0;
+                    if (pbSyncProgress.Maximum > 0)
+                        progress = ((double)pbSyncProgress.Value / pbSyncProgress.Maximum) * 100.0;
+                    cnotificationManager.HoverText = global::Mezeo.Properties.Resources.BrSyncManagerTitle + " " + AboutBox.AssemblyVersion + "\n" + LanguageTranslator.GetValue("TrayHoverSyncProgressText") + (int)progress + LanguageTranslator.GetValue("TrayHoverSyncProgressInitialText");
 
-            if (messageValue > messageMax)
-                messageMax = messageValue;
+                    if (messageValue > messageMax)
+                        messageMax = messageValue;
 
-            lblStatusL1.Text = LanguageTranslator.GetValue("SyncManagerDownloading") + " " + messageValue + " " + LanguageTranslator.GetValue("SyncManagerUsageOfLabel") + " " + messageMax;
-            //LogWrapper.LogMessage("frmSyncManager - showProgress", "leave");
+                    lblStatusL1.Text = LanguageTranslator.GetValue("SyncManagerDownloading") + " " + messageValue + " " + LanguageTranslator.GetValue("SyncManagerUsageOfLabel") + " " + messageMax;
+                    //LogWrapper.LogMessage("frmSyncManager - showProgress", "leave");
+                });
+            }
+            else
+            {
+                //LogWrapper.LogMessage("frmSyncManager - showProgress", "enter");
+                double progress = 100.0;
+                if (pbSyncProgress.Maximum > 0)
+                    progress = ((double)pbSyncProgress.Value / pbSyncProgress.Maximum) * 100.0;
+                cnotificationManager.HoverText = global::Mezeo.Properties.Resources.BrSyncManagerTitle + " " + AboutBox.AssemblyVersion + "\n" + LanguageTranslator.GetValue("TrayHoverSyncProgressText") + (int)progress + LanguageTranslator.GetValue("TrayHoverSyncProgressInitialText");
+
+                if (messageValue > messageMax)
+                    messageMax = messageValue;
+
+                lblStatusL1.Text = LanguageTranslator.GetValue("SyncManagerDownloading") + " " + messageValue + " " + LanguageTranslator.GetValue("SyncManagerUsageOfLabel") + " " + messageMax;
+                //LogWrapper.LogMessage("frmSyncManager - showProgress", "leave");
+            }
         }
 
         private void setUpControls()
@@ -3321,17 +3341,19 @@ namespace Mezeo
             GetNextEvent(ref lEvent, ref nqEvent, ref localItemDetails);
 
             // If there are no more events in the queue, then see if the server has any more that need processing.
-            if ((null == lEvent) && (null == nqEvent) && (null == localItemDetails) && !IsSyncPaused())
+            if (((null == lEvent) && (null == nqEvent) && (null == localItemDetails)) && !IsSyncPaused())
             {
                 PopulateNQEvents();
                 GetNextEvent(ref lEvent, ref nqEvent, ref localItemDetails);
             }
 
             // Process the events 1 at a time in priority order.
-            while ((lEvent != null) || (nqEvent != null) || (null != localItemDetails) && !IsSyncPaused())
+            while (((lEvent != null) || (nqEvent != null) || (null != localItemDetails)) && !IsSyncPaused())
             {
                 // Increment the counter for the message text.
                 messageValue++;
+                messageMax = (int)dbHandler.GetJobCount();
+                showProgress();
 
                 if (localItemDetails != null)
                 {
@@ -3386,10 +3408,13 @@ namespace Mezeo
                 GetNextEvent(ref lEvent, ref nqEvent, ref localItemDetails);
 
                 // If there are no more events in the queue, then see if the server has any more that need processing.
-                if ((null == lEvent) && (null == nqEvent) && (null == localItemDetails))
+                if ((lEvent == null) && (nqEvent == null) && (null == localItemDetails))
                 {
-                    PopulateNQEvents();
-                    GetNextEvent(ref lEvent, ref nqEvent, ref localItemDetails);
+                    if (!IsSyncPaused())
+                    {
+                        PopulateNQEvents();
+                        GetNextEvent(ref lEvent, ref nqEvent, ref localItemDetails);
+                    }
                 }
             }
 
