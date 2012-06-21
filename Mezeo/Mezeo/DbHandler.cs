@@ -504,6 +504,8 @@ namespace Mezeo
             LogWrapper.LogMessage("DBHandler - ClearLocalEvents", "Running query: " + query3);
             result = sqlCommand3.ExecuteNonQuery();
             sqlConnection3.Close();
+
+            ResetJobCount();
         }
 
         public Int64 GetJobCount()

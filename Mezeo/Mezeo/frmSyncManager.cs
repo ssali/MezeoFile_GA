@@ -3188,12 +3188,17 @@ namespace Mezeo
 
                     if (refCode == ResponseCode.LOGINFAILED1 || refCode == ResponseCode.LOGINFAILED2)
                     {
-                        lockObject.StopThread = true;
+                        //lockObject.StopThread = true;
                         return ResponseCode.LOGINFAILED1; // CancelReason.LOGIN_FAILED
+                    }
+                    else if (refCode == ResponseCode.NOTFOUND)
+                    {
+                        //lockObject.StopThread = true;
+                        return ResponseCode.NOTFOUND;
                     }
                     else if (refCode != ResponseCode.DOWNLOADFILE)
                     {
-                        lockObject.StopThread = true;
+                        //lockObject.StopThread = true;
                         return ResponseCode.SERVER_INACCESSIBLE; // CancelReason.SERVER_INACCESSIBLE
                     }
 
@@ -3209,12 +3214,12 @@ namespace Mezeo
 
                     if (refCode == ResponseCode.LOGINFAILED1 || refCode == ResponseCode.LOGINFAILED2)
                     {
-                        lockObject.StopThread = true;
+                        //lockObject.StopThread = true;
                         return ResponseCode.LOGINFAILED1; // CancelReason.LOGIN_FAILED
                     }
                     else if (refCode != ResponseCode.GETETAG)
                     {
-                        lockObject.StopThread = true;
+                        //lockObject.StopThread = true;
                         return ResponseCode.SERVER_INACCESSIBLE; // CancelReason.SERVER_INACCESSIBLE
                     }
                     LogWrapper.LogMessage("frmSyncManager - consume", "eTag for " + id.strName + ": " + id.strETag);
@@ -3364,7 +3369,7 @@ namespace Mezeo
                 if (localItemDetails != null)
                 {
                     nStatus = ConsumeLocalItemDetail(localItemDetails);
-                    if (nStatus == 1)
+                    if ((nStatus == 1) || (ResponseCode.NOTFOUND == nStatus))
                     {
                         dbHandler.DeleteEvent(localItemDetails.EventDbId);
                     }
@@ -3378,7 +3383,7 @@ namespace Mezeo
                         //e.Result = CancelReason.SERVER_INACCESSIBLE;
                         break;
                     }
-                 }
+                }
                 else if (lEvent != null)
                 {
                     nStatus = HandleEvent((BackgroundWorker)sender, lEvent);
@@ -3399,6 +3404,11 @@ namespace Mezeo
                     {
                         //e.Result = CancelReason.LOGIN_FAILED;
                         break;
+                    }
+                    else if (nStatus == -3)
+                    {
+                        // Something is going on.  Forget about it and continue on.
+                        dbHandler.DeleteEvent(nqEvent.EventDbId);
                     }
                     else if (nStatus != ResponseCode.GETETAG && nStatus != ResponseCode.DOWNLOADFILE && nStatus != ResponseCode.DOWNLOADITEMDETAILS && nStatus != 1)
                     {
