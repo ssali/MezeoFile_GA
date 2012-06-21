@@ -36,7 +36,9 @@ namespace Mezeo
         
         public static int LOGINFAILED1 = 401;
         public static int LOGINFAILED2 = 403;
-        public static int NOTFOUND = 404;   
+        public static int NOTFOUND = 404;
 
+        public static int SERVER_INACCESSIBLE = -1;
+        public static int INSUFFICIENT_STORAGE_AVAILABLE = -4;
     }
 }

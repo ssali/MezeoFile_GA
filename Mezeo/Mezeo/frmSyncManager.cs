@@ -250,7 +250,6 @@ namespace Mezeo
             isSyncThreadInProgress = syncInProgress;
         }
 
-
         // It will tell Sync Manager is in pause state or not 
         public bool IsSyncPaused()
         {
@@ -277,12 +276,10 @@ namespace Mezeo
             return isSyncGenerateLocalEvents;
         }
 
-
         public void SetSyncGenerateLocalEvent(bool talkToTheServer)
         {
             isSyncGenerateLocalEvents = talkToTheServer;
         }
-
 
         public bool IsInIdleState()
         {
@@ -3074,12 +3071,195 @@ namespace Mezeo
             return returnCode;
         }
 
-        private void GetNextEvent(ref LocalEvents lEvent, ref NQDetails nqEvent)
+        private int ConsumeLocalItemDetail(LocalItemDetails itemDetail)
         {
-            // See if there are any events in the queue.  Local events take priority over NQ.
-            lEvent = dbHandler.GetLocalEvent();
-            if (lEvent == null)
-                nqEvent = dbHandler.GetNQEvent();
+            int nResultStatus = 1;
+            LogWrapper.LogMessage("frmSyncManager - consume", "Enter");
+            ItemDetails id = itemDetail.ItemDetails;
+            LogWrapper.LogMessage("frmSyncManager - consume", "creating file folder info for " + id.strName);
+
+            using (FileFolderInfo fileFolderInfo = new FileFolderInfo())
+            {
+                fileFolderInfo.Key = itemDetail.Path;
+
+                fileFolderInfo.IsPublic = id.bPublic;
+                fileFolderInfo.IsShared = id.bShared;
+                fileFolderInfo.ContentUrl = id.szContentUrl;
+                fileFolderInfo.CreatedDate = id.dtCreated;
+                fileFolderInfo.FileName = id.strName;
+                fileFolderInfo.FileSize = id.dblSizeInBytes;
+                fileFolderInfo.MimeType = id.szMimeType;
+                fileFolderInfo.ModifiedDate = id.dtModified;
+                fileFolderInfo.ParentUrl = id.szParentUrl;
+                fileFolderInfo.Status = "INPROGRESS";
+                fileFolderInfo.Type = id.szItemType;
+
+                int lastSepIndex = itemDetail.Path.LastIndexOf("\\");
+                string parentDirPath = "";
+
+                if (lastSepIndex != -1)
+                {
+                    parentDirPath = itemDetail.Path.Substring(0, itemDetail.Path.LastIndexOf("\\"));
+                    parentDirPath = parentDirPath.Substring(parentDirPath.LastIndexOf("\\") + 1);
+                }
+                //else
+                //{
+                //    parentDirPath = itemDetail.Path;
+                //}
+
+                fileFolderInfo.ParentDir = parentDirPath;
+
+                if (fileFolderInfo.ETag == null)
+                {
+                    fileFolderInfo.ETag = "";
+                }
+                if (fileFolderInfo.MimeType == null)
+                {
+                    fileFolderInfo.MimeType = "";
+                }
+
+                LogWrapper.LogMessage("frmSyncManager - consume", "writing file folder info for " + id.strName + " in DB");
+                dbHandler.Write(fileFolderInfo);
+
+                string downloadObjectName = BasicInfo.SyncDirPath + "\\" + itemDetail.Path;
+
+                LogWrapper.LogMessage("frmSyncManager - consume", "download object " + downloadObjectName);
+
+                LogWrapper.LogMessage("frmSyncManager - consume", "setting parent folders status DB_STATUS_IN_PROGRESS, bRet FALSE");
+                MarkParentsStatus(downloadObjectName, DB_STATUS_IN_PROGRESS);
+                bool bRet = false;
+                int refCode = 0;
+
+                if (id.szItemType == "DIRECTORY")
+                {
+                    LogWrapper.LogMessage("frmSyncManager - consume", id.strName + " is DIRECTORY");
+                    System.IO.Directory.CreateDirectory(downloadObjectName);
+
+                    if (id.strETag.Trim().Length == 0)
+                    {
+                        LogWrapper.LogMessage("frmSyncManager - consume", "Getting eTag for " + id.strName);
+                        id.strETag = cMezeoFileCloud.GetETag(id.szContentUrl, ref refCode);
+                        if (refCode == ResponseCode.LOGINFAILED1 || refCode == ResponseCode.LOGINFAILED2)
+                        {
+                            lockObject.StopThread = true;
+                            return ResponseCode.LOGINFAILED1;  // CancelReason.LOGINFAILED
+                        }
+                        else if (refCode != ResponseCode.GETETAG)
+                        {
+                            lockObject.StopThread = true;
+                            return ResponseCode.SERVER_INACCESSIBLE; // CancelReason.SERVER_INACCESSIBLE
+                        }
+                    }
+
+                    LogWrapper.LogMessage("frmSyncManager - consume", "eTag for " + id.strName + ": " + id.strETag + ", bRet TRUE");
+                    bRet = true;
+                }
+                else
+                {
+                    LogWrapper.LogMessage("frmSyncManager - consume", id.strName + " is NOT DIRECTORY");
+                    bRet = cMezeoFileCloud.DownloadFile(id.szContentUrl + '/' + id.strName,
+                                            downloadObjectName, id.dblSizeInBytes, ref refCode);
+
+                    if (refCode == ResponseCode.LOGINFAILED1 || refCode == ResponseCode.LOGINFAILED2)
+                    {
+                        lockObject.StopThread = true;
+                        return ResponseCode.LOGINFAILED1; // CancelReason.LOGIN_FAILED
+                    }
+                    else if (refCode != ResponseCode.DOWNLOADFILE)
+                    {
+                        lockObject.StopThread = true;
+                        return ResponseCode.SERVER_INACCESSIBLE; // CancelReason.SERVER_INACCESSIBLE
+                    }
+
+                    LogWrapper.LogMessage("frmSyncManager - consume", "bRet for " + id.strName + " is " + bRet.ToString());
+                    if (refCode == ResponseCode.INSUFFICIENT_STORAGE_AVAILABLE)
+                    {
+                        LogWrapper.LogMessage("frmSyncManager - consume", "INSUFFICIENT_STORAGE_AVAILABLE, calling CancelAndNotify with reason INSUFFICIENT_STORAGE");
+                        return ResponseCode.INSUFFICIENT_STORAGE_AVAILABLE;
+                    }
+
+                    LogWrapper.LogMessage("frmSyncManager - consume", "Getting eTag for " + id.strName);
+                    id.strETag = cMezeoFileCloud.GetETag(id.szContentUrl, ref refCode);
+
+                    if (refCode == ResponseCode.LOGINFAILED1 || refCode == ResponseCode.LOGINFAILED2)
+                    {
+                        lockObject.StopThread = true;
+                        return ResponseCode.LOGINFAILED1; // CancelReason.LOGIN_FAILED
+                    }
+                    else if (refCode != ResponseCode.GETETAG)
+                    {
+                        lockObject.StopThread = true;
+                        return ResponseCode.SERVER_INACCESSIBLE; // CancelReason.SERVER_INACCESSIBLE
+                    }
+                    LogWrapper.LogMessage("frmSyncManager - consume", "eTag for " + id.strName + ": " + id.strETag);
+                }
+
+                if (!bRet)
+                {
+                    LogWrapper.LogMessage("frmSyncManager - consume", "bRet FALSE, writing to cFileCloud.AppEventViewer");
+                    string Description = "";
+                    Description += LanguageTranslator.GetValue("ErrorBlurbDownload1");
+                    Description += LanguageTranslator.GetValue("ErrorBlurbDownload2");
+                    Description += LanguageTranslator.GetValue("ErrorBlurbDownload3");
+                    // cFileCloud.AppEventViewer(AboutBox.AssemblyTitle, Description, 3);
+                }
+                else
+                {
+                    LogWrapper.LogMessage("frmSyncManager - consume", "setting parent folders status to DB_STATUS_SUCCESS for " + downloadObjectName);
+                    MarkParentsStatus(downloadObjectName, DB_STATUS_SUCCESS);
+                    //fileFolderInfo.ETag = id.strETag;
+                    if (id.szItemType == "DIRECTORY")
+                    {
+                        LogWrapper.LogMessage("frmSyncManager - consume", "updating DB for folder " + downloadObjectName);
+                        DirectoryInfo dInfo = new DirectoryInfo(downloadObjectName);
+                        dbHandler.UpdateModifiedDate(dInfo.LastWriteTime, fileFolderInfo.Key);
+                        dbHandler.Update(DbHandler.TABLE_NAME, DbHandler.E_TAG, id.strETag, DbHandler.KEY, fileFolderInfo.Key);
+                        dbHandler.Update(DbHandler.TABLE_NAME, DbHandler.STATUS, "SUCCESS", DbHandler.KEY, fileFolderInfo.Key);
+                    }
+                    else
+                    {
+                        LogWrapper.LogMessage("frmSyncManager - consume", "updating DB for file " + downloadObjectName);
+                        FileInfo fInfo = new FileInfo(downloadObjectName);
+                        dbHandler.UpdateModifiedDate(fInfo.LastWriteTime, fileFolderInfo.Key);
+                        dbHandler.Update(DbHandler.TABLE_NAME, DbHandler.E_TAG, id.strETag, DbHandler.KEY, fileFolderInfo.Key);
+                        dbHandler.Update(DbHandler.TABLE_NAME, DbHandler.STATUS, "SUCCESS", DbHandler.KEY, fileFolderInfo.Key);
+                    }
+
+                    //if (downloadEvent != null)
+                    //{
+                    //    LogWrapper.LogMessage("frmSyncManager - consume", "calling  downloadEvent with " + downloadObjectName);
+                    //    downloadEvent(this, new FileDownloaderEvents(downloadObjectName, 0));
+                    //}
+                }
+            }
+
+            //if (IsAnalysisCompleted && queue.Count == 0)
+            //{
+            //    LogWrapper.LogMessage("FileDownloader - consume", "Analysis completed and queue lenth is ZERO");
+            //    if (fileDownloadCompletedEvent != null)
+            //    {
+            //        LogWrapper.LogMessage("FileDownloader - consume", "calling fileDownloadCompletedEvent");
+            //        done = true;
+            //        fileDownloadCompletedEvent();
+            //    }
+            //}
+
+            LogWrapper.LogMessage("frmSyncManager - consume", "Leave");
+            return nResultStatus;
+        }
+
+        private void GetNextEvent(ref LocalEvents lEvent, ref NQDetails nqEvent, ref LocalItemDetails localItemDetails)
+        {
+            // See if there are any events in the queue.
+            // Local events take priority over NQ.
+            // localItemDetails (initial sync events) take priority over local events.
+            localItemDetails = dbHandler.GetLocalItemDetailsEvent();
+            if (localItemDetails == null)
+            {
+                lEvent = dbHandler.GetLocalEvent();
+                if (lEvent == null)
+                    nqEvent = dbHandler.GetNQEvent();
+            }
         }
 
         private bool PopulateNQEvents()
@@ -3126,6 +3306,7 @@ namespace Mezeo
         {
             LocalEvents lEvent = null;
             NQDetails nqEvent = null;
+            LocalItemDetails localItemDetails = null;
             int nStatus = 0;
 
             // Initialize any counters.
@@ -3136,22 +3317,41 @@ namespace Mezeo
             // Set the GUI to reflect that a sync is going on.
             SetSyncThreadInProgress(true);
             // See if there are any events in the queue.  Local events take priority over NQ.
-            GetNextEvent(ref lEvent, ref nqEvent);
+            // LocalItemDetails (initial sync events) take priority over local events.
+            GetNextEvent(ref lEvent, ref nqEvent, ref localItemDetails);
 
             // If there are no more events in the queue, then see if the server has any more that need processing.
-            if ((null == lEvent) && (null == nqEvent) && !IsSyncPaused())
+            if ((null == lEvent) && (null == nqEvent) && (null == localItemDetails) && !IsSyncPaused())
             {
                 PopulateNQEvents();
-                GetNextEvent(ref lEvent, ref nqEvent);
+                GetNextEvent(ref lEvent, ref nqEvent, ref localItemDetails);
             }
 
             // Process the events 1 at a time in priority order.
-            while ((lEvent != null) || (nqEvent != null) && !IsSyncPaused())
+            while ((lEvent != null) || (nqEvent != null) || (null != localItemDetails) && !IsSyncPaused())
             {
                 // Increment the counter for the message text.
                 messageValue++;
 
-                if (lEvent != null)
+                if (localItemDetails != null)
+                {
+                    nStatus = ConsumeLocalItemDetail(localItemDetails);
+                    if (nStatus == ResponseCode.LOGINFAILED1 || nStatus == ResponseCode.LOGINFAILED2)
+                    {
+                        //e.Result = CancelReason.LOGIN_FAILED;
+                        break;
+                    }
+                    else if (nStatus != ResponseCode.GETETAG && nStatus != ResponseCode.DOWNLOADFILE && nStatus != ResponseCode.DOWNLOADITEMDETAILS && nStatus != 1)
+                    {
+                        //e.Result = CancelReason.SERVER_INACCESSIBLE;
+                        break;
+                    }
+                    if (nStatus == 1)
+                    {
+                        dbHandler.DeleteEvent(localItemDetails.EventDbId);
+                    }
+                }
+                else if (lEvent != null)
                 {
                     nStatus = HandleEvent((BackgroundWorker)sender, lEvent);
                     //nStatus = HandleEvent(null, lEvent);
@@ -3182,13 +3382,14 @@ namespace Mezeo
                 // Release the items so we can look for new ones.
                 lEvent = null;
                 nqEvent = null;
-                GetNextEvent(ref lEvent, ref nqEvent);
+                localItemDetails = null;
+                GetNextEvent(ref lEvent, ref nqEvent, ref localItemDetails);
 
                 // If there are no more events in the queue, then see if the server has any more that need processing.
-                if ((null == lEvent) && (null == nqEvent))
+                if ((null == lEvent) && (null == nqEvent) && (null == localItemDetails))
                 {
                     PopulateNQEvents();
-                    GetNextEvent(ref lEvent, ref nqEvent);
+                    GetNextEvent(ref lEvent, ref nqEvent, ref localItemDetails);
                 }
             }
 
@@ -3592,7 +3793,6 @@ namespace Mezeo
         }
 
         #endregion
-
        
         # region DB methods 
 
@@ -3728,7 +3928,6 @@ namespace Mezeo
         }
 
         #endregion
-
 
         # region Walk directory
 

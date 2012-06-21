@@ -30,8 +30,8 @@ namespace Mezeo
             }
         }
 
-        Queue<LocalItemDetails> queue;
-        ThreadLockObject lockObject;
+        //Queue<LocalItemDetails> queue;
+        //ThreadLockObject lockObject;
         string cRootContainerUrl;
         CloudService cFileCloud;
 
@@ -40,8 +40,8 @@ namespace Mezeo
         public StructureDownloader(Queue<LocalItemDetails> queue, ThreadLockObject lockObject, string rootContainerUrl, CloudService fileCloud)
         {
             LogWrapper.LogMessage("StructureDownloader - Constructor", "Enter");
-            this.queue = queue;
-            this.lockObject = lockObject;
+            //this.queue = queue;
+            //this.lockObject = lockObject;
             cRootContainerUrl = rootContainerUrl;
             cFileCloud = fileCloud;
             dbhandler.OpenConnection();
@@ -54,17 +54,18 @@ namespace Mezeo
         {
             LogWrapper.LogMessage("StructureDownloader - PrepareStructure", "Enter");
 
-                lock (lockObject)
-                {
-                    queue.Enqueue(lItemdDetails);
-                    if (isRootContainer)
-                    {
-                        LogWrapper.LogMessage("StructureDownloader - PrepareStructure", "Pulse");
-                        Monitor.PulseAll(lockObject);
-                    }
-                }
+            //lock (lockObject)
+            //{
+            //    queue.Enqueue(lItemdDetails);
+            //    if (isRootContainer)
+            //    {
+            //        LogWrapper.LogMessage("StructureDownloader - PrepareStructure", "Pulse");
+            //        Monitor.PulseAll(lockObject);
+            //    }
+            //}
+            dbhandler.AddLocalItemDetailsEvent(lItemdDetails);
 
-                LogWrapper.LogMessage("StructureDownloader - PrepareStructure", "Leave");
+            LogWrapper.LogMessage("StructureDownloader - PrepareStructure", "Leave");
         }
 
         public void startAnalyseItemDetails()
@@ -73,10 +74,10 @@ namespace Mezeo
 
             int refCode=0;
             ItemDetails[] contents = cFileCloud.DownloadItemDetails(cRootContainerUrl, ref refCode, null);
-            
+
             if (refCode == ResponseCode.LOGINFAILED1 || refCode == ResponseCode.LOGINFAILED2)
             {
-                lockObject.StopThread = true;
+                //lockObject.StopThread = true;
                 CancelAndNotify(CancelReason.LOGIN_FAILED);
                 return;
             }
@@ -90,7 +91,7 @@ namespace Mezeo
             }
             else if (refCode != ResponseCode.DOWNLOADITEMDETAILS)
             {
-                lockObject.StopThread = true;
+                //lockObject.StopThread = true;
                 CancelAndNotify(CancelReason.SERVER_INACCESSIBLE);
                 return;
             }
@@ -147,12 +148,12 @@ namespace Mezeo
             LogWrapper.LogMessage("StructureDownloader - startAnalyseItemDetails", "Contents total item count: " + contents[0].nTotalItem);
             for (int n = 0; n < contents[0].nTotalItem; n++)
             {
-                if (lockObject.StopThread /*|| refCode != 200*/)
-                {
-                    LogWrapper.LogMessage("StructureDownloader - startAnalyseItemDetails", "Stop thread requested Calling CancelAndNotify");
-                    CancelAndNotify(CancelReason.USER_CANCEL);
-                    break;
-                }
+                //if (lockObject.StopThread /*|| refCode != 200*/)
+                //{
+                //    LogWrapper.LogMessage("StructureDownloader - startAnalyseItemDetails", "Stop thread requested Calling CancelAndNotify");
+                //    CancelAndNotify(CancelReason.USER_CANCEL);
+                //    break;
+                //}
                 if (contents[n].szItemType == "DIRECTORY")
                 {
                     LogWrapper.LogMessage("StructureDownloader - startAnalyseItemDetails", "Calling analyseItemDetails for DIR: " + contents[n].strName);
@@ -174,10 +175,10 @@ namespace Mezeo
             LogWrapper.LogMessage("StructureDownloader - analyseItemDetails", "Enter");
             int refCode = 0;
             ItemDetails[] contents = cFileCloud.DownloadItemDetails(itemDetail.szContentUrl, ref refCode, null);
-            
+
             if (refCode == ResponseCode.LOGINFAILED1 || refCode == ResponseCode.LOGINFAILED2)
             {
-                lockObject.StopThread = true;
+                //lockObject.StopThread = true;
                 CancelAndNotify(CancelReason.LOGIN_FAILED);
                 return;
             }
@@ -191,7 +192,7 @@ namespace Mezeo
             }
             else if (refCode != ResponseCode.DOWNLOADITEMDETAILS)
             {
-                lockObject.StopThread = true;
+                //lockObject.StopThread = true;
                 CancelAndNotify(CancelReason.SERVER_INACCESSIBLE);
                 return;
             }
@@ -227,12 +228,12 @@ namespace Mezeo
             {
                 for (int n = 0; n < contents[0].nTotalItem; n++)
                 {
-                    if (lockObject.StopThread /*|| refCode != 200*/)
-                    {
-                        LogWrapper.LogMessage("StructureDownloader - analyseItemDetails", "Stop thread requested Calling CancelAndNotify");
-                        CancelAndNotify(CancelReason.USER_CANCEL);
-                        break;
-                    }
+                    //if (lockObject.StopThread /*|| refCode != 200*/)
+                    //{
+                    //    LogWrapper.LogMessage("StructureDownloader - analyseItemDetails", "Stop thread requested Calling CancelAndNotify");
+                    //    CancelAndNotify(CancelReason.USER_CANCEL);
+                    //    break;
+                    //}
 
                     if (contents[n].szItemType == "DIRECTORY")
                     {

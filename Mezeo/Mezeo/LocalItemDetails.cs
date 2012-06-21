@@ -10,6 +10,7 @@ namespace Mezeo
     {
         ItemDetails contents;
         string strPath;
+        public Int64 EventDbId { get; set; }
 
         public ItemDetails ItemDetails
         {
@@ -33,6 +34,11 @@ namespace Mezeo
             {
                 this.strPath = value;
             }
+        }
+
+        public LocalItemDetails()
+        {
+            EventDbId = -1;
         }
     }
 }

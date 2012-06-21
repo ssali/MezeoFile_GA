@@ -38,7 +38,7 @@ namespace Mezeo
         //Event table fields.
         public const string EVENT_TABLE_NAME = "EventInfo";
         public const string EVENT_INDEX = "EventIndex";
-        public const string EVENT_ORIGIN = "Origin";
+        public const string EVENT_ORIGIN = "Origin"; // 'I'nitial sync, 'L'ocal event, or 'N'otification Queue event.
         public const string EVENT_LOCAL_FILE_NAME = "LFileName";
         public const string EVENT_LOCAL_OLD_FILE_NAME = "LOldFileName";
         public const string EVENT_LOCAL_FULL_PATH = "LFullPath";
@@ -61,6 +61,12 @@ namespace Mezeo
         public const string EVENT_NQ_OBJ_TYPE = "NQObjType";
         public const string EVENT_NQ_PARENT_ID = "NQParentID";
         public const string EVENT_NQ_PARENT_URI = "NQParentURI";
+        public const string EVENT_INITIAL_TYPE = "IType";
+        public const string EVENT_INITIAL_PUBLIC = "IPublic";
+        public const string EVENT_INITIAL_SHARED = "IShared";
+        public const string EVENT_INITIAL_TOTAL = "ITotal";
+        public const string EVENT_INITIAL_SIZE = "ISize";
+
 
         // Conflict table columns/fields.
         public const string CONFLICT_TABLE_NAME = "ConflictIssues";
@@ -208,7 +214,12 @@ namespace Mezeo
                                 EVENT_NQ_NAME + " TEXT, " +
                                 EVENT_NQ_OBJ_TYPE + " TEXT, " +
                                 EVENT_NQ_PARENT_ID + " TEXT, " +
-                                EVENT_NQ_PARENT_URI + " TEXT)";
+                                EVENT_NQ_PARENT_URI + " TEXT, " +
+                                EVENT_INITIAL_TYPE + " TEXT," +
+                                EVENT_INITIAL_PUBLIC + " BOOL," +
+                                EVENT_INITIAL_SHARED + " BOOL," +
+                                EVENT_INITIAL_SIZE + " INTEGER," +
+                                EVENT_INITIAL_TOTAL + " INTEGER)";
 
                 ExecuteNonQuery(queryEvents);
 
@@ -667,6 +678,52 @@ namespace Mezeo
             return result;
         }
 
+        public int AddLocalItemDetailsEvent(LocalItemDetails iEvent)
+        {
+            int result = -1;
+            string query = "insert into " + EVENT_TABLE_NAME + " (" +
+                            EVENT_ORIGIN + ", " +
+                            EVENT_INITIAL_SIZE + ", " +
+                            EVENT_INITIAL_PUBLIC + ", " +
+                            EVENT_INITIAL_SHARED + ", " +
+                            EVENT_INITIAL_TOTAL + ", " +
+                            EVENT_NQ_TIME + ", " +
+                            EVENT_LOCAL_TIMESTAMP + ", " +
+                            EVENT_LOCAL_OLD_FILE_NAME + ", " +
+                            EVENT_LOCAL_FILE_NAME + ", " +
+                            EVENT_LOCAL_FULL_PATH + ", " +
+                            EVENT_INITIAL_TYPE + ", " +
+                            EVENT_LOCAL_OLD_FULL_PATH + ", " +
+                            EVENT_NQ_PARENT_URI + ") values ('I', " +
+                            (Int64)iEvent.ItemDetails.dblSizeInBytes + ",'" +
+                            iEvent.ItemDetails.bPublic + "','" +
+                            iEvent.ItemDetails.bShared + "'," +
+                            iEvent.ItemDetails.nTotalItem + ",'" +
+                            iEvent.ItemDetails.dtCreated.Ticks + "'," +
+                            iEvent.ItemDetails.dtModified.Ticks + ",'" +
+                            iEvent.ItemDetails.strETag + "','" +
+                            EscapeString(iEvent.ItemDetails.strName) + "','" +
+                            iEvent.ItemDetails.szContentUrl + "','" +
+                            iEvent.ItemDetails.szItemType + "','" +
+                            EscapeString(iEvent.Path) + "','" +
+                            iEvent.ItemDetails.szParentUrl + "');";
+
+            SQLiteConnection sqlConnection = OpenConnection();
+            SQLiteCommand sqlCommand = new SQLiteCommand(query, sqlConnection);
+            LogWrapper.LogMessage("DBHandler - AddLocalItemDetailsEvent", "Running query: " + query);
+
+            result = sqlCommand.ExecuteNonQuery();
+            sqlConnection.Close();
+
+            // Increment the job count.
+            if (0 < result)
+                IncrementJobCount();
+
+            // A result of 1 is success (# of rows affected and we should
+            // only have 1), not the index of the newly created entry.
+            return result;
+        }
+
         public int DeleteEvent(Int64 eventID)
         {
             int result = -1;
@@ -734,6 +791,38 @@ namespace Mezeo
             item.StrParentUri = (string)sqlDataReader[EVENT_NQ_PARENT_URI];
         }
 
+        public void PopulateLocalItemDetailsEventFromReader(ref LocalItemDetails item, ref SQLiteDataReader sqlDataReader)
+        {
+            try
+            {
+                ItemDetails itemDetails = new ItemDetails();
+                item.EventDbId = (Int64)sqlDataReader[EVENT_INDEX];
+                itemDetails.dblSizeInBytes = (Int64)sqlDataReader[EVENT_INITIAL_SIZE];
+                itemDetails.bPublic = (bool)sqlDataReader[EVENT_INITIAL_PUBLIC];
+                itemDetails.bShared = (bool)sqlDataReader[EVENT_INITIAL_SHARED];
+                itemDetails.nTotalItem = (int)((Int64)sqlDataReader[EVENT_INITIAL_TOTAL]);
+                itemDetails.dtCreated.AddTicks(Int64.Parse((string)sqlDataReader[EVENT_NQ_TIME]));
+                itemDetails.dtModified.AddTicks((Int64)sqlDataReader[EVENT_LOCAL_TIMESTAMP]);
+                itemDetails.strETag = (string)sqlDataReader[EVENT_LOCAL_OLD_FILE_NAME];
+                itemDetails.strName = (string)sqlDataReader[EVENT_LOCAL_FILE_NAME];
+                itemDetails.szParentUrl = (string)sqlDataReader[EVENT_NQ_PARENT_URI];
+                item.Path = (string)sqlDataReader[EVENT_LOCAL_OLD_FULL_PATH];
+                itemDetails.szContentUrl = (string)sqlDataReader[EVENT_LOCAL_FULL_PATH];
+                itemDetails.szItemType = (string)sqlDataReader[EVENT_INITIAL_TYPE];
+                //public string szMimeType;       // Always set to null/emtpy.
+                //public DateTime dtAccessed;     // Never set or used.
+                //public int nCurrentPosition;    // Never set or used.
+
+                // Due to the class, I have to assign all the details at once instead of individually.
+                item.ItemDetails = itemDetails;
+            }
+            catch (Exception ex)
+            {
+                LogWrapper.LogMessage("DbHandler - PopulateLocalItemDetailsEventFromReader", "Caught exception: " + ex.Message);
+                item = null;
+            }
+        }
+
         public LocalEvents GetLocalEvent()
         {
             string query = "SELECT * FROM " + EVENT_TABLE_NAME + " WHERE " + EVENT_ORIGIN + " = 'L' ORDER BY " + EVENT_INDEX + " LIMIT 1;";
@@ -791,6 +880,37 @@ namespace Mezeo
             catch (Exception ex)
             {
                 LogWrapper.LogMessage("DbHandler - GetNQEvent", "Caught exception: " + ex.Message);
+                item = null;
+            }
+
+            if (null != sqlDataReader)
+                sqlDataReader.Close();
+            sqlConnection.Close();
+
+            return item;
+        }
+
+        public LocalItemDetails GetLocalItemDetailsEvent()
+        {
+            string query = "SELECT * FROM " + EVENT_TABLE_NAME + " WHERE " + EVENT_ORIGIN + " = 'I' ORDER BY " + EVENT_INDEX + " LIMIT 1;";
+            LogWrapper.LogMessage("DBHandler - GetLocalItemDetailsEvent", "Running query: " + query);
+            LocalItemDetails item = null;
+
+            SQLiteConnection sqlConnection = OpenConnection();
+            SQLiteCommand sqlCommand = new SQLiteCommand(query, sqlConnection);
+            SQLiteDataReader sqlDataReader = null;
+            try
+            {
+                sqlDataReader = sqlCommand.ExecuteReader();
+                while (sqlDataReader.Read())
+                {
+                    item = new LocalItemDetails();
+                    PopulateLocalItemDetailsEventFromReader(ref item, ref sqlDataReader);
+                }
+            }
+            catch (Exception ex)
+            {
+                LogWrapper.LogMessage("DbHandler - GetLocalItemDetailsEvent", "Caught exception: " + ex.Message);
                 item = null;
             }
 
