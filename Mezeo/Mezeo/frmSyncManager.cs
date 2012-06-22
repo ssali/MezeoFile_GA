@@ -3374,6 +3374,8 @@ namespace Mezeo
                 {
                     nStatus = HandleEvent((BackgroundWorker)sender, lEvent);
                     //nStatus = HandleEvent(null, lEvent);
+                    if (1 == nStatus)
+                        dbHandler.DeleteEvent(lEvent.EventDbId);
                 }
                 else if (nqEvent != null)
                 {
