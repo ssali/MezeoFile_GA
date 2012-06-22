@@ -425,6 +425,8 @@ namespace Mezeo
          
             this.btnIssuesFound.Visible = false;
             this.pbSyncProgress.Visible = false;
+            this.lblPercentDone.Visible = false;
+
             this.lblUserName.Text = BasicInfo.UserName;
             this.lnkServerUrl.Text = BasicInfo.ServiceUrl;
             this.lnkFolderPath.Text = BasicInfo.SyncDirPath;
