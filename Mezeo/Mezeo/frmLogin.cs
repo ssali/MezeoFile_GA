@@ -207,7 +207,9 @@ namespace Mezeo
 
             //Loading resources at runtime for for context menu 
             this.toolStripMenuItem2.Text = global::Mezeo.Properties.Resources.BrSyncManagerTitle + " " + AboutBox.AssemblyVersion;
-            
+            this.toolStripMenuItem6.Text = global::Mezeo.Properties.Resources.BrSyncManagerTitle + " " + AboutBox.AssemblyVersion;
+          
+  
             this.btnLogin.Text = LanguageTranslator.GetValue("LoginButtonText");	
             this.exitToolStripMenuItem.Text	 = LanguageTranslator.GetValue("ExitSyncManager");
 	        this.loginToolStripMenuItem.Text = LanguageTranslator.GetValue("LoginButtonText");
@@ -234,6 +236,7 @@ namespace Mezeo
                 if (!BasicInfo.IsCredentialsAvailable)
                 {
                     showLogin = true;
+                    niSystemTray.ContextMenuStrip = cmSystemTrayLogin;
                 }
                 else
                 {
@@ -373,8 +376,8 @@ namespace Mezeo
 
             this.btnLogin.Enabled = true;
 
-           // niSystemTray.ContextMenuStrip = cmSystemTrayLogin;
-            SyncEvaluatingBalloonMessage();
+            niSystemTray.ContextMenuStrip = cmSystemTrayLogin;
+           // SyncEvaluatingBalloonMessage();
 
             this.Show();
 
