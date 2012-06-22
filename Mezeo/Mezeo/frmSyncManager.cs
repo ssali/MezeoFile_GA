@@ -490,7 +490,7 @@ namespace Mezeo
         private void SetUpControlForSync()
         {
             SetIssueFound(false);
-           // btnSyncNow.Text = this.btnSyncNow.Text = LanguageTranslator.GetValue("PauseSync");
+            btnSyncNow.Text = this.btnSyncNow.Text = LanguageTranslator.GetValue("PauseSync");
             btnSyncNow.Refresh();
            // isAnalysingStructure = true;
             isDownloadingFile = true;
