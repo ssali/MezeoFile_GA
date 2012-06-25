@@ -230,6 +230,7 @@ namespace Mezeo
             if (!BasicInfo.LoadRegistryValues())
             {
                 showLogin = true;
+                niSystemTray.ContextMenuStrip = cmSystemTrayLogin;
             }
             else
             {
