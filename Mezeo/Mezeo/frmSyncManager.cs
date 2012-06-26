@@ -365,19 +365,25 @@ namespace Mezeo
         {
             if (e.IsCompleted && !lockObject.StopThread)
             {
-                tmrSwapStatusMessage.Enabled = false;
-                BasicInfo.IsInitialSync = false;
-                SetAnalysisIsCompleted(true);
-                resetAllControls();
-                SyncNow();
-                //if (pbSyncProgress.Maximum > 0)
-                //{
-                //    fileDownloadCount = 1;
-                //    lblPercentDone.Text = "";
-                //    lblPercentDone.Visible = true;
-
-                //    showProgress();
-                //}
+                if (this.InvokeRequired)
+                {
+                    this.Invoke((MethodInvoker)delegate
+                    {
+                        tmrSwapStatusMessage.Enabled = false;
+                        BasicInfo.IsInitialSync = false;
+                        SetAnalysisIsCompleted(true);
+                        resetAllControls();
+                        SyncNow();
+                    });
+                }
+                else
+                {
+                    tmrSwapStatusMessage.Enabled = false;
+                    BasicInfo.IsInitialSync = false;
+                    SetAnalysisIsCompleted(true);
+                    resetAllControls();
+                    SyncNow();
+                }
             }
            
         }
@@ -397,8 +403,18 @@ namespace Mezeo
 
         void stDownloader_cancelDownloadEvent(CancelReason reason)
         {
+            if (this.InvokeRequired)
+            {
+                this.Invoke((MethodInvoker)delegate
+                {
+                    tmrSwapStatusMessage.Enabled = false;
+                });
+            }
+            else
+            {
+                tmrSwapStatusMessage.Enabled = false;
+            }
             //isAnalysingStructure = false;
-            tmrSwapStatusMessage.Enabled = false;
             OnThreadCancel(reason);
         }
 
@@ -416,91 +432,186 @@ namespace Mezeo
 
         public void resetAllControls()
         {
-            this.Text = AboutBox.AssemblyTitle;
-            this.lblFolder.Text = LanguageTranslator.GetValue("SyncManagerFolderLabel");
-            this.lblStatus.Text = LanguageTranslator.GetValue("SyncManagerStatusLabel");
-            this.lblUsage.Text = LanguageTranslator.GetValue("SyncManagerUsageLabel");
-
-            this.btnSyncNow.Text = LanguageTranslator.GetValue("SyncManagerSyncNowButtonText");
-         
-            this.btnIssuesFound.Visible = false;
-            this.pbSyncProgress.Visible = false;
-            this.lblPercentDone.Visible = false;
-
-            this.lblUserName.Text = BasicInfo.UserName;
-            this.lnkServerUrl.Text = BasicInfo.ServiceUrl;
-            this.lnkFolderPath.Text = BasicInfo.SyncDirPath;
-
-            lastSync = DateTime.Now;
-            BasicInfo.LastSyncAt = lastSync;
-
-            this.btnSyncNow.Text = LanguageTranslator.GetValue("SyncManagerSyncNowButtonText");
-            lblStatusL1.Text = LanguageTranslator.GetValue("SyncManagerStatusAllFilesInSyncLabel");
-           
-            lblStatusL3.Text = LanguageTranslator.GetValue("SyncManagerStatusLastSyncLabel") + " " + lastSync.ToString("MMM d, yyyy h:mm tt");
-            label1.Text = LanguageTranslator.GetValue("SyncManagerStatusNextSyncAtLabel") + " " + lastSync.AddMinutes(Convert.ToInt32(global::Mezeo.Properties.Resources.BrSyncTimer)).ToString("h:mm tt");
-            label1.BringToFront();
-            label1.Visible = true;
-            label1.Show();
-
-            if (IsInIdleState())
-                InitialSyncBalloonMessage();
-           
-            if (cLoginDetails != null)
+            if (this.InvokeRequired)
             {
-                string usedSize = FormatSizeString(cLoginDetails.dblStorage_Used);
-                string allocatedSize = "";
-
-                if (cLoginDetails.dblStorage_Allocated == -1)
+                this.Invoke((MethodInvoker)delegate
                 {
-                    allocatedSize = LanguageTranslator.GetValue("SyncManagerUsageUnlimited");
-                }
-                else
-                {
-                    allocatedSize = FormatSizeString(cLoginDetails.dblStorage_Allocated);
-                }
+                    this.Text = AboutBox.AssemblyTitle;
+                    this.lblFolder.Text = LanguageTranslator.GetValue("SyncManagerFolderLabel");
+                    this.lblStatus.Text = LanguageTranslator.GetValue("SyncManagerStatusLabel");
+                    this.lblUsage.Text = LanguageTranslator.GetValue("SyncManagerUsageLabel");
 
-                allocatedSize += " " + LanguageTranslator.GetValue("SyncManagerUsageUsed");
+                    this.btnSyncNow.Text = LanguageTranslator.GetValue("SyncManagerSyncNowButtonText");
 
-                this.lblUsageDetails.Text = usedSize + " " + LanguageTranslator.GetValue("SyncManagerUsageOfLabel") + " " + allocatedSize;
+                    this.btnIssuesFound.Visible = false;
+                    this.pbSyncProgress.Visible = false;
+                    this.lblPercentDone.Visible = false;
+
+                    this.lblUserName.Text = BasicInfo.UserName;
+                    this.lnkServerUrl.Text = BasicInfo.ServiceUrl;
+                    this.lnkFolderPath.Text = BasicInfo.SyncDirPath;
+
+                    lastSync = DateTime.Now;
+                    BasicInfo.LastSyncAt = lastSync;
+
+                    this.btnSyncNow.Text = LanguageTranslator.GetValue("SyncManagerSyncNowButtonText");
+                    lblStatusL1.Text = LanguageTranslator.GetValue("SyncManagerStatusAllFilesInSyncLabel");
+
+                    lblStatusL3.Text = LanguageTranslator.GetValue("SyncManagerStatusLastSyncLabel") + " " + lastSync.ToString("MMM d, yyyy h:mm tt");
+                    label1.Text = LanguageTranslator.GetValue("SyncManagerStatusNextSyncAtLabel") + " " + lastSync.AddMinutes(Convert.ToInt32(global::Mezeo.Properties.Resources.BrSyncTimer)).ToString("h:mm tt");
+                    label1.BringToFront();
+                    label1.Visible = true;
+                    label1.Show();
+
+                    if (IsInIdleState())
+                        InitialSyncBalloonMessage();
+
+                    if (cLoginDetails != null)
+                    {
+                        string usedSize = FormatSizeString(cLoginDetails.dblStorage_Used);
+                        string allocatedSize = "";
+
+                        if (cLoginDetails.dblStorage_Allocated == -1)
+                        {
+                            allocatedSize = LanguageTranslator.GetValue("SyncManagerUsageUnlimited");
+                        }
+                        else
+                        {
+                            allocatedSize = FormatSizeString(cLoginDetails.dblStorage_Allocated);
+                        }
+
+                        allocatedSize += " " + LanguageTranslator.GetValue("SyncManagerUsageUsed");
+
+                        this.lblUsageDetails.Text = usedSize + " " + LanguageTranslator.GetValue("SyncManagerUsageOfLabel") + " " + allocatedSize;
+                    }
+                    else
+                        this.lblUsageDetails.Text = LanguageTranslator.GetValue("UsageNotAvailable");
+                });
             }
             else
-                this.lblUsageDetails.Text = LanguageTranslator.GetValue("UsageNotAvailable");
+            {
+                this.Text = AboutBox.AssemblyTitle;
+                this.lblFolder.Text = LanguageTranslator.GetValue("SyncManagerFolderLabel");
+                this.lblStatus.Text = LanguageTranslator.GetValue("SyncManagerStatusLabel");
+                this.lblUsage.Text = LanguageTranslator.GetValue("SyncManagerUsageLabel");
+
+                this.btnSyncNow.Text = LanguageTranslator.GetValue("SyncManagerSyncNowButtonText");
+
+                this.btnIssuesFound.Visible = false;
+                this.pbSyncProgress.Visible = false;
+                this.lblPercentDone.Visible = false;
+
+                this.lblUserName.Text = BasicInfo.UserName;
+                this.lnkServerUrl.Text = BasicInfo.ServiceUrl;
+                this.lnkFolderPath.Text = BasicInfo.SyncDirPath;
+
+                lastSync = DateTime.Now;
+                BasicInfo.LastSyncAt = lastSync;
+
+                this.btnSyncNow.Text = LanguageTranslator.GetValue("SyncManagerSyncNowButtonText");
+                lblStatusL1.Text = LanguageTranslator.GetValue("SyncManagerStatusAllFilesInSyncLabel");
+
+                lblStatusL3.Text = LanguageTranslator.GetValue("SyncManagerStatusLastSyncLabel") + " " + lastSync.ToString("MMM d, yyyy h:mm tt");
+                label1.Text = LanguageTranslator.GetValue("SyncManagerStatusNextSyncAtLabel") + " " + lastSync.AddMinutes(Convert.ToInt32(global::Mezeo.Properties.Resources.BrSyncTimer)).ToString("h:mm tt");
+                label1.BringToFront();
+                label1.Visible = true;
+                label1.Show();
+
+                if (IsInIdleState())
+                    InitialSyncBalloonMessage();
+
+                if (cLoginDetails != null)
+                {
+                    string usedSize = FormatSizeString(cLoginDetails.dblStorage_Used);
+                    string allocatedSize = "";
+
+                    if (cLoginDetails.dblStorage_Allocated == -1)
+                    {
+                        allocatedSize = LanguageTranslator.GetValue("SyncManagerUsageUnlimited");
+                    }
+                    else
+                    {
+                        allocatedSize = FormatSizeString(cLoginDetails.dblStorage_Allocated);
+                    }
+
+                    allocatedSize += " " + LanguageTranslator.GetValue("SyncManagerUsageUsed");
+
+                    this.lblUsageDetails.Text = usedSize + " " + LanguageTranslator.GetValue("SyncManagerUsageOfLabel") + " " + allocatedSize;
+                }
+                else
+                    this.lblUsageDetails.Text = LanguageTranslator.GetValue("UsageNotAvailable");
+            }
         }
 
         private void UpdateUsageLabel()
         {
-            if (cLoginDetails != null)
+            if (this.InvokeRequired)
             {
-                if (!bwUpdateUsage.IsBusy)
-                    bwUpdateUsage.RunWorkerAsync();
+                this.Invoke((MethodInvoker)delegate
+                {
+                    if (cLoginDetails != null)
+                    {
+                        if (!bwUpdateUsage.IsBusy)
+                            bwUpdateUsage.RunWorkerAsync();
+                    }
+                    else
+                    {
+                        this.lblUsageDetails.Text = LanguageTranslator.GetValue("UsageNotAvailable");
+                    }
+                });
             }
             else
             {
-                this.lblUsageDetails.Text = LanguageTranslator.GetValue("UsageNotAvailable");
+                if (cLoginDetails != null)
+                {
+                    if (!bwUpdateUsage.IsBusy)
+                        bwUpdateUsage.RunWorkerAsync();
+                }
+                else
+                {
+                    this.lblUsageDetails.Text = LanguageTranslator.GetValue("UsageNotAvailable");
+                }
             }
         }
 
         public void SetUpSync()
         {
-            lblPercentDone.Visible = true;
-            lblPercentDone.Text = "";
+            if (this.InvokeRequired)
+            {
+                this.Invoke((MethodInvoker)delegate
+                {
+                    lblPercentDone.Visible = true;
+                    lblPercentDone.Text = "";
+                });
+            }
+            else
+            {
+                lblPercentDone.Visible = true;
+                lblPercentDone.Text = "";
+            }
         }
 
         private void SetUpControlForSync()
         {
-            SetIssueFound(false);
-            btnSyncNow.Text = this.btnSyncNow.Text = LanguageTranslator.GetValue("PauseSync");
-            btnSyncNow.Refresh();
-           // isAnalysingStructure = true;
-            isDownloadingFile = true;
-            //SetIsSyncInProgress(true);
-            ShowNextSyncLabel(false);
-          //  isAnalysisCompleted = false;
-            // tmrNextSync.Enabled = false;
-            // pbSyncProgress.Visible = true;
-            // btnMoveFolder.Enabled = false;
-            // Commeted above line as move folder functinality disable 
+            if (this.InvokeRequired)
+            {
+                this.Invoke((MethodInvoker)delegate
+                {
+                    SetIssueFound(false);
+                    btnSyncNow.Text = this.btnSyncNow.Text = LanguageTranslator.GetValue("PauseSync");
+                    btnSyncNow.Refresh();
+                    isDownloadingFile = true;
+                    ShowNextSyncLabel(false);
+                });
+            }
+            else
+            {
+                SetIssueFound(false);
+                btnSyncNow.Text = this.btnSyncNow.Text = LanguageTranslator.GetValue("PauseSync");
+                btnSyncNow.Refresh();
+                isDownloadingFile = true;
+                ShowNextSyncLabel(false);
+            }
         }
 
         private void tmrSwapStatusMessage_Tick(object sender, EventArgs e)
@@ -569,116 +680,260 @@ namespace Mezeo
 
         private void setUpControls()
         {
-            lblStatusL1.Text = statusMessages[0];
-            lblStatusL1.Visible = true;
+            if (this.InvokeRequired)
+            {
+                this.Invoke((MethodInvoker)delegate
+                {
+                    lblStatusL1.Text = statusMessages[0];
+                    lblStatusL1.Visible = true;
 
-            lblStatusL3.Text = "";
-            lblStatusL3.Visible = true;
-            pbSyncProgress.Visible = false;
-            tmrSwapStatusMessage.Enabled = true;
+                    lblStatusL3.Text = "";
+                    lblStatusL3.Visible = true;
+                    pbSyncProgress.Visible = false;
+                    tmrSwapStatusMessage.Enabled = true;
+                });
+            }
+            else
+            {
+                lblStatusL1.Text = statusMessages[0];
+                lblStatusL1.Visible = true;
+
+                lblStatusL3.Text = "";
+                lblStatusL3.Visible = true;
+                pbSyncProgress.Visible = false;
+                tmrSwapStatusMessage.Enabled = true;
+            }
         }
 
         private void ShowSyncMessage(bool IsStopped = false, bool IsLocalEvents = false)
         {
-            //LogWrapper.LogMessage("frmSyncManager - ShowSyncMessage", "enter");
-            lastSync = DateTime.Now;
-            BasicInfo.LastSyncAt = lastSync;
-
-            // UpdateUsageLabel();
-
-            DisableProgress();
-           // this.btnSyncNow.Text = LanguageTranslator.GetValue("SyncManagerSyncNowButtonText");
-            this.btnSyncNow.Enabled = true;
-
-            if (BasicInfo.AutoSync)
+            if (this.InvokeRequired)
             {
-                ShowAutoSyncMessage(IsStopped);
+                this.Invoke((MethodInvoker)delegate
+                {
+                    //LogWrapper.LogMessage("frmSyncManager - ShowSyncMessage", "enter");
+                    lastSync = DateTime.Now;
+                    BasicInfo.LastSyncAt = lastSync;
+
+                    // UpdateUsageLabel();
+
+                    DisableProgress();
+                    // this.btnSyncNow.Text = LanguageTranslator.GetValue("SyncManagerSyncNowButtonText");
+                    this.btnSyncNow.Enabled = true;
+
+                    if (BasicInfo.AutoSync)
+                    {
+                        ShowAutoSyncMessage(IsStopped);
+                    }
+                    else
+                    {
+                        ShowSyncDisabledMessage();
+                    }
+
+                    //LogWrapper.LogMessage("frmSyncManager - ShowSyncMessage", "leave");
+                });
             }
             else
             {
-                ShowSyncDisabledMessage();
-            }
+                //LogWrapper.LogMessage("frmSyncManager - ShowSyncMessage", "enter");
+                lastSync = DateTime.Now;
+                BasicInfo.LastSyncAt = lastSync;
 
-            //LogWrapper.LogMessage("frmSyncManager - ShowSyncMessage", "leave");
+                // UpdateUsageLabel();
+
+                DisableProgress();
+                // this.btnSyncNow.Text = LanguageTranslator.GetValue("SyncManagerSyncNowButtonText");
+                this.btnSyncNow.Enabled = true;
+
+                if (BasicInfo.AutoSync)
+                {
+                    ShowAutoSyncMessage(IsStopped);
+                }
+                else
+                {
+                    ShowSyncDisabledMessage();
+                }
+
+                //LogWrapper.LogMessage("frmSyncManager - ShowSyncMessage", "leave");
+            }
         }
 
         private void ShowAutoSyncMessage(bool IsStopped)
         {
-            //LogWrapper.LogMessage("frmSyncManager - ShowAutoSyncMessage", "enter");
-            if (IsStopped)
+            if (this.InvokeRequired)
             {
-                if (frmIssuesFound != null && frmIssuesFound.GetItemsInList() > 0)
+                this.Invoke((MethodInvoker)delegate
                 {
-                    IssueFoundBalloonMessage();
-                }
-                else
-                {
-                    //SyncStoppedBalloonMessage();
-                    SyncPauseBalloonMessage();
-                    lblStatusL1.Text = LanguageTranslator.GetValue("TrayBalloonSyncPauseText");
-                }
+                    //LogWrapper.LogMessage("frmSyncManager - ShowAutoSyncMessage", "enter");
+                    if (IsStopped)
+                    {
+                        if (frmIssuesFound != null && frmIssuesFound.GetItemsInList() > 0)
+                        {
+                            IssueFoundBalloonMessage();
+                        }
+                        else
+                        {
+                            //SyncStoppedBalloonMessage();
+                            SyncPauseBalloonMessage();
+                            lblStatusL1.Text = LanguageTranslator.GetValue("TrayBalloonSyncPauseText");
+                        }
+                    }
+                    else
+                    {
+                        if (frmIssuesFound != null && frmIssuesFound.GetItemsInList() > 0)
+                        {
+                            IssueFoundBalloonMessage();
+                        }
+                        else
+                        {
+                            InitialSyncBalloonMessage();
+                        }
+                    }
+
+                    lblStatusL3.Text = LanguageTranslator.GetValue("SyncManagerStatusLastSyncLabel") + " " + lastSync.ToString("MMM d, yyyy h:mm tt");
+                    label1.Text = LanguageTranslator.GetValue("SyncManagerStatusNextSyncAtLabel") + " " + lastSync.AddMinutes(Convert.ToInt32(global::Mezeo.Properties.Resources.BrSyncTimer)).ToString("h:mm tt");
+                    label1.BringToFront();
+                    label1.Visible = true;
+                    label1.Show();
+                    //LogWrapper.LogMessage("frmSyncManager - ShowAutoSyncMessage", "leave");
+                });
             }
             else
             {
-                if (frmIssuesFound != null && frmIssuesFound.GetItemsInList() > 0)
+                //LogWrapper.LogMessage("frmSyncManager - ShowAutoSyncMessage", "enter");
+                if (IsStopped)
                 {
-                    IssueFoundBalloonMessage();
+                    if (frmIssuesFound != null && frmIssuesFound.GetItemsInList() > 0)
+                    {
+                        IssueFoundBalloonMessage();
+                    }
+                    else
+                    {
+                        //SyncStoppedBalloonMessage();
+                        SyncPauseBalloonMessage();
+                        lblStatusL1.Text = LanguageTranslator.GetValue("TrayBalloonSyncPauseText");
+                    }
                 }
                 else
                 {
-                    InitialSyncBalloonMessage();
+                    if (frmIssuesFound != null && frmIssuesFound.GetItemsInList() > 0)
+                    {
+                        IssueFoundBalloonMessage();
+                    }
+                    else
+                    {
+                        InitialSyncBalloonMessage();
+                    }
                 }
-            }
 
-            lblStatusL3.Text = LanguageTranslator.GetValue("SyncManagerStatusLastSyncLabel") + " " + lastSync.ToString("MMM d, yyyy h:mm tt");
-            label1.Text = LanguageTranslator.GetValue("SyncManagerStatusNextSyncAtLabel") + " " + lastSync.AddMinutes(Convert.ToInt32(global::Mezeo.Properties.Resources.BrSyncTimer)).ToString("h:mm tt");
-            label1.BringToFront();
-            label1.Visible = true;
-            label1.Show();
-            //LogWrapper.LogMessage("frmSyncManager - ShowAutoSyncMessage", "leave");
+                lblStatusL3.Text = LanguageTranslator.GetValue("SyncManagerStatusLastSyncLabel") + " " + lastSync.ToString("MMM d, yyyy h:mm tt");
+                label1.Text = LanguageTranslator.GetValue("SyncManagerStatusNextSyncAtLabel") + " " + lastSync.AddMinutes(Convert.ToInt32(global::Mezeo.Properties.Resources.BrSyncTimer)).ToString("h:mm tt");
+                label1.BringToFront();
+                label1.Visible = true;
+                label1.Show();
+                //LogWrapper.LogMessage("frmSyncManager - ShowAutoSyncMessage", "leave");
+            }
         }
 
         private void ShowSyncDisabledMessage()
         {
-            //frmParent.menuItem7.Text = LanguageTranslator.GetValue("SyncManagerSyncDisabled");
-            //LogWrapper.LogMessage("frmSyncManager - ShowSyncDisabledMessage", "enter");
+            if (this.InvokeRequired)
+            {
+                this.Invoke((MethodInvoker)delegate
+                {
+                    //frmParent.menuItem7.Text = LanguageTranslator.GetValue("SyncManagerSyncDisabled");
+                    //LogWrapper.LogMessage("frmSyncManager - ShowSyncDisabledMessage", "enter");
 
-            cnotificationManager.NotificationHandler.Icon = Properties.Resources.app_icon_disabled;
+                    cnotificationManager.NotificationHandler.Icon = Properties.Resources.app_icon_disabled;
 
-            cnotificationManager.NotificationHandler.ShowBalloonTip(1, LanguageTranslator.GetValue("TrayBalloonSyncStatusText"),
-                                                                          LanguageTranslator.GetValue("SyncManagerSyncDisabled") + ". " + LanguageTranslator.GetValue("SyncManagerTrayEnableOnText"),
-                                                                         ToolTipIcon.None);
+                    cnotificationManager.NotificationHandler.ShowBalloonTip(1, LanguageTranslator.GetValue("TrayBalloonSyncStatusText"),
+                                                                                  LanguageTranslator.GetValue("SyncManagerSyncDisabled") + ". " + LanguageTranslator.GetValue("SyncManagerTrayEnableOnText"),
+                                                                                 ToolTipIcon.None);
 
-            cnotificationManager.HoverText = LanguageTranslator.GetValue("SyncManagerSyncDisabled") + ". " + LanguageTranslator.GetValue("SyncManagerTrayEnableOnText");
-            frmParent.toolStripMenuItem4.Text = LanguageTranslator.GetValue("SyncManagerSyncDisabled");
-            lblStatusL1.Text = LanguageTranslator.GetValue("SyncManagerSyncDisabled");
-            label1.Text = LanguageTranslator.GetValue("SyncManagerResumeSync");
-            lblStatusL3.Text = LanguageTranslator.GetValue("SyncManagerStatusLastSyncLabel") + " " + lastSync.ToString("MMM d, yyyy h:mm tt");
-            ShowNextSyncLabel(true);
-            //LogWrapper.LogMessage("frmSyncManager - ShowSyncDisabledMessage", "leave");
+                    cnotificationManager.HoverText = LanguageTranslator.GetValue("SyncManagerSyncDisabled") + ". " + LanguageTranslator.GetValue("SyncManagerTrayEnableOnText");
+                    frmParent.toolStripMenuItem4.Text = LanguageTranslator.GetValue("SyncManagerSyncDisabled");
+                    lblStatusL1.Text = LanguageTranslator.GetValue("SyncManagerSyncDisabled");
+                    label1.Text = LanguageTranslator.GetValue("SyncManagerResumeSync");
+                    lblStatusL3.Text = LanguageTranslator.GetValue("SyncManagerStatusLastSyncLabel") + " " + lastSync.ToString("MMM d, yyyy h:mm tt");
+                    ShowNextSyncLabel(true);
+                    //LogWrapper.LogMessage("frmSyncManager - ShowSyncDisabledMessage", "leave");
+                });
+            }
+            else
+            {
+                //frmParent.menuItem7.Text = LanguageTranslator.GetValue("SyncManagerSyncDisabled");
+                //LogWrapper.LogMessage("frmSyncManager - ShowSyncDisabledMessage", "enter");
+
+                cnotificationManager.NotificationHandler.Icon = Properties.Resources.app_icon_disabled;
+
+                cnotificationManager.NotificationHandler.ShowBalloonTip(1, LanguageTranslator.GetValue("TrayBalloonSyncStatusText"),
+                                                                              LanguageTranslator.GetValue("SyncManagerSyncDisabled") + ". " + LanguageTranslator.GetValue("SyncManagerTrayEnableOnText"),
+                                                                             ToolTipIcon.None);
+
+                cnotificationManager.HoverText = LanguageTranslator.GetValue("SyncManagerSyncDisabled") + ". " + LanguageTranslator.GetValue("SyncManagerTrayEnableOnText");
+                frmParent.toolStripMenuItem4.Text = LanguageTranslator.GetValue("SyncManagerSyncDisabled");
+                lblStatusL1.Text = LanguageTranslator.GetValue("SyncManagerSyncDisabled");
+                label1.Text = LanguageTranslator.GetValue("SyncManagerResumeSync");
+                lblStatusL3.Text = LanguageTranslator.GetValue("SyncManagerStatusLastSyncLabel") + " " + lastSync.ToString("MMM d, yyyy h:mm tt");
+                ShowNextSyncLabel(true);
+                //LogWrapper.LogMessage("frmSyncManager - ShowSyncDisabledMessage", "leave");
+            }
         }
 
         private void DisableProgress()
         {
-            //LogWrapper.LogMessage("frmSyncManager - DisableProgress", "enter");
-            lblPercentDone.Visible = false;
-            lblPercentDone.Text = "";
+            if (this.InvokeRequired)
+            {
+                this.Invoke((MethodInvoker)delegate
+                {
+                    //LogWrapper.LogMessage("frmSyncManager - DisableProgress", "enter");
+                    lblPercentDone.Visible = false;
+                    lblPercentDone.Text = "";
 
-            lblStatusL1.Text = "";
-            lblStatusL3.Text = "";
-            pbSyncProgress.Visible = false;
-            // btnMoveFolder.Enabled = true;
-            // Commeted above line as move folder functinality disable 
-            ShowNextSyncLabel(true);
-            //LogWrapper.LogMessage("frmSyncManager - DisableProgress", "leave");
+                    lblStatusL1.Text = "";
+                    lblStatusL3.Text = "";
+                    pbSyncProgress.Visible = false;
+                    // btnMoveFolder.Enabled = true;
+                    // Commeted above line as move folder functinality disable 
+                    ShowNextSyncLabel(true);
+                    //LogWrapper.LogMessage("frmSyncManager - DisableProgress", "leave");
+                });
+            }
+            else
+            {
+                //LogWrapper.LogMessage("frmSyncManager - DisableProgress", "enter");
+                lblPercentDone.Visible = false;
+                lblPercentDone.Text = "";
+
+                lblStatusL1.Text = "";
+                lblStatusL3.Text = "";
+                pbSyncProgress.Visible = false;
+                // btnMoveFolder.Enabled = true;
+                // Commeted above line as move folder functinality disable 
+                ShowNextSyncLabel(true);
+                //LogWrapper.LogMessage("frmSyncManager - DisableProgress", "leave");
+            }
         }
 
         private void EnableProgress()
         {
-            //LogWrapper.LogMessage("frmSyncManager - EnableProgress", "enter");
-            ShowNextSyncLabel(false);
-            Application.DoEvents();
-            //LogWrapper.LogMessage("frmSyncManager - EnableProgress", "leave");
+            if (this.InvokeRequired)
+            {
+                this.Invoke((MethodInvoker)delegate
+                {
+                    //LogWrapper.LogMessage("frmSyncManager - EnableProgress", "enter");
+                    ShowNextSyncLabel(false);
+                    Application.DoEvents();
+                    //LogWrapper.LogMessage("frmSyncManager - EnableProgress", "leave");
+                });
+            }
+            else
+            {
+                //LogWrapper.LogMessage("frmSyncManager - EnableProgress", "enter");
+                ShowNextSyncLabel(false);
+                Application.DoEvents();
+                //LogWrapper.LogMessage("frmSyncManager - EnableProgress", "leave");
+            }
         }
 
         private void OpenFolder()
@@ -689,27 +944,50 @@ namespace Mezeo
 
         public void DisableSyncManager()
         {
-            //LogWrapper.LogMessage("frmSyncManager - DisableSyncManager", "enter");
-            SetCanNotTalkToServer(true);
-            StopSync();
-            //pnlFileSyncOnOff.Enabled = false;
-            //rbSyncOff.Checked = true;
-            //btnMoveFolder.Enabled = false;
-            //Commeted above line as move folder functinality disable 
-            btnSyncNow.Enabled = false;
-            //tmrNextSync.Enabled = false;
-            //lnkFolderPath.Enabled = false;
-            //LogWrapper.LogMessage("frmSyncManager - DisableSyncManager", "leave");
+            if (this.InvokeRequired)
+            {
+                this.Invoke((MethodInvoker)delegate
+                {
+                    //LogWrapper.LogMessage("frmSyncManager - DisableSyncManager", "enter");
+                    SetCanNotTalkToServer(true);
+                    StopSync();
+                    btnSyncNow.Enabled = false;
+                    //LogWrapper.LogMessage("frmSyncManager - DisableSyncManager", "leave");
+                });
+            }
+            else
+            {
+                //LogWrapper.LogMessage("frmSyncManager - DisableSyncManager", "enter");
+                SetCanNotTalkToServer(true);
+                StopSync();
+                btnSyncNow.Enabled = false;
+                //LogWrapper.LogMessage("frmSyncManager - DisableSyncManager", "leave");
+            }
         }
 
         public void EnableSyncManager()
         {
-            //LogWrapper.LogMessage("frmSyncManager - EnableSyncManager", "enter");
-            SyncOnlineMessage();
-            SetCanNotTalkToServer(false);
-            btnSyncNow.Enabled = true;
-            if (lockObject != null)
-                lockObject.StopThread = false;
+            if (this.InvokeRequired)
+            {
+                this.Invoke((MethodInvoker)delegate
+                {
+                    //LogWrapper.LogMessage("frmSyncManager - EnableSyncManager", "enter");
+                    SyncOnlineMessage();
+                    SetCanNotTalkToServer(false);
+                    btnSyncNow.Enabled = true;
+                    if (lockObject != null)
+                        lockObject.StopThread = false;
+                });
+            }
+            else
+            {
+                //LogWrapper.LogMessage("frmSyncManager - EnableSyncManager", "enter");
+                SyncOnlineMessage();
+                SetCanNotTalkToServer(false);
+                btnSyncNow.Enabled = true;
+                if (lockObject != null)
+                    lockObject.StopThread = false;
+            }
         }
 
         public void ChangeUIOnPause()
@@ -753,44 +1031,96 @@ namespace Mezeo
 
         public void ShowSyncManagerOffline()
         {
-            //LogWrapper.LogMessage("frmSyncManager - ShowSyncManagerOffline", "enter");
-            SyncOfflineMessage();
-            lblStatusL1.Text = LanguageTranslator.GetValue("AppOfflineMenu");
-            label1.Text = "";
+            if (this.InvokeRequired)
+            {
+                this.Invoke((MethodInvoker)delegate
+                {
+                    //LogWrapper.LogMessage("frmSyncManager - ShowSyncManagerOffline", "enter");
+                    SyncOfflineMessage();
+                    lblStatusL1.Text = LanguageTranslator.GetValue("AppOfflineMenu");
+                    label1.Text = "";
 
-            //Adding following line for fogbugzid: 1489
-            if (lastSync.ToString("MMM d, yyyy h:mm tt") == "Jan 1, 0001 12:00 AM")
-                lblStatusL3.Text = "";
+                    //Adding following line for fogbugzid: 1489
+                    if (lastSync.ToString("MMM d, yyyy h:mm tt") == "Jan 1, 0001 12:00 AM")
+                        lblStatusL3.Text = "";
+                    else
+                        lblStatusL3.Text = lblStatusL3.Text = LanguageTranslator.GetValue("SyncManagerStatusLastSyncLabel") + " " + lastSync.ToString("MMM d, yyyy h:mm tt");
+
+                    //btnMoveFolder.Enabled = false;
+                    //Commeted above line as move folder functinality disable 
+
+                    lblPercentDone.Text = "";
+                    pbSyncProgress.Visible = false;
+                    pbSyncProgress.Hide();
+                    //LogWrapper.LogMessage("frmSyncManager - ShowSyncManagerOffline", "leave");
+                });
+            }
             else
-                lblStatusL3.Text = lblStatusL3.Text = LanguageTranslator.GetValue("SyncManagerStatusLastSyncLabel") + " " + lastSync.ToString("MMM d, yyyy h:mm tt");
+            {
+                //LogWrapper.LogMessage("frmSyncManager - ShowSyncManagerOffline", "enter");
+                SyncOfflineMessage();
+                lblStatusL1.Text = LanguageTranslator.GetValue("AppOfflineMenu");
+                label1.Text = "";
 
-            //btnMoveFolder.Enabled = false;
-            //Commeted above line as move folder functinality disable 
+                //Adding following line for fogbugzid: 1489
+                if (lastSync.ToString("MMM d, yyyy h:mm tt") == "Jan 1, 0001 12:00 AM")
+                    lblStatusL3.Text = "";
+                else
+                    lblStatusL3.Text = lblStatusL3.Text = LanguageTranslator.GetValue("SyncManagerStatusLastSyncLabel") + " " + lastSync.ToString("MMM d, yyyy h:mm tt");
 
-            lblPercentDone.Text = "";
-            pbSyncProgress.Visible = false;
-            pbSyncProgress.Hide();
-            //LogWrapper.LogMessage("frmSyncManager - ShowSyncManagerOffline", "leave");
+                //btnMoveFolder.Enabled = false;
+                //Commeted above line as move folder functinality disable 
+
+                lblPercentDone.Text = "";
+                pbSyncProgress.Visible = false;
+                pbSyncProgress.Hide();
+                //LogWrapper.LogMessage("frmSyncManager - ShowSyncManagerOffline", "leave");
+            }
         }
 
         private void ShowLocalEventsCompletedMessage()
         {
-            ShowSyncMessage(EventQueue.QueueNotEmpty());
-
-            if (frmIssuesFound != null && frmIssuesFound.GetItemsInList() > 0)
+            if (this.InvokeRequired)
             {
-                IssueFoundBalloonMessage();
+                this.Invoke((MethodInvoker)delegate
+                {
+                    ShowSyncMessage(EventQueue.QueueNotEmpty());
+
+                    if (frmIssuesFound != null && frmIssuesFound.GetItemsInList() > 0)
+                    {
+                        IssueFoundBalloonMessage();
+                    }
+                    else
+                    {
+                        if (BasicInfo.AutoSync)
+                            cnotificationManager.NotificationHandler.Icon = Properties.Resources.MezeoVault;
+                        else
+                            cnotificationManager.NotificationHandler.Icon = Properties.Resources.app_icon_disabled;
+
+                        SyncFolderUpToDateMessage();
+                    }
+                    //LogWrapper.LogMessage("frmSyncManager - ShowLocalEventsCompletedMessage", "leave");
+                });
             }
             else
             {
-                if (BasicInfo.AutoSync)
-                    cnotificationManager.NotificationHandler.Icon = Properties.Resources.MezeoVault;
-                else
-                    cnotificationManager.NotificationHandler.Icon = Properties.Resources.app_icon_disabled;
+                ShowSyncMessage(EventQueue.QueueNotEmpty());
 
-                SyncFolderUpToDateMessage();
+                if (frmIssuesFound != null && frmIssuesFound.GetItemsInList() > 0)
+                {
+                    IssueFoundBalloonMessage();
+                }
+                else
+                {
+                    if (BasicInfo.AutoSync)
+                        cnotificationManager.NotificationHandler.Icon = Properties.Resources.MezeoVault;
+                    else
+                        cnotificationManager.NotificationHandler.Icon = Properties.Resources.app_icon_disabled;
+
+                    SyncFolderUpToDateMessage();
+                }
+                //LogWrapper.LogMessage("frmSyncManager - ShowLocalEventsCompletedMessage", "leave");
             }
-            //LogWrapper.LogMessage("frmSyncManager - ShowLocalEventsCompletedMessage", "leave");
         }
 
         #endregion
@@ -800,8 +1130,19 @@ namespace Mezeo
         
         private void btnIssuesFound_Click(object sender, EventArgs e)
         {
-            frmIssuesFound.Show();
-            frmIssuesFound.BringToFront();
+            if (this.InvokeRequired)
+            {
+                this.Invoke((MethodInvoker)delegate
+                {
+                    frmIssuesFound.Show();
+                    frmIssuesFound.BringToFront();
+                });
+            }
+            else
+            {
+                frmIssuesFound.Show();
+                frmIssuesFound.BringToFront();
+            }
         }
 
         private void frmSyncManager_Load(object sender, EventArgs e)
@@ -828,22 +1169,48 @@ namespace Mezeo
 
         private void btnSyncNow_Click(object sender, EventArgs e)
         {
-            // SetIsEventCanceled(false);
-            if (IsSyncPaused())
+            if (this.InvokeRequired)
             {
-                SetSyncPaused(false);
-            }
-            if (!IsSyncThreadInProgress())
-            {
-                InitializeSync();
+                this.Invoke((MethodInvoker)delegate
+                {
+                    // SetIsEventCanceled(false);
+                    if (IsSyncPaused())
+                    {
+                        SetSyncPaused(false);
+                    }
+                    if (!IsSyncThreadInProgress())
+                    {
+                        InitializeSync();
+                    }
+                    else
+                    {
+                        SetSyncPaused(true);
+                        StopSync();
+                        SyncPauseBalloonMessage();
+                        ChangeUIOnPause();
+                        frmParent.changePauseText();
+                    }
+                });
             }
             else
             {
-                SetSyncPaused(true);
-                StopSync();
-                SyncPauseBalloonMessage();
-                ChangeUIOnPause();
-                frmParent.changePauseText();
+                // SetIsEventCanceled(false);
+                if (IsSyncPaused())
+                {
+                    SetSyncPaused(false);
+                }
+                if (!IsSyncThreadInProgress())
+                {
+                    InitializeSync();
+                }
+                else
+                {
+                    SetSyncPaused(true);
+                    StopSync();
+                    SyncPauseBalloonMessage();
+                    ChangeUIOnPause();
+                    frmParent.changePauseText();
+                }
             }
         }
 
@@ -1121,25 +1488,53 @@ namespace Mezeo
 
         private void StopLocalSync()
         {
-            lblPercentDone.Text = "";
-            pbSyncProgress.Visible = false;
-            pbSyncProgress.Hide();
-            ShowNextSyncLabel(true);
-            btnSyncNow.Enabled = true;
-
-            if (frmIssuesFound != null && frmIssuesFound.GetItemsInList() > 0)
+            if (this.InvokeRequired)
             {
-                IssueFoundBalloonMessage();
+                this.Invoke((MethodInvoker)delegate
+                {
+                    lblPercentDone.Text = "";
+                    pbSyncProgress.Visible = false;
+                    pbSyncProgress.Hide();
+                    ShowNextSyncLabel(true);
+                    btnSyncNow.Enabled = true;
+
+                    if (frmIssuesFound != null && frmIssuesFound.GetItemsInList() > 0)
+                    {
+                        IssueFoundBalloonMessage();
+                    }
+                    else
+                    {
+                        if (BasicInfo.AutoSync)
+                            cnotificationManager.NotificationHandler.Icon = Properties.Resources.MezeoVault;
+                        else
+                            cnotificationManager.NotificationHandler.Icon = Properties.Resources.app_icon_disabled;
+
+                        SyncStoppedBalloonMessage();
+                    }
+                });
             }
             else
             {
-                if (BasicInfo.AutoSync)
-                    cnotificationManager.NotificationHandler.Icon = Properties.Resources.MezeoVault;
-                else
-                    cnotificationManager.NotificationHandler.Icon = Properties.Resources.app_icon_disabled;
+                lblPercentDone.Text = "";
+                pbSyncProgress.Visible = false;
+                pbSyncProgress.Hide();
+                ShowNextSyncLabel(true);
+                btnSyncNow.Enabled = true;
 
-                SyncStoppedBalloonMessage();
-             }
+                if (frmIssuesFound != null && frmIssuesFound.GetItemsInList() > 0)
+                {
+                    IssueFoundBalloonMessage();
+                }
+                else
+                {
+                    if (BasicInfo.AutoSync)
+                        cnotificationManager.NotificationHandler.Icon = Properties.Resources.MezeoVault;
+                    else
+                        cnotificationManager.NotificationHandler.Icon = Properties.Resources.app_icon_disabled;
+
+                    SyncStoppedBalloonMessage();
+                }
+            }
         }
 
         public int CheckServerStatus()
