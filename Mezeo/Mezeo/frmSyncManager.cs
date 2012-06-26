@@ -653,7 +653,7 @@ namespace Mezeo
                     double progress = 100.0;
                     if (pbSyncProgress.Maximum > 0)
                         progress = ((double)pbSyncProgress.Value / pbSyncProgress.Maximum) * 100.0;
-                    cnotificationManager.HoverText = global::Mezeo.Properties.Resources.BrSyncManagerTitle + " " + AboutBox.AssemblyVersion + "\n" + LanguageTranslator.GetValue("TrayHoverSyncProgressText") + (int)progress + LanguageTranslator.GetValue("TrayHoverSyncProgressInitialText");
+                    cnotificationManager.HoverText = global::Mezeo.Properties.Resources.BrSyncManagerTitle + " " + AboutBox.AssemblyVersion;
 
                     if (messageValue > messageMax)
                         messageMax = messageValue;
@@ -668,7 +668,7 @@ namespace Mezeo
                 double progress = 100.0;
                 if (pbSyncProgress.Maximum > 0)
                     progress = ((double)pbSyncProgress.Value / pbSyncProgress.Maximum) * 100.0;
-                cnotificationManager.HoverText = global::Mezeo.Properties.Resources.BrSyncManagerTitle + " " + AboutBox.AssemblyVersion + "\n" + LanguageTranslator.GetValue("TrayHoverSyncProgressText") + (int)progress + LanguageTranslator.GetValue("TrayHoverSyncProgressInitialText");
+                cnotificationManager.HoverText = global::Mezeo.Properties.Resources.BrSyncManagerTitle + " " + AboutBox.AssemblyVersion;
 
                 if (messageValue > messageMax)
                     messageMax = messageValue;
@@ -1573,12 +1573,12 @@ namespace Mezeo
         public void SyncNow()
         {
            // TODO:check for offline (Modified for server status thread)
-           
+
             if (CanNotTalkToServer())
                     EnableSyncManager();
-           
+
             SetUpSyncNowNotification();
-            
+
             if (BasicInfo.IsInitialSync)
             {
                 ShowNextSyncLabel(false);
@@ -1592,9 +1592,9 @@ namespace Mezeo
                 lockObject.StopThread = false;
                 stDownloader = new StructureDownloader(queue, lockObject, cLoginDetails.szContainerContentsUri, cMezeoFileCloud);
                 stDownloader.downloadEvent += new StructureDownloader.StructureDownloadEvent(stDownloader_downloadEvent);
-             
+
                 analyseThread = new Thread(stDownloader.startAnalyseItemDetails);
-           
+
                 setUpControls();
                 SetAnalysisIsCompleted(false);
                 analyseThread.Start();
@@ -1634,8 +1634,7 @@ namespace Mezeo
             }
 
             if (EventQueue.QueueNotEmpty())
-            {
-          
+            {          
                 if (!bwSyncThread.IsBusy)
                     bwSyncThread.RunWorkerAsync();
             }
@@ -1678,7 +1677,6 @@ namespace Mezeo
             if (nsResult == null && nqDetail.StrEvent != "cdmi_delete")
             {
                 //LogWrapper.LogMessage("frmSyncManager - UpdateFromNQ - ", "nsResult Null");
-
                 nStatus = 1;
                 return nStatus;
             }
@@ -3978,8 +3976,7 @@ namespace Mezeo
             //btnSyncNow.Text = LanguageTranslator.GetValue("SyncManagerSyncStopButtonText");
             btnSyncNow.Text = LanguageTranslator.GetValue("PauseSync");
             cnotificationManager.NotificationHandler.Icon = Properties.Resources.mezeosyncstatus_syncing;
-            cnotificationManager.HoverText = global::Mezeo.Properties.Resources.BrSyncManagerTitle + " " + AboutBox.AssemblyVersion + "\n" + LanguageTranslator.GetValue("TrayHoverSyncProgressText") +
-                                            (int)0 + LanguageTranslator.GetValue("TrayHoverSyncProgressInitialText");
+            cnotificationManager.HoverText = global::Mezeo.Properties.Resources.BrSyncManagerTitle + " " + AboutBox.AssemblyVersion;
             frmParent.toolStripMenuItem4.Text = LanguageTranslator.GetValue("TrayHoverSyncProgressText");
         }
 
@@ -4156,15 +4153,13 @@ namespace Mezeo
                         {
                             double progress = ((double)pbSyncProgress.Value / pbSyncProgress.Maximum) * 100.0;
                             lblPercentDone.Text = Convert.ToString((int)progress) + "%";
-                            cnotificationManager.HoverText = global::Mezeo.Properties.Resources.BrSyncManagerTitle + " " + AboutBox.AssemblyVersion + "\n" + LanguageTranslator.GetValue("TrayHoverSyncProgressText") + (int)progress + LanguageTranslator.GetValue("TrayHoverSyncProgressInitialText");
                         }
                         else
                         {
                             //Progress bar will show 100% - making as string in resource file
                             lblPercentDone.Text = LanguageTranslator.GetValue("ProgressBarComplete");
-                            //lblPercentDone.Text = "100%";
-                            cnotificationManager.HoverText = global::Mezeo.Properties.Resources.BrSyncManagerTitle + " " + AboutBox.AssemblyVersion + "\n" + LanguageTranslator.GetValue("TrayHoverSyncProgressText") + 100 + LanguageTranslator.GetValue("TrayHoverSyncProgressInitialText");
                         }
+                        cnotificationManager.HoverText = global::Mezeo.Properties.Resources.BrSyncManagerTitle + " " + AboutBox.AssemblyVersion;
                     }
                     catch (Exception ex)
                     {
@@ -4198,15 +4193,13 @@ namespace Mezeo
                     {
                         double progress = ((double)pbSyncProgress.Value / pbSyncProgress.Maximum) * 100.0;
                         lblPercentDone.Text = Convert.ToString((int)progress) + "%";
-                        cnotificationManager.HoverText = global::Mezeo.Properties.Resources.BrSyncManagerTitle + " " + AboutBox.AssemblyVersion + "\n" + LanguageTranslator.GetValue("TrayHoverSyncProgressText") + (int)progress + LanguageTranslator.GetValue("TrayHoverSyncProgressInitialText");
                     }
                     else
                     {
                         //Progress bar will show 100% - making as string in resource file
                         lblPercentDone.Text = LanguageTranslator.GetValue("ProgressBarComplete");
-                        //lblPercentDone.Text = "100%";
-                        cnotificationManager.HoverText = global::Mezeo.Properties.Resources.BrSyncManagerTitle + " " + AboutBox.AssemblyVersion + "\n" + LanguageTranslator.GetValue("TrayHoverSyncProgressText") + 100 + LanguageTranslator.GetValue("TrayHoverSyncProgressInitialText");
                     }
+                    cnotificationManager.HoverText = global::Mezeo.Properties.Resources.BrSyncManagerTitle + " " + AboutBox.AssemblyVersion;
                 }
                 catch (Exception ex)
                 {

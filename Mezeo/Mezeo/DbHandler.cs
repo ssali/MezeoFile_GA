@@ -82,6 +82,8 @@ namespace Mezeo
         public const string CONFLICT_SERVER_SIZE = "SSize";
         public const string CONFLICT_TIME_STAMP = "Time";
         public const string CONFLICT_URI = "Uri";
+        public const string CONFLICT_OR_ERROR = "ConflictOrError";
+        public const string CONFLICT_EVENT_INDEX = "ConflictOrError";
 
         public bool CreatedNewDatabase()
         {
@@ -261,6 +263,8 @@ namespace Mezeo
                                 CONFLICT_SERVER_DATE + " INTEGER, " +
                                 CONFLICT_SERVER_SIZE + " TEXT, " +
                                 CONFLICT_TIME_STAMP + " INTEGER, " +
+                                CONFLICT_OR_ERROR + " TEXT, " +
+                                CONFLICT_EVENT_INDEX + " INTEGER, " +
                                 CONFLICT_URI + " TEXT);";
 
                 ExecuteNonQuery(queryConflicts);
@@ -288,7 +292,9 @@ namespace Mezeo
                             CONFLICT_SERVER_FILE_INFO + ", " +
                             CONFLICT_SERVER_DATE + ", " +
                             CONFLICT_SERVER_SIZE + ", " +
-                            CONFLICT_TIME_STAMP + ", " +
+                            CONFLICT_TIME_STAMP + ", '" +
+                            CONFLICT_OR_ERROR + "', " +
+                            CONFLICT_EVENT_INDEX + ", " +
                             CONFLICT_URI + ") values ('" +
                             EscapeString(issue.LocalFilePath) + "','" +
                             EscapeString(issue.IssueTitle) + "','" +
@@ -300,6 +306,8 @@ namespace Mezeo
                             issue.ServerIssueDT.Ticks + "','" +
                             issue.ServerSize + ",'" +
                             issue.ConflictTimeStamp.Ticks + "','" +
+                            'C' + "'," +
+                            '0'+",'" +
                             issue.ServerFileUri + "');";
 
             SQLiteConnection sqlConnection = OpenConnection();
