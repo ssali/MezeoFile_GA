@@ -436,6 +436,76 @@ namespace Mezeo
             {
                 this.Invoke((MethodInvoker)delegate
                 {
+                     if (IsInIdleState())
+                     {
+                        this.Text = AboutBox.AssemblyTitle;
+                        this.lblFolder.Text = LanguageTranslator.GetValue("SyncManagerFolderLabel");
+                        this.lblStatus.Text = LanguageTranslator.GetValue("SyncManagerStatusLabel");
+                        this.lblUsage.Text = LanguageTranslator.GetValue("SyncManagerUsageLabel");
+
+                        this.btnSyncNow.Text = LanguageTranslator.GetValue("SyncManagerSyncNowButtonText");
+
+                        this.btnIssuesFound.Visible = false;
+                        this.pbSyncProgress.Visible = false;
+                        this.lblPercentDone.Visible = false;
+
+                        this.lblUserName.Text = BasicInfo.UserName;
+                        this.lnkServerUrl.Text = BasicInfo.ServiceUrl;
+                        this.lnkFolderPath.Text = BasicInfo.SyncDirPath;
+
+                        lastSync = DateTime.Now;
+                        BasicInfo.LastSyncAt = lastSync;
+
+                        this.btnSyncNow.Text = LanguageTranslator.GetValue("SyncManagerSyncNowButtonText");
+                        lblStatusL1.Text = LanguageTranslator.GetValue("SyncManagerStatusAllFilesInSyncLabel");
+
+                        lblStatusL3.Text = LanguageTranslator.GetValue("SyncManagerStatusLastSyncLabel") + " " + lastSync.ToString("MMM d, yyyy h:mm tt");
+                        label1.Text = LanguageTranslator.GetValue("SyncManagerStatusNextSyncAtLabel") + " " + lastSync.AddMinutes(Convert.ToInt32(global::Mezeo.Properties.Resources.BrSyncTimer)).ToString("h:mm tt");
+                        label1.BringToFront();
+                        label1.Visible = true;
+                        label1.Show();
+
+                        //if (IsInIdleState())
+                            InitialSyncBalloonMessage();
+
+                        if (cLoginDetails != null)
+                        {
+                            string usedSize = FormatSizeString(cLoginDetails.dblStorage_Used);
+                            string allocatedSize = "";
+
+                            if (cLoginDetails.dblStorage_Allocated == -1)
+                            {
+                                allocatedSize = LanguageTranslator.GetValue("SyncManagerUsageUnlimited");
+                            }
+                            else
+                            {
+                                allocatedSize = FormatSizeString(cLoginDetails.dblStorage_Allocated);
+                            }
+
+                            allocatedSize += " " + LanguageTranslator.GetValue("SyncManagerUsageUsed");
+
+                            this.lblUsageDetails.Text = usedSize + " " + LanguageTranslator.GetValue("SyncManagerUsageOfLabel") + " " + allocatedSize;
+                        }
+                        else
+                            this.lblUsageDetails.Text = LanguageTranslator.GetValue("UsageNotAvailable");
+                     }
+                     else
+                     {
+                         if (IsSyncPaused())
+                         {
+                             frmParent.syncPausedOperation();
+                         }
+                         else if(!IsSyncPaused())
+                         {
+                             frmParent.syncResumeOperation();
+                         }
+                     }
+                });
+            }
+            else
+            {
+                if (IsInIdleState())
+                {
                     this.Text = AboutBox.AssemblyTitle;
                     this.lblFolder.Text = LanguageTranslator.GetValue("SyncManagerFolderLabel");
                     this.lblStatus.Text = LanguageTranslator.GetValue("SyncManagerStatusLabel");
@@ -463,8 +533,8 @@ namespace Mezeo
                     label1.Visible = true;
                     label1.Show();
 
-                    if (IsInIdleState())
-                        InitialSyncBalloonMessage();
+                    //if (IsInIdleState())
+                    InitialSyncBalloonMessage();
 
                     if (cLoginDetails != null)
                     {
@@ -486,60 +556,18 @@ namespace Mezeo
                     }
                     else
                         this.lblUsageDetails.Text = LanguageTranslator.GetValue("UsageNotAvailable");
-                });
-            }
-            else
-            {
-                this.Text = AboutBox.AssemblyTitle;
-                this.lblFolder.Text = LanguageTranslator.GetValue("SyncManagerFolderLabel");
-                this.lblStatus.Text = LanguageTranslator.GetValue("SyncManagerStatusLabel");
-                this.lblUsage.Text = LanguageTranslator.GetValue("SyncManagerUsageLabel");
-
-                this.btnSyncNow.Text = LanguageTranslator.GetValue("SyncManagerSyncNowButtonText");
-
-                this.btnIssuesFound.Visible = false;
-                this.pbSyncProgress.Visible = false;
-                this.lblPercentDone.Visible = false;
-
-                this.lblUserName.Text = BasicInfo.UserName;
-                this.lnkServerUrl.Text = BasicInfo.ServiceUrl;
-                this.lnkFolderPath.Text = BasicInfo.SyncDirPath;
-
-                lastSync = DateTime.Now;
-                BasicInfo.LastSyncAt = lastSync;
-
-                this.btnSyncNow.Text = LanguageTranslator.GetValue("SyncManagerSyncNowButtonText");
-                lblStatusL1.Text = LanguageTranslator.GetValue("SyncManagerStatusAllFilesInSyncLabel");
-
-                lblStatusL3.Text = LanguageTranslator.GetValue("SyncManagerStatusLastSyncLabel") + " " + lastSync.ToString("MMM d, yyyy h:mm tt");
-                label1.Text = LanguageTranslator.GetValue("SyncManagerStatusNextSyncAtLabel") + " " + lastSync.AddMinutes(Convert.ToInt32(global::Mezeo.Properties.Resources.BrSyncTimer)).ToString("h:mm tt");
-                label1.BringToFront();
-                label1.Visible = true;
-                label1.Show();
-
-                if (IsInIdleState())
-                    InitialSyncBalloonMessage();
-
-                if (cLoginDetails != null)
-                {
-                    string usedSize = FormatSizeString(cLoginDetails.dblStorage_Used);
-                    string allocatedSize = "";
-
-                    if (cLoginDetails.dblStorage_Allocated == -1)
-                    {
-                        allocatedSize = LanguageTranslator.GetValue("SyncManagerUsageUnlimited");
-                    }
-                    else
-                    {
-                        allocatedSize = FormatSizeString(cLoginDetails.dblStorage_Allocated);
-                    }
-
-                    allocatedSize += " " + LanguageTranslator.GetValue("SyncManagerUsageUsed");
-
-                    this.lblUsageDetails.Text = usedSize + " " + LanguageTranslator.GetValue("SyncManagerUsageOfLabel") + " " + allocatedSize;
                 }
                 else
-                    this.lblUsageDetails.Text = LanguageTranslator.GetValue("UsageNotAvailable");
+                {
+                    if (IsSyncPaused())
+                    {
+                        frmParent.syncPausedOperation();
+                    }
+                    else if (!IsSyncPaused())
+                    {
+                        frmParent.syncResumeOperation();
+                    }
+                }
             }
         }
 
@@ -1177,7 +1205,13 @@ namespace Mezeo
                     if (IsSyncPaused())
                     {
                         SetSyncPaused(false);
-                        frmParent.syncResumeOperation();
+                       
+                        frmParent.changeResumeText();
+                        SyncResumeBalloonMessage();
+
+                        if (!bwSyncThread.IsBusy)
+                            bwSyncThread.RunWorkerAsync();
+                       // frmParent.syncResumeOperation();
                     }
                     else
                     {
@@ -1188,18 +1222,25 @@ namespace Mezeo
                         else
                         {
                             SetSyncPaused(true);
-                            frmParent.syncPausedOperation();
+                           // frmParent.syncPausedOperation();
                         }
                     }
                 });
             }
             else
             {
+              
                 // SetIsEventCanceled(false);
                 if (IsSyncPaused())
                 {
                     SetSyncPaused(false);
-                    frmParent.syncResumeOperation();
+                    
+                    frmParent.changeResumeText();
+                    SyncResumeBalloonMessage();
+
+                    if (!bwSyncThread.IsBusy)
+                        bwSyncThread.RunWorkerAsync();
+                   // frmParent.syncResumeOperation();
                 }
                 else
                 {
@@ -1210,7 +1251,7 @@ namespace Mezeo
                     else
                     {
                         SetSyncPaused(true);
-                        frmParent.syncPausedOperation();
+                      //  frmParent.syncPausedOperation();
                     }
                 }
             }
@@ -3740,9 +3781,9 @@ namespace Mezeo
                 PopulateNQEvents();
                 GetNextEvent(ref lEvent, ref nqEvent, ref localItemDetails);
             }
-
+            
             // Process the events 1 at a time in priority order.
-            while (((lEvent != null) || (nqEvent != null) || (null != localItemDetails)) && !IsSyncPaused())
+            while (((lEvent != null) || (nqEvent != null) || (null != localItemDetails)) && !IsSyncPaused() && (((BackgroundWorker)sender).CancellationPending==false))
             {
                 // Increment the counter for the message text.
                 messageValue++;
@@ -3917,7 +3958,11 @@ namespace Mezeo
 
         public void SyncResumeBalloonMessage()
         {
-            cnotificationManager.NotificationHandler.Icon = Properties.Resources.MezeoVault;
+            if (IsInIdleState())
+                cnotificationManager.NotificationHandler.Icon = Properties.Resources.MezeoVault;
+            else
+                cnotificationManager.NotificationHandler.Icon = Properties.Resources.mezeosyncstatus_syncing;
+
             cnotificationManager.NotificationHandler.ShowBalloonTip(1, LanguageTranslator.GetValue("TrayBalloonSyncStatusText"),
                                                                            LanguageTranslator.GetValue("TrayBalloonSyncResumeText"),
                                                                           ToolTipIcon.None);
@@ -4744,10 +4789,8 @@ namespace Mezeo
                 {
                     queue_WatchCompletedEvent();
                 }
-                if (!IsSyncPaused())
-                {
+               
                     resetAllControls();
-                }
             }
             catch (Exception ex)
             {
