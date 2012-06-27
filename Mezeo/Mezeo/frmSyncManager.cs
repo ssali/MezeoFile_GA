@@ -372,6 +372,7 @@ namespace Mezeo
                         tmrSwapStatusMessage.Enabled = false;
                         BasicInfo.IsInitialSync = false;
                         SetAnalysisIsCompleted(true);
+                        SetSyncThreadInProgress(true);
                         resetAllControls();
                         SyncNow();
                     });
@@ -381,6 +382,7 @@ namespace Mezeo
                     tmrSwapStatusMessage.Enabled = false;
                     BasicInfo.IsInitialSync = false;
                     SetAnalysisIsCompleted(true);
+                    SetSyncThreadInProgress(true);
                     resetAllControls();
                     SyncNow();
                 }
@@ -456,7 +458,6 @@ namespace Mezeo
                         lastSync = DateTime.Now;
                         BasicInfo.LastSyncAt = lastSync;
 
-                        this.btnSyncNow.Text = LanguageTranslator.GetValue("SyncManagerSyncNowButtonText");
                         lblStatusL1.Text = LanguageTranslator.GetValue("SyncManagerStatusAllFilesInSyncLabel");
 
                         lblStatusL3.Text = LanguageTranslator.GetValue("SyncManagerStatusLastSyncLabel") + " " + lastSync.ToString("MMM d, yyyy h:mm tt");
@@ -489,15 +490,18 @@ namespace Mezeo
                         else
                             this.lblUsageDetails.Text = LanguageTranslator.GetValue("UsageNotAvailable");
                      }
-                     else
+                     else 
                      {
                          if (IsSyncPaused())
                          {
-                             frmParent.syncPausedOperation();
+                            frmParent.changePauseText();
+                            ChangeUIOnPause();
+                            SyncPauseBalloonMessage();
                          }
-                         else if(!IsSyncPaused())
+                         else 
                          {
-                             frmParent.syncResumeOperation();
+                             this.btnSyncNow.Text = LanguageTranslator.GetValue("PauseSync");
+                             frmParent.changeResumeText();
                          }
                      }
                 });
@@ -524,7 +528,6 @@ namespace Mezeo
                     lastSync = DateTime.Now;
                     BasicInfo.LastSyncAt = lastSync;
 
-                    this.btnSyncNow.Text = LanguageTranslator.GetValue("SyncManagerSyncNowButtonText");
                     lblStatusL1.Text = LanguageTranslator.GetValue("SyncManagerStatusAllFilesInSyncLabel");
 
                     lblStatusL3.Text = LanguageTranslator.GetValue("SyncManagerStatusLastSyncLabel") + " " + lastSync.ToString("MMM d, yyyy h:mm tt");
@@ -533,7 +536,6 @@ namespace Mezeo
                     label1.Visible = true;
                     label1.Show();
 
-                    //if (IsInIdleState())
                     InitialSyncBalloonMessage();
 
                     if (cLoginDetails != null)
@@ -561,11 +563,14 @@ namespace Mezeo
                 {
                     if (IsSyncPaused())
                     {
-                        frmParent.syncPausedOperation();
+                        frmParent.changePauseText();
+                        ChangeUIOnPause();
+                   
                     }
-                    else if (!IsSyncPaused())
+                    else
                     {
-                        frmParent.syncResumeOperation();
+                        this.btnSyncNow.Text = LanguageTranslator.GetValue("PauseSync");
+                        frmParent.changeResumeText();
                     }
                 }
             }
@@ -610,12 +615,14 @@ namespace Mezeo
                 {
                     lblPercentDone.Visible = true;
                     lblPercentDone.Text = "";
+                    this.btnSyncNow.Text = LanguageTranslator.GetValue("PauseSync");
                 });
             }
             else
             {
                 lblPercentDone.Visible = true;
                 lblPercentDone.Text = "";
+                this.btnSyncNow.Text = LanguageTranslator.GetValue("PauseSync");
             }
         }
 
@@ -626,7 +633,7 @@ namespace Mezeo
                 this.Invoke((MethodInvoker)delegate
                 {
                     SetIssueFound(false);
-                    btnSyncNow.Text = this.btnSyncNow.Text = LanguageTranslator.GetValue("PauseSync");
+                    this.btnSyncNow.Text = LanguageTranslator.GetValue("PauseSync");
                     btnSyncNow.Refresh();
                     isDownloadingFile = true;
                     ShowNextSyncLabel(false);
@@ -635,7 +642,7 @@ namespace Mezeo
             else
             {
                 SetIssueFound(false);
-                btnSyncNow.Text = this.btnSyncNow.Text = LanguageTranslator.GetValue("PauseSync");
+                this.btnSyncNow.Text = LanguageTranslator.GetValue("PauseSync");
                 btnSyncNow.Refresh();
                 isDownloadingFile = true;
                 ShowNextSyncLabel(false);
@@ -1204,14 +1211,10 @@ namespace Mezeo
                     // SetIsEventCanceled(false);
                     if (IsSyncPaused())
                     {
-                        SetSyncPaused(false);
-                       
-                        frmParent.changeResumeText();
                         SyncResumeBalloonMessage();
-
+                        SetSyncPaused(false);
                         if (!bwSyncThread.IsBusy)
                             bwSyncThread.RunWorkerAsync();
-                       // frmParent.syncResumeOperation();
                     }
                     else
                     {
@@ -1222,9 +1225,10 @@ namespace Mezeo
                         else
                         {
                             SetSyncPaused(true);
-                           // frmParent.syncPausedOperation();
+                            SyncPauseBalloonMessage();
                         }
                     }
+                    resetAllControls();
                 });
             }
             else
@@ -1233,14 +1237,11 @@ namespace Mezeo
                 // SetIsEventCanceled(false);
                 if (IsSyncPaused())
                 {
-                    SetSyncPaused(false);
-                    
-                    frmParent.changeResumeText();
                     SyncResumeBalloonMessage();
-
+                    SetSyncPaused(false);
+     
                     if (!bwSyncThread.IsBusy)
                         bwSyncThread.RunWorkerAsync();
-                   // frmParent.syncResumeOperation();
                 }
                 else
                 {
@@ -1251,9 +1252,10 @@ namespace Mezeo
                     else
                     {
                         SetSyncPaused(true);
-                      //  frmParent.syncPausedOperation();
+                        SyncPauseBalloonMessage();
                     }
                 }
+                resetAllControls();
             }
         }
 
