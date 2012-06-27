@@ -1177,18 +1177,19 @@ namespace Mezeo
                     if (IsSyncPaused())
                     {
                         SetSyncPaused(false);
-                    }
-                    if (!IsSyncThreadInProgress())
-                    {
-                        InitializeSync();
+                        frmParent.syncResumeOperation();
                     }
                     else
                     {
-                        SetSyncPaused(true);
-                        StopSync();
-                        SyncPauseBalloonMessage();
-                        ChangeUIOnPause();
-                        frmParent.changePauseText();
+                        if (!IsSyncThreadInProgress())
+                        {
+                            InitializeSync();
+                        }
+                        else
+                        {
+                            SetSyncPaused(true);
+                            frmParent.syncPausedOperation();
+                        }
                     }
                 });
             }
@@ -1198,18 +1199,19 @@ namespace Mezeo
                 if (IsSyncPaused())
                 {
                     SetSyncPaused(false);
-                }
-                if (!IsSyncThreadInProgress())
-                {
-                    InitializeSync();
+                    frmParent.syncResumeOperation();
                 }
                 else
                 {
-                    SetSyncPaused(true);
-                    StopSync();
-                    SyncPauseBalloonMessage();
-                    ChangeUIOnPause();
-                    frmParent.changePauseText();
+                    if (!IsSyncThreadInProgress())
+                    {
+                        InitializeSync();
+                    }
+                    else
+                    {
+                        SetSyncPaused(true);
+                        frmParent.syncPausedOperation();
+                    }
                 }
             }
         }
@@ -4742,7 +4744,10 @@ namespace Mezeo
                 {
                     queue_WatchCompletedEvent();
                 }
-                resetAllControls();
+                if (!IsSyncPaused())
+                {
+                    resetAllControls();
+                }
             }
             catch (Exception ex)
             {
