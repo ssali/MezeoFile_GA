@@ -495,8 +495,8 @@ namespace Mezeo
             syncManager.SetMaxProgress(fileinfo.Length, strSource);
 
             bool bRet = fileCloud.OverWriteFile(strSource, strDestination, ref nStatusCode, syncManager.myDelegate);
-            
-            if (nStatusCode != ResponseCode.OVERWRITEFILE)
+
+            if ((nStatusCode != ResponseCode.OVERWRITEFILE) && (nStatusCode != ResponseCode.SERVER_INACCESSIBLE))
             {
                 for (int n = 0; n < CloudService.NUMBER_OF_RETRIES; n++)
                 {

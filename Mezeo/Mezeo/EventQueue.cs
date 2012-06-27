@@ -250,7 +250,9 @@ namespace Mezeo
                                 // If the new event is MODIFIED and the existing is ADDED, then update the timestamp of the
                                 // existing event, but don't add it to the list.
                                 if ((id.EventType == LocalEvents.EventsType.FILE_ACTION_ADDED) ||
-                                    (id.EventType == LocalEvents.EventsType.FILE_ACTION_MODIFIED))
+                                    (id.EventType == LocalEvents.EventsType.FILE_ACTION_MODIFIED) ||
+                                    (id.EventType == LocalEvents.EventsType.FILE_ACTION_RENAMED)
+                                    )
                                 {
                                     LogWrapper.LogMessage("EventQueue - Add", "Local event already exists for: " + newEvent.FullPath);
                                     id.EventTimeStamp = newEvent.EventTimeStamp;
