@@ -466,29 +466,9 @@ namespace Mezeo
                         label1.Visible = true;
                         label1.Show();
 
-                        //if (IsInIdleState())
-                            InitialSyncBalloonMessage();
-
-                        if (cLoginDetails != null)
-                        {
-                            string usedSize = FormatSizeString(cLoginDetails.dblStorage_Used);
-                            string allocatedSize = "";
-
-                            if (cLoginDetails.dblStorage_Allocated == -1)
-                            {
-                                allocatedSize = LanguageTranslator.GetValue("SyncManagerUsageUnlimited");
-                            }
-                            else
-                            {
-                                allocatedSize = FormatSizeString(cLoginDetails.dblStorage_Allocated);
-                            }
-
-                            allocatedSize += " " + LanguageTranslator.GetValue("SyncManagerUsageUsed");
-
-                            this.lblUsageDetails.Text = usedSize + " " + LanguageTranslator.GetValue("SyncManagerUsageOfLabel") + " " + allocatedSize;
-                        }
-                        else
-                            this.lblUsageDetails.Text = LanguageTranslator.GetValue("UsageNotAvailable");
+                        InitialSyncBalloonMessage();
+             
+                        UpdateUsageLabel();
                      }
                      else 
                      {
@@ -537,27 +517,8 @@ namespace Mezeo
                     label1.Show();
 
                     InitialSyncBalloonMessage();
-
-                    if (cLoginDetails != null)
-                    {
-                        string usedSize = FormatSizeString(cLoginDetails.dblStorage_Used);
-                        string allocatedSize = "";
-
-                        if (cLoginDetails.dblStorage_Allocated == -1)
-                        {
-                            allocatedSize = LanguageTranslator.GetValue("SyncManagerUsageUnlimited");
-                        }
-                        else
-                        {
-                            allocatedSize = FormatSizeString(cLoginDetails.dblStorage_Allocated);
-                        }
-
-                        allocatedSize += " " + LanguageTranslator.GetValue("SyncManagerUsageUsed");
-
-                        this.lblUsageDetails.Text = usedSize + " " + LanguageTranslator.GetValue("SyncManagerUsageOfLabel") + " " + allocatedSize;
-                    }
-                    else
-                        this.lblUsageDetails.Text = LanguageTranslator.GetValue("UsageNotAvailable");
+                  
+                    UpdateUsageLabel();
                 }
                 else
                 {
