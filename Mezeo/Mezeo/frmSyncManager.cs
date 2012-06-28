@@ -2409,6 +2409,9 @@ namespace Mezeo
                 DateTime ActualModTime = File.GetLastWriteTime(lEvent.FullPath);
                 ActualModTime = ActualModTime.AddMilliseconds(-ActualModTime.Millisecond);
                 TimeSpan diff = ActualModTime - DBModTime;
+                if (ActualModTime < DBModTime)
+                    diff = DBModTime - ActualModTime;
+
                 if (diff >= TimeSpan.FromSeconds(1) || diff.CompareTo(TimeSpan.Zero) < 0)
                 {
                     LogWrapper.LogMessage("frmSyncManager - CheckForModifyEvent", "leave");
