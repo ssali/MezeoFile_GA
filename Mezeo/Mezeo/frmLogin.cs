@@ -433,7 +433,7 @@ namespace Mezeo
                 BasicInfo.ServiceUrl = txtServerUrl.Text;
 
                 isLoginSuccess = true;
-                SyncEvaluatingBalloonMessage();
+              //  SyncEvaluatingBalloonMessage();
             }
              
             if (showLogin)
