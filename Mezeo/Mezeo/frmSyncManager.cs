@@ -616,6 +616,7 @@ namespace Mezeo
                     lblPercentDone.Visible = true;
                     lblPercentDone.Text = "";
                     this.btnSyncNow.Text = LanguageTranslator.GetValue("PauseSync");
+                    btnSyncNow.Refresh();
                 });
             }
             else
@@ -623,6 +624,7 @@ namespace Mezeo
                 lblPercentDone.Visible = true;
                 lblPercentDone.Text = "";
                 this.btnSyncNow.Text = LanguageTranslator.GetValue("PauseSync");
+                btnSyncNow.Refresh();
             }
         }
 
@@ -1219,9 +1221,7 @@ namespace Mezeo
                         if (!bwSyncThread.IsBusy)
                             bwSyncThread.RunWorkerAsync();
                     }
-                    else
-                    {
-                        if (!IsSyncThreadInProgress())
+                       if (!IsSyncThreadInProgress())
                         {
                             InitializeSync();
                         }
@@ -1230,7 +1230,7 @@ namespace Mezeo
                             SetSyncPaused(true);
                             SyncPauseBalloonMessage();
                         }
-                    }
+                    
                     resetAllControls();
                 });
             }
@@ -1246,18 +1246,17 @@ namespace Mezeo
                     if (!bwSyncThread.IsBusy)
                         bwSyncThread.RunWorkerAsync();
                 }
+             
+                if (!IsSyncThreadInProgress())
+                {
+                    InitializeSync();
+                }
                 else
                 {
-                    if (!IsSyncThreadInProgress())
-                    {
-                        InitializeSync();
-                    }
-                    else
-                    {
-                        SetSyncPaused(true);
-                        SyncPauseBalloonMessage();
-                    }
+                    SetSyncPaused(true);
+                    SyncPauseBalloonMessage();
                 }
+                
                 resetAllControls();
             }
         }
@@ -1651,6 +1650,7 @@ namespace Mezeo
             {
                 if (false == EventQueue.QueueNotEmpty())
                 {
+                    ShowNextSyncLabel(false);
                     PopulateNQEvents();
                 }
 
@@ -1664,6 +1664,7 @@ namespace Mezeo
                 {
                    resetAllControls();
                 }
+                SetSyncThreadInProgress(false);                   
             }
             //LogWrapper.LogMessage("frmSyncManager - SyncNow", "leave");
         }
@@ -3731,8 +3732,13 @@ namespace Mezeo
             if (IsSyncPaused())
                 return false;
 
-            lblStatusL1.Text = LanguageTranslator.GetValue("SyncManagerCheckingServer");
-            lblStatusL3.Text = "";
+            this.lblStatusL1.Text = LanguageTranslator.GetValue("SyncManagerCheckingServer");
+            this.lblStatusL3.Text = "";
+            ShowNextSyncLabel(false);
+
+            lblStatusL1.Refresh();
+            lblStatusL3.Refresh();
+            label1.Refresh();
 
             NQLengthResult nqLengthRes = cMezeoFileCloud.NQGetLength(BasicInfo.ServiceUrl + cLoginDetails.szNQParentUri, BasicInfo.GetQueueName(), ref nStatusCode);
             if (nStatusCode == ResponseCode.LOGINFAILED1 || nStatusCode == ResponseCode.LOGINFAILED2)
@@ -3778,6 +3784,7 @@ namespace Mezeo
             SetSyncThreadInProgress(true);
             // See if there are any events in the queue.  Local events take priority over NQ.
             // LocalItemDetails (initial sync events) take priority over local events.
+            resetAllControls();
             GetNextEvent(ref lEvent, ref nqEvent, ref localItemDetails);
 
             // If there are no more events in the queue, then see if the server has any more that need processing.

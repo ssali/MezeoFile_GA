@@ -101,7 +101,7 @@ namespace Mezeo
         private void exitToolStripMenuItem_Click(object sender, EventArgs e)
         {
           
-            if (syncManager != null && (syncManager.isSyncThreadInProgress) && (syncManager.IsSyncPaused()))
+            if (syncManager != null && (syncManager.isSyncThreadInProgress))
             {
                 DialogResult dResult = MessageBox.Show(LanguageTranslator.GetValue("MezeoExitString1") + "\n" + LanguageTranslator.GetValue("MezeoExitString2"), AboutBox.AssemblyTitle, MessageBoxButtons.OKCancel);
                 if (dResult == DialogResult.Cancel)
