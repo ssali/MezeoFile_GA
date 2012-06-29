@@ -124,37 +124,7 @@
         "Entry"
         {
         "MsmKey" = "8:_UNDEFINED"
-        "OwnerKey" = "8:_DFF7F401643C436EB485570961CD88CC"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_UNDEFINED"
-        "OwnerKey" = "8:_D336FDEA74D4A0335A5FEF452C58E21F"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_UNDEFINED"
-        "OwnerKey" = "8:_DA5D974368B74F1D1E8EC96563FD6F37"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_UNDEFINED"
-        "OwnerKey" = "8:_93633F3672AF5F79E3258A4FBC92AFC1"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_UNDEFINED"
-        "OwnerKey" = "8:_2423443EB50458BD06AECF197697DDE3"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_UNDEFINED"
-        "OwnerKey" = "8:_E66B53928F3AEA50BBBDD301CEA24A14"
+        "OwnerKey" = "8:_3AEDD2ECD67F4B769BA42FC5F2A56D2A"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
@@ -166,7 +136,37 @@
         "Entry"
         {
         "MsmKey" = "8:_UNDEFINED"
-        "OwnerKey" = "8:_3AEDD2ECD67F4B769BA42FC5F2A56D2A"
+        "OwnerKey" = "8:_E66B53928F3AEA50BBBDD301CEA24A14"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_UNDEFINED"
+        "OwnerKey" = "8:_2423443EB50458BD06AECF197697DDE3"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_UNDEFINED"
+        "OwnerKey" = "8:_93633F3672AF5F79E3258A4FBC92AFC1"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_UNDEFINED"
+        "OwnerKey" = "8:_DA5D974368B74F1D1E8EC96563FD6F37"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_UNDEFINED"
+        "OwnerKey" = "8:_D336FDEA74D4A0335A5FEF452C58E21F"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_UNDEFINED"
+        "OwnerKey" = "8:_DFF7F401643C436EB485570961CD88CC"
         "MsmSig" = "8:_UNDEFINED"
         }
     }
@@ -233,10 +233,10 @@
             "ComponentsUrl" = "8:"
                 "Items"
                 {
-                    "{EDC2488A-8267-493A-A98E-7D9C3B36CDF3}:.NETFramework,Version=v4.0,Profile=Client"
+                    "{EDC2488A-8267-493A-A98E-7D9C3B36CDF3}:.NETFramework,Version=v4.0"
                     {
-                    "Name" = "8:Microsoft .NET Framework 4 Client Profile (x86 and x64)"
-                    "ProductCode" = "8:.NETFramework,Version=v4.0,Profile=Client"
+                    "Name" = "8:Microsoft .NET Framework 4 (x86 and x64)"
+                    "ProductCode" = "8:.NETFramework,Version=v4.0"
                     }
                     "{EDC2488A-8267-493A-A98E-7D9C3B36CDF3}:Microsoft.Windows.Installer.3.1"
                     {
@@ -350,9 +350,9 @@
                 {
                 "Name" = "8:.NET Framework"
                 "Message" = "8:[VSDNETMSG]"
-                "FrameworkVersion" = "8:.NETFramework,Version=v4.0,Profile=Client"
+                "FrameworkVersion" = "8:.NETFramework,Version=v4.0"
                 "AllowLaterVersions" = "11:FALSE"
-                "InstallUrl" = "8:http://go.microsoft.com/fwlink/?LinkId=131000"
+                "InstallUrl" = "8:http://go.microsoft.com/fwlink/?LinkId=186913"
                 }
             }
         }
@@ -699,7 +699,7 @@
             {
             "AssemblyRegister" = "3:1"
             "AssemblyIsInGAC" = "11:FALSE"
-            "AssemblyAsmDisplayName" = "8:MezeoFile, Version=2.0.51.0, Culture=neutral, processorArchitecture=x86"
+            "AssemblyAsmDisplayName" = "8:MezeoFile, Version=2.0.58.0, Culture=neutral, processorArchitecture=x86"
                 "ScatterAssemblies"
                 {
                     "_DFF7F401643C436EB485570961CD88CC"
@@ -918,15 +918,15 @@
         {
         "Name" = "8:Microsoft Visual Studio"
         "ProductName" = "8:MezeoFile"
-        "ProductCode" = "8:{3B301E16-B2A1-49C0-8741-89C8DB5792B1}"
-        "PackageCode" = "8:{CDDC3D0C-7864-48F8-B2E4-C6D52C21C9E8}"
+        "ProductCode" = "8:{74A3C9C9-5FA3-4A51-BC45-12A52ECBBFCA}"
+        "PackageCode" = "8:{349F263A-81DE-4722-B034-ABE334C13CDC}"
         "UpgradeCode" = "8:{9A686460-3EE8-42C7-987B-2AC187ED8477}"
         "AspNetVersion" = "8:4.0.30319.0"
         "RestartWWWService" = "11:FALSE"
         "RemovePreviousVersions" = "11:TRUE"
         "DetectNewerInstalledVersion" = "11:TRUE"
         "InstallAllUsers" = "11:FALSE"
-        "ProductVersion" = "8:2.0.50"
+        "ProductVersion" = "8:2.0.58"
         "Manufacturer" = "8:MezeoFile"
         "ARPHELPTELEPHONE" = "8:"
         "ARPHELPLINK" = "8:"
@@ -1520,7 +1520,7 @@
             "{970C0BB2-C7D0-45D7-ABFA-7EC378858BC0}:_FE02CE2B497A4D449F1EF1F2885472CB"
             {
             "Name" = "8:Uninstall MezeoFile"
-            "Arguments" = "8:/x {AC84B656-9676-414A-BAD9-2CDB40E94E14}"
+            "Arguments" = "8:/x {74A3C9C9-5FA3-4A51-BC45-12A52ECBBFCA}"
             "Description" = "8:"
             "ShowCmd" = "3:1"
             "IconIndex" = "3:0"
