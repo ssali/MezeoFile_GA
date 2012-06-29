@@ -250,7 +250,7 @@ namespace MezeoFileSupport
             {
                 if ((null != filterDetails.szFieldValue) && (0 != filterDetails.szFieldValue.Length))
                 {
-                    strRequestURLAndFilter = strRequestURLAndFilter + "&filterField=" + filterDetails.szFieldName + "&filterOperation=" + filterDetails.szFilterOperation + "&filterValue=" + filterDetails.szFieldValue;
+                    strRequestURLAndFilter = strRequestURLAndFilter + "&filterField=" + HttpUtility.UrlEncode(filterDetails.szFieldName) + "&filterOperation=" + HttpUtility.UrlEncode(filterDetails.szFilterOperation) + "&filterValue=" + HttpUtility.UrlEncode(filterDetails.szFieldValue);
                 }
 
                 if (-1 != filterDetails.nStartPosition)
