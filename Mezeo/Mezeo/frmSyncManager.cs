@@ -1351,7 +1351,7 @@ namespace Mezeo
                             // The only time ignoreTime is true is when the user has clicked on 'check for new versions'.
                             // Otherwise, we don't want to pop up a message box every time the timer activates.
                             if (ignoreTime)
-                                ShowCurrentVersionBalloonMessage(strNewVersion);
+                                ShowCurrentVersionBalloonMessage(strCurVersion);
                         }
 
                         // Update the time we last checked for an update.
@@ -3894,9 +3894,12 @@ namespace Mezeo
         {
             string strNoUpdateAvailable;
             strNoUpdateAvailable = LanguageTranslator.GetValue("VersionText") + strNewVersion + LanguageTranslator.GetValue("AppAvailableMessage");
-            cnotificationManager.NotificationHandler.Icon = Properties.Resources.app_icon_upgrade;
+            //cnotificationManager.NotificationHandler.Icon = Properties.Resources.app_icon_upgrade;
+            //cnotificationManager.NotificationHandler.ShowBalloonTip(1, LanguageTranslator.GetValue("NoUpdateAvailable"),
+            //                                                          strNoUpdateAvailable,
+            //                                                         ToolTipIcon.None);
             cnotificationManager.NotificationHandler.ShowBalloonTip(1, LanguageTranslator.GetValue("NoUpdateAvailable"),
-                                                                      strNoUpdateAvailable,
+                                                                      " ",
                                                                      ToolTipIcon.None);
         }
 
