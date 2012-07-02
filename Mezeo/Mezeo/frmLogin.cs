@@ -100,8 +100,8 @@ namespace Mezeo
 
         private void exitToolStripMenuItem_Click(object sender, EventArgs e)
         {
-          
-            if (syncManager != null && (syncManager.isSyncThreadInProgress))
+
+            if (syncManager != null && (syncManager.IsSyncThreadInProgress()))
             {
                 DialogResult dResult = MessageBox.Show(LanguageTranslator.GetValue("MezeoExitString1") + "\n" + LanguageTranslator.GetValue("MezeoExitString2"), AboutBox.AssemblyTitle, MessageBoxButtons.OKCancel);
                 if (dResult == DialogResult.Cancel)
@@ -110,9 +110,10 @@ namespace Mezeo
                 syncManager.ApplicationExit();
               
             }
-                niSystemTray.Visible = false;
-                _Appexit.Set();
-                System.Environment.Exit(0);
+
+            niSystemTray.Visible = false;
+            _Appexit.Set();
+            System.Environment.Exit(0);
         }
 
         private void niSystemTray_MouseClick(object sender, MouseEventArgs e)
@@ -302,7 +303,6 @@ namespace Mezeo
                 //If we are login and can not talk with server show app is offline
                  syncManager.DisableSyncManager();
                  syncManager.ShowSyncManagerOffline();
-                 syncManager.SetSyncThreadInProgress(false);
             }
 
             syncManager.SyncOfflineMessage();

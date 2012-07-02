@@ -42,7 +42,8 @@ namespace Mezeo
 
         private static int USER_CANCELLED = -3;
         private static int LOGIN_FAILED = -4;
-        private static int SERVER_INACCESSIBLE = -5;
+        private static int ITEM_NOT_FOUND = -5;
+        private static int SERVER_INACCESSIBLE = 6;
 
         private static string DB_STATUS_SUCCESS = "SUCCESS";
         private static string DB_STATUS_IN_PROGRESS = "INPROGRESS";
@@ -67,7 +68,6 @@ namespace Mezeo
         //private bool isAnalysingStructure = false;
         //private bool isAnalysisCompleted = false;
         private bool analysisIsComplete = true;
-        public bool isSyncThreadInProgress = false;
         public bool isSyncPause = false; // Check sync is pause or not
         // public bool isEventCanceled = false;
         public bool isSyncGenerateLocalEvents = false;
@@ -253,12 +253,7 @@ namespace Mezeo
         */
         public bool IsSyncThreadInProgress()
         {
-            return isSyncThreadInProgress;
-        }
-
-        public void SetSyncThreadInProgress(bool syncInProgress)
-        {
-            isSyncThreadInProgress = syncInProgress;
+            return bwSyncThread.IsBusy;
         }
 
         // It will tell Sync Manager is in pause state or not 
@@ -279,7 +274,21 @@ namespace Mezeo
 
         public void SetCanNotTalkToServer(bool talkToTheServer)
         {
-            canNotTalktoTheServer = talkToTheServer;
+            if (this.InvokeRequired)
+            {
+                this.Invoke((MethodInvoker)delegate
+                {
+                    if ((canNotTalktoTheServer == true) && (talkToTheServer == false))
+                        SyncOnlineMessage();
+                    canNotTalktoTheServer = talkToTheServer;
+                });
+            }
+            else
+            {
+                if ((canNotTalktoTheServer == true) && (talkToTheServer == false))
+                    SyncOnlineMessage();
+                canNotTalktoTheServer = talkToTheServer;
+            }
         }
 
         public bool IsSyncGenerateLocalEvent()
@@ -311,25 +320,16 @@ namespace Mezeo
             {
                 this.Invoke((MethodInvoker)delegate
                 {
-                    SetSyncThreadInProgress(false);
-
                     BasicInfo.IsInitialSync = false;
                     ShowSyncMessage();
-
                     InitialSyncUptodateMessage();
-
                     queue_WatchCompletedEvent();
                 });
             }
             else
             {
-                SetSyncThreadInProgress(false);
-
                 BasicInfo.IsInitialSync = false;
-               // ShowSyncMessage();
-
                 InitialSyncUptodateMessage();
-
                 queue_WatchCompletedEvent();
             }
         }
@@ -372,7 +372,6 @@ namespace Mezeo
                         tmrSwapStatusMessage.Enabled = false;
                         BasicInfo.IsInitialSync = false;
                         SetAnalysisIsCompleted(true);
-                        SetSyncThreadInProgress(true);
                         resetAllControls();
                         SyncNow();
                     });
@@ -382,7 +381,6 @@ namespace Mezeo
                     tmrSwapStatusMessage.Enabled = false;
                     BasicInfo.IsInitialSync = false;
                     SetAnalysisIsCompleted(true);
-                    SetSyncThreadInProgress(true);
                     resetAllControls();
                     SyncNow();
                 }
@@ -973,7 +971,7 @@ namespace Mezeo
                 this.Invoke((MethodInvoker)delegate
                 {
                     //LogWrapper.LogMessage("frmSyncManager - EnableSyncManager", "enter");
-                    SyncOnlineMessage();
+                    //SyncOnlineMessage();
                     SetCanNotTalkToServer(false);
                     btnSyncNow.Enabled = true;
                     if (lockObject != null)
@@ -983,7 +981,7 @@ namespace Mezeo
             else
             {
                 //LogWrapper.LogMessage("frmSyncManager - EnableSyncManager", "enter");
-                SyncOnlineMessage();
+                //SyncOnlineMessage();
                 SetCanNotTalkToServer(false);
                 btnSyncNow.Enabled = true;
                 if (lockObject != null)
@@ -1374,7 +1372,6 @@ namespace Mezeo
                     System.Environment.Exit(0);
                 else
                 {
-                    SetSyncThreadInProgress(false);
                     ShowSyncMessage(true);
                     btnSyncNow.Enabled = true;
 
@@ -1450,31 +1447,54 @@ namespace Mezeo
 
         public void StopSync()
         {
-            if (IsSyncThreadInProgress())
+            if (this.InvokeRequired)
             {
+                this.Invoke((MethodInvoker)delegate
+                {
+                    tmrNextSync.Start();
+                    tmrNextSync.Interval = getSynNextCycleTimer();
+                    if (IsSyncThreadInProgress())
+                    {
+                        //SetIsEventCanceled(true);
+                        bwSyncThread.CancelAsync();
+                        // btnSyncNow.Enabled = false;
+                        if (lockObject != null)
+                            lockObject.StopThread = true;
+
+                        if (frmIssuesFound != null && frmIssuesFound.GetItemsInList() > 0)
+                        {
+                            IssueFoundBalloonMessage();
+                        }
+                        else
+                        {
+                            //SyncStoppedBalloonMessage();
+                        }
+                        cMezeoFileCloud.StopSyncProcess();
+                    }
+                });
+            }
+            else
+            {
+                tmrNextSync.Start();
                 tmrNextSync.Interval = getSynNextCycleTimer();
-                //SetIsEventCanceled(true);
-                bwSyncThread.CancelAsync();
-               // ShowNextSyncLabel(true);
-               // btnSyncNow.Enabled = false;
-                if (lockObject != null)
-                    lockObject.StopThread = true;
-
-                if (frmIssuesFound != null && frmIssuesFound.GetItemsInList() > 0)
+                if (IsSyncThreadInProgress())
                 {
-                    IssueFoundBalloonMessage();
-                }
-                else
-                {
-                    //if (BasicInfo.AutoSync)
-                    //    cnotificationManager.NotificationHandler.Icon = Properties.Resources.MezeoVault;
-                    //else
-                    //    cnotificationManager.NotificationHandler.Icon = Properties.Resources.app_icon_disabled;
+                    //SetIsEventCanceled(true);
+                    bwSyncThread.CancelAsync();
+                    // btnSyncNow.Enabled = false;
+                    if (lockObject != null)
+                        lockObject.StopThread = true;
 
-                    //SyncStoppedBalloonMessage();
-                 
+                    if (frmIssuesFound != null && frmIssuesFound.GetItemsInList() > 0)
+                    {
+                        IssueFoundBalloonMessage();
+                    }
+                    else
+                    {
+                        //SyncStoppedBalloonMessage();
+                    }
+                    cMezeoFileCloud.StopSyncProcess();
                 }
-                cMezeoFileCloud.StopSyncProcess();
             }
         }
 
@@ -1547,7 +1567,7 @@ namespace Mezeo
         }
 
         public int CheckServerStatus()
-        {
+        {   
             int nStatusCode = 0;
 
             if (cLoginDetails == null)
@@ -1560,21 +1580,22 @@ namespace Mezeo
             NQLengthResult nqLengthRes = cMezeoFileCloud.NQGetLength(BasicInfo.ServiceUrl + cLoginDetails.szNQParentUri, BasicInfo.GetQueueName(), ref nStatusCode);
             if (nStatusCode == ResponseCode.LOGINFAILED1 || nStatusCode == ResponseCode.LOGINFAILED2)
             {
+                StopSync();
                 this.Hide();
                 frmParent.ShowLoginAgainFromSyncMgr();
-             //   SetIsSyncInProgress(false);
-                SetCanNotTalkToServer(false);
+                SetCanNotTalkToServer(true);
                 return -1;
             }
             else if (nStatusCode != ResponseCode.NQGETLENGTH)
             {
+                StopSync();
                 DisableSyncManager();
                 ShowSyncManagerOffline();
-                SetCanNotTalkToServer(false);
-                
-                //    SetIsSyncInProgress(false);
+                SetCanNotTalkToServer(true);
                 return -2;
             }
+
+            SetCanNotTalkToServer(false);
 
             return 1;
         }
@@ -1583,8 +1604,8 @@ namespace Mezeo
         {
            // TODO:check for offline (Modified for server status thread)
 
-            if (CanNotTalkToServer())
-                    EnableSyncManager();
+            if (!CanNotTalkToServer())
+                EnableSyncManager();
 
             SetUpSyncNowNotification();
 
@@ -1626,7 +1647,6 @@ namespace Mezeo
                 {
                    resetAllControls();
                 }
-                SetSyncThreadInProgress(false);                   
             }
             //LogWrapper.LogMessage("frmSyncManager - SyncNow", "leave");
         }
@@ -2755,7 +2775,7 @@ namespace Mezeo
         void queue_WatchCompletedEvent()
         {
             //LogWrapper.LogMessage("frmSyncManager - queue_WatchCompletedEvent", "enter");
-            if (IsInIdleState() && EventQueue.QueueNotEmpty() && BasicInfo.AutoSync && !BasicInfo.IsInitialSync && !CanNotTalkToServer())
+            if (IsInIdleState() && EventQueue.QueueNotEmpty() && !BasicInfo.IsInitialSync && !CanNotTalkToServer())
             {
                 if (!bwSyncThread.IsBusy)
                     bwSyncThread.RunWorkerAsync();
@@ -3046,6 +3066,8 @@ namespace Mezeo
                         }
                         else if (nStatusCode != ResponseCode.GETCONTINERRESULT)
                         {
+                            if (ResponseCode.NOTFOUND == nStatusCode)
+                                return ITEM_NOT_FOUND;
                             return SERVER_INACCESSIBLE;
                         }
 
@@ -3070,6 +3092,8 @@ namespace Mezeo
                         }
                         else if (nStatusCode != ResponseCode.CONTAINERMOVE)
                         {
+                            if (ResponseCode.NOTFOUND == nStatusCode)
+                                return ITEM_NOT_FOUND;
                             return SERVER_INACCESSIBLE;
                         }
                         else
@@ -3114,6 +3138,8 @@ namespace Mezeo
                             }
                             else if (nStatusCode != ResponseCode.DOWNLOADITEMDETAILS)
                             {
+                                if (ResponseCode.NOTFOUND == nStatusCode)
+                                    return ITEM_NOT_FOUND;
                                 return SERVER_INACCESSIBLE;
                             }
                             else if (nStatusCode == ResponseCode.DOWNLOADITEMDETAILS)
@@ -3147,6 +3173,8 @@ namespace Mezeo
                                 }
                                 else if (nStatusCode != ResponseCode.NEWCONTAINER)
                                 {
+                                    if (ResponseCode.NOTFOUND == nStatusCode)
+                                        return ITEM_NOT_FOUND;
                                     return SERVER_INACCESSIBLE;
                                 }
                                 else if ((strUrl.Trim().Length != 0) && (nStatusCode == ResponseCode.NEWCONTAINER))
@@ -3200,6 +3228,8 @@ namespace Mezeo
                             }
                             else if (nStatusCode != ResponseCode.DOWNLOADITEMDETAILS)
                             {
+                                if (ResponseCode.NOTFOUND == nStatusCode)
+                                    return ITEM_NOT_FOUND;
                                 return SERVER_INACCESSIBLE;
                             }
                             else if (nStatusCode == ResponseCode.DOWNLOADITEMDETAILS)
@@ -3237,6 +3267,8 @@ namespace Mezeo
                                 }
                                 else if (nStatusCode != ResponseCode.UPLOADINGFILE)
                                 {
+                                    if (ResponseCode.NOTFOUND == nStatusCode)
+                                        return ITEM_NOT_FOUND;
                                     return SERVER_INACCESSIBLE;
                                 }
                                 else if ((strUrl.Trim().Length != 0) && (nStatusCode == ResponseCode.UPLOADINGFILE))
@@ -3303,6 +3335,8 @@ namespace Mezeo
                                 }
                                 else if (nStatusCode != ResponseCode.OVERWRITEFILE)
                                 {
+                                    if (ResponseCode.NOTFOUND == nStatusCode)
+                                        return ITEM_NOT_FOUND;
                                     return SERVER_INACCESSIBLE;
                                 }
                                 else
@@ -3361,6 +3395,8 @@ namespace Mezeo
                             }
                             else if (nStatusCode != ResponseCode.DELETE)
                             {
+                                if (ResponseCode.NOTFOUND == nStatusCode)
+                                    return ITEM_NOT_FOUND;
                                 return SERVER_INACCESSIBLE;
                             }
                             else
@@ -3415,6 +3451,8 @@ namespace Mezeo
                             }
                             else if (nStatusCode != ResponseCode.CONTAINERRENAME)
                             {
+                                if (ResponseCode.NOTFOUND == nStatusCode)
+                                    return ITEM_NOT_FOUND;
                                 return SERVER_INACCESSIBLE;
                             }
                             else
@@ -3440,6 +3478,8 @@ namespace Mezeo
                                 }
                                 else if (nStatusCode != ResponseCode.GETCONTINERRESULT)
                                 {
+                                    if (ResponseCode.NOTFOUND == nStatusCode)
+                                        return ITEM_NOT_FOUND;
                                     return SERVER_INACCESSIBLE;
                                 }
 
@@ -3465,6 +3505,8 @@ namespace Mezeo
                                 }
                                 else if (nStatusCode != ResponseCode.FILERENAME)
                                 {
+                                    if (ResponseCode.NOTFOUND == nStatusCode)
+                                        return ITEM_NOT_FOUND;
                                     return SERVER_INACCESSIBLE;
                                 }
                                 else
@@ -3568,6 +3610,8 @@ namespace Mezeo
                         else if (refCode != ResponseCode.GETETAG)
                         {
                             lockObject.StopThread = true;
+                            if (ResponseCode.NOTFOUND == refCode)
+                                return ResponseCode.NOTFOUND;
                             return ResponseCode.SERVER_INACCESSIBLE; // CancelReason.SERVER_INACCESSIBLE
                         }
                     }
@@ -3615,6 +3659,8 @@ namespace Mezeo
                     else if (refCode != ResponseCode.GETETAG)
                     {
                         //lockObject.StopThread = true;
+                        if (refCode == ResponseCode.NOTFOUND)
+                            return ResponseCode.NOTFOUND;
                         return ResponseCode.SERVER_INACCESSIBLE; // CancelReason.SERVER_INACCESSIBLE
                     }
                     LogWrapper.LogMessage("frmSyncManager - consume", "eTag for " + id.strName + ": " + id.strETag);
@@ -3746,7 +3792,7 @@ namespace Mezeo
             messageMax = (int)dbHandler.GetJobCount();
 
             // Set the GUI to reflect that a sync is going on.
-            SetSyncThreadInProgress(true);
+            //SetSyncThreadInProgress(true);
             // See if there are any events in the queue.  Local events take priority over NQ.
             // LocalItemDetails (initial sync events) take priority over local events.
             resetAllControls();
@@ -3760,7 +3806,7 @@ namespace Mezeo
             }
             
             // Process the events 1 at a time in priority order.
-            while (((lEvent != null) || (nqEvent != null) || (null != localItemDetails)) && !IsSyncPaused() && (((BackgroundWorker)sender).CancellationPending==false))
+            while (((lEvent != null) || (nqEvent != null) || (null != localItemDetails)) && !IsSyncPaused() && (((BackgroundWorker)sender).CancellationPending == false) && !CanNotTalkToServer())
             {
                 // Increment the counter for the message text.
                 messageValue++;
@@ -3781,6 +3827,11 @@ namespace Mezeo
                     }
                     else if (nStatus != ResponseCode.GETETAG && nStatus != ResponseCode.DOWNLOADFILE && nStatus != ResponseCode.DOWNLOADITEMDETAILS && nStatus != 1)
                     {
+                        if (nStatus == SERVER_INACCESSIBLE)
+                        {
+                            SetCanNotTalkToServer(true);
+                            StopSync();
+                        }
                         //e.Result = CancelReason.SERVER_INACCESSIBLE;
                         break;
                     }
@@ -3791,6 +3842,11 @@ namespace Mezeo
                     //nStatus = HandleEvent(null, lEvent);
                     if (1 == nStatus)
                         dbHandler.DeleteEvent(lEvent.EventDbId);
+                    if (nStatus == SERVER_INACCESSIBLE)
+                    {
+                        SetCanNotTalkToServer(true);
+                        StopSync();
+                    }
                 }
                 else if (nqEvent != null)
                 {
@@ -3815,6 +3871,11 @@ namespace Mezeo
                     }
                     else if (nStatus != ResponseCode.GETETAG && nStatus != ResponseCode.DOWNLOADFILE && nStatus != ResponseCode.DOWNLOADITEMDETAILS && nStatus != 1)
                     {
+                        if (nStatus == SERVER_INACCESSIBLE)
+                        {
+                            SetCanNotTalkToServer(true);
+                            StopSync();
+                        }
                         //e.Result = CancelReason.SERVER_INACCESSIBLE;
                         break;
                     }
@@ -3829,7 +3890,7 @@ namespace Mezeo
                 // If there are no more events in the queue, then see if the server has any more that need processing.
                 if ((lEvent == null) && (nqEvent == null) && (null == localItemDetails))
                 {
-                    if (!IsSyncPaused())
+                    if (!IsSyncPaused() && !CanNotTalkToServer())
                     {
                         PopulateNQEvents();
                         GetNextEvent(ref lEvent, ref nqEvent, ref localItemDetails);
@@ -3838,7 +3899,6 @@ namespace Mezeo
             }
 
             // Update the GUI and any flags now that we're done with the sync.
-            SetSyncThreadInProgress(false);
 
             return nStatus;
         }
@@ -4631,7 +4691,6 @@ namespace Mezeo
         private void bwSyncThread_DoWork(object sender, DoWorkEventArgs e)
         {
             //LogWrapper.LogMessage("frmSyncManager - bwOffilneEvent_DoWork", "enter");
-            SetSyncThreadInProgress(true);
             int statusCode = RunSyncLoop(sender, e);
             e.Result = statusCode;
             //LogWrapper.LogMessage("frmSyncManager - bwOffilneEvent_DoWork", "leave");
@@ -4672,11 +4731,6 @@ namespace Mezeo
                             {
                                 lastSync = DateTime.Now;
                                 BasicInfo.LastSyncAt = lastSync;
-
-                                //  CheckServerStatus(); *** TODO:check for offline (Modified for server status thread)
-                                // DisableProgress();
-                                // ShowSyncDisabledMessage();
-                                // ShowSyncManagerOffline();
                             }
                             else
                             {
@@ -4719,11 +4773,6 @@ namespace Mezeo
                         {
                             lastSync = DateTime.Now;
                             BasicInfo.LastSyncAt = lastSync;
-
-                            //  CheckServerStatus(); *** TODO:check for offline (Modified for server status thread)
-                            // DisableProgress();
-                            // ShowSyncDisabledMessage();
-                            // ShowSyncManagerOffline();
                         }
                         else
                         {
@@ -4738,16 +4787,14 @@ namespace Mezeo
 
                 //Application.DoEvents();
                 //LogWrapper.LogMessage("frmSyncManager - bwLocalEvents_ProgressChanged", "leave");
-            
         }
 
         private void bwSyncThread_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
         {
             //LogWrapper.LogMessage("frmSyncManager - bwNQUpdate_RunWorkerCompleted", "enter");
             //ShowSyncMessage(IsEventCanceled());
-            tmrNextSync.Enabled = true;
+            tmrNextSync.Start();
             tmrNextSync.Interval = getSynNextCycleTimer();
-            SetSyncThreadInProgress(false);
 
             // Set the job count to whatever is left in the queue.
             // May not be 0 if the sync was paused/stopped.
