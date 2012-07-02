@@ -1266,7 +1266,8 @@ namespace Mezeo
                 //tmrNextSync.Enabled = false;
                 InitializeSync();
             }
-            else if (IsSyncThreadInProgress())
+            //else if (IsSyncThreadInProgress())
+            else
             {
                 tmrNextSync.Interval = FIVE_SECONDS;
             }
@@ -4744,6 +4745,7 @@ namespace Mezeo
         {
             //LogWrapper.LogMessage("frmSyncManager - bwNQUpdate_RunWorkerCompleted", "enter");
             //ShowSyncMessage(IsEventCanceled());
+            tmrNextSync.Enabled = true;
             tmrNextSync.Interval = getSynNextCycleTimer();
             SetSyncThreadInProgress(false);
 
