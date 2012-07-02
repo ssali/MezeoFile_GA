@@ -4043,8 +4043,8 @@ namespace Mezeo
                     if (string.IsNullOrEmpty(fileName))
                         syncPath = "";
                     else
-                        syncPath = fileName.Substring(BasicInfo.SyncDirPath.Length + 1);
-
+                        syncPath = AboutBox.AssemblyTitle + "\\" + fileName.Substring(BasicInfo.SyncDirPath.Length + 1);
+                    
                     lblStatusL3.Text = syncPath;
 
 
@@ -4069,7 +4069,7 @@ namespace Mezeo
                 if (string.IsNullOrEmpty(fileName))
                     syncPath = "";
                 else
-                    syncPath = fileName.Substring(BasicInfo.SyncDirPath.Length + 1);
+                    syncPath = AboutBox.AssemblyTitle + "\\" + fileName.Substring(BasicInfo.SyncDirPath.Length + 1);
 
                 lblStatusL3.Text = syncPath;
 
