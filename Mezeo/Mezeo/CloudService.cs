@@ -538,7 +538,7 @@ namespace Mezeo
                 syncManager.SetMaxProgress(fileinfo.Length, strSource);
 
                 strUrl = fileCloud.UploadingFile(strSource, strDestination, ref nStatusCode, syncManager.myDelegate);
-                if (nStatusCode != ResponseCode.UPLOADINGFILE)
+                if ((nStatusCode != ResponseCode.UPLOADINGFILE) && (nStatusCode != -3) && (nStatusCode != -4))
                 {
                     for (int n = 0; n < CloudService.NUMBER_OF_RETRIES; n++)
                     {
@@ -552,7 +552,9 @@ namespace Mezeo
             {
                 LogWrapper.LogMessage("CloudService - UploadingFile", "Caught exception: " + ex.Message);
             }
-            return strUrl;
+            if (nStatusCode == ResponseCode.UPLOADINGFILE)
+                return strUrl;
+            return null;
         }
     }
 }

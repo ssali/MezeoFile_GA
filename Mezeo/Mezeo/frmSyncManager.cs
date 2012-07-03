@@ -1173,49 +1173,53 @@ namespace Mezeo
                 this.Invoke((MethodInvoker)delegate
                 {
                     // SetIsEventCanceled(false);
+                    // Is the Sync paused?
                     if (IsSyncPaused())
                     {
+                        // Then resume the sync if events are in the queue.
                         SyncResumeBalloonMessage();
                         SetSyncPaused(false);
                         if (!bwSyncThread.IsBusy)
                             bwSyncThread.RunWorkerAsync();
                     }
-                       if (!IsSyncThreadInProgress())
-                        {
-                            InitializeSync();
-                        }
-                        else
-                        {
-                            SetSyncPaused(true);
-                            SyncPauseBalloonMessage();
-                        }
-                    
+                    else if (!IsSyncThreadInProgress())
+                    {
+                        // If no sync was in progress, then start a sync operation if events exist in the queue.
+                        InitializeSync();
+                    }
+                    else
+                    {
+                        // It wasn't paused, and it wasn't idle, so we must have been performing a sync.  Pause it.
+                        StopSync();
+                        SetSyncPaused(true);
+                        SyncPauseBalloonMessage();
+                    }
+
                     resetAllControls();
                 });
             }
             else
             {
-              
                 // SetIsEventCanceled(false);
                 if (IsSyncPaused())
                 {
                     SyncResumeBalloonMessage();
                     SetSyncPaused(false);
-     
+
                     if (!bwSyncThread.IsBusy)
                         bwSyncThread.RunWorkerAsync();
                 }
-             
-                if (!IsSyncThreadInProgress())
+                else if (!IsSyncThreadInProgress())
                 {
                     InitializeSync();
                 }
                 else
                 {
+                    StopSync();
                     SetSyncPaused(true);
                     SyncPauseBalloonMessage();
                 }
-                
+
                 resetAllControls();
             }
         }
@@ -3267,7 +3271,9 @@ namespace Mezeo
                                 }
                                 else if (nStatusCode != ResponseCode.UPLOADINGFILE)
                                 {
-                                    if (ResponseCode.NOTFOUND == nStatusCode)
+                                    // Apparently, the -4 from a file upload is ONLY when
+                                    // the upload was interrupted/canceled by the user.
+                                    if ((ResponseCode.NOTFOUND == nStatusCode) || (nStatusCode == -4))
                                         return ITEM_NOT_FOUND;
                                     return SERVER_INACCESSIBLE;
                                 }
