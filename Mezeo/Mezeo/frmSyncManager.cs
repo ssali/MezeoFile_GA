@@ -2113,6 +2113,10 @@ namespace Mezeo
                 {
                     return nStatusCode;
                 }
+                else if (nStatusCode == ResponseCode.INTERNAL_SERVER_ERROR)
+                {
+                    // Don't do anything, just keep on chugging.
+                }
                 else if (nStatusCode != ResponseCode.DOWNLOADITEMDETAILS)
                 {
                     return nStatusCode;
@@ -2253,6 +2257,10 @@ namespace Mezeo
                 if (nStatusCode == ResponseCode.LOGINFAILED1 || nStatusCode == ResponseCode.LOGINFAILED2)
                 {
                     return nStatusCode;
+                }
+                else if (nStatusCode == ResponseCode.INTERNAL_SERVER_ERROR)
+                {
+                    // Don't do anything, just keep on chugging.
                 }
                 else if (nStatusCode != ResponseCode.DOWNLOADITEMDETAILS)
                 {
@@ -3140,6 +3148,10 @@ namespace Mezeo
                             {
                                 return LOGIN_FAILED;
                             }
+                            else if (nStatusCode == ResponseCode.INTERNAL_SERVER_ERROR)
+                            {
+                                // Don't do anything, just keep on chugging.
+                            }
                             else if (nStatusCode != ResponseCode.DOWNLOADITEMDETAILS)
                             {
                                 if (ResponseCode.NOTFOUND == nStatusCode)
@@ -3229,6 +3241,10 @@ namespace Mezeo
                             if (nStatusCode == ResponseCode.LOGINFAILED1 || nStatusCode == ResponseCode.LOGINFAILED2)
                             {
                                 return LOGIN_FAILED;
+                            }
+                            else if (nStatusCode == ResponseCode.INTERNAL_SERVER_ERROR)
+                            {
+                                // Don't do anything, just keep on chugging.
                             }
                             else if (nStatusCode != ResponseCode.DOWNLOADITEMDETAILS)
                             {
@@ -3746,7 +3762,7 @@ namespace Mezeo
             int nStatusCode = 0;
             NQDetails[] pNQDetails = null;
 
-            if (IsSyncPaused())
+            if (IsSyncPaused() || (cLoginDetails == null))
                 return false;
 
             this.lblStatusL1.Text = LanguageTranslator.GetValue("SyncManagerCheckingServer");

@@ -508,20 +508,10 @@ namespace Mezeo
             return bRet;
         }
 
-        public void PauseSyncProcess()
-        {
-            fileCloud.PauseSyncProcess();
-        }
-
-        public void ResumeSyncProcess()
-        {
-            fileCloud.ResumeSyncProcess();
-        }
-
-        public bool StatusConnection(string strLoginName, string strPassword, string strUrl, ref int nStatusCode)
-        {
-            return fileCloud.StatusConnection(strLoginName, strPassword, strUrl, ref nStatusCode);
-        }
+        //public bool StatusConnection(string strLoginName, string strPassword, string strUrl, ref int nStatusCode)
+        //{
+        //    return fileCloud.StatusConnection(strLoginName, strPassword, strUrl, ref nStatusCode);
+        //}
 
         public void StopSyncProcess()
         {
