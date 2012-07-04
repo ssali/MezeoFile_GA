@@ -14,6 +14,7 @@ namespace Mezeo
     public partial class frmIssues : Form
     {
         private CloudService cMezeoFileCloud;
+        DbHandler dbHandler;
 
         public frmIssues()
         {
@@ -25,6 +26,7 @@ namespace Mezeo
         public frmIssues(CloudService mezeoFileCloud)
         {
             InitializeComponent();
+            dbHandler = new DbHandler();
             ClearInfoLabels();
 
             cMezeoFileCloud = mezeoFileCloud;
@@ -36,17 +38,23 @@ namespace Mezeo
             {
                 this.Invoke((MethodInvoker)delegate
                 {
-                    foreach (IssueFound issue in issuesList)
+                    if (issuesList != null)
                     {
-                        AddIssueToList(issue);
+                        foreach (IssueFound issue in issuesList)
+                        {
+                            AddIssueToList(issue);
+                        }
                     }
                 });
             }
             else
             {
-                foreach (IssueFound issue in issuesList)
+                if (issuesList != null)
                 {
-                    AddIssueToList(issue);
+                    foreach (IssueFound issue in issuesList)
+                    {
+                        AddIssueToList(issue);
+                    }
                 }
             }
         }
@@ -145,6 +153,7 @@ namespace Mezeo
                 {
                     foreach (int index in lvIssues.SelectedIndices)
                     {
+                        dbHandler.DeleteConflict(((IssueFound)lvIssues.SelectedItems[index].Tag).ConflictDbId);
                         lvIssues.Items.RemoveAt(index);
                     }
 
@@ -161,6 +170,7 @@ namespace Mezeo
             {
                 foreach (int index in lvIssues.SelectedIndices)
                 {
+                    dbHandler.DeleteConflict(((IssueFound)lvIssues.SelectedItems[index].Tag).ConflictDbId);
                     lvIssues.Items.RemoveAt(index);
                 }
 
@@ -215,6 +225,9 @@ namespace Mezeo
                     lblLocalModifiedDate.Text = issue.LocalIssueDT.ToString("M/d/yyyy h:mm tt");
                     lnkLocalFile.Text = issue.LocalFilePath;
 
+                    lnkLocalFile.Visible = true;
+                    lnkFileInfo.Visible = true;
+
                     if (issue.cType == IssueFound.ConflictType.CONFLICT_MODIFIED)
                         btnIgnoreConflict.Visible = true;
                     else
@@ -237,6 +250,9 @@ namespace Mezeo
                 lblLocalModifiedDate.Text = issue.LocalIssueDT.ToString("M/d/yyyy h:mm tt");
                 lnkLocalFile.Text = issue.LocalFilePath;
 
+                lnkLocalFile.Visible = true;
+                lnkFileInfo.Visible = true;
+                
                 if (issue.cType == IssueFound.ConflictType.CONFLICT_MODIFIED)
                     btnIgnoreConflict.Visible = true;
                 else
@@ -253,13 +269,15 @@ namespace Mezeo
                     lblUpdateStatus.Text = "";
                     lblDescription.Text = "";
 
-                    lnkFileInfo.Text = "";
+                   // lnkFileInfo.Text = "";
+                    lnkFileInfo.Visible = false;
                     lblFileSize.Text = "";
                     lblModified.Text = "";
 
                     lblLocalFileSize.Text = "";
                     lblLocalModifiedDate.Text = "";
-                    lnkLocalFile.Text = "";
+                   // lnkLocalFile.Text = "";
+                    lnkLocalFile.Visible = false;
                 });
             }
             else
@@ -267,13 +285,15 @@ namespace Mezeo
                 lblUpdateStatus.Text = "";
                 lblDescription.Text = "";
 
-                lnkFileInfo.Text = "";
+              //  lnkFileInfo.Text = "";
+                lnkFileInfo.Visible = false;
                 lblFileSize.Text = "";
                 lblModified.Text = "";
 
                 lblLocalFileSize.Text = "";
                 lblLocalModifiedDate.Text = "";
-                lnkLocalFile.Text = "";
+              //  lnkLocalFile.Text = "";
+                lnkLocalFile.Visible = false;
             }
         }
 
@@ -287,6 +307,10 @@ namespace Mezeo
             {
                 lvIssues.Items[i].Selected = false;
             }
+            //if(lvIssues.Items.Count > 0)
+            //    lvIssues.Items[0].Selected = true;
+            
+            //ClearInfoLabels();
             this.Hide();
             return;
         }
@@ -337,18 +361,41 @@ namespace Mezeo
 
         public int GetItemsInList()
         {
-            return lvIssues.Items.Count;
+          List<IssueFound> issuesList =  dbHandler.GetConflicts();
+          int count = 0;
+          if (issuesList != null)
+              count = issuesList.Count();
+
+          return count;
         }
 
         private void lnkLocalFile_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
         {
-            if (lvIssues.SelectedItems.Count > 0)
+            if (this.InvokeRequired)
             {
-                IssueFound iFound = (IssueFound)lvIssues.SelectedItems[0].Tag;
-                if (iFound.LocalFilePath.Length != 0)
+                this.Invoke((MethodInvoker)delegate
                 {
-                    string argument = iFound.LocalFilePath;
-                    System.Diagnostics.Process.Start(argument);
+                    if (lvIssues.SelectedItems.Count > 0)
+                    {
+                        IssueFound iFound = (IssueFound)lvIssues.SelectedItems[0].Tag;
+                        if (iFound.LocalFilePath.Length != 0)
+                        {
+                            string argument = iFound.LocalFilePath;
+                            System.Diagnostics.Process.Start(argument);
+                        }
+                    }
+                });
+            }
+            else
+            {
+                if (lvIssues.SelectedItems.Count > 0)
+                {
+                    IssueFound iFound = (IssueFound)lvIssues.SelectedItems[0].Tag;
+                    if (iFound.LocalFilePath.Length != 0)
+                    {
+                        string argument = iFound.LocalFilePath;
+                        System.Diagnostics.Process.Start(argument);
+                    }
                 }
             }
         }

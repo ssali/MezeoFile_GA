@@ -83,7 +83,7 @@ namespace Mezeo
         public const string CONFLICT_TIME_STAMP = "Time";
         public const string CONFLICT_URI = "Uri";
         public const string CONFLICT_OR_ERROR = "ConflictOrError";
-        public const string CONFLICT_EVENT_INDEX = "ConflictOrError";
+        public const string CONFLICT_EVENT_INDEX = "ConflictEventIndex";
 
         public bool CreatedNewDatabase()
         {
@@ -300,12 +300,12 @@ namespace Mezeo
                             EscapeString(issue.IssueTitle) + "','" +
                             EscapeString(issue.IssueDescripation) + "','" +
                             issue.cType + "'," +
-                            issue.LocalIssueDT.Ticks + "," +
-                            issue.LocalSize + ",'" +
+                            issue.LocalIssueDT.Ticks + ",'" +
+                            issue.LocalSize + "','" +
                             EscapeString(issue.ServerFileInfo) + "'," +
-                            issue.ServerIssueDT.Ticks + "','" +
-                            issue.ServerSize + ",'" +
-                            issue.ConflictTimeStamp.Ticks + "','" +
+                            issue.ServerIssueDT.Ticks + ",'" +
+                            issue.ServerSize + "'," +
+                            issue.ConflictTimeStamp.Ticks + ",'" +
                             'C' + "'," +
                             '0'+",'" +
                             issue.ServerFileUri + "');";
@@ -337,7 +337,7 @@ namespace Mezeo
             issue.ConflictTimeStamp.AddTicks((Int64)sqlDataReader[CONFLICT_TIME_STAMP]);
             issue.ServerFileUri = (string)sqlDataReader[CONFLICT_URI];
 
-            switch ((string)sqlDataReader[EVENT_LOCAL_TYPE])
+            switch ((string)sqlDataReader[CONFLICT_TYPE])
             {
                 case "CONFLICT_UPLOAD":
                     issue.cType = IssueFound.ConflictType.CONFLICT_UPLOAD;

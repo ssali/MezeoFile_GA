@@ -452,9 +452,14 @@ namespace Mezeo
                         this.btnSyncNow.Text = LanguageTranslator.GetValue("SyncManagerSyncNowButtonText");
                         this.btnSyncNow.Enabled = true;
                         
-                         this.btnIssuesFound.Visible = false;
                         this.pbSyncProgress.Visible = false;
                         this.lblPercentDone.Visible = false;
+
+                        if (frmIssuesFound.GetItemsInList() > 0)
+                            btnIssuesFound.Visible = true;
+                        else
+                            this.btnIssuesFound.Visible = false;
+                        
 
                         this.lblUserName.Text = BasicInfo.UserName;
                         this.lnkServerUrl.Text = BasicInfo.ServiceUrl;
@@ -470,6 +475,8 @@ namespace Mezeo
                         label1.BringToFront();
                         label1.Visible = true;
                         label1.Show();
+
+                        
 
                         InitialSyncBalloonMessage();
              
@@ -503,9 +510,14 @@ namespace Mezeo
                     this.btnSyncNow.Text = LanguageTranslator.GetValue("SyncManagerSyncNowButtonText");
                     this.btnSyncNow.Enabled = true;
 
-                    this.btnIssuesFound.Visible = false;
+                   // this.btnIssuesFound.Visible = false;
                     this.pbSyncProgress.Visible = false;
                     this.lblPercentDone.Visible = false;
+                    
+                    if (frmIssuesFound.GetItemsInList() > 0)
+                        btnIssuesFound.Visible = true;
+                    else
+                        this.btnIssuesFound.Visible = false;
 
                     this.lblUserName.Text = BasicInfo.UserName;
                     this.lnkServerUrl.Text = BasicInfo.ServiceUrl;
@@ -605,6 +617,7 @@ namespace Mezeo
                 {
                     SetIssueFound(false);
                     //this.btnSyncNow.Text = LanguageTranslator.GetValue("PauseSync");
+                    this.btnSyncNow.Enabled = false;
                     btnSyncNow.Refresh();
                     isDownloadingFile = true;
                     ShowNextSyncLabel(false);
@@ -614,6 +627,7 @@ namespace Mezeo
             {
                 SetIssueFound(false);
                // this.btnSyncNow.Text = LanguageTranslator.GetValue("PauseSync");
+                this.btnSyncNow.Enabled = false;
                 btnSyncNow.Refresh();
                 isDownloadingFile = true;
                 ShowNextSyncLabel(false);
@@ -1163,12 +1177,16 @@ namespace Mezeo
             {
                 this.Invoke((MethodInvoker)delegate
                 {
+                    frmIssuesFound.ClearList();
+                    frmIssuesFound.AddIssuesToList(dbHandler.GetConflicts());
                     frmIssuesFound.Show();
                     frmIssuesFound.BringToFront();
                 });
             }
             else
             {
+                frmIssuesFound.ClearList();
+                frmIssuesFound.AddIssuesToList(dbHandler.GetConflicts());
                 frmIssuesFound.Show();
                 frmIssuesFound.BringToFront();
             }
@@ -1257,6 +1275,20 @@ namespace Mezeo
         private void lnkFolderPath_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
         {
             OpenFolder();
+        }
+
+        private void btnPauseResume_Click(object sender, EventArgs e)
+        {
+            if (!IsSyncPaused())
+            {
+                frmParent.syncPausedOperation();
+                return;
+            }
+            if (IsSyncPaused())
+            {
+                frmParent.syncResumeOperation();
+                return;
+            }
         }
 
         private void frmSyncManager_FormClosing(object sender, FormClosingEventArgs e)
@@ -2675,8 +2707,8 @@ namespace Mezeo
             iFound.ServerFileInfo = lEvent.FileName;
             iFound.ServerFileUri = iDetails.szContentUrl;
 
-            frmIssuesFound.AddIssueToList(iFound);
-
+           // frmIssuesFound.AddIssueToList(iFound);
+            dbHandler.StoreConflict(iFound);
             // Issue Fix for Conflicts 
             IssueFoundBalloonMessage();
 
@@ -4071,7 +4103,7 @@ namespace Mezeo
                                                                       LanguageTranslator.GetValue("SyncConflictFoundText"),
                                                                      ToolTipIcon.None);
 
-            cnotificationManager.HoverText = global::Mezeo.Properties.Resources.BrSyncManagerTitle + " " + AboutBox.AssemblyVersion + "\n" + LanguageTranslator.GetValue("SyncConflictFoundText");
+           // cnotificationManager.HoverText = global::Mezeo.Properties.Resources.BrSyncManagerTitle + " " + AboutBox.AssemblyVersion + "\n" + LanguageTranslator.GetValue("SyncConflictFoundText");
 
             frmParent.toolStripMenuItem4.Text = LanguageTranslator.GetValue("SyncManagerMenuIssueFoundText");
         }
@@ -4966,18 +4998,5 @@ namespace Mezeo
 
         #endregion
 
-        private void btnPauseResume_Click(object sender, EventArgs e)
-        {
-            if (!IsSyncPaused())
-            {
-              frmParent.syncPausedOperation();
-              return;
-            }
-            if (IsSyncPaused())
-            {
-              frmParent.syncResumeOperation();
-              return;
-            }
-        }
     }
 }
