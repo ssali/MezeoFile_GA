@@ -42,8 +42,6 @@ namespace MezeoFileSupport
         public String szNamespaceUri;
         public String szNQParentUri;
 
-       
-
         public LoginDetails()
         {
             szUserName = "";
@@ -225,7 +223,6 @@ namespace MezeoFileSupport
 		private String m_strPassword;
         private XmlDocument m_xmlDocument = new XmlDocument();
         private bool m_bStop = false;
-        private bool m_bPause = false;
         private String StrAPIKey = "c5f5c39e22b4c743ff7c83470499748c6ac46b249c29e3934f5744166af130c6";
         private Int32 nTimeout = 120000;
         private Dictionary<string, string> types;
@@ -393,11 +390,6 @@ namespace MezeoFileSupport
                     bStatus = false;
 			        break;
 		        }
-		        if(m_bPause)
-                {
-			        bStatus = false;
-                    break;
-                }
 	        }
 
 	        responseStream.Close();
@@ -417,16 +409,6 @@ namespace MezeoFileSupport
         public void StopSyncProcess()
         {
 	        m_bStop = true;
-        }
-
-        public void PauseSyncProcess()
-        {
-	        m_bPause = true;
-        }
-
-        public void ResumeSyncProcess()
-        {
-	        m_bPause = false;
         }
 
         private String OnGetMimeType(String StrFilePath)
@@ -468,7 +450,9 @@ namespace MezeoFileSupport
                     return 409;
                 else if (((HttpWebResponse)webEx.Response).StatusCode == HttpStatusCode.UnsupportedMediaType)
                     return 415;
-	        }
+                else if (((HttpWebResponse)webEx.Response).StatusCode == HttpStatusCode.InternalServerError)
+                    return 500;
+            }
 	        return -1;
         }
 
@@ -2046,7 +2030,6 @@ namespace MezeoFileSupport
 		        m_strPassword = "";
                 m_xmlDocument.RemoveAll();
                 m_bStop = false;
-                m_bPause = false;
 	        }
 	        catch
 	        {
