@@ -511,11 +511,11 @@ namespace Mezeo.Resources.en {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Issues found. Launch Sync Manager to review..
+        ///   Looks up a localized string similar to Conflicts found. Launch Sync Manager to review..
         /// </summary>
-        internal static string SyncIssueFoundText {
+        internal static string SyncConflictFoundText {
             get {
-                return ResourceManager.GetString("SyncIssueFoundText", resourceCulture);
+                return ResourceManager.GetString("SyncConflictFoundText", resourceCulture);
             }
         }
         
@@ -574,6 +574,15 @@ namespace Mezeo.Resources.en {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Conflicts.
+        /// </summary>
+        internal static string SyncManagerConflictsButtonText {
+            get {
+                return ResourceManager.GetString("SyncManagerConflictsButtonText", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Updating.
         /// </summary>
         internal static string SyncManagerDownloading {
@@ -606,15 +615,6 @@ namespace Mezeo.Resources.en {
         internal static string SyncManagerHelpLinkText {
             get {
                 return ResourceManager.GetString("SyncManagerHelpLinkText", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Issues Found.
-        /// </summary>
-        internal static string SyncManagerIssueFoundButtonText {
-            get {
-                return ResourceManager.GetString("SyncManagerIssueFoundButtonText", resourceCulture);
             }
         }
         

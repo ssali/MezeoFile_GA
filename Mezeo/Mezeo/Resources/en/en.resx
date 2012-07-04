@@ -267,8 +267,8 @@
   <data name="ResumeSyncText" xml:space="preserve">
     <value>Resume Sync</value>
   </data>
-  <data name="SyncIssueFoundText" xml:space="preserve">
-    <value>Issues found. Launch Sync Manager to review.</value>
+  <data name="SyncConflictFoundText" xml:space="preserve">
+    <value>Conflicts found. Launch Sync Manager to review.</value>
   </data>
   <data name="SyncManager" xml:space="preserve">
     <value>Sync Manager</value>
@@ -288,6 +288,9 @@
   <data name="SyncManagerCheckingServer" xml:space="preserve">
     <value>Checking server for updates...</value>
   </data>
+  <data name="SyncManagerConflictsButtonText" xml:space="preserve">
+    <value>Conflicts</value>
+  </data>
   <data name="SyncManagerDownloading" xml:space="preserve">
     <value>Updating</value>
   </data>
@@ -299,9 +302,6 @@
   </data>
   <data name="SyncManagerHelpLinkText" xml:space="preserve">
     <value>Help</value>
-  </data>
-  <data name="SyncManagerIssueFoundButtonText" xml:space="preserve">
-    <value>Issues Found</value>
   </data>
   <data name="SyncManagerLastSync" xml:space="preserve">
     <value>Last sync</value>

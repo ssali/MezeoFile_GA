@@ -56,6 +56,7 @@
             this.lblStatusL1 = new System.Windows.Forms.Label();
             this.imgStatus = new System.Windows.Forms.PictureBox();
             this.bwSyncThread = new System.ComponentModel.BackgroundWorker();
+            this.btnPauseResume = new System.Windows.Forms.Button();
             this.panel1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.eventLog1)).BeginInit();
@@ -110,6 +111,7 @@
             // panel1
             // 
             this.panel1.BackgroundImage = global::Mezeo.Properties.Resources.patch_green;
+            this.panel1.Controls.Add(this.btnPauseResume);
             this.panel1.Controls.Add(this.pictureBox1);
             this.panel1.Dock = System.Windows.Forms.DockStyle.Top;
             this.panel1.Location = new System.Drawing.Point(0, 0);
@@ -300,6 +302,16 @@
             this.bwSyncThread.ProgressChanged += new System.ComponentModel.ProgressChangedEventHandler(this.bwSyncThread_ProgressChanged);
             this.bwSyncThread.RunWorkerCompleted += new System.ComponentModel.RunWorkerCompletedEventHandler(this.bwSyncThread_RunWorkerCompleted);
             // 
+            // btnPauseResume
+            // 
+            this.btnPauseResume.Location = new System.Drawing.Point(538, 21);
+            this.btnPauseResume.Name = "btnPauseResume";
+            this.btnPauseResume.Size = new System.Drawing.Size(96, 23);
+            this.btnPauseResume.TabIndex = 21;
+            this.btnPauseResume.Text = "Pause Sync";
+            this.btnPauseResume.UseVisualStyleBackColor = true;
+            this.btnPauseResume.Click += new System.EventHandler(this.btnPauseResume_Click);
+            // 
             // frmSyncManager
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -370,5 +382,6 @@
         private System.Windows.Forms.Label lblUsageDetails;
         private System.Windows.Forms.Label lblUsage;
         private System.ComponentModel.BackgroundWorker bwSyncThread;
+        private System.Windows.Forms.Button btnPauseResume;
     }
 }

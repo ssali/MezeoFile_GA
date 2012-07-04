@@ -220,7 +220,7 @@ namespace Mezeo
             this.msShowSyncMgr.Text = LanguageTranslator.GetValue("SyncManager");
             this.msSyncMgrExit.Text = LanguageTranslator.GetValue("ExitSyncManager");	
 
-            this.toolStripMenuItem3.Text = LanguageTranslator.GetValue("CheckforUpdate");
+         //   this.toolStripMenuItem3.Text = LanguageTranslator.GetValue("CheckforUpdate");
             this.toolStripMenuItem4.Text = LanguageTranslator.GetValue("SyncProgress");
             this.toolStripMenuItem5.Text = LanguageTranslator.GetValue("WebsiteUrl");
             this.toolStripMenuItem7.Text = LanguageTranslator.GetValue("PauseSync");
@@ -838,16 +838,18 @@ namespace Mezeo
                 this.Invoke((MethodInvoker)delegate
                 {
                     syncManager.SetSyncPaused(false);
-                    syncManager.InitializeSync();
                     changeResumeText();
+                    syncManager.changePauseResumeBtnText();
+                    syncManager.InitializeSync();
                     syncManager.SyncResumeBalloonMessage();
                 });
             }
             else
             {
                 syncManager.SetSyncPaused(false);
-                syncManager.InitializeSync();
                 changeResumeText();
+                syncManager.changePauseResumeBtnText();
+                syncManager.InitializeSync();
                 syncManager.SyncResumeBalloonMessage();
             }
         }
@@ -885,20 +887,20 @@ namespace Mezeo
             notificationManager.HoverText = global::Mezeo.Properties.Resources.BrSyncManagerTitle + " " + AboutBox.AssemblyVersion + "\n" + LanguageTranslator.GetValue("EvaluatingLocalChanges");
         }
 
-        public void changeUpdatesText(string newVersion)
-        {
-            if (this.InvokeRequired)
-            {
-                this.Invoke((MethodInvoker)delegate
-                {
-                    toolStripMenuItem3.Text = LanguageTranslator.GetValue("InstallUpdateText") + newVersion;
-                });
-            }
-            else
-            {
-                toolStripMenuItem3.Text = LanguageTranslator.GetValue("InstallUpdateText") + newVersion;
-            }
-        }
+        //public void changeUpdatesText(string newVersion)
+        //{
+        //    if (this.InvokeRequired)
+        //    {
+        //        this.Invoke((MethodInvoker)delegate
+        //        {
+        //            toolStripMenuItem3.Text = LanguageTranslator.GetValue("InstallUpdateText") + newVersion;
+        //        });
+        //    }
+        //    else
+        //    {
+        //        toolStripMenuItem3.Text = LanguageTranslator.GetValue("InstallUpdateText") + newVersion;
+        //    }
+        //}
 
         public void changePauseText()
         {
