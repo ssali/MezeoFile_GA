@@ -168,9 +168,17 @@ namespace Mezeo
 
         public void bwCheckServerStatus_DoWork(object sender, DoWorkEventArgs e)
         {
-            TimeSpan time = new TimeSpan(0,5,0);
-            while(!_Appexit.WaitOne(time))
+            TimeSpan timeOnline = new TimeSpan(0, 5, 0);
+            TimeSpan timeOffline = new TimeSpan(0, 1, 0);
+            TimeSpan time = timeOnline;
+            while (!_Appexit.WaitOne(time))
+            {
                 syncManager.CheckServerStatus();
+                if (syncManager.CanNotTalkToServer())
+                    time = timeOffline;  // Wait for a lesser amount of time before checking on the server status.
+                else
+                    time = timeOnline;  // Wait for a longer period of time before checking on the server status.
+            }
         }
 
         private string validateServiceUrl(string url)

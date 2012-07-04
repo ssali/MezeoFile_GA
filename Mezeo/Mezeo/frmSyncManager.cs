@@ -279,14 +279,20 @@ namespace Mezeo
                 this.Invoke((MethodInvoker)delegate
                 {
                     if ((canNotTalktoTheServer == true) && (talkToTheServer == false))
+                    {
                         SyncOnlineMessage();
+                        resetAllControls();
+                    }
                     canNotTalktoTheServer = talkToTheServer;
                 });
             }
             else
             {
                 if ((canNotTalktoTheServer == true) && (talkToTheServer == false))
+                {
                     SyncOnlineMessage();
+                    resetAllControls();
+                }
                 canNotTalktoTheServer = talkToTheServer;
             }
         }
