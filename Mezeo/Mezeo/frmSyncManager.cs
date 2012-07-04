@@ -1295,7 +1295,17 @@ namespace Mezeo
             if (IsInIdleState())
             {
                 // SetIsCalledByNextSyncTmr(true);
-                tmrNextSync.Interval = getSynNextCycleTimer();
+                if (this.InvokeRequired)
+                {
+                    this.Invoke((MethodInvoker)delegate
+                    {
+                        tmrNextSync.Interval = getSynNextCycleTimer();
+                    });
+                }
+                else
+                {
+                    tmrNextSync.Interval = getSynNextCycleTimer();
+                }
 
                 //tmrNextSync.Enabled = false;
                 InitializeSync();
@@ -1303,7 +1313,17 @@ namespace Mezeo
             //else if (IsSyncThreadInProgress())
             else
             {
-                tmrNextSync.Interval = FIVE_SECONDS;
+                if (this.InvokeRequired)
+                {
+                    this.Invoke((MethodInvoker)delegate
+                    {
+                        tmrNextSync.Interval = FIVE_SECONDS;
+                    });
+                }
+                else
+                {
+                    tmrNextSync.Interval = FIVE_SECONDS;
+                }
             }
         }
 
@@ -1488,8 +1508,20 @@ namespace Mezeo
             {
                 this.Invoke((MethodInvoker)delegate
                 {
-                    tmrNextSync.Start();
-                    tmrNextSync.Interval = getSynNextCycleTimer();
+                    if (this.InvokeRequired)
+                    {
+                        this.Invoke((MethodInvoker)delegate
+                        {
+                            //tmrNextSync.Start();
+                            tmrNextSync.Interval = getSynNextCycleTimer();
+                        });
+                    }
+                    else
+                    {
+                        //tmrNextSync.Start();
+                        tmrNextSync.Interval = getSynNextCycleTimer();
+                    }
+
                     if (IsSyncThreadInProgress())
                     {
                         //SetIsEventCanceled(true);
@@ -1512,8 +1544,20 @@ namespace Mezeo
             }
             else
             {
-                tmrNextSync.Start();
-                tmrNextSync.Interval = getSynNextCycleTimer();
+                if (this.InvokeRequired)
+                {
+                    this.Invoke((MethodInvoker)delegate
+                    {
+                        //tmrNextSync.Start();
+                        tmrNextSync.Interval = getSynNextCycleTimer();
+                    });
+                }
+                else
+                {
+                    //tmrNextSync.Start();
+                    tmrNextSync.Interval = getSynNextCycleTimer();
+                }
+
                 if (IsSyncThreadInProgress())
                 {
                     //SetIsEventCanceled(true);
@@ -4854,8 +4898,19 @@ namespace Mezeo
         {
             //LogWrapper.LogMessage("frmSyncManager - bwNQUpdate_RunWorkerCompleted", "enter");
             //ShowSyncMessage(IsEventCanceled());
-            tmrNextSync.Start();
-            tmrNextSync.Interval = getSynNextCycleTimer();
+            if (this.InvokeRequired)
+            {
+                this.Invoke((MethodInvoker)delegate
+                {
+                    //tmrNextSync.Start();
+                    tmrNextSync.Interval = getSynNextCycleTimer();
+                });
+            }
+            else
+            {
+                //tmrNextSync.Start();
+                tmrNextSync.Interval = getSynNextCycleTimer();
+            }
 
             // Set the job count to whatever is left in the queue.
             // May not be 0 if the sync was paused/stopped.
@@ -4880,8 +4935,8 @@ namespace Mezeo
                 {
                     queue_WatchCompletedEvent();
                 }
-               
-                    resetAllControls();
+
+                resetAllControls();
             }
             catch (Exception ex)
             {
