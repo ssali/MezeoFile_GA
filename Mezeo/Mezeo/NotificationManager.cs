@@ -47,6 +47,9 @@ namespace Mezeo
             set
             {
                 hoverText = value;
+                // The text is limited to 64 characters.
+                if (hoverText.Length > 64)
+                    hoverText = hoverText.Substring(0, 64);
                 cNotifyIcon.Text = hoverText;
             }
         }
