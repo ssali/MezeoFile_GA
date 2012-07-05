@@ -444,7 +444,7 @@ namespace Mezeo
             {
                 this.Invoke((MethodInvoker)delegate
                 {
-                     if (IsInIdleState())
+                     if (IsInIdleState() && !CanNotTalkToServer())
                      {
                         this.Text = AboutBox.AssemblyTitle;
                         this.lblFolder.Text = LanguageTranslator.GetValue("SyncManagerFolderLabel");
@@ -484,6 +484,8 @@ namespace Mezeo
              
                         UpdateUsageLabel();
                      }
+                     if (CanNotTalkToServer())
+                         ShowSyncManagerOffline();
                      //else 
                      //{
                      //    if (IsSyncPaused())
@@ -502,7 +504,7 @@ namespace Mezeo
             }
             else
             {
-                if (IsInIdleState())
+                if (IsInIdleState() && !CanNotTalkToServer())
                 {
                     this.Text = AboutBox.AssemblyTitle;
                     this.lblFolder.Text = LanguageTranslator.GetValue("SyncManagerFolderLabel");
@@ -540,6 +542,8 @@ namespace Mezeo
                   
                     UpdateUsageLabel();
                 }
+                if (CanNotTalkToServer())
+                    ShowSyncManagerOffline();
                 //else
                 //{
                 //    if (IsSyncPaused())
