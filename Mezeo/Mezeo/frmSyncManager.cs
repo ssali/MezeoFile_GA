@@ -4105,7 +4105,7 @@ namespace Mezeo
                                                                       LanguageTranslator.GetValue("SyncConflictFoundText"),
                                                                      ToolTipIcon.None);
 
-           // cnotificationManager.HoverText = global::Mezeo.Properties.Resources.BrSyncManagerTitle + " " + AboutBox.AssemblyVersion + "\n" + LanguageTranslator.GetValue("SyncConflictFoundText");
+            cnotificationManager.HoverText = global::Mezeo.Properties.Resources.BrSyncManagerTitle + " " + AboutBox.AssemblyVersion + "\n" + LanguageTranslator.GetValue("SyncConflictFoundText");
 
             frmParent.toolStripMenuItem4.Text = LanguageTranslator.GetValue("SyncManagerMenuIssueFoundText");
         }

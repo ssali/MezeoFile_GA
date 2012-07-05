@@ -268,7 +268,7 @@
     <value>Resume Sync</value>
   </data>
   <data name="SyncConflictFoundText" xml:space="preserve">
-    <value>Conflicts found. Launch Sync Manager to review.</value>
+    <value>Launch sync manager to review conflicts.</value>
   </data>
   <data name="SyncManager" xml:space="preserve">
     <value>Sync Manager</value>

@@ -511,7 +511,7 @@ namespace Mezeo.Resources.en {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Conflicts found. Launch Sync Manager to review..
+        ///   Looks up a localized string similar to Launch sync manager to review conflicts..
         /// </summary>
         internal static string SyncConflictFoundText {
             get {
