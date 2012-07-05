@@ -1906,23 +1906,26 @@ namespace Mezeo
                 }
                 else
                 {
-                    bool bRet = cMezeoFileCloud.DownloadFile(nsResult.StrContentsUri + '/' + nsResult.StrName, strPath, nsResult.dblSizeInBytes,ref nStatusCode);
-                    if (nStatusCode == ResponseCode.LOGINFAILED1 || nStatusCode == ResponseCode.LOGINFAILED2)
+                    if ("FILE" == nsResult.StrType)
                     {
-                        return nStatusCode;
-                    }
-                    else if (nStatusCode != ResponseCode.DOWNLOADFILE)
-                    {
-                        return nStatusCode;
-                    }
-                    if (bRet)
-                    {
-                        dbHandler.Update(DbHandler.TABLE_NAME, DbHandler.E_TAG , strEtagCloud , DbHandler.KEY , strKey);
-                        bool isFileExist = File.Exists(strPath);
-                        if (isFileExist)
+                        bool bRet = cMezeoFileCloud.DownloadFile(nsResult.StrContentsUri + '/' + nsResult.StrName, strPath, nsResult.dblSizeInBytes, ref nStatusCode);
+                        if (nStatusCode == ResponseCode.LOGINFAILED1 || nStatusCode == ResponseCode.LOGINFAILED2)
                         {
-                            FileInfo fInfo = new FileInfo(strPath);
-                            dbHandler.UpdateModifiedDate(fInfo.LastWriteTime, strKey);
+                            return nStatusCode;
+                        }
+                        else if (nStatusCode != ResponseCode.DOWNLOADFILE)
+                        {
+                            return nStatusCode;
+                        }
+                        if (bRet)
+                        {
+                            dbHandler.Update(DbHandler.TABLE_NAME, DbHandler.E_TAG, strEtagCloud, DbHandler.KEY, strKey);
+                            bool isFileExist = File.Exists(strPath);
+                            if (isFileExist)
+                            {
+                                FileInfo fInfo = new FileInfo(strPath);
+                                dbHandler.UpdateModifiedDate(fInfo.LastWriteTime, strKey);
+                            }
                         }
                     }
                 }

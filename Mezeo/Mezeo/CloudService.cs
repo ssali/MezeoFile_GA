@@ -115,7 +115,7 @@ namespace Mezeo
 
             bool bRet = fileCloud.DownloadFile(strSource, strDestination, dblFileSizeInBytes, ref nStatusCode, syncManager.myDelegate, syncManager.ContinueRunningDelegate);
 
-            if (nStatusCode != ResponseCode.DOWNLOADFILE)
+            if ((nStatusCode != ResponseCode.DOWNLOADFILE) && (nStatusCode != ResponseCode.SERVER_INACCESSIBLE) && (nStatusCode != -4))
             {
                 for (int n = 0; n < CloudService.NUMBER_OF_RETRIES; n++)
                 {
@@ -314,7 +314,7 @@ namespace Mezeo
         public NSResult GetNamespaceResult(string StrUri, string StrObjectType, ref int nStatusCode)
         {
             NSResult nsResult = fileCloud.GetNamespaceResult(StrUri, StrObjectType, ref nStatusCode);
-            if (nStatusCode != ResponseCode.GETNAMESPACERESULT)
+            if ((nStatusCode != ResponseCode.GETNAMESPACERESULT) && (nStatusCode != ResponseCode.NOTFOUND))
             {
                 for (int n = 0; n < CloudService.NUMBER_OF_RETRIES; n++)
                 {
