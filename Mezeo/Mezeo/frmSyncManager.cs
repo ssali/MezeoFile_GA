@@ -379,6 +379,7 @@ namespace Mezeo
                         BasicInfo.IsInitialSync = false;
                         SetAnalysisIsCompleted(true);
                         resetAllControls();
+                        SetUpSync();
                         SyncNow();
                     });
                 }
@@ -388,6 +389,7 @@ namespace Mezeo
                     BasicInfo.IsInitialSync = false;
                     SetAnalysisIsCompleted(true);
                     resetAllControls();
+                    SetUpSync();
                     SyncNow();
                 }
             }
@@ -1220,28 +1222,28 @@ namespace Mezeo
             {
                 this.Invoke((MethodInvoker)delegate
                 {
-                    // SetIsEventCanceled(false);
-                    // Is the Sync paused?
-                    if (IsSyncPaused())
-                    {
-                        // Then resume the sync if events are in the queue.
-                        SyncResumeBalloonMessage();
-                        SetSyncPaused(false);
-                        if (!bwSyncThread.IsBusy)
-                            bwSyncThread.RunWorkerAsync();
-                    }
-                    else if (!IsSyncThreadInProgress())
+                    //// SetIsEventCanceled(false);
+                    //// Is the Sync paused?
+                    //if (IsSyncPaused())
+                    //{
+                    //    // Then resume the sync if events are in the queue.
+                    //    SyncResumeBalloonMessage();
+                    //    SetSyncPaused(false);
+                    //    if (!bwSyncThread.IsBusy)
+                    //        bwSyncThread.RunWorkerAsync();
+                    //}
+                    if (!IsSyncThreadInProgress())
                     {
                         // If no sync was in progress, then start a sync operation if events exist in the queue.
                         InitializeSync();
                     }
-                    else
-                    {
-                        // It wasn't paused, and it wasn't idle, so we must have been performing a sync.  Pause it.
-                        StopSync();
-                        SetSyncPaused(true);
-                        SyncPauseBalloonMessage();
-                    }
+                    //else
+                    //{
+                    //    // It wasn't paused, and it wasn't idle, so we must have been performing a sync.  Pause it.
+                    //    StopSync();
+                    //    SetSyncPaused(true);
+                    //    SyncPauseBalloonMessage();
+                    //}
 
                     resetAllControls();
                 });
@@ -1249,24 +1251,24 @@ namespace Mezeo
             else
             {
                 // SetIsEventCanceled(false);
-                if (IsSyncPaused())
-                {
-                    SyncResumeBalloonMessage();
-                    SetSyncPaused(false);
+                //if (IsSyncPaused())
+                //{
+                //    SyncResumeBalloonMessage();
+                //    SetSyncPaused(false);
 
-                    if (!bwSyncThread.IsBusy)
-                        bwSyncThread.RunWorkerAsync();
-                }
-                else if (!IsSyncThreadInProgress())
+                //    if (!bwSyncThread.IsBusy)
+                //        bwSyncThread.RunWorkerAsync();
+                //}
+                if (!IsSyncThreadInProgress())
                 {
                     InitializeSync();
                 }
-                else
-                {
-                    StopSync();
-                    SetSyncPaused(true);
-                    SyncPauseBalloonMessage();
-                }
+                //else
+                //{
+                //    StopSync();
+                //    SetSyncPaused(true);
+                //    SyncPauseBalloonMessage();
+                //}
 
                 resetAllControls();
             }
@@ -4193,7 +4195,6 @@ namespace Mezeo
         {
             //btnSyncNow.Text = LanguageTranslator.GetValue("PauseSync");
             cnotificationManager.NotificationHandler.Icon = Properties.Resources.mezeosyncstatus_syncing;
-            //cnotificationManager.HoverText = global::Mezeo.Properties.Resources.BrSyncManagerTitle + " " + AboutBox.AssemblyVersion;
             cnotificationManager.HoverText = global::Mezeo.Properties.Resources.BrSyncManagerTitle + " " + AboutBox.AssemblyVersion + "\n" + LanguageTranslator.GetValue("TrayHoverSyncProgressText"); 
             frmParent.toolStripMenuItem4.Text = LanguageTranslator.GetValue("TrayHoverSyncProgressText");
         }
