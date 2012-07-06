@@ -138,7 +138,7 @@ namespace Mezeo
             dbHandler = new DbHandler();
             dbHandler.OpenConnection();
 
-            frmIssuesFound = new frmIssues(mezeoFileCloud);
+            frmIssuesFound = new frmIssues(mezeoFileCloud, this);
             offlineWatcher = new OfflineWatcher(dbHandler);
             
             myDelegate = new MezeoFileSupport.CallbackIncrementProgress(this.CallbackSyncProgress);
@@ -2640,7 +2640,7 @@ namespace Mezeo
             return false;
         }
 
-        private void SetIssueFound(bool bIsIssueFound)
+        public void SetIssueFound(bool bIsIssueFound)
         {
             //LogWrapper.LogMessage("frmSyncManager - SetIssueFound", "enter");
             if (this.InvokeRequired)

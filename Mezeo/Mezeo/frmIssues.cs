@@ -15,6 +15,7 @@ namespace Mezeo
     {
         private CloudService cMezeoFileCloud;
         DbHandler dbHandler;
+        frmSyncManager syncmanager;
 
         public frmIssues()
         {
@@ -23,9 +24,10 @@ namespace Mezeo
             LoadResources();
         }
 
-        public frmIssues(CloudService mezeoFileCloud)
+        public frmIssues(CloudService mezeoFileCloud, frmSyncManager manager)
         {
             InitializeComponent();
+            syncmanager = manager;
             dbHandler = new DbHandler();
             ClearInfoLabels();
 
@@ -307,10 +309,10 @@ namespace Mezeo
             {
                 lvIssues.Items[i].Selected = false;
             }
-            //if(lvIssues.Items.Count > 0)
-            //    lvIssues.Items[0].Selected = true;
+
+            if (syncmanager != null && lvIssues.Items.Count == 0)
+                syncmanager.SetIssueFound(false);
             
-            //ClearInfoLabels();
             this.Hide();
             return;
         }
