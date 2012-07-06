@@ -336,7 +336,6 @@ namespace Mezeo
             issue.ServerSize = (string)sqlDataReader[CONFLICT_SERVER_SIZE];
             issue.ConflictTimeStamp.AddTicks((Int64)sqlDataReader[CONFLICT_TIME_STAMP]);
             issue.ServerFileUri = (string)sqlDataReader[CONFLICT_URI];
-           
 
             switch ((string)sqlDataReader[CONFLICT_TYPE])
             {
@@ -832,6 +831,38 @@ namespace Mezeo
                 LogWrapper.LogMessage("DbHandler - PopulateLocalItemDetailsEventFromReader", "Caught exception: " + ex.Message);
                 item = null;
             }
+        }
+
+        public Int64 GetNextEventId(ref string eventType)
+        {
+            Int64 nextEventId = -1;
+            string query = "SELECT * FROM " + EVENT_TABLE_NAME + " ORDER BY " + EVENT_INDEX + " LIMIT 1;";
+            LogWrapper.LogMessage("DBHandler - GetNextEventId", "Running query: " + query);
+
+            SQLiteConnection sqlConnection = OpenConnection();
+            SQLiteCommand sqlCommand = new SQLiteCommand(query, sqlConnection);
+            SQLiteDataReader sqlDataReader = null;
+            try
+            {
+                sqlDataReader = sqlCommand.ExecuteReader();
+                while (sqlDataReader.Read())
+                {
+                    nextEventId = (Int64)sqlDataReader[EVENT_INDEX];
+                    eventType = (string)sqlDataReader[EVENT_ORIGIN];
+                }
+            }
+            catch (Exception ex)
+            {
+                LogWrapper.LogMessage("DbHandler - GetLocalEvent", "Caught exception: " + ex.Message);
+                nextEventId = -1;
+                eventType = "";
+            }
+
+            if (null != sqlDataReader)
+                sqlDataReader.Close();
+            sqlConnection.Close();
+
+            return nextEventId;
         }
 
         public LocalEvents GetLocalEvent()

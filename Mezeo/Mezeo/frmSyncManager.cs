@@ -158,11 +158,22 @@ namespace Mezeo
 
         void cMezeoFileCloud_uploadStoppedEvent(string szSourceFileName, string szContantURI)
         {
-            DeleteUploadedIncompleteFile(szContantURI);
+            // See the comment in cMezeoFileCloud_downloadStoppedEvent.
+            // Related to defects 2314 and 2322.
+            // Deleting an incomplete/partial file (either in the cloud or locally) generates a delete event.
+            // Whether the delete event is local or server side, it will eventually end up causing all
+            // versions of the file to be deleted from the system.  The upload delete starts the process
+            // via a notification queue.  The app gets the nq event and then deletes the local file.
+            // For a download, the event starts locally via the local delete event.  If a priority queue exists,
+            // then resuming the download causes the local events to be processed first resulting in the create,
+            // modified (1 or more) and then delete action after which the download gets a 404.  Without the priority,
+            // the download finished, then the create, modified, and delete events are processed ending with the delete.
+            //DeleteUploadedIncompleteFile(szContantURI);
         }
 
         void DeleteUploadedIncompleteFile(string szContantURI)
         {
+            // See the comment in cMezeoFileCloud_uploadStoppedEvent.
             if (szContantURI.Trim().Length != 0)
             {
                 int nStatusCode = 0;
@@ -172,7 +183,8 @@ namespace Mezeo
 
         void cMezeoFileCloud_downloadStoppedEvent(string fileName)
         {
-            DeleteCurrentIncompleteFile(fileName);
+            // See the comment in cMezeoFileCloud_uploadStoppedEvent.
+            //DeleteCurrentIncompleteFile(fileName);
         }
 
         public LoginDetails LoginDetail
@@ -3880,15 +3892,50 @@ namespace Mezeo
 
         private void GetNextEvent(ref LocalEvents lEvent, ref NQDetails nqEvent, ref LocalItemDetails localItemDetails)
         {
-            // See if there are any events in the queue.
-            // Local events take priority over NQ.
-            // localItemDetails (initial sync events) take priority over local events.
-            localItemDetails = dbHandler.GetLocalItemDetailsEvent();
-            if (localItemDetails == null)
+            bool usePriorityQueueLogic = false;
+            if (usePriorityQueueLogic)
             {
-                lEvent = dbHandler.GetLocalEvent();
-                if (lEvent == null)
-                    nqEvent = dbHandler.GetNQEvent();
+                // See if there are any events in the queue.
+                // Local events take priority over NQ.
+                // localItemDetails (initial sync events) take priority over local events.
+                localItemDetails = dbHandler.GetLocalItemDetailsEvent();
+                if (localItemDetails == null)
+                {
+                    lEvent = dbHandler.GetLocalEvent();
+                    if (lEvent == null)
+                        nqEvent = dbHandler.GetNQEvent();
+                }
+            }
+            else
+            {
+                // See if there are any events in the queue.
+                // localItemDetails (initial sync events) take priority over other events.
+                // If there are no 'I'nitial sync events, just get the item with the
+                // lowest index, determine the type, populate it, and return it.
+                // The GetXEvent() functions sort by index so we just have to know
+                // the type of event before calling the appropriate function.
+                localItemDetails = dbHandler.GetLocalItemDetailsEvent();
+                if (localItemDetails == null)
+                {
+                    string eventType = "";
+                    Int64 eventId = dbHandler.GetNextEventId(ref eventType);
+                    if (-1 != eventId)
+                    {
+                        switch (eventType)
+                        {
+                            case "I":    // The 'I'nitial events should already be handled.
+                                break;
+
+                            case "L":    // 'L'ocal event.
+                                lEvent = dbHandler.GetLocalEvent();
+                                break;
+
+                            case "N":    // 'N'otification queue event.
+                                nqEvent = dbHandler.GetNQEvent();
+                                break;
+                        }
+                    }
+                }
             }
         }
 
