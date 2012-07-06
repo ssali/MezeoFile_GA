@@ -3498,6 +3498,13 @@ namespace Mezeo
                                     dbHandler.DeleteEvent(lEvent.EventDbId);
                                 }
                             }
+                            else
+                            {
+                                wasSuccessful = true;
+                                MarkParentsStatus(lEvent.FullPath, DB_STATUS_SUCCESS);
+                                UpdateDBForModifiedSuccess(lEvent, strContentURi);
+                                dbHandler.DeleteEvent(lEvent.EventDbId);
+                            }
                         }
 
                         LogWrapper.LogMessage("SyncManager - ProcessLocalEvent", "FILE_ACTION_MODIFIED - Leave for file path " + lEvent.FullPath);

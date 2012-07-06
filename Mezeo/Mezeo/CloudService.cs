@@ -294,7 +294,7 @@ namespace Mezeo
         public string GetETag(string strContainUrl, ref int nStatusCode)
         {
             string strEtag = fileCloud.GetETag(strContainUrl, ref nStatusCode);
-            if (nStatusCode != ResponseCode.GETETAG)
+            if (nStatusCode != ResponseCode.GETETAG && nStatusCode != ResponseCode.NOTFOUND && nStatusCode != ResponseCode.LOGINFAILED1)
             {
                 for (int n = 0; n < CloudService.NUMBER_OF_RETRIES; n++)
                 {
