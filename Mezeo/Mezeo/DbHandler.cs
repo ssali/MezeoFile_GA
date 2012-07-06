@@ -948,21 +948,28 @@ namespace Mezeo
         public int Update(string tableName, string fieldName, string newValues, string whereFields,string whereValues)
         {
             int result = -1;
-            string query = "update " + tableName + " set " + fieldName + "=@newValue where " + whereFields + "=@whereValue";
-            SQLiteConnection sqlConnection = OpenConnection();
-            SQLiteCommand sqlCommand = new SQLiteCommand(query, sqlConnection);
+            try
+            {
+                string query = "update " + tableName + " set " + fieldName + "=@newValue where " + whereFields + "=@whereValue";
+                SQLiteConnection sqlConnection = OpenConnection();
+                SQLiteCommand sqlCommand = new SQLiteCommand(query, sqlConnection);
 
-            sqlCommand.Parameters.Add("@newValue" , System.Data.DbType.String);
-            sqlCommand.Parameters["@newValue" ].Value = newValues;
+                sqlCommand.Parameters.Add("@newValue", System.Data.DbType.String);
+                sqlCommand.Parameters["@newValue"].Value = newValues;
 
-            sqlCommand.Parameters.Add("@whereValue", System.Data.DbType.String);
-            sqlCommand.Parameters["@whereValue"].Value = whereValues;
-            
-            //sqlCommand.CommandText = query;
-            //sqlCommand.Connection = sqlConnection;
+                sqlCommand.Parameters.Add("@whereValue", System.Data.DbType.String);
+                sqlCommand.Parameters["@whereValue"].Value = whereValues;
 
-            result = sqlCommand.ExecuteNonQuery();
-            sqlConnection.Close();
+                //sqlCommand.CommandText = query;
+                //sqlCommand.Connection = sqlConnection;
+
+                result = sqlCommand.ExecuteNonQuery();
+                sqlConnection.Close();
+            }
+            catch (Exception ex)
+            {
+                LogWrapper.LogMessage("DbHandler - Update(5str)", "Caught exception: " + ex.Message);
+            }
 
             return result;
         }

@@ -3164,6 +3164,10 @@ namespace Mezeo
                         string strContentURi = GetContentURI(lEvent.FileName);
                         if (strContentURi.Trim().Length == 0)
                         {
+                            strContentURi = GetContentURI(lEvent.OldFileName);
+                        }
+                        if (strContentURi.Trim().Length == 0)
+                        {
                             LogWrapper.LogMessage("SyncManager - ProcessLocalEvent", "GetContentURI for length ZERO");
                             return 1;
                         }
@@ -3175,6 +3179,10 @@ namespace Mezeo
                         }
 
                         string strParentUri = GetParentURI(lEvent.FileName);
+                        if (strParentUri.Trim().Length == 0)
+                        {
+                            strParentUri = GetParentURI(lEvent.OldFileName);
+                        }
                         if (strParentUri.Trim().Length == 0)
                         {
                             LogWrapper.LogMessage("SyncManager - ProcessLocalEvent", "GetParentURI for length ZERO");
@@ -3202,7 +3210,10 @@ namespace Mezeo
                         }
 
                         dbHandler.Update(DbHandler.TABLE_NAME, DbHandler.PUBLIC, iDetails.bPublic, DbHandler.KEY, lEvent.FileName);
+                        AddInDBForRename(lEvent);
                         string mimeType = dbHandler.GetString(DbHandler.TABLE_NAME, DbHandler.MIMIE_TYPE, new string[] { DbHandler.KEY }, new string[] { lEvent.FileName }, new DbType[] { DbType.String });
+                        if (0 == mimeType.Length)
+                            mimeType = dbHandler.GetString(DbHandler.TABLE_NAME, DbHandler.MIMIE_TYPE, new string[] { DbHandler.KEY }, new string[] { lEvent.OldFileName }, new DbType[] { DbType.String });
 
                         if ((attr & FileAttributes.Directory) == FileAttributes.Directory)
                         {
