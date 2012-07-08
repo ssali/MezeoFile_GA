@@ -4007,6 +4007,8 @@ namespace Mezeo
             NQDetails nqEvent = null;
             LocalItemDetails localItemDetails = null;
             int nStatus = 0;
+            int previousInitialCount = (int)dbHandler.GetInitialSyncEventCount(); 
+            int currentInitialCount = 0;
 
             // Initialize any counters.
             fileDownloadCount = 0;
@@ -4028,7 +4030,7 @@ namespace Mezeo
             }
             
             // Process the events 1 at a time in priority order.
-            while (((lEvent != null) || (nqEvent != null) || (null != localItemDetails)) && !IsSyncPaused() && (((BackgroundWorker)sender).CancellationPending == false) && !CanNotTalkToServer())
+            while (((lEvent != null) || (nqEvent != null) || (null != localItemDetails)) && !IsSyncPaused() && (((BackgroundWorker)sender).CancellationPending == false) && !CanNotTalkToServer() && !IsSyncGenerateLocalEvent())
             {
                 // Increment the counter for the message text.
                 messageValue++;
@@ -4118,6 +4120,16 @@ namespace Mezeo
                         GetNextEvent(ref lEvent, ref nqEvent, ref localItemDetails);
                     }
                 }
+                currentInitialCount = (int)dbHandler.GetInitialSyncEventCount();
+
+                if (previousInitialCount > 0 && currentInitialCount == 0)
+                {
+                    ProcessOfflineEvents();
+                    /* NOTE: Initial sync is done and Sync manager has processed all 'I' from 
+                    database and now it is ready to perform local sync */ 
+                }
+             
+                    previousInitialCount = currentInitialCount;
             }
 
             // Update the GUI and any flags now that we're done with the sync.

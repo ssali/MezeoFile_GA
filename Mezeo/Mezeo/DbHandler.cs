@@ -519,7 +519,7 @@ namespace Mezeo
         public Int64 GetInitialSyncEventCount()
         {
             Int64 count = 0;
-            string query = "SELECT COUNT(*) AS EVENTCOUNT FROM " + EVENT_QUEUE_INFO_TABLE_NAME + " WHERE " + EVENT_ORIGIN + "='I'";
+            string query = "SELECT COUNT(*) AS EVENTCOUNT FROM " + EVENT_TABLE_NAME + " WHERE " + EVENT_ORIGIN + "='I'";
             SQLiteConnection sqlConnection = OpenConnection();
             SQLiteCommand sqlCommand = new SQLiteCommand(query, sqlConnection);
 
@@ -536,6 +536,7 @@ namespace Mezeo
             catch (Exception ex)
             {
                 LogWrapper.LogMessage("DbHandler - GetInitialSyncEventCount", "Caught exception: " + ex.Message);
+                count = -1;
             }
 
             return count;

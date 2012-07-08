@@ -361,6 +361,26 @@ namespace Mezeo
 
             if (isLoginSuccess)
             {
+                //bwCheckServerStatus.RunWorkerAsync();
+                ////syncManager.EnableSyncManager();
+                //if (BasicInfo.IsInitialSync)
+                //{
+                //    syncManager.InitializeSync();
+                //}
+                //else
+                //{
+                //    syncManager.SetUpSync();
+                //    syncManager.SetUpSyncNowNotification();
+                //    syncManager.ProcessOfflineEvents();
+                //}
+                LoginSuccessTask();
+            }
+        }
+
+
+        private void LoginSuccessTask()
+        {
+              DbHandler dbHandler = new DbHandler();
                 bwCheckServerStatus.RunWorkerAsync();
                 //syncManager.EnableSyncManager();
                 if (BasicInfo.IsInitialSync)
@@ -371,9 +391,11 @@ namespace Mezeo
                 {
                     syncManager.SetUpSync();
                     syncManager.SetUpSyncNowNotification();
-                    syncManager.ProcessOfflineEvents();
+                    if (dbHandler.GetInitialSyncEventCount() == 0)
+                        syncManager.ProcessOfflineEvents();
+                    else if (dbHandler.GetInitialSyncEventCount() > 0)
+                        syncManager.SyncNow();
                 }
-            }
         }
 
         public void ShowLoginAgainFromSyncMgr()
@@ -466,17 +488,18 @@ namespace Mezeo
 
             if (isLoginSuccess)
             {
-                bwCheckServerStatus.RunWorkerAsync();
-                if (BasicInfo.IsInitialSync)
-                {
-                    syncManager.InitializeSync();
-                }
-                else
-                {
-                    syncManager.SetUpSync();
-                    syncManager.SetUpSyncNowNotification();
-                    syncManager.ProcessOfflineEvents();
-                }
+                //bwCheckServerStatus.RunWorkerAsync();
+                //if (BasicInfo.IsInitialSync)
+                //{
+                //    syncManager.InitializeSync();
+                //}
+                //else
+                //{
+                //    syncManager.SetUpSync();
+                //    syncManager.SetUpSyncNowNotification();
+                //    syncManager.ProcessOfflineEvents();
+                //}
+                LoginSuccessTask();
             }
         }
 
