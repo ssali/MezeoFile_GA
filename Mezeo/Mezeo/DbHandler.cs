@@ -516,6 +516,31 @@ namespace Mezeo
             ResetJobCount();
         }
 
+        public Int64 GetInitialSyncEventCount()
+        {
+            Int64 count = 0;
+            string query = "SELECT COUNT(*) AS EVENTCOUNT FROM " + EVENT_QUEUE_INFO_TABLE_NAME + " WHERE " + EVENT_ORIGIN + "='I'";
+            SQLiteConnection sqlConnection = OpenConnection();
+            SQLiteCommand sqlCommand = new SQLiteCommand(query, sqlConnection);
+
+            try
+            {
+                SQLiteDataReader sqlDataReader = sqlCommand.ExecuteReader();
+                while (sqlDataReader.Read())
+                {
+                    count = (Int64)sqlDataReader["EVENTCOUNT"];
+                }
+                sqlDataReader.Close();
+                sqlConnection.Close();
+            }
+            catch (Exception ex)
+            {
+                LogWrapper.LogMessage("DbHandler - GetInitialSyncEventCount", "Caught exception: " + ex.Message);
+            }
+
+            return count;
+        }
+
         public Int64 GetJobCount()
         {
             Int64 jobCount = 0;
