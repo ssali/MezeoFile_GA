@@ -359,48 +359,69 @@ namespace MezeoFileSupport
         {
             byte[] buffer = new byte[1024 * 64];
 	        int bytes_read = 0;
-	        FileStream fstPersons;
+	        FileStream fstPersons = null;
             bool bStatus = true;
             m_bStop = false;
 
-	        if(lFrom > 0)
-	        {
-		        fstPersons = new FileStream(strSaveInFile, FileMode.Append);
-		        fstPersons.Seek(lFrom, SeekOrigin.Begin);
-	        }
-	        else
-		        fstPersons = new FileStream(strSaveInFile, FileMode.Create);
+            try
+            {
+                if (lFrom > 0)
+                {
+                    fstPersons = new FileStream(strSaveInFile, FileMode.Append);
+                    fstPersons.Seek(lFrom, SeekOrigin.Begin);
+                }
+                else
+                {
+                    try
+                    {
+                        fstPersons = new FileStream(strSaveInFile, FileMode.Create);
+                    }
+                    catch (Exception ex)
+                    {
+                        //LogWrapper.LogMessage("MezeoFileCloud - OnSaveResponseFile", "Caught exception: " + ex.Message);
+                        // The file probably already exists so truncate it...we're downloading it again.
+                        fstPersons = new FileStream(strSaveInFile, FileMode.Truncate);
+                    }
+                }
 
-            bool keepRunning = true;
-            if (ContinueRun != null)
-                keepRunning = ContinueRun();
-
-	        while ((bytes_read = responseStream.Read(buffer, 0, buffer.Length)) > 0 && keepRunning)
-	        {
-                if (IncProgress != null)
-                    IncProgress(bytes_read);
-
+                bool keepRunning = true;
                 if (ContinueRun != null)
                     keepRunning = ContinueRun();
 
-                fstPersons.Write(buffer, 0, bytes_read);
-		        if(m_bStop)
-		        {
-			        m_bStop = false;
-                    bStatus = false;
-			        break;
-		        }
-	        }
-
-	        responseStream.Close();
-	        fstPersons.Close();
-
-            if (!bStatus)
-            {
-                if (downloadStoppedEvent != null)
+                while ((bytes_read = responseStream.Read(buffer, 0, buffer.Length)) > 0 && keepRunning)
                 {
-                    downloadStoppedEvent(strSaveInFile);
+                    if (IncProgress != null)
+                        IncProgress(bytes_read);
+
+                    if (ContinueRun != null)
+                        keepRunning = ContinueRun();
+
+                    fstPersons.Write(buffer, 0, bytes_read);
+                    if (m_bStop)
+                    {
+                        m_bStop = false;
+                        bStatus = false;
+                        break;
+                    }
                 }
+
+                responseStream.Close();
+                fstPersons.Close();
+
+                if (!bStatus)
+                {
+                    if (downloadStoppedEvent != null)
+                    {
+                        downloadStoppedEvent(strSaveInFile);
+                    }
+                }
+            }
+            finally
+            {
+                if (responseStream != null)
+                    responseStream.Close();
+                if (fstPersons != null)
+                    fstPersons.Close();
             }
 
             return bStatus;

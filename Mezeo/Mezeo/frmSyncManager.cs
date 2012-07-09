@@ -206,7 +206,6 @@ namespace Mezeo
         
         private void panel1_Paint(object sender, PaintEventArgs e)
         {
-
         }
         
         private void DrawRoundedRectangle(Graphics gfx, Rectangle Bounds, int CornerRadius, Pen DrawPen, Color FillColor)
@@ -292,7 +291,14 @@ namespace Mezeo
                 {
                     if ((canNotTalktoTheServer == true) && (talkToTheServer == false))
                     {
+                        // Moving from offline to online.
                         SyncOnlineMessage();
+                        resetAllControls();
+                    }
+                    else if ((canNotTalktoTheServer == false) && (talkToTheServer == true))
+                    {
+                        // Moving from online to offline.
+                        SyncOfflineMessage();
                         resetAllControls();
                     }
                     canNotTalktoTheServer = talkToTheServer;
@@ -302,7 +308,14 @@ namespace Mezeo
             {
                 if ((canNotTalktoTheServer == true) && (talkToTheServer == false))
                 {
+                    // Moving from offline to online.
                     SyncOnlineMessage();
+                    resetAllControls();
+                }
+                else if ((canNotTalktoTheServer == false) && (talkToTheServer == true))
+                {
+                    // Moving from online to offline.
+                    SyncOfflineMessage();
                     resetAllControls();
                 }
                 canNotTalktoTheServer = talkToTheServer;
@@ -1023,7 +1036,6 @@ namespace Mezeo
             }
         }
 
-
         public void changePauseResumeBtnText()
         {
             if (this.InvokeRequired)
@@ -1114,7 +1126,7 @@ namespace Mezeo
                 this.Invoke((MethodInvoker)delegate
                 {
                     //LogWrapper.LogMessage("frmSyncManager - ShowSyncManagerOffline", "enter");
-                    SyncOfflineMessage();
+                    //SyncOfflineMessage();
                     lblStatusL1.Text = LanguageTranslator.GetValue("AppOfflineMenu");
                     label1.Text = "";
 
@@ -1136,7 +1148,7 @@ namespace Mezeo
             else
             {
                 //LogWrapper.LogMessage("frmSyncManager - ShowSyncManagerOffline", "enter");
-                SyncOfflineMessage();
+                //SyncOfflineMessage();
                 lblStatusL1.Text = LanguageTranslator.GetValue("AppOfflineMenu");
                 label1.Text = "";
 
@@ -3768,8 +3780,9 @@ namespace Mezeo
                 }
 
                 LogWrapper.LogMessage("frmSyncManager - consume", "writing file folder info for " + id.strName + " in DB");
-                if (!dbHandler.Write(fileFolderInfo))
-                    return 1;
+                //if (!dbHandler.Write(fileFolderInfo))
+                //    return 1;
+                dbHandler.Write(fileFolderInfo);
 
                 string downloadObjectName = BasicInfo.SyncDirPath + "\\" + itemDetail.Path;
 
