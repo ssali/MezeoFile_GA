@@ -381,8 +381,10 @@ namespace Mezeo
         private void LoginSuccessTask()
         {
               DbHandler dbHandler = new DbHandler();
+              if (!bwCheckServerStatus.IsBusy)
                 bwCheckServerStatus.RunWorkerAsync();
                 //syncManager.EnableSyncManager();
+              syncManager.SetCanNotTalkToServer(false);
                 if (BasicInfo.IsInitialSync)
                 {
                     syncManager.InitializeSync();
@@ -871,7 +873,8 @@ namespace Mezeo
                     syncManager.SetSyncPaused(false);
                     changeResumeText();
                     syncManager.changePauseResumeBtnText();
-                    syncManager.InitializeSync();
+                    syncManager.SetUpSync();
+                    syncManager.SyncNow();
                     syncManager.SyncResumeBalloonMessage();
                 });
             }
@@ -880,7 +883,8 @@ namespace Mezeo
                 syncManager.SetSyncPaused(false);
                 changeResumeText();
                 syncManager.changePauseResumeBtnText();
-                syncManager.InitializeSync();
+                syncManager.SetUpSync();
+                syncManager.SyncNow();
                 syncManager.SyncResumeBalloonMessage();
             }
         }

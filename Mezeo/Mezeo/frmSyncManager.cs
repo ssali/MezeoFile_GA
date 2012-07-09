@@ -1742,16 +1742,16 @@ namespace Mezeo
             {
                 StopSync();
                 this.Hide();
-                frmParent.ShowLoginAgainFromSyncMgr();
                 SetCanNotTalkToServer(true);
+                frmParent.ShowLoginAgainFromSyncMgr();
                 return -1;
             }
             else if (nStatusCode != ResponseCode.NQGETLENGTH)
             {
                 StopSync();
                 DisableSyncManager();
-                ShowSyncManagerOffline();
                 SetCanNotTalkToServer(true);
+                ShowSyncManagerOffline();
                 return -2;
             }
 
@@ -3437,6 +3437,7 @@ namespace Mezeo
                                                 buploadfileToCloud = false;
                                                 // Populate the url with this file.
                                                 strUrl = item.szContentUrl;
+                                                checkfoOverwrite(item, lEvent);
                                                 break;
                                             }
                                         }
@@ -3730,6 +3731,34 @@ namespace Mezeo
             LogWrapper.LogMessage("SyncManager - ProcessLocalEvent", "Leave");
 
             return returnCode;
+        }
+
+        private int checkfoOverwrite(ItemDetails item, LocalEvents lEvent)
+        {
+            int nStatusCode = 0;
+            if (!checkFileTooLarge(lEvent.FullPath))
+               cMezeoFileCloud.OverWriteFile(lEvent.FullPath, item.szContentUrl, ref nStatusCode);
+            else
+                nStatusCode = 200;
+
+            if (nStatusCode == ResponseCode.LOGINFAILED1 || nStatusCode == ResponseCode.LOGINFAILED2)
+            {
+                return LOGIN_FAILED;
+            }
+            else if (nStatusCode != ResponseCode.OVERWRITEFILE)
+            {
+                if (ResponseCode.NOTFOUND == nStatusCode)
+                    return ITEM_NOT_FOUND;
+                return SERVER_INACCESSIBLE;
+            }
+            else
+            {
+                MarkParentsStatus(lEvent.FullPath, DB_STATUS_SUCCESS);
+                UpdateDBForModifiedSuccess(lEvent, item.szContentUrl);
+                dbHandler.DeleteEvent(lEvent.EventDbId);
+            }
+
+            return nStatusCode;                   
         }
 
         private int ConsumeLocalItemDetail(LocalItemDetails itemDetail)
