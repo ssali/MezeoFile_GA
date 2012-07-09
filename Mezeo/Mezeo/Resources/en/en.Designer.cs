@@ -322,7 +322,7 @@ namespace Mezeo.Resources.en {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to File Sync Issues.
+        ///   Looks up a localized string similar to File Conflicts.
         /// </summary>
         internal static string IssuesHeader {
             get {

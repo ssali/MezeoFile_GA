@@ -334,7 +334,7 @@ namespace Mezeo
             issue.ServerFileInfo = (string)sqlDataReader[CONFLICT_SERVER_FILE_INFO];
             issue.ServerIssueDT = issue.ServerIssueDT.AddTicks((Int64)sqlDataReader[CONFLICT_SERVER_DATE]);
             issue.ServerSize = (string)sqlDataReader[CONFLICT_SERVER_SIZE];
-            issue.ConflictTimeStamp.AddTicks((Int64)sqlDataReader[CONFLICT_TIME_STAMP]);
+            issue.ConflictTimeStamp = issue.ConflictTimeStamp.AddTicks((Int64)sqlDataReader[CONFLICT_TIME_STAMP]);
             issue.ServerFileUri = (string)sqlDataReader[CONFLICT_URI];
 
             switch ((string)sqlDataReader[CONFLICT_TYPE])

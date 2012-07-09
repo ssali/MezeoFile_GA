@@ -205,7 +205,7 @@
     <value>File Info:</value>
   </data>
   <data name="IssuesHeader" xml:space="preserve">
-    <value>File Sync Issues</value>
+    <value>File Conflicts</value>
   </data>
   <data name="IssuesIgnoreConflictButtonText" xml:space="preserve">
     <value>Ignore Conflict</value>

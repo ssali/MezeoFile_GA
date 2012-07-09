@@ -423,7 +423,7 @@ namespace Mezeo
 
         private void LoadResources()
         {
-            this.Text = AboutBox.AssemblyTitle + " " + LanguageTranslator.GetValue("IssuesTitle");
+            this.Text = AboutBox.AssemblyTitle; 
             lblHeader.Text = LanguageTranslator.GetValue("IssuesHeader");
             btnEventViewer.Text = LanguageTranslator.GetValue("IssuesEventViewerButtonText");
             btnIgnoreConflict.Text = LanguageTranslator.GetValue("IssuesIgnoreConflictButtonText");

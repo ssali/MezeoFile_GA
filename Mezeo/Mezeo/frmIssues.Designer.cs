@@ -90,7 +90,7 @@
             this.lblHeader.Name = "lblHeader";
             this.lblHeader.Size = new System.Drawing.Size(136, 24);
             this.lblHeader.TabIndex = 0;
-            this.lblHeader.Text = "File Sync Issues";
+            this.lblHeader.Text = "File Conflicts";
             // 
             // lvIssues
             // 
@@ -343,7 +343,7 @@
             this.Name = "frmIssues";
             this.ShowIcon = false;
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
-            this.Text = "MezeoFile Issues";
+            this.Text = "MezeoFile";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.frmIssues_FormClosing);
             this.Load += new System.EventHandler(this.frmIssues_Load);
             this.Shown += new System.EventHandler(this.frmIssues_Shown);
