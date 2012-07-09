@@ -717,7 +717,7 @@ namespace Mezeo
             {
                 // Since this is the first time we've run, add the sync folder to
                 // the users favorites list.
-                // AddFarvoritesLinkToFolder();
+                 AddFarvoritesLinkToFolder();
                  folderIcon(dirName);
             }
 
