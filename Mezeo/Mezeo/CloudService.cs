@@ -91,7 +91,7 @@ namespace Mezeo
         {
             syncManager.ShowOtherProgressBar(strDisplayName);
             bool bRet = fileCloud.Delete(strPath, ref nStatusCode);
-            if (nStatusCode != ResponseCode.DELETE)
+            if (nStatusCode != ResponseCode.DELETE && nStatusCode != ResponseCode.NOTFOUND && nStatusCode != ResponseCode.LOGINFAILED2)
             {
                 for (int n = 0; n < CloudService.NUMBER_OF_RETRIES; n++)
                 {
@@ -106,6 +106,11 @@ namespace Mezeo
             }
             if (syncManager.myDelegate != null)
                 syncManager.myDelegate(1);
+
+            if (nStatusCode == ResponseCode.NOTFOUND || nStatusCode == ResponseCode.LOGINFAILED2)
+                bRet = true;
+
+
             return bRet;
         }
 

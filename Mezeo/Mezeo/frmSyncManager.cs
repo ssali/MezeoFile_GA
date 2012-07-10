@@ -3593,11 +3593,11 @@ namespace Mezeo
                             else
                                 nStatusCode = 200;
 
-                            if (nStatusCode == ResponseCode.LOGINFAILED1 || nStatusCode == ResponseCode.LOGINFAILED2)
+                            if (nStatusCode == ResponseCode.LOGINFAILED1)
                             {
                                 return LOGIN_FAILED;
                             }
-                            else if (nStatusCode == ResponseCode.NOTFOUND)
+                            else if (nStatusCode == ResponseCode.NOTFOUND || nStatusCode == ResponseCode.LOGINFAILED2)
                             {
                                 // If it doesn't exist on the server, then it's the same thing as far as we're concerned.
                                 wasSuccessful = true;
