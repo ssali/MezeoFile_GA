@@ -1896,7 +1896,19 @@ namespace Mezeo
                 //LogWrapper.LogMessage("frmSyncManager - UpdateFromNQ - ", nqDetail.StrEvent + " - " + strKey + " - Enter"); 
 
                 string strDBKey = dbHandler.GetString(DbHandler.TABLE_NAME, DbHandler.KEY, new string[] { DbHandler.CONTENT_URL }, new string[] { nsResult.StrContentsUri }, new DbType[] { DbType.String });
-                if (strDBKey.Trim().Length == 0)
+
+                // Just because the length is 0 doesn't make it the only reason to download the file.
+                // Check the file size against the event.  If the size differs, then download the file
+                // again since the local one is a partial...probably from a pause/resume.
+                bool bLocalFileDiffers = false;
+                if (strDBKey.Trim().Length != 0)
+                {
+                    FileInfo fileInfo = new FileInfo(strPath);
+                    if ((fileInfo != null) && (0 == (fileInfo.Attributes & FileAttributes.Directory)) && fileInfo.Exists && (fileInfo.Length != nqDetail.lSize))
+                        bLocalFileDiffers = true;
+                }
+
+                if ((strDBKey.Trim().Length == 0) || bLocalFileDiffers)
                 {
                     nStatus = nqEventCdmiCreate(nqDetail, nsResult, strKey, strPath);
                     if (nStatus == ResponseCode.LOGINFAILED1 || nStatus == ResponseCode.LOGINFAILED2)
