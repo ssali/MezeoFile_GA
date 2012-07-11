@@ -236,6 +236,13 @@ namespace Mezeo
 
                 ExecuteNonQuery(queryEventInfo);
 
+
+                string query3 = "INSERT INTO " + EVENT_QUEUE_INFO_TABLE_NAME + " (" + EVENT_QUEUE_INFO_NAME + ", " + EVENT_QUEUE_INFO_JOB_COUNT + ") VALUES ('" + EVENT_TABLE_NAME + "', 0);";
+                SQLiteConnection sqlConnection3 = OpenConnection();
+                SQLiteCommand sqlCommand3 = new SQLiteCommand(query3, sqlConnection3);
+                sqlCommand3.ExecuteNonQuery();
+                sqlConnection3.Close();
+
                 // Since the database schema has changed, we need to get a new connection.
                 //sqlConnection.Close();
                 //OpenConnection();

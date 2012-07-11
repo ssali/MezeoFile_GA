@@ -617,6 +617,7 @@ namespace Mezeo
                         BasicInfo.IsInitialSync = true;
                         BasicInfo.SyncDirPath = dirName;
                         dbHandler.DeleteDb();
+                        dbHandler.CreatedNewDatabase(); 
                         dbHandler.OpenConnection();
                     }
                     else

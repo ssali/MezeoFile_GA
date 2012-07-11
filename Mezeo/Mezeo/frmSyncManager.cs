@@ -589,10 +589,10 @@ namespace Mezeo
                 cnotificationManager.HoverText = global::Mezeo.Properties.Resources.BrSyncManagerTitle + " " + AboutBox.AssemblyVersion + "\n" + LanguageTranslator.GetValue("SyncConflictFoundText");
                 frmParent.toolStripMenuItem4.Text = LanguageTranslator.GetValue("SyncManagerMenuIssueFoundText");
             }
-            else if (BasicInfo.UpdateAvailable)
-            {
-                cnotificationManager.NotificationHandler.Icon = Properties.Resources.app_icon_upgrade;
-            }
+            //else if (BasicInfo.UpdateAvailable)
+            //{
+            //    cnotificationManager.NotificationHandler.Icon = Properties.Resources.app_icon_upgrade;
+            //}
             else
             {
                 cnotificationManager.NotificationHandler.Icon = Properties.Resources.MezeoVault;
@@ -1475,7 +1475,7 @@ namespace Mezeo
                         // If an update is available, the show a pop
                         if ((null != strNewVersion) && (0 != strNewVersion.Length))
                         {
-                            ShowUpdateAvailableBalloonMessage(strNewVersion);
+                          //  ShowUpdateAvailableBalloonMessage(strNewVersion);
                             BasicInfo.updateAvailable = true;
                            // frmParent.changeUpdatesText(strNewVersion);
                             // cnotificationManager.HoverText = "Install Update";

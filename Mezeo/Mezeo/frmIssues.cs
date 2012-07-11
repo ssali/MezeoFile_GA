@@ -153,10 +153,15 @@ namespace Mezeo
             {
                 this.Invoke((MethodInvoker)delegate
                 {
-                    foreach (int index in lvIssues.SelectedIndices)
+                    for (int index = lvIssues.SelectedIndices.Count-1; index >= 0; index--)
                     {
-                        dbHandler.DeleteConflict(((IssueFound)lvIssues.SelectedItems[index].Tag).ConflictDbId);
-                        lvIssues.Items.RemoveAt(index);
+                        IssueFound issue = (IssueFound)lvIssues.Items[lvIssues.SelectedIndices[index]].Tag;
+                        if (issue != null)
+                        {
+                            int dbid = (int)issue.ConflictDbId;
+                            dbHandler.DeleteConflict(dbid);
+                            lvIssues.Items.RemoveAt(lvIssues.SelectedIndices[index]);
+                        }
                     }
 
                     if (lvIssues.Items.Count == 0)
@@ -170,10 +175,16 @@ namespace Mezeo
             }
             else
             {
-                foreach (int index in lvIssues.SelectedIndices)
+                for (int index = lvIssues.SelectedIndices.Count-1; index >= 0; index--)
                 {
-                    dbHandler.DeleteConflict(((IssueFound)lvIssues.SelectedItems[index].Tag).ConflictDbId);
-                    lvIssues.Items.RemoveAt(index);
+                    
+                    IssueFound issue = (IssueFound)lvIssues.Items[lvIssues.SelectedIndices[index]].Tag;
+                    if (issue != null)
+                    {
+                        int dbid = (int)issue.ConflictDbId;
+                        dbHandler.DeleteConflict(dbid);
+                        lvIssues.Items.RemoveAt(lvIssues.SelectedIndices[index]);
+                    }
                 }
 
                 if (lvIssues.Items.Count == 0)

@@ -61,6 +61,8 @@ namespace Mezeo
             // changes and create events for them.
             dbHandler.ClearLocalEvents();
 
+            dbHandler = null;
+
             frmLogin loginForm = new frmLogin();
             bool showLogin = loginForm.showLogin;
 

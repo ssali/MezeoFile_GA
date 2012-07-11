@@ -34,10 +34,17 @@ namespace Mezeo
             timer.Elapsed += new System.Timers.ElapsedEventHandler(EventQueue.timer_Elapsed);
             timer.Interval = TIME_WITHOUT_EVENTS;
             timer.AutoReset = true;
-            timer.Enabled = true;
+            timer.Enabled = true;        
+        }
 
-            dbHandler = new DbHandler();
-            dbHandler.OpenConnection();
+        private static DbHandler GetDbHandler()
+        {
+            if (dbHandler == null)
+            {
+                dbHandler = new DbHandler();
+                dbHandler.OpenConnection();
+            }
+            return dbHandler;
         }
 
         // Collate the events before finally releasing them to be acted on.
@@ -57,13 +64,13 @@ namespace Mezeo
                 {
                     if (eventList[index].EventType == LocalEvents.EventsType.FILE_ACTION_REMOVED)
                     {
-                        string strCheck = dbHandler.GetString(DbHandler.TABLE_NAME, DbHandler.CONTENT_URL, new string[] { DbHandler.KEY }, new string[] { eventList[index].FileName }, new DbType[] { DbType.String });
+                        string strCheck = GetDbHandler().GetString(DbHandler.TABLE_NAME, DbHandler.CONTENT_URL, new string[] { DbHandler.KEY }, new string[] { eventList[index].FileName }, new DbType[] { DbType.String });
                         if (0 == strCheck.Length)
                         {
                             LogWrapper.LogMessage("EventQueue - CollateEvents", "Event for item no in the database: (" + eventList[index].EventType + ") " + eventList[index].FullPath + " name: " + eventList[index].FileName);
                             // Since this item isn't in the database (and so not on the cloud),
                             // then we can throw out any events for this item since in the
-                            // end it was deleted anyway.
+                            // end it was deleted anyway. 
                             LocalEvents lEvent = new LocalEvents();
                             lEvent = eventList[index];
                             eventsToRemove.Add(lEvent);
@@ -141,7 +148,7 @@ namespace Mezeo
                     foreach (LocalEvents item in eventList)
                     {
                         bNewEventExists = true;
-                        dbHandler.AddEvent(item);
+                        GetDbHandler().AddEvent(item);
                     }
 
                     // Empty the list.
@@ -162,7 +169,7 @@ namespace Mezeo
 
         public static bool QueueNotEmpty()
         {
-            Int64 jobCount = dbHandler.GetJobCount();
+            Int64 jobCount = GetDbHandler().GetJobCount();
             return (jobCount > 0);
         }
 
@@ -171,7 +178,7 @@ namespace Mezeo
             LocalEvents localEvent = null;
             lock (thisLock)
             {
-                localEvent = dbHandler.GetLocalEvent();
+                localEvent = GetDbHandler().GetLocalEvent();
             }
             //----------------------------------------------------------------------
             // TODO: Remove this code since it's just for debugging.
