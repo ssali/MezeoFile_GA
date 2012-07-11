@@ -123,7 +123,6 @@
       <DependentUpon>en.resx</DependentUpon>
     </Compile>
     <Compile Include="EventQueue.cs" />
-    <Compile Include="FileDownloader.cs" />
     <Compile Include="FileDownloaderEvents.cs" />
     <Compile Include="FileFolderInfo.cs" />
     <Compile Include="frmIssues.cs">
