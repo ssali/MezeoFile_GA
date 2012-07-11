@@ -551,5 +551,35 @@ namespace Mezeo
                 return strUrl;
             return null;
         }
+
+
+        public string UploadingFileOnResume(string strSource, string strDestination, ref int nStatusCode)
+        {
+            string strUrl = null;
+            try
+            {
+                var fileinfo = new FileInfo(strSource);
+
+                syncManager.SetMaxProgress(fileinfo.Length, strSource);
+
+                strUrl = fileCloud.UploadingFileOnResume(strSource, strDestination, ref nStatusCode, syncManager.myDelegate);
+                if ((nStatusCode != ResponseCode.UPLOADINGFILE) && (nStatusCode != -3) && (nStatusCode != -4))
+                {
+                    for (int n = 0; n < CloudService.NUMBER_OF_RETRIES; n++)
+                    {
+                        strUrl = fileCloud.UploadingFileOnResume(strSource, strDestination, ref nStatusCode, syncManager.myDelegate);
+                        if (nStatusCode == ResponseCode.UPLOADINGFILE)
+                            return strUrl;
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                LogWrapper.LogMessage("CloudService - UploadingFileOnResume", "Caught exception: " + ex.Message);
+            }
+            if (nStatusCode == ResponseCode.UPLOADINGFILE)
+                return strUrl;
+            return null;
+        }
     }
 }

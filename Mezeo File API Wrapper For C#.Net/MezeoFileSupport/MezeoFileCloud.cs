@@ -314,43 +314,56 @@ namespace MezeoFileSupport
             webRequest.SendChunked = true;
             webRequest.AllowWriteStreamBuffering = false;
 
-            Stream writeStream = webRequest.GetRequestStream();
-	        if( writeStream != null)
-	        {
-		        byte[] bytes = Encoding.UTF8.GetBytes(strLoadHeader);
-		        writeStream.Write(bytes, 0, bytes.Length);
-		        if(strSource != "")
-		        {
-                    FileStream fileStream = new FileStream(strSource, FileMode.Open, FileAccess.Read, FileShare.ReadWrite);
-			        if( fileStream != null)
-			        {
-                        byte[] buffer = new byte[1024 * 64];
-				        int bytesRead = 0;
-                        
-				        while ((bytesRead = fileStream.Read(buffer, 0, buffer.Length)) != 0)
-				        {
-                            if (IncProgress != null)
-                                IncProgress(bytesRead);
-
-                            writeStream.Write(buffer, 0, bytesRead);
-
-                            if (m_bStop)
-                            {
-                                m_bStop = false;
-                                bStatus = false;
-                                break;
-                            }
-				        }
-				        fileStream.Close();
-			        }
-			        bytes = Encoding.UTF8.GetBytes(strFinalBoundary);
-                    if (IncProgress != null)
-                        IncProgress(bytes.Length);
-
+            Stream writeStream = null;
+            FileStream fileStream = null;
+            try
+            {
+                writeStream = webRequest.GetRequestStream();
+                if (writeStream != null)
+                {
+                    byte[] bytes = Encoding.UTF8.GetBytes(strLoadHeader);
                     writeStream.Write(bytes, 0, bytes.Length);
-  		        }
-		        writeStream.Close();
-	        }
+                    if (strSource != "")
+                    {
+                        fileStream = new FileStream(strSource, FileMode.Open, FileAccess.Read, FileShare.ReadWrite);
+                        if (fileStream != null)
+                        {
+                            byte[] buffer = new byte[1024 * 64];
+                            int bytesRead = 0;
+
+                            while ((bytesRead = fileStream.Read(buffer, 0, buffer.Length)) != 0)
+                            {
+                                if (IncProgress != null)
+                                    IncProgress(bytesRead);
+
+                                writeStream.Write(buffer, 0, bytesRead);
+
+                                if (m_bStop)
+                                {
+                                    m_bStop = false;
+                                    bStatus = false;
+                                    break;
+                                }
+                            }
+                            fileStream.Close();
+                        }
+                        bytes = Encoding.UTF8.GetBytes(strFinalBoundary);
+                        if (IncProgress != null)
+                            IncProgress(bytes.Length);
+
+                        writeStream.Write(bytes, 0, bytes.Length);
+                    }
+                    writeStream.Close();
+                }
+            }
+            finally
+            {
+              
+                if (writeStream != null)
+                    writeStream.Close();
+                if (fileStream != null)
+                    fileStream.Close();
+            }
             return bStatus;
         }
 
@@ -486,27 +499,41 @@ namespace MezeoFileSupport
 	        webRequest.KeepAlive = false;
 	        webRequest.Headers.Add("X-Client-Specification", "2");
             webRequest.Timeout = nTimeout;
+            FileStream fileStream = null;
+            Stream writeStream = null;
 
-            Stream writeStream = webRequest.GetRequestStream();
-	        if( writeStream != null)
-	        {
-                FileStream fileStream = new FileStream(strSource, FileMode.Open, FileAccess.Read, FileShare.ReadWrite);
-		        if(fileStream != null)
-		        {
-                    byte[] buffer = new byte[1024 * 64];
-			        int bytesRead = 0;
+            try
+            {
 
-			        while ((bytesRead = fileStream.Read(buffer, 0, buffer.Length)) != 0)
-			        {
-                        if (IncProgress != null)
-                            IncProgress(bytesRead);
+                writeStream = webRequest.GetRequestStream();
 
-				        writeStream.Write(buffer, 0, bytesRead);
-			        }
-			        fileStream.Close();
-		        }
-		        writeStream.Close();
-	        }
+                if (writeStream != null)
+                {
+                    fileStream = new FileStream(strSource, FileMode.Open, FileAccess.Read, FileShare.ReadWrite);
+                    if (fileStream != null)
+                    {
+                        byte[] buffer = new byte[1024 * 64];
+                        int bytesRead = 0;
+
+                        while ((bytesRead = fileStream.Read(buffer, 0, buffer.Length)) != 0)
+                        {
+                            if (IncProgress != null)
+                                IncProgress(bytesRead);
+
+                            writeStream.Write(buffer, 0, bytesRead);
+                        }
+                        fileStream.Close();
+                    }
+                    writeStream.Close();
+                }
+            }
+            finally
+            {
+                if (fileStream != null)
+                    fileStream.Close();
+                if (writeStream != null)
+                    writeStream.Close();
+            }
         }
 
         //Cloud Login
@@ -1422,6 +1449,68 @@ namespace MezeoFileSupport
 	        return StrRef;
         }
 
+        public String UploadingFileOnResume(String strSource, String strDestination, ref int nStatusCode, CallbackIncrementProgress IncProcess)
+        {
+            nStatusCode = 0;
+            String StrRet = "";
+            String strFileName = strSource;
+
+            int nNameLoc = strSource.LastIndexOf('\\');
+
+            if (nNameLoc > 0)
+                strFileName = strSource.Substring(nNameLoc);
+
+            // Create a new random form boundary using the System time
+            String strBoundary = DateTime.Now.Ticks.ToString("x") + DateTime.Now.Ticks.ToString("x");
+
+            // File payload section
+            String strLoadHeader = "--" + strBoundary + "\r\n";
+            strLoadHeader += "Content-Disposition: form-data; name=\"Filedata\"; filename=\"" + strFileName + "\"\r\n";
+            strLoadHeader += "Content-Type: " + OnGetMimeType(strSource) + "\r\n\r\n";
+            HttpWebRequest webRequest = null;
+            HttpWebResponse response = null;
+
+            try
+            {
+                bool bStatus = OnPostAndPutRequest(ref webRequest, strDestination, strSource, "multipart/form-data; boundary=" + strBoundary, strLoadHeader, "\r\n--" + strBoundary + "--\r\n", "POST", "", IncProcess);
+
+                response = (HttpWebResponse)webRequest.GetResponse();
+                nStatusCode = 201;
+                //StrRet = OnGetResponseString(response.GetResponseStream());
+                //StrRet = StrRet.Substring(0, (StrRet.Length - Environment.NewLine.Length));
+                webRequest.Abort();
+                response.Close();
+                if (!bStatus)
+                {
+                    if (uploadStoppedEvent != null)
+                    {
+                        nStatusCode = -4;
+                        uploadStoppedEvent(strSource, StrRet);
+                    }
+                }
+            }
+            catch (WebException wEx)
+            {
+                nStatusCode = OnException(wEx);
+                return "";
+            }
+            catch
+            {
+                nStatusCode = -3;
+                return "";
+            }
+
+            finally
+            {
+                if (webRequest != null)
+                    webRequest.Abort();
+                if (response != null)
+                    response.Close();
+            }
+            return StrRet;
+        }
+
+
         public String UploadingFile(String strSource, String strDestination, ref int nStatusCode, CallbackIncrementProgress IncProcess)
         {
             nStatusCode = 0;
@@ -1440,13 +1529,14 @@ namespace MezeoFileSupport
             String strLoadHeader = "--" + strBoundary + "\r\n";
             strLoadHeader += "Content-Disposition: form-data; name=\"Filedata\"; filename=\"" + strFileName + "\"\r\n";
             strLoadHeader += "Content-Type: " + OnGetMimeType(strSource) + "\r\n\r\n";
+            HttpWebRequest webRequest = null;
+            HttpWebResponse response = null;
 
             try
             {
-                HttpWebRequest webRequest = null;
                 bool bStatus = OnPostAndPutRequest(ref webRequest, strDestination, strSource, "multipart/form-data; boundary=" + strBoundary, strLoadHeader, "\r\n--" + strBoundary + "--\r\n", "POST", "", IncProcess);
 
-                HttpWebResponse response = (HttpWebResponse)webRequest.GetResponse();
+                response = (HttpWebResponse)webRequest.GetResponse();
                 nStatusCode = 201;
                 StrRet = OnGetResponseString(response.GetResponseStream());
                 StrRet = StrRet.Substring(0, (StrRet.Length - Environment.NewLine.Length));
@@ -1472,32 +1562,48 @@ namespace MezeoFileSupport
                 return "";
             }
 
+            finally
+            {
+                if (webRequest != null)
+                    webRequest.Abort();
+                if (response != null)
+                    response.Close();
+            }
             return StrRet;
         }
 
         public bool OverWriteFile(String strSource, String strDestination, ref int nStatusCode, CallbackIncrementProgress IncProgress)
         {
             nStatusCode = 0;
-	        try
-	        {
-		        HttpWebRequest webRequest = null;
-		        OnPutRequest(ref webRequest, strDestination, strSource, IncProgress);
+            HttpWebRequest webRequest = null;
+            HttpWebResponse response = null;
 
-		        HttpWebResponse response = (HttpWebResponse)webRequest.GetResponse();
-		        nStatusCode = 204;
-		        webRequest.Abort();
-		        response.Close();
-	        }
-	        catch(WebException wEx)
-	        {
+            try
+            {
+                OnPutRequest(ref webRequest, strDestination, strSource, IncProgress);
+                response = (HttpWebResponse)webRequest.GetResponse();
+                nStatusCode = 204;
+                webRequest.Abort();
+                response.Close();
+            }
+            catch (WebException wEx)
+            {
                 nStatusCode = OnException(wEx);
-		        return false;
-	        }
-	        catch
-	        {
-		        nStatusCode = -3;
-		        return false;
-	        }
+                return false;
+            }
+            catch
+            {
+                nStatusCode = -3;
+                return false;
+            }
+
+            finally
+            {
+                if (webRequest != null)
+                    webRequest.Abort();
+                if (response != null)
+                    response.Close();
+            }
 
 	        return true;
         }

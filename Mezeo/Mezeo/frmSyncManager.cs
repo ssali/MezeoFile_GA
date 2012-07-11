@@ -3749,7 +3749,8 @@ namespace Mezeo
         {
             int nStatusCode = 0;
             if (!checkFileTooLarge(lEvent.FullPath))
-               cMezeoFileCloud.OverWriteFile(lEvent.FullPath, item.szContentUrl, ref nStatusCode);
+               //cMezeoFileCloud.OverWriteFile(lEvent.FullPath, item.szContentUrl, ref nStatusCode);
+                cMezeoFileCloud.UploadingFileOnResume(lEvent.FullPath, item.szContentUrl, ref nStatusCode);
             else
                 nStatusCode = 200;
 
