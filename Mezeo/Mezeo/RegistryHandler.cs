@@ -47,7 +47,7 @@ namespace Mezeo
                 {
                     if (valueKind == RegistryValueKind.Binary)
                     {
-                        Byte[] bytes = (Byte[])sk1.GetValue(KeyName.ToUpper());
+                        Byte[] bytes = (Byte[])sk1.GetValue(KeyName);
 
                         if (isEncrypted)
                         {
@@ -60,7 +60,7 @@ namespace Mezeo
                     }
                     else
                     {
-                        return (string)sk1.GetValue(KeyName.ToUpper());
+                        return (string)sk1.GetValue(KeyName);
                     }
                 }
                 catch (Exception e)
@@ -82,16 +82,16 @@ namespace Mezeo
                 {
                     if (isEncrypted)
                     {
-                        sk1.SetValue(KeyName.ToUpper(),MezeoFileCloud.Encrypt(Value.ToString()), valueKind);
+                        sk1.SetValue(KeyName,MezeoFileCloud.Encrypt(Value.ToString()), valueKind);
                     }
                     else
                     {
-                        sk1.SetValue(KeyName.ToUpper(), Encoding.ASCII.GetBytes(Value.ToString()), valueKind);
+                        sk1.SetValue(KeyName, Encoding.ASCII.GetBytes(Value.ToString()), valueKind);
                     }
                 }
                 else
                 {
-                    sk1.SetValue(KeyName.ToUpper(), Value.ToString(), valueKind);
+                    sk1.SetValue(KeyName, Value.ToString(), valueKind);
                 }
 
                 return true;

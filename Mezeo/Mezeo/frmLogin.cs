@@ -57,13 +57,14 @@ namespace Mezeo
             LoadResources();
 
             string RSSFeed = BasicInfo.GetUpdateURL();
+            TimeSpan checkFrequency = new TimeSpan(Convert.ToInt32(global::Mezeo.Properties.Resources.BrUpdateTimer), 0, 0);
 
             if (RSSFeed.Length != 0)
             {
                 _sparkle = new Sparkle(RSSFeed);
-                _sparkle.StartLoop(true);
+                _sparkle.StartLoop(true, false, checkFrequency);
             }
-
+         
             EventQueue.InitEventQueue();
         }
 
@@ -838,16 +839,16 @@ namespace Mezeo
             if (BasicInfo.updateAvailable == false)
                 syncManager.checkForAppUpdate(true);
 
-            if (BasicInfo.updateAvailable == true)
-            {
-                string RSSFeed = BasicInfo.GetUpdateURL();
+                //if (BasicInfo.updateAvailable == true)
+                //{
+                //    string RSSFeed = BasicInfo.GetUpdateURL();
 
-                if (RSSFeed.Length != 0)
-                {
-                    _sparkle = new Sparkle(RSSFeed);
-                    _sparkle.StartLoop(true);
-                }
-            }
+                //    if (RSSFeed.Length != 0)
+                //    {
+                //        _sparkle = new Sparkle(RSSFeed);
+                //        _sparkle.StartLoop(true);
+                //    }
+                //}
         }
 
         private void toolStripMenuItem7_Click(object sender, EventArgs e)

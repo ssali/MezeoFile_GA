@@ -47,6 +47,7 @@ namespace Mezeo
 
         private static string DB_STATUS_SUCCESS = "SUCCESS";
         private static string DB_STATUS_IN_PROGRESS = "INPROGRESS";
+        //private Sparkle _sparkle;
 
         #endregion
 
@@ -81,6 +82,7 @@ namespace Mezeo
         private int messageMax;
         private int messageValue;
         private int SynctmrDelay = -1;
+        private int pbScale = 1;
 
         Queue<LocalItemDetails> queue;
         frmIssues frmIssuesFound;
@@ -1477,6 +1479,18 @@ namespace Mezeo
                         {
                           //  ShowUpdateAvailableBalloonMessage(strNewVersion);
                             BasicInfo.updateAvailable = true;
+
+                            //if (BasicInfo.updateAvailable == true)
+                            //{
+                            //    string RSSFeed = BasicInfo.GetUpdateURL();
+
+                            //    if (RSSFeed.Length != 0)
+                            //    {
+                            //        _sparkle = new Sparkle(RSSFeed);
+                            //        _sparkle.StartLoop(true);
+                            //    }
+                            //}
+
                            // frmParent.changeUpdatesText(strNewVersion);
                             // cnotificationManager.HoverText = "Install Update";
                         }
@@ -4397,8 +4411,14 @@ namespace Mezeo
                         syncPath = AboutBox.AssemblyTitle + "\\" + fileName.Substring(BasicInfo.SyncDirPath.Length + 1);
                     
                     lblStatusL3.Text = syncPath;
+                    pbScale = 1;
 
-
+                    while (fileSize > Int32.MaxValue)
+                    {
+                        fileSize = fileSize / 10;
+                        pbScale = pbScale * 10;
+                    }
+                    
                     pbSyncProgress.Maximum = (int)fileSize;
                     pbSyncProgress.Value = 0;
 
@@ -4424,6 +4444,13 @@ namespace Mezeo
 
                 lblStatusL3.Text = syncPath;
 
+                pbScale = 1;
+
+                while (fileSize > Int32.MaxValue)
+                {
+                    fileSize = fileSize / 10;
+                    pbScale = pbScale * 10;
+                }
 
                 pbSyncProgress.Maximum = (int)fileSize;
                 pbSyncProgress.Value = 0;
@@ -4519,7 +4546,9 @@ namespace Mezeo
                     {
                         if (IsSyncPaused() || CallbackContinueRun() == false)
                             return;
-                        
+
+                        filesize = filesize / pbScale;
+
                         if (pbSyncProgress.Value + filesize > pbSyncProgress.Maximum)
                             pbSyncProgress.Value = pbSyncProgress.Maximum;
                         else
@@ -4560,6 +4589,8 @@ namespace Mezeo
                 {
                     if (IsSyncPaused() || CallbackContinueRun() == false)
                         return;
+
+                    filesize = filesize / pbScale;
 
                     if (pbSyncProgress.Value + filesize > pbSyncProgress.Maximum)
                         pbSyncProgress.Value = pbSyncProgress.Maximum;
