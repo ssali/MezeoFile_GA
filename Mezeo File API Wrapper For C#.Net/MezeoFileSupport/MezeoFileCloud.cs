@@ -301,71 +301,213 @@ namespace MezeoFileSupport
         private bool OnPostAndPutRequest(ref HttpWebRequest webRequest, String strRequestURL, String strSource, String strContentType, String strLoadHeader, String strFinalBoundary, String StrMethod, String strDest, CallbackIncrementProgress IncProgress)
         {
             bool bStatus = true;
-	        webRequest = (HttpWebRequest)WebRequest.Create( strRequestURL );
-	        webRequest.Credentials = new NetworkCredential(m_strLoginName, m_strPassword);
-	        webRequest.PreAuthenticate = true;
-	        webRequest.Method = StrMethod;
-	        webRequest.KeepAlive = false;
-	        webRequest.Headers.Add("X-Client-Specification", "2");
-            if(strDest != "")
-                webRequest.Headers.Add("Content-Location", strDest);
-	        webRequest.ContentType = strContentType;
-            webRequest.Timeout = System.Threading.Timeout.Infinite;
-            webRequest.SendChunked = true;
-            webRequest.AllowWriteStreamBuffering = false;
+            string strNewUri = strRequestURL + "?n=" + DateTime.Now.Ticks.ToString();
+            bStatus = MultipartFormPost(ref webRequest, strNewUri, strSource, IncProgress);
+            return bStatus;
 
-            Stream writeStream = null;
-            FileStream fileStream = null;
+         //   bool bStatus = true;
+         //   // Overall content length
+         //   Int64 contentLength = 0;
+
+         //   FileInfo fileinfo = new FileInfo(strSource);
+
+         //   if(strFinalBoundary != null && strLoadHeader != null)
+         //   // compute length of multi-part form
+         //   contentLength = strLoadHeader.Length + strFinalBoundary.Length;
+
+         //   contentLength += fileinfo.Length;
+
+         //   webRequest = (HttpWebRequest)WebRequest.Create( strRequestURL );
+         //   webRequest.Credentials = new NetworkCredential(m_strLoginName, m_strPassword);
+         //   webRequest.PreAuthenticate = true;
+         //   webRequest.Method = StrMethod;
+         //   webRequest.KeepAlive = false;
+         //   webRequest.Headers.Add("X-Client-Specification", "2");
+         //   if(strDest != "")
+         //       webRequest.Headers.Add("Content-Location", strDest);
+         //   webRequest.ContentType = strContentType;
+         //   webRequest.Timeout = System.Threading.Timeout.Infinite;
+         ////   webRequest.SendChunked = true;
+         //   webRequest.AllowWriteStreamBuffering = false;
+         //   webRequest.ContentLength = contentLength;
+
+         //   Stream writeStream = null;
+         //   FileStream fileStream = null;
+         //   try
+         //   {
+         //       writeStream = webRequest.GetRequestStream();
+         //       if (writeStream != null)
+         //       {
+         //           byte[] bytes = Encoding.UTF8.GetBytes(strLoadHeader);
+         //           writeStream.Write(bytes, 0, bytes.Length);
+         //           if (strSource != "")
+         //           {
+         //               fileStream = new FileStream(strSource, FileMode.Open, FileAccess.Read, FileShare.ReadWrite);
+         //               if (fileStream != null)
+         //               {
+         //                   byte[] buffer = new byte[1024 * 64];
+         //                   int bytesRead = 0;
+
+         //                   while ((bytesRead = fileStream.Read(buffer, 0, buffer.Length)) != 0)
+         //                   {
+         //                       if (IncProgress != null)
+         //                           IncProgress(bytesRead);
+
+         //                       writeStream.Write(buffer, 0, bytesRead);
+
+         //                       if (m_bStop)
+         //                       {
+         //                           m_bStop = false;
+         //                           bStatus = false;
+         //                           break;
+         //                       }
+         //                   }
+         //                   fileStream.Close();
+         //               }
+         //               bytes = Encoding.UTF8.GetBytes(strFinalBoundary);
+         //               if (IncProgress != null)
+         //                   IncProgress(bytes.Length);
+
+         //               writeStream.Write(bytes, 0, bytes.Length);
+         //           }
+         //           writeStream.Close();
+         //       }
+         //   }
+         //   finally
+         //   {
+              
+         //       if (writeStream != null)
+         //           writeStream.Close();
+         //       if (fileStream != null)
+         //           fileStream.Close();
+         //   }
+         //   return bStatus;
+        }
+
+
+        public bool MultipartFormPost(ref HttpWebRequest webRequest, String posturi, String filenameWithPath, CallbackIncrementProgress IncProgress)
+        {
+            // Strip off the path from our filename
+            String filename = filenameWithPath;
+            
+            bool bStatus = true;
+
+            FileInfo fileinfo = new FileInfo(filenameWithPath);
+            
+            int slashloc = filenameWithPath.LastIndexOf('\\');
+
+            if (slashloc > 0)
+                filename = filenameWithPath.Substring(slashloc);
+
+            Console.WriteLine(filename);
+            // Overall content length
+            Int64 contentLength = 0;
+
+            // Mime-Type of the file to be uploaded
+            String contenttype = GetMineTypeContainsKey(fileinfo.Extension.ToLower()); 
+
+            // Create a new random form boundary using the System time
+            String boundary = DateTime.Now.Ticks.ToString("x") + DateTime.Now.Ticks.ToString("x");
+
+            // File payload section
+            String payloadheader;
+            payloadheader = "--" + boundary + "\r\n";
+            payloadheader += "Content-Disposition: form-data; name=\"Filedata\"; filename=\"" + filename + "\"\r\n";
+            payloadheader += "Content-Type: " + contenttype + "\r\n\r\n";
+
+            // multipart/form-data final boundary
+            String finalboundary = "\r\n--" + boundary + "--\r\n";
+
+            //Convert payloadheader to UTF8
+            byte[] bytes = System.Text.Encoding.UTF8.GetBytes(payloadheader);
+                
+
+            // compute length of multi-part form
+            contentLength = bytes.Length + finalboundary.Length;
+
+            // Add our file's size to our overall contentlength
+            contentLength += fileinfo.Length;
+
+            // Set up our HttpWebRequest object 
+            webRequest = (HttpWebRequest)WebRequest.Create(posturi);
+            webRequest.ContentType = "multipart/form-data; boundary=" + boundary;
+            webRequest.Method = "POST";
+            webRequest.Accept = "*/*";
+            webRequest.KeepAlive = false;
+            webRequest.ProtocolVersion = HttpVersion.Version10;
+            webRequest.ContentLength = contentLength;
+            // Add our additional headers
+            webRequest.Headers.Add("X-Client-Specification", "2");
+            //request.Headers.Add("X-Client-Key", Properties.Credentials.Default.Apikey);
+
+            webRequest.Timeout = Timeout.Infinite;
+
+            // Add our username/password to the request
+            webRequest.Credentials = new NetworkCredential(m_strLoginName, m_strPassword);
+
+            // Set PreAuthenticate to true to preemptively send the required Auth header
+            webRequest.PreAuthenticate = true;
+
+            Int64 Total = 0;
+            bool finalize = true;
+ 
             try
             {
-                writeStream = webRequest.GetRequestStream();
-                if (writeStream != null)
+                // Submit the form data to the server
+                using (Stream requestStream = webRequest.GetRequestStream())
                 {
-                    byte[] bytes = Encoding.UTF8.GetBytes(strLoadHeader);
-                    writeStream.Write(bytes, 0, bytes.Length);
-                    if (strSource != "")
+                    // Send the payload header after converting to UTF8 bytes
+                    requestStream.Write(bytes, 0, bytes.Length);
+
+                    // Stream the file data to the server
+                    using (FileStream fileStream = new FileStream(filenameWithPath, FileMode.Open, FileAccess.Read))
                     {
-                        fileStream = new FileStream(strSource, FileMode.Open, FileAccess.Read, FileShare.ReadWrite);
-                        if (fileStream != null)
+                        // Upload the file streaming it from disk
+                        byte[] buffer = new byte[1024 * 4];
+                        int bytesRead = 0;
+
+                        while ((bytesRead = fileStream.Read(buffer, 0, buffer.Length)) != 0)
                         {
-                            byte[] buffer = new byte[1024 * 64];
-                            int bytesRead = 0;
+                            if (IncProgress != null)
+                                IncProgress(bytesRead);
+                          
+                            requestStream.Write(buffer, 0, bytesRead);
 
-                            while ((bytesRead = fileStream.Read(buffer, 0, buffer.Length)) != 0)
+                            if (m_bStop)
                             {
-                                if (IncProgress != null)
-                                    IncProgress(bytesRead);
-
-                                writeStream.Write(buffer, 0, bytesRead);
-
-                                if (m_bStop)
-                                {
-                                    m_bStop = false;
-                                    bStatus = false;
-                                    break;
-                                }
+                                m_bStop = false;
+                                bStatus = false;
+                                finalize = false;
+                                break;
                             }
-                            fileStream.Close();
                         }
-                        bytes = Encoding.UTF8.GetBytes(strFinalBoundary);
-                        if (IncProgress != null)
-                            IncProgress(bytes.Length);
 
-                        writeStream.Write(bytes, 0, bytes.Length);
+                        fileStream.Close();
                     }
-                    writeStream.Close();
+
+                    if (finalize)
+                    {
+                        // Send the form's final boundary after converting to UTF8 bytes
+                        bytes = System.Text.Encoding.UTF8.GetBytes(finalboundary);
+                    }
+                    
+                    if (IncProgress != null)
+                        IncProgress(bytes.Length);
+
+                    requestStream.Write(bytes, 0, bytes.Length);
                 }
             }
-            finally
+            catch (Exception ex)
             {
-              
-                if (writeStream != null)
-                    writeStream.Close();
-                if (fileStream != null)
-                    fileStream.Close();
+                int x = 0;
+                if (x == 0)
+                { }
             }
+
             return bStatus;
         }
+
+
 
         //save on the local drive
         private bool OnSaveResponseFile(Stream responseStream, String strSaveInFile, long lFrom, CallbackIncrementProgress IncProgress, CallbackContinueRunning ContinueRun)
@@ -498,6 +640,7 @@ namespace MezeoFileSupport
 	        webRequest.Method = "PUT";
 	        webRequest.KeepAlive = false;
 	        webRequest.Headers.Add("X-Client-Specification", "2");
+            webRequest.Headers.Add("X-Client-Specification", "2");
             webRequest.Timeout = nTimeout;
             FileStream fileStream = null;
             Stream writeStream = null;
