@@ -47,7 +47,6 @@ namespace Mezeo
 
         private static string DB_STATUS_SUCCESS = "SUCCESS";
         private static string DB_STATUS_IN_PROGRESS = "INPROGRESS";
-        //private Sparkle _sparkle;
 
         #endregion
 
@@ -66,16 +65,11 @@ namespace Mezeo
         private frmLogin frmParent;
         private string[] statusMessages = new string[3];
         private int statusMessageCounter = 0;
-        //private bool isAnalysingStructure = false;
-        //private bool isAnalysisCompleted = false;
         private bool analysisIsComplete = true;
         public bool isSyncPause = false; // Check sync is pause or not
-        // public bool isEventCanceled = false;
         public bool isSyncGenerateLocalEvents = false;
-      //  private FileDownloader fileDownloder;
         private bool isDownloadingFile = false;
         private StructureDownloader stDownloader;
-        private int fileDownloadCount = 1;
         private DateTime lastSync;
         private OfflineWatcher offlineWatcher;
         private bool canNotTalktoTheServer = false;
@@ -90,7 +84,6 @@ namespace Mezeo
         NotificationManager cnotificationManager;
 
         Thread analyseThread;
-        Thread downloadingThread;
         ThreadLockObject lockObject;
 
         DbHandler dbHandler;
@@ -186,7 +179,7 @@ namespace Mezeo
         void cMezeoFileCloud_downloadStoppedEvent(string fileName)
         {
             // See the comment in cMezeoFileCloud_uploadStoppedEvent.
-            //DeleteCurrentIncompleteFile(fileName);
+            DeleteCurrentIncompleteFile(fileName);
         }
 
         public LoginDetails LoginDetail
@@ -384,16 +377,6 @@ namespace Mezeo
             }
         }
 
-        //void fileDownloder_downloadEvent(object sender, FileDownloaderEvents e)
-        //{
-        //    if (isAnalysisCompleted)
-        //    {
-        //        showProgress();
-        //    }
-        //    fileDownloadCount++;
-        //    messageValue++;
-        //}
-
         void stDownloader_downloadEvent(object sender, StructureDownloaderEvent e)
         {
             if (e.IsCompleted && !lockObject.StopThread)
@@ -427,7 +410,6 @@ namespace Mezeo
         {
             isDownloadingFile = false;
 
-            fileDownloadCount = 0;
             OnThreadCancel(reason);
 
             if (reason == CancelReason.INSUFFICIENT_STORAGE)
@@ -1375,7 +1357,6 @@ namespace Mezeo
             // See if I need to kick off a sync action.
             if (IsInIdleState())
             {
-                // SetIsCalledByNextSyncTmr(true);
                 if (this.InvokeRequired)
                 {
                     this.Invoke((MethodInvoker)delegate
@@ -1388,10 +1369,8 @@ namespace Mezeo
                     tmrNextSync.Interval = getSynNextCycleTimer();
                 }
 
-                //tmrNextSync.Enabled = false;
                 InitializeSync();
             }
-            //else if (IsSyncThreadInProgress())
             else
             {
                 if (this.InvokeRequired)
@@ -1674,6 +1653,8 @@ namespace Mezeo
 
         private void DeleteCurrentIncompleteFile(string fileName)
         {
+            String strOriginal = ".original." + BasicInfo.MacAddress;
+            String strPartial = ".partial." + BasicInfo.MacAddress;
             bool isFile = System.IO.File.Exists(fileName);
             
             if (isFile)
@@ -1684,8 +1665,11 @@ namespace Mezeo
                 if (status != DB_STATUS_SUCCESS)
                 {
                     dbHandler.Delete(DbHandler.TABLE_NAME, DbHandler.KEY ,key);
-                    System.IO.File.Delete(fileName);
+                    //System.IO.File.Delete(fileName);
                 }
+                // Only delete stuff that has .partial.m_strMacAdd or .original.m_strMacAdd in the name.
+                if (fileName.Contains(strOriginal) || fileName.Contains(strPartial))
+                    System.IO.File.Delete(fileName);
             }
         }
 
@@ -1914,11 +1898,16 @@ namespace Mezeo
                 // Just because the length is 0 doesn't make it the only reason to download the file.
                 // Check the file size against the event.  If the size differs, then download the file
                 // again since the local one is a partial...probably from a pause/resume.
+                // The pause/resume can also result in a file that doesn't exist even though the database
+                // entry does.  That condition should also be marked as a difference so that the event
+                // is processed and the file is downloaded.
                 bool bLocalFileDiffers = false;
                 if (strDBKey.Trim().Length != 0)
                 {
                     FileInfo fileInfo = new FileInfo(strPath);
                     if ((fileInfo != null) && (0 == (fileInfo.Attributes & FileAttributes.Directory)) && fileInfo.Exists && (fileInfo.Length != nqDetail.lSize))
+                        bLocalFileDiffers = true;
+                    if (!System.IO.File.Exists(strPath))
                         bLocalFileDiffers = true;
                 }
 
@@ -2696,14 +2685,20 @@ namespace Mezeo
         //Adding function to put limit on file upload 
         private bool checkFileTooLarge(string filePath)
         {
-            //FileInfo iFileDetails = new FileInfo(filePath);
-            //long fileSize;
-            //if (File.Exists(filePath))
-            //{
-            //    fileSize = iFileDetails.Length;
-            //    if (fileSize >= 25 * 1000 * 1000)
-            //        return true;
-            //}
+            try
+            {
+                FileInfo iFileDetails = new FileInfo(filePath);
+                long fileSize;
+                if (File.Exists(filePath))
+                {
+                    fileSize = iFileDetails.Length;
+                    if (fileSize >= 250 * 1000 * 1000)
+                        return true;
+                }
+            }
+            catch(Exception ex)
+            {
+            }
             return false;
         }
 
@@ -4034,13 +4029,29 @@ namespace Mezeo
             if (IsSyncPaused() || (cLoginDetails == null))
                 return false;
 
-            this.lblStatusL1.Text = LanguageTranslator.GetValue("SyncManagerCheckingServer");
-            this.lblStatusL3.Text = "";
-            ShowNextSyncLabel(false);
+            if (this.InvokeRequired)
+            {
+                this.Invoke((MethodInvoker)delegate
+                {
+                    this.lblStatusL1.Text = LanguageTranslator.GetValue("SyncManagerCheckingServer");
+                    this.lblStatusL3.Text = "";
+                    ShowNextSyncLabel(false);
 
-            lblStatusL1.Refresh();
-            lblStatusL3.Refresh();
-            label1.Refresh();
+                    lblStatusL1.Refresh();
+                    lblStatusL3.Refresh();
+                    label1.Refresh();
+                });
+            }
+            else
+            {
+                this.lblStatusL1.Text = LanguageTranslator.GetValue("SyncManagerCheckingServer");
+                this.lblStatusL3.Text = "";
+                ShowNextSyncLabel(false);
+
+                lblStatusL1.Refresh();
+                lblStatusL3.Refresh();
+                label1.Refresh();
+            }
 
             NQLengthResult nqLengthRes = cMezeoFileCloud.NQGetLength(BasicInfo.ServiceUrl + cLoginDetails.szNQParentUri, BasicInfo.GetQueueName(), ref nStatusCode);
             if (nStatusCode == ResponseCode.LOGINFAILED1 || nStatusCode == ResponseCode.LOGINFAILED2)
@@ -4080,7 +4091,6 @@ namespace Mezeo
             int currentInitialCount = 0;
 
             // Initialize any counters.
-            fileDownloadCount = 0;
             messageValue = 0;
             messageMax = (int)dbHandler.GetJobCount();
 
@@ -4209,7 +4219,6 @@ namespace Mezeo
         private void InitializeLocalEventsProcess(int progressMax)
         {
             //LogWrapper.LogMessage("frmSyncManager - InitializeLocalEventsProcess", "enter");
-            fileDownloadCount = 1;
             if (frmIssuesFound != null && frmIssuesFound.GetItemsInList() > 0)
                 SetIssueFound(true);
             else

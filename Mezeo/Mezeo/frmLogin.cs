@@ -51,7 +51,7 @@ namespace Mezeo
             notificationManager.NotificationHandler = this.niSystemTray;
 
             //niSystemTray.ContextMenuStrip = cmSystemTrayLogin;
-          
+
             mezeoFileCloud = new CloudService();
 
             LoadResources();
@@ -64,8 +64,8 @@ namespace Mezeo
                 _sparkle = new Sparkle(RSSFeed);
                 _sparkle.StartLoop(true, false, checkFrequency);
             }
-         
-            EventQueue.InitEventQueue();
+
+            EventQueue.InitEventQueue(BasicInfo.MacAddress);
         }
 
         private void frmLogin_FormClosing(object sender, FormClosingEventArgs e)

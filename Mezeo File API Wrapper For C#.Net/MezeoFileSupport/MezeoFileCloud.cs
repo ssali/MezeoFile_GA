@@ -221,6 +221,7 @@ namespace MezeoFileSupport
     {
         private String m_strLoginName;
 		private String m_strPassword;
+        private String m_strMacAdd;
         private XmlDocument m_xmlDocument = new XmlDocument();
         private bool m_bStop = false;
         private String StrAPIKey = "c5f5c39e22b4c743ff7c83470499748c6ac46b249c29e3934f5744166af130c6";
@@ -375,7 +376,7 @@ namespace MezeoFileSupport
          //   }
          //   finally
          //   {
-              
+
          //       if (writeStream != null)
          //           writeStream.Close();
          //       if (fileStream != null)
@@ -389,11 +390,8 @@ namespace MezeoFileSupport
         {
             // Strip off the path from our filename
             String filename = filenameWithPath;
-            
             bool bStatus = true;
-
             FileInfo fileinfo = new FileInfo(filenameWithPath);
-            
             int slashloc = filenameWithPath.LastIndexOf('\\');
 
             if (slashloc > 0)
@@ -420,7 +418,6 @@ namespace MezeoFileSupport
 
             //Convert payloadheader to UTF8
             byte[] bytes = System.Text.Encoding.UTF8.GetBytes(payloadheader);
-                
 
             // compute length of multi-part form
             contentLength = bytes.Length + finalboundary.Length;
@@ -448,7 +445,6 @@ namespace MezeoFileSupport
             // Set PreAuthenticate to true to preemptively send the required Auth header
             webRequest.PreAuthenticate = true;
 
-            Int64 Total = 0;
             bool finalize = true;
  
             try
@@ -508,7 +504,6 @@ namespace MezeoFileSupport
         }
 
 
-
         //save on the local drive
         private bool OnSaveResponseFile(Stream responseStream, String strSaveInFile, long lFrom, CallbackIncrementProgress IncProgress, CallbackContinueRunning ContinueRun)
         {
@@ -516,26 +511,29 @@ namespace MezeoFileSupport
 	        int bytes_read = 0;
 	        FileStream fstPersons = null;
             bool bStatus = true;
+            String strTempFileNew = strSaveInFile + ".partial." + m_strMacAdd;
+            String strTempFileOld = strSaveInFile + ".original." + m_strMacAdd;
+
             m_bStop = false;
 
             try
             {
                 if (lFrom > 0)
                 {
-                    fstPersons = new FileStream(strSaveInFile, FileMode.Append);
+                    fstPersons = new FileStream(strTempFileNew, FileMode.Append);
                     fstPersons.Seek(lFrom, SeekOrigin.Begin);
                 }
                 else
                 {
                     try
                     {
-                        fstPersons = new FileStream(strSaveInFile, FileMode.Create);
+                        fstPersons = new FileStream(strTempFileNew, FileMode.Create);
                     }
                     catch (Exception ex)
                     {
                         //LogWrapper.LogMessage("MezeoFileCloud - OnSaveResponseFile", "Caught exception: " + ex.Message);
                         // The file probably already exists so truncate it...we're downloading it again.
-                        fstPersons = new FileStream(strSaveInFile, FileMode.Truncate);
+                        fstPersons = new FileStream(strTempFileNew, FileMode.Truncate);
                     }
                 }
 
@@ -567,7 +565,8 @@ namespace MezeoFileSupport
                 {
                     if (downloadStoppedEvent != null)
                     {
-                        downloadStoppedEvent(strSaveInFile);
+                        downloadStoppedEvent(strTempFileNew);
+                        //downloadStoppedEvent(strSaveInFile);
                     }
                 }
             }
@@ -579,6 +578,31 @@ namespace MezeoFileSupport
                     fstPersons.Close();
             }
 
+            if (bStatus)
+            {
+                try
+                {
+                    if (System.IO.File.Exists(strSaveInFile))
+                    {
+                        // Rename the existing file to 'original'.
+                        File.Move(strSaveInFile, strTempFileOld);
+                        System.IO.File.Delete(strTempFileOld);
+                    }
+
+                    // Rename the partial to the existing file.
+                    File.Move(strTempFileNew, strSaveInFile);
+                }
+                catch (Exception ex)
+                {
+                    // This variable is just for debugging so that the debugger will
+                    // actually step into this function so I can see what the exception is.
+                    // TODO: Remove this for the release build.
+                    int x = 0;
+                    if (x > 0)
+                    {
+                    }
+                }
+            }
             return bStatus;
         }
 
@@ -680,12 +704,13 @@ namespace MezeoFileSupport
         }
 
         //Cloud Login
-        public LoginDetails Login(String strLoginName, String strPassword, String strUrl, ref int nStatusCode)
+        public LoginDetails Login(String strLoginName, String strPassword, String strUrl, String strMacAdd, ref int nStatusCode)
         {
             String m_strXmlResource;
             nStatusCode = 0;
 	        m_strLoginName = strLoginName;
 	        m_strPassword = strPassword;
+            m_strMacAdd = strMacAdd;
             LoginDetails pLoginDetails = null;
 
             try

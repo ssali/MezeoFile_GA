@@ -10,6 +10,9 @@ namespace Mezeo
     public static class EventQueue
     {
         private static DbHandler dbHandler;
+        private static String m_strMacAdd;
+        private static String m_strOriginal;
+        private static String m_strPartial;
 
         // Time without receiving events for a resource before
         // it is moved from evenListCandidates to eventList.
@@ -28,13 +31,17 @@ namespace Mezeo
         public delegate void WatchCompleted();
         public static event WatchCompleted WatchCompletedEvent;
 
-        public static void InitEventQueue()
+        public static void InitEventQueue(String strMacAdd)
         {
             timer = new System.Timers.Timer();
             timer.Elapsed += new System.Timers.ElapsedEventHandler(EventQueue.timer_Elapsed);
             timer.Interval = TIME_WITHOUT_EVENTS;
             timer.AutoReset = true;
-            timer.Enabled = true;        
+            timer.Enabled = true;
+
+            m_strMacAdd = strMacAdd;
+            m_strOriginal = ".original." + m_strMacAdd;
+            m_strPartial = ".partial." + m_strMacAdd;
         }
 
         private static DbHandler GetDbHandler()
@@ -180,12 +187,6 @@ namespace Mezeo
             {
                 localEvent = GetDbHandler().GetLocalEvent();
             }
-            //----------------------------------------------------------------------
-            // TODO: Remove this code since it's just for debugging.
-            //----------------------------------------------------------------------
-            if (null != localEvent)
-                LogWrapper.LogMessage("EventQueue - GetCurrentQueue", "(" + localEvent.EventDbId + ") Event type: " + localEvent.EventType + " - " + localEvent.FullPath + " - (old path) " + localEvent.OldFullPath);
-            //----------------------------------------------------------------------
             return localEvent;
         }
 
@@ -223,6 +224,13 @@ namespace Mezeo
 
         public static void Add(LocalEvents newEvent)
         {
+            // Ignore events for anything that has .partial.m_strMacAdd or .original.m_strMacAdd in the name.
+            if (newEvent.FileName.Contains(m_strOriginal) || newEvent.FileName.Contains(m_strPartial))
+            {
+                LogWrapper.LogMessage("EventQueue - Add", "Ignoring event: (" + newEvent.EventType + ") " + newEvent.FullPath);
+                return;
+            }
+
             int indexToRemove = -1;
 
             LogWrapper.LogMessage("EventQueue - Add", "Adding event: (" + newEvent.EventType + ") " + newEvent.FullPath);

@@ -358,7 +358,7 @@ namespace Mezeo
 
         public LoginDetails Login(string strLoginName, string strPassword, string strUrl, ref int nStatusCode)
         {
-            return fileCloud.Login(strLoginName, strPassword, strUrl, ref nStatusCode);
+            return fileCloud.Login(strLoginName, strPassword, strUrl, BasicInfo.MacAddress, ref nStatusCode);
         }
 
         public bool Logout()
