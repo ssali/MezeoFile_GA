@@ -45,6 +45,7 @@ namespace Mezeo
             {
                 for (int n = 0; n < CloudService.NUMBER_OF_RETRIES; n++)
                 {
+                    syncManager.ShowOtherProgressBar(strNewName);
                     bRet = fileCloud.ContainerMove(strPath, strNewName, strMineType, bPublic, StrParent, ref nStatusCode);
                     if (nStatusCode == ResponseCode.CONTAINERMOVE)
                     {
@@ -68,6 +69,7 @@ namespace Mezeo
             {
                 for (int n = 0; n < CloudService.NUMBER_OF_RETRIES; n++)
                 {
+                    syncManager.ShowOtherProgressBar(strNewName);
                     bRet = fileCloud.ContainerRename(strPath, strNewName, ref nStatusCode);
                     if (nStatusCode == ResponseCode.CONTAINERRENAME)
                     {
@@ -95,7 +97,9 @@ namespace Mezeo
             {
                 for (int n = 0; n < CloudService.NUMBER_OF_RETRIES; n++)
                 {
+                    syncManager.ShowOtherProgressBar(strDisplayName);
                     bRet = fileCloud.Delete(strPath, ref nStatusCode);
+                    
                     if (nStatusCode == ResponseCode.DELETE)
                     {
                         if (syncManager.myDelegate != null)
@@ -124,7 +128,9 @@ namespace Mezeo
             {
                 for (int n = 0; n < CloudService.NUMBER_OF_RETRIES; n++)
                 {
+                    syncManager.SetMaxProgress(dblFileSizeInBytes, strDestination);
                     bRet = fileCloud.DownloadFile(strSource, strDestination, dblFileSizeInBytes, ref nStatusCode, syncManager.myDelegate, syncManager.ContinueRunningDelegate);
+                    
                     if (nStatusCode == ResponseCode.DOWNLOADFILE)
                         return bRet;
                 }
@@ -240,7 +246,9 @@ namespace Mezeo
             {
                 for (int n = 0; n < CloudService.NUMBER_OF_RETRIES; n++)
                 {
+                    syncManager.ShowOtherProgressBar(strNewName);
                     bRet = fileCloud.FileMove(strPath, strNewName, strMineType, bPublic, StrParent, ref nStatusCode);
+                    
                     if (nStatusCode == ResponseCode.FILEMOVE)
                     {
                         if (syncManager.myDelegate != null)
@@ -262,7 +270,9 @@ namespace Mezeo
             {
                 for (int n = 0; n < CloudService.NUMBER_OF_RETRIES; n++)
                 {
+                    syncManager.ShowOtherProgressBar(strNewName);
                     bRet = fileCloud.FileRename(strPath, strNewName, strMineType, bPublic, ref nStatusCode);
+                    
                     if (nStatusCode == ResponseCode.FILERENAME)
                     {
                         if (syncManager.myDelegate != null)
@@ -374,7 +384,9 @@ namespace Mezeo
             {
                 for (int n = 0; n < CloudService.NUMBER_OF_RETRIES; n++)
                 {
+                    syncManager.ShowOtherProgressBar(strNewContainer);
                     strUrl = fileCloud.NewContainer(strNewContainer, strContentsResource, ref nStatusCode);
+           
                     if (nStatusCode == ResponseCode.NEWCONTAINER)
                     {
                         if (syncManager.myDelegate != null)
@@ -505,7 +517,9 @@ namespace Mezeo
             {
                 for (int n = 0; n < CloudService.NUMBER_OF_RETRIES; n++)
                 {
+                    syncManager.SetMaxProgress(fileinfo.Length, strSource);
                     bRet = fileCloud.OverWriteFile(strSource, strDestination, ref nStatusCode, syncManager.myDelegate);
+                    
                     if (nStatusCode == ResponseCode.OVERWRITEFILE)
                         return bRet;
                 }
@@ -537,7 +551,9 @@ namespace Mezeo
                 {
                     for (int n = 0; n < CloudService.NUMBER_OF_RETRIES; n++)
                     {
+                        syncManager.SetMaxProgress(fileinfo.Length, strSource);
                         strUrl = fileCloud.UploadingFile(strSource, strDestination, ref nStatusCode, syncManager.myDelegate);
+                        
                         if (nStatusCode == ResponseCode.UPLOADINGFILE)
                             return strUrl;
                     }
@@ -567,7 +583,9 @@ namespace Mezeo
                 {
                     for (int n = 0; n < CloudService.NUMBER_OF_RETRIES; n++)
                     {
+                        syncManager.SetMaxProgress(fileinfo.Length, strSource);
                         strUrl = fileCloud.UploadingFileOnResume(strSource, strDestination, ref nStatusCode, syncManager.myDelegate);
+                        
                         if (nStatusCode == ResponseCode.UPLOADINGFILE)
                             return strUrl;
                     }
