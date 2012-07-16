@@ -954,6 +954,38 @@ namespace Mezeo
             }
         }
 
+
+        public void DisableContextMenuText()
+        {
+            if (this.InvokeRequired)
+            {
+                this.Invoke((MethodInvoker)delegate
+                {
+                    toolStripMenuItem7.Enabled = false;
+                });
+            }
+            else
+            {
+                toolStripMenuItem7.Enabled = false;
+            }
+        }
+
+        public void EnableContextMenuText()
+        {
+            if (this.InvokeRequired)
+            {
+                this.Invoke((MethodInvoker)delegate
+                {
+                    toolStripMenuItem7.Enabled = true;
+                });
+            }
+            else
+            {
+                toolStripMenuItem7.Enabled = true;
+            }
+        }
+
+
         public void changeResumeText()
         {
             if (this.InvokeRequired)

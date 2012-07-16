@@ -500,6 +500,12 @@ namespace Mezeo
                          btnSyncNow.Enabled = false;
                      }
 
+                     if (IsSyncPaused())
+                     {
+                         btnPauseResume.Enabled = true;
+                         frmParent.EnableContextMenuText();
+                     }
+
                      CheckIcon();
                 });
             }
@@ -547,6 +553,12 @@ namespace Mezeo
                 else if (!IsInIdleState())
                 {
                     btnSyncNow.Enabled = false;
+                }
+                
+                if (IsSyncPaused())
+                {
+                    btnPauseResume.Enabled = true;
+                    frmParent.EnableContextMenuText();
                 }
                 
                 CheckIcon();
@@ -1070,10 +1082,17 @@ namespace Mezeo
                     if (lastSync.ToString("MMM d, yyyy h:mm tt") == "Jan 1, 0001 12:00 AM")
                         lblStatusL3.Text = "";
                     else
-                        lblStatusL3.Text = lblStatusL3.Text = LanguageTranslator.GetValue("SyncManagerStatusLastSyncLabel") + " " + lastSync.ToString("MMM d, yyyy h:mm tt"); label1.Text = LanguageTranslator.GetValue("ResumeSyncOprationText");
+                        lblStatusL3.Text = lblStatusL3.Text = LanguageTranslator.GetValue("SyncManagerStatusLastSyncLabel") + " " + lastSync.ToString("MMM d, yyyy h:mm tt"); 
+                    
+                    label1.Text = LanguageTranslator.GetValue("ResumeSyncOprationText");
                    // btnSyncNow.Text = this.btnSyncNow.Text = LanguageTranslator.GetValue("ResumeSyncText");
                     btnSyncNow.Enabled = false;
                     btnPauseResume.Text = LanguageTranslator.GetValue("ResumeSyncText");
+                    if (bwSyncThread.IsBusy)
+                    {
+                        btnPauseResume.Enabled = false;
+                        frmParent.DisableContextMenuText();
+                    }
                     pbSyncProgress.Hide();
                     pbSyncProgress.Visible = false;
                     lblPercentDone.Hide();
@@ -1089,10 +1108,17 @@ namespace Mezeo
                 if (lastSync.ToString("MMM d, yyyy h:mm tt") == "Jan 1, 0001 12:00 AM")
                     lblStatusL3.Text = "";
                 else
-                    lblStatusL3.Text = lblStatusL3.Text = LanguageTranslator.GetValue("SyncManagerStatusLastSyncLabel") + " " + lastSync.ToString("MMM d, yyyy h:mm tt"); label1.Text = LanguageTranslator.GetValue("ResumeSyncOprationText");
+                    lblStatusL3.Text = lblStatusL3.Text = LanguageTranslator.GetValue("SyncManagerStatusLastSyncLabel") + " " + lastSync.ToString("MMM d, yyyy h:mm tt"); 
+                
+                label1.Text = LanguageTranslator.GetValue("ResumeSyncOprationText");
                 // btnSyncNow.Text = this.btnSyncNow.Text = LanguageTranslator.GetValue("ResumeSyncText");
                 btnSyncNow.Enabled = false;
                 btnPauseResume.Text = LanguageTranslator.GetValue("ResumeSyncText");
+                if (bwSyncThread.IsBusy)
+                {
+                    btnPauseResume.Enabled = false;
+                    frmParent.DisableContextMenuText();
+                }
                 pbSyncProgress.Hide();
                 pbSyncProgress.Visible = false;
                 lblPercentDone.Hide();
@@ -4412,14 +4438,52 @@ namespace Mezeo
             {
                 this.Invoke((MethodInvoker)delegate
                 {
+                    if (!IsSyncPaused())
+                    {
+                        //LogWrapper.LogMessage("frmSyncManager - SetMaxProgress", "enter");
+                        string syncPath;
+                        if (string.IsNullOrEmpty(fileName))
+                            syncPath = "";
+                        else
+                            syncPath = AboutBox.AssemblyTitle + "\\" + fileName.Substring(BasicInfo.SyncDirPath.Length + 1);
+
+                        lblStatusL3.Text = syncPath;
+                        pbScale = 1;
+
+                        while (fileSize > Int32.MaxValue)
+                        {
+                            fileSize = fileSize / 10;
+                            pbScale = pbScale * 10;
+                        }
+
+                        pbSyncProgress.Maximum = (int)fileSize;
+                        pbSyncProgress.Value = 0;
+
+                        if (pbSyncProgress.Style != ProgressBarStyle.Continuous)
+                            pbSyncProgress.Style = ProgressBarStyle.Continuous;
+
+                        pbSyncProgress.BringToFront();
+                        pbSyncProgress.Visible = true;
+                        pbSyncProgress.Show();
+                        lblPercentDone.Visible = true;
+                        lblPercentDone.Show();
+                        //LogWrapper.LogMessage("frmSyncManager - SetMaxProgress", "leave");
+                    }
+                });
+            }
+            else
+            {
+                if (!IsSyncPaused())
+                {
                     //LogWrapper.LogMessage("frmSyncManager - SetMaxProgress", "enter");
                     string syncPath;
                     if (string.IsNullOrEmpty(fileName))
                         syncPath = "";
                     else
                         syncPath = AboutBox.AssemblyTitle + "\\" + fileName.Substring(BasicInfo.SyncDirPath.Length + 1);
-                    
+
                     lblStatusL3.Text = syncPath;
+
                     pbScale = 1;
 
                     while (fileSize > Int32.MaxValue)
@@ -4427,7 +4491,7 @@ namespace Mezeo
                         fileSize = fileSize / 10;
                         pbScale = pbScale * 10;
                     }
-                    
+
                     pbSyncProgress.Maximum = (int)fileSize;
                     pbSyncProgress.Value = 0;
 
@@ -4440,39 +4504,7 @@ namespace Mezeo
                     lblPercentDone.Visible = true;
                     lblPercentDone.Show();
                     //LogWrapper.LogMessage("frmSyncManager - SetMaxProgress", "leave");
-                });
-            }
-            else
-            {
-                //LogWrapper.LogMessage("frmSyncManager - SetMaxProgress", "enter");
-                string syncPath;
-                if (string.IsNullOrEmpty(fileName))
-                    syncPath = "";
-                else
-                    syncPath = AboutBox.AssemblyTitle + "\\" + fileName.Substring(BasicInfo.SyncDirPath.Length + 1);
-
-                lblStatusL3.Text = syncPath;
-
-                pbScale = 1;
-
-                while (fileSize > Int32.MaxValue)
-                {
-                    fileSize = fileSize / 10;
-                    pbScale = pbScale * 10;
                 }
-
-                pbSyncProgress.Maximum = (int)fileSize;
-                pbSyncProgress.Value = 0;
-
-                if (pbSyncProgress.Style != ProgressBarStyle.Continuous)
-                    pbSyncProgress.Style = ProgressBarStyle.Continuous;
-
-                pbSyncProgress.BringToFront();
-                pbSyncProgress.Visible = true;
-                pbSyncProgress.Show();
-                lblPercentDone.Visible = true;
-                lblPercentDone.Show();
-                //LogWrapper.LogMessage("frmSyncManager - SetMaxProgress", "leave");
             }
         }
 
