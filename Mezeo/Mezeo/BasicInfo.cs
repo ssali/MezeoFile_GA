@@ -21,6 +21,7 @@ namespace Mezeo
         private static string lastExecutedVersion="";
         private static bool isInitailSync = true;
         private static string nqParentURI = "";
+        private static string strMacAddress = null;
 
         //Registry Value Names 
         private static string USERNAME = "Username";
@@ -33,6 +34,7 @@ namespace Mezeo
         private static string LASTVERSION = "LastVersion";
         private static string INITIALSYNC = "InitialSync";
         private static string LASTUPDATEDCHECK = "LastUpdateCheckAt";
+        private static string MACADDRESS = "InitialMacAddress";
 
         //Flag for updates 
         public static bool updateAvailable = false;
@@ -163,7 +165,27 @@ namespace Mezeo
         {
             get
             {
-                return GetNinMacAddress();
+                if (null == strMacAddress)
+                {
+                    // Look in the registry first.
+                    try
+                    {
+                        strMacAddress = regHandler.Read(MACADDRESS, Microsoft.Win32.RegistryValueKind.String, false);
+                        if (null == strMacAddress)
+                            strMacAddress = GetNinMacAddress();
+                    }
+                    catch (Exception ex)
+                    {
+                        LogWrapper.LogMessage("BasicInfo - ReadRegValue", "Caught exception: " + ex.Message);
+                    }
+
+                    // Only calculate the address once.  This prevents issues if there are multiple
+                    // network cards or if someone switches/replaces a network card.
+                    if ((null == strMacAddress) || (strMacAddress.Length == 0))
+                        strMacAddress = GetNinMacAddress();
+                    regHandler.Write(MACADDRESS, strMacAddress, Microsoft.Win32.RegistryValueKind.String, false);
+                }
+                return strMacAddress;
             }
         }
 
@@ -239,6 +261,18 @@ namespace Mezeo
             {
                 LogWrapper.LogMessage("BasicInfo - ReadRegValue", "Caught exception: " + ex.Message);
             }
+            try
+            {
+                strMacAddress = regHandler.Read(MACADDRESS, Microsoft.Win32.RegistryValueKind.String, false);
+                // Don't set the value here.  The getter/setter will save it to the registry the first time
+                // it is initialized.
+                //if (null == strMacAddress)
+                //    strMacAddress = GetNinMacAddress();
+            }
+            catch (Exception ex)
+            {
+                LogWrapper.LogMessage("BasicInfo - ReadRegValue", "Caught exception: " + ex.Message);
+            }
         }
 
         private static void WriteRegValue()
@@ -253,6 +287,7 @@ namespace Mezeo
             regHandler.Write(LOGGING, loggingEnabled, Microsoft.Win32.RegistryValueKind.Binary, false);
             regHandler.Write(LASTUPDATEDCHECK, lastUpdateCheckAt, Microsoft.Win32.RegistryValueKind.Binary, false);
             regHandler.Write(LASTVERSION, lastExecutedVersion, Microsoft.Win32.RegistryValueKind.String, false);
+            regHandler.Write(MACADDRESS, strMacAddress, Microsoft.Win32.RegistryValueKind.String, false);
         }
 
         private static string GetNinMacAddress()
