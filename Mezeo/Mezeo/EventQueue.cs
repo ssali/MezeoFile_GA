@@ -110,6 +110,40 @@ namespace Mezeo
             }
         }
 
+        private static bool IsFileLocked(String filePath)
+        {
+            FileStream stream = null;
+            FileInfo file = new FileInfo(filePath);
+
+            try
+            {
+                if (File.Exists(file.FullName))
+                    stream = file.Open(FileMode.Open, FileAccess.Read, FileShare.ReadWrite);
+                else
+                    return false;
+            }
+            catch (IOException)
+            {
+                //the file is unavailable because it is:
+                //still being written to
+                //or being processed by another thread
+                //or does not exist (has already been processed)
+                return true;
+            }
+            catch (Exception)
+            {
+                return File.Exists(file.FullName);
+            }
+            finally
+            {
+                if (stream != null)
+                    stream.Close();
+            }
+
+            //file is not locked
+            return false;
+        }
+
         public static void timer_Elapsed(object sender, System.Timers.ElapsedEventArgs e)
         {
             bool bNewEventExists = false;
@@ -119,19 +153,33 @@ namespace Mezeo
             // Check the event candidate list and see which events should be moved.
             lock (thisLock)
             {
+                bool copyEvent = true;
                 // If the resource has not had an event in the last X timespan,
                 // move it from the eventListCandidates to eventList.
                 foreach (LocalEvents id in eventListCandidates)
                 {
+                    copyEvent = false;
                     TimeSpan diff = currTime - id.EventTimeStamp;
                     if (TIME_WITHOUT_EVENTS <= diff.TotalMilliseconds)
                     {
-                        LocalEvents lEvent = new LocalEvents();
-                        lEvent = id;
-                        lEvent.EventTimeStamp = id.EventTimeStamp;
-                        eventList.Add(lEvent);
-                        eventsToRemove.Add(id);
-                        //dbHandler.AddEvent(lEvent);
+                        // If this is a file that's going to be uploaded, then make sure it isn't locked.
+                        if (id.IsFile && ((id.EventType == LocalEvents.EventsType.FILE_ACTION_ADDED) || (id.EventType == LocalEvents.EventsType.FILE_ACTION_MODIFIED)))
+                        {
+                            if (!IsFileLocked(id.FullPath))
+                                copyEvent = true;
+                        }
+                        else
+                            copyEvent = true;
+
+                        if (copyEvent)
+                        {
+                            LocalEvents lEvent = new LocalEvents();
+                            lEvent = id;
+                            lEvent.EventTimeStamp = id.EventTimeStamp;
+                            eventList.Add(lEvent);
+                            eventsToRemove.Add(id);
+                            //dbHandler.AddEvent(lEvent);
+                        }
                     }
                 }
 

@@ -287,16 +287,17 @@ namespace Mezeo
                     if ((canNotTalktoTheServer == true) && (talkToTheServer == false))
                     {
                         // Moving from offline to online.
+                        canNotTalktoTheServer = talkToTheServer;
                         SyncOnlineMessage();
                         resetAllControls();
                     }
                     else if ((canNotTalktoTheServer == false) && (talkToTheServer == true))
                     {
                         // Moving from online to offline.
+                        canNotTalktoTheServer = talkToTheServer;
                         SyncOfflineMessage();
                         resetAllControls();
                     }
-                    canNotTalktoTheServer = talkToTheServer;
                 });
             }
             else
@@ -304,16 +305,17 @@ namespace Mezeo
                 if ((canNotTalktoTheServer == true) && (talkToTheServer == false))
                 {
                     // Moving from offline to online.
+                    canNotTalktoTheServer = talkToTheServer;
                     SyncOnlineMessage();
                     resetAllControls();
                 }
                 else if ((canNotTalktoTheServer == false) && (talkToTheServer == true))
                 {
                     // Moving from online to offline.
+                    canNotTalktoTheServer = talkToTheServer;
                     SyncOfflineMessage();
                     resetAllControls();
                 }
-                canNotTalktoTheServer = talkToTheServer;
             }
         }
 
