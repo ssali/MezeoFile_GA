@@ -2709,24 +2709,24 @@ namespace Mezeo
             return "";
         }
 
-        /* 25MB Need to keep this function for future reference */
+        /* 250MB Need to keep this function for future reference */
         //Adding function to put limit on file upload 
         private bool checkFileTooLarge(string filePath)
         {
-            try
-            {
-                FileInfo iFileDetails = new FileInfo(filePath);
-                long fileSize;
-                if (File.Exists(filePath))
-                {
-                    fileSize = iFileDetails.Length;
-                    if (fileSize >= 250 * 1000 * 1000)
-                        return true;
-                }
-            }
-            catch(Exception ex)
-            {
-            }
+            //try
+            //{
+            //    FileInfo iFileDetails = new FileInfo(filePath);
+            //    long fileSize;
+            //    if (File.Exists(filePath))
+            //    {
+            //        fileSize = iFileDetails.Length;
+            //        if (fileSize >= 250 * 1000 * 1000)
+            //            return true;
+            //    }
+            //}
+            //catch(Exception ex)
+            //{
+            //}
             return false;
         }
 
