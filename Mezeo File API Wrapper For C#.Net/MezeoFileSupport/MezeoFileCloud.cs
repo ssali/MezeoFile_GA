@@ -303,86 +303,92 @@ namespace MezeoFileSupport
         {
             bool bStatus = true;
             string strNewUri = strRequestURL + "?n=" + DateTime.Now.Ticks.ToString();
-            bStatus = MultipartFormPost(ref webRequest, strNewUri, strSource, IncProgress);
+            //bStatus = MultipartFormPost(ref webRequest, strNewUri, strSource, IncProgress);
+            //return bStatus;
+
+            // Overall content length
+            Int64 contentLength = 0;
+
+            //Convert payloadheader to UTF8
+            byte[] bytes = Encoding.UTF8.GetBytes(strLoadHeader);
+
+            // If there is a file, then get the information about it.
+            FileInfo fileinfo = null;
+            if ((strSource != null) && (strSource.Length != 0))
+                fileinfo = new FileInfo(strSource);
+
+            if (strFinalBoundary != null && strLoadHeader != null)
+            {
+                // compute length of multi-part form
+                contentLength = bytes.Length + strFinalBoundary.Length;
+            }
+
+            if (fileinfo != null)
+                contentLength += fileinfo.Length;
+
+            webRequest = (HttpWebRequest)WebRequest.Create(strRequestURL);
+            webRequest.Credentials = new NetworkCredential(m_strLoginName, m_strPassword);
+            webRequest.PreAuthenticate = true;
+            webRequest.Method = StrMethod;
+            webRequest.KeepAlive = false;
+            webRequest.Headers.Add("X-Client-Specification", "2");
+            if (strDest != "")
+                webRequest.Headers.Add("Content-Location", strDest);
+            webRequest.ContentType = strContentType;
+            webRequest.Timeout = System.Threading.Timeout.Infinite;
+            //   webRequest.SendChunked = true;
+            webRequest.AllowWriteStreamBuffering = false;
+            webRequest.ContentLength = contentLength;
+
+            bool finalize = true;
+
+            using (Stream writeStream = webRequest.GetRequestStream())
+            {
+                writeStream.Write(bytes, 0, bytes.Length);
+                if (strSource != "")
+                {
+                    using (FileStream fileStream = new FileStream(strSource, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
+                    {
+                        byte[] buffer = new byte[1024 * 64];
+                        int bytesRead = 0;
+
+                        while ((bytesRead = fileStream.Read(buffer, 0, buffer.Length)) != 0)
+                        {
+                            if (IncProgress != null)
+                                IncProgress(bytesRead);
+
+                            writeStream.Write(buffer, 0, bytesRead);
+
+                            if (m_bStop)
+                            {
+                                m_bStop = false;
+                                bStatus = false;
+                                finalize = false;
+                                break;
+                            }
+                        }
+                        fileStream.Close();
+                    }
+
+                    if (finalize)
+                    {
+                        bytes = Encoding.UTF8.GetBytes(strFinalBoundary);
+                        if (IncProgress != null)
+                            IncProgress(bytes.Length);
+                        writeStream.Write(bytes, 0, bytes.Length);
+                    }
+                }
+                writeStream.Close();
+            }
+
+            // If the request was cancelled, then set the webRequest reference to null.
+            if (finalize == false)
+            {
+                webRequest.Abort();
+                webRequest = null;
+            }
+
             return bStatus;
-
-         //   bool bStatus = true;
-         //   // Overall content length
-         //   Int64 contentLength = 0;
-
-         //   FileInfo fileinfo = new FileInfo(strSource);
-
-         //   if(strFinalBoundary != null && strLoadHeader != null)
-         //   // compute length of multi-part form
-         //   contentLength = strLoadHeader.Length + strFinalBoundary.Length;
-
-         //   contentLength += fileinfo.Length;
-
-         //   webRequest = (HttpWebRequest)WebRequest.Create( strRequestURL );
-         //   webRequest.Credentials = new NetworkCredential(m_strLoginName, m_strPassword);
-         //   webRequest.PreAuthenticate = true;
-         //   webRequest.Method = StrMethod;
-         //   webRequest.KeepAlive = false;
-         //   webRequest.Headers.Add("X-Client-Specification", "2");
-         //   if(strDest != "")
-         //       webRequest.Headers.Add("Content-Location", strDest);
-         //   webRequest.ContentType = strContentType;
-         //   webRequest.Timeout = System.Threading.Timeout.Infinite;
-         ////   webRequest.SendChunked = true;
-         //   webRequest.AllowWriteStreamBuffering = false;
-         //   webRequest.ContentLength = contentLength;
-
-         //   Stream writeStream = null;
-         //   FileStream fileStream = null;
-         //   try
-         //   {
-         //       writeStream = webRequest.GetRequestStream();
-         //       if (writeStream != null)
-         //       {
-         //           byte[] bytes = Encoding.UTF8.GetBytes(strLoadHeader);
-         //           writeStream.Write(bytes, 0, bytes.Length);
-         //           if (strSource != "")
-         //           {
-         //               fileStream = new FileStream(strSource, FileMode.Open, FileAccess.Read, FileShare.ReadWrite);
-         //               if (fileStream != null)
-         //               {
-         //                   byte[] buffer = new byte[1024 * 64];
-         //                   int bytesRead = 0;
-
-         //                   while ((bytesRead = fileStream.Read(buffer, 0, buffer.Length)) != 0)
-         //                   {
-         //                       if (IncProgress != null)
-         //                           IncProgress(bytesRead);
-
-         //                       writeStream.Write(buffer, 0, bytesRead);
-
-         //                       if (m_bStop)
-         //                       {
-         //                           m_bStop = false;
-         //                           bStatus = false;
-         //                           break;
-         //                       }
-         //                   }
-         //                   fileStream.Close();
-         //               }
-         //               bytes = Encoding.UTF8.GetBytes(strFinalBoundary);
-         //               if (IncProgress != null)
-         //                   IncProgress(bytes.Length);
-
-         //               writeStream.Write(bytes, 0, bytes.Length);
-         //           }
-         //           writeStream.Close();
-         //       }
-         //   }
-         //   finally
-         //   {
-
-         //       if (writeStream != null)
-         //           writeStream.Close();
-         //       if (fileStream != null)
-         //           fileStream.Close();
-         //   }
-         //   return bStatus;
         }
 
 
@@ -1642,12 +1648,15 @@ namespace MezeoFileSupport
             {
                 bool bStatus = OnPostAndPutRequest(ref webRequest, strDestination, strSource, "multipart/form-data; boundary=" + strBoundary, strLoadHeader, "\r\n--" + strBoundary + "--\r\n", "POST", "", IncProcess);
 
-                response = (HttpWebResponse)webRequest.GetResponse();
-                nStatusCode = 201;
-                //StrRet = OnGetResponseString(response.GetResponseStream());
-                //StrRet = StrRet.Substring(0, (StrRet.Length - Environment.NewLine.Length));
-                webRequest.Abort();
-                response.Close();
+                if (null != webRequest)
+                {
+                    response = (HttpWebResponse)webRequest.GetResponse();
+                    nStatusCode = 201;
+                    //StrRet = OnGetResponseString(response.GetResponseStream());
+                    //StrRet = StrRet.Substring(0, (StrRet.Length - Environment.NewLine.Length));
+                    webRequest.Abort();
+                    response.Close();
+                }
                 if (!bStatus)
                 {
                     if (uploadStoppedEvent != null)
@@ -1704,12 +1713,15 @@ namespace MezeoFileSupport
             {
                 bool bStatus = OnPostAndPutRequest(ref webRequest, strDestination, strSource, "multipart/form-data; boundary=" + strBoundary, strLoadHeader, "\r\n--" + strBoundary + "--\r\n", "POST", "", IncProcess);
 
-                response = (HttpWebResponse)webRequest.GetResponse();
-                nStatusCode = 201;
-                StrRet = OnGetResponseString(response.GetResponseStream());
-                StrRet = StrRet.Substring(0, (StrRet.Length - Environment.NewLine.Length));
-                webRequest.Abort();
-                response.Close();
+                if (null != webRequest)
+                {
+                    response = (HttpWebResponse)webRequest.GetResponse();
+                    nStatusCode = 201;
+                    StrRet = OnGetResponseString(response.GetResponseStream());
+                    StrRet = StrRet.Substring(0, (StrRet.Length - Environment.NewLine.Length));
+                    webRequest.Abort();
+                    response.Close();
+                }
                 if (!bStatus)
                 {
                     if (uploadStoppedEvent != null)
@@ -1749,10 +1761,15 @@ namespace MezeoFileSupport
             try
             {
                 OnPutRequest(ref webRequest, strDestination, strSource, IncProgress);
-                response = (HttpWebResponse)webRequest.GetResponse();
-                nStatusCode = 204;
-                webRequest.Abort();
-                response.Close();
+                if (null != webRequest)
+                {
+                    response = (HttpWebResponse)webRequest.GetResponse();
+                    nStatusCode = 204;
+                    webRequest.Abort();
+                    response.Close();
+                }
+                else
+                    nStatusCode = -4;
             }
             catch (WebException wEx)
             {
