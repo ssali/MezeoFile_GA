@@ -165,7 +165,7 @@ namespace Mezeo
         {
             get
             {
-                if (null == strMacAddress)
+                if ((null == strMacAddress) || (strMacAddress.Length == 0))
                 {
                     // Look in the registry first.
                     try
@@ -183,8 +183,12 @@ namespace Mezeo
                     // network cards or if someone switches/replaces a network card.
                     if ((null == strMacAddress) || (strMacAddress.Length == 0))
                         strMacAddress = GetNinMacAddress();
-                    regHandler.Write(MACADDRESS, strMacAddress, Microsoft.Win32.RegistryValueKind.String, false);
+                    if ((null != strMacAddress) && (strMacAddress.Length != 0))
+                        regHandler.Write(MACADDRESS, strMacAddress, Microsoft.Win32.RegistryValueKind.String, false);
                 }
+                if ((null == strMacAddress) || (strMacAddress.Length == 0))
+                    strMacAddress = "";
+
                 return strMacAddress;
             }
         }
@@ -287,7 +291,7 @@ namespace Mezeo
             regHandler.Write(LOGGING, loggingEnabled, Microsoft.Win32.RegistryValueKind.Binary, false);
             regHandler.Write(LASTUPDATEDCHECK, lastUpdateCheckAt, Microsoft.Win32.RegistryValueKind.Binary, false);
             regHandler.Write(LASTVERSION, lastExecutedVersion, Microsoft.Win32.RegistryValueKind.String, false);
-            regHandler.Write(MACADDRESS, strMacAddress, Microsoft.Win32.RegistryValueKind.String, false);
+            //regHandler.Write(MACADDRESS, strMacAddress, Microsoft.Win32.RegistryValueKind.String, false);
         }
 
         private static string GetNinMacAddress()
