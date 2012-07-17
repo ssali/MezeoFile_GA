@@ -1,0 +1,3 @@
+@echo off
+@echo Removing setup files...
+rd /s /q "%Temp%\MezeoFile.2.0.66"
