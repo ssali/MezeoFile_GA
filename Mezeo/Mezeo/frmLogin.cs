@@ -229,7 +229,7 @@ namespace Mezeo
             this.msShowSyncMgr.Text = LanguageTranslator.GetValue("SyncManager");
             this.msSyncMgrExit.Text = LanguageTranslator.GetValue("ExitSyncManager");	
 
-         //   this.toolStripMenuItem3.Text = LanguageTranslator.GetValue("CheckforUpdate");
+            this.toolStripMenuItem3.Text = LanguageTranslator.GetValue("CheckforUpdate");
             this.toolStripMenuItem4.Text = LanguageTranslator.GetValue("SyncProgress");
             this.toolStripMenuItem5.Text = LanguageTranslator.GetValue("WebsiteUrl");
             this.toolStripMenuItem7.Text = LanguageTranslator.GetValue("PauseSync");
@@ -362,18 +362,6 @@ namespace Mezeo
 
             if (isLoginSuccess)
             {
-                //bwCheckServerStatus.RunWorkerAsync();
-                ////syncManager.EnableSyncManager();
-                //if (BasicInfo.IsInitialSync)
-                //{
-                //    syncManager.InitializeSync();
-                //}
-                //else
-                //{
-                //    syncManager.SetUpSync();
-                //    syncManager.SetUpSyncNowNotification();
-                //    syncManager.ProcessOfflineEvents();
-                //}
                 LoginSuccessTask();
             }
         }
@@ -459,6 +447,13 @@ namespace Mezeo
                 ShowGuestLoginError();
                 return;
             }
+            else if (loginDetails.szContainerContentsUri == "")
+            {
+                /* Fogbugzid: 2295 login - return message when account has no default storage container or no 
+                containers at all */
+                ShowNoRootContainerError();
+                return;
+            }
             else
             {
                 BasicInfo.UserName = txtUserName.Text;
@@ -491,17 +486,6 @@ namespace Mezeo
 
             if (isLoginSuccess)
             {
-                //bwCheckServerStatus.RunWorkerAsync();
-                //if (BasicInfo.IsInitialSync)
-                //{
-                //    syncManager.InitializeSync();
-                //}
-                //else
-                //{
-                //    syncManager.SetUpSync();
-                //    syncManager.SetUpSyncNowNotification();
-                //    syncManager.ProcessOfflineEvents();
-                //}
                 LoginSuccessTask();
             }
         }
@@ -519,6 +503,18 @@ namespace Mezeo
         }
 
         private void ShowGuestLoginError()
+        {
+            this.labelError.Text = LanguageTranslator.GetValue("LoginGuestAccMsgText");
+            this.txtUserName.Enabled = true;
+            this.txtPasswrod.Enabled = true;
+            this.txtServerUrl.Enabled = true;
+
+            this.btnLogin.Enabled = true;
+
+            isLoginSuccess = false;
+        }
+
+        private void ShowNoRootContainerError()
         {
             this.labelError.Text = LanguageTranslator.GetValue("LoginGuestAccMsgText");
             this.txtUserName.Enabled = true;
@@ -815,18 +811,11 @@ namespace Mezeo
 
         private void toolStripMenuItem2_Paint(object sender, PaintEventArgs e)
         {
-            //Point pt = new Point(0, 0);
             Rectangle rect=new Rectangle();
             rect.X=0;
             rect.Y=0;
             rect.Width=((ToolStripMenuItem)sender).Width;
             rect.Height=((ToolStripMenuItem)sender).Height;
-
-            //Image img = Properties.Resources.mezeo_menu_logo_large;
-            //e.Graphics.DrawImage(img, pt);
-            //GraphicsUnit gu = new GraphicsUnit();
-           // e.Graphics.DrawImage(img, rect, img.GetBounds(ref gu), gu);
-            //e.Graphics.DrawImageUnscaled(img, rect);
         }
 
         private void toolStripMenuItem5_Click(object sender, EventArgs e)
@@ -924,20 +913,20 @@ namespace Mezeo
             notificationManager.HoverText = global::Mezeo.Properties.Resources.BrSyncManagerTitle + " " + AboutBox.AssemblyVersion + "\n" + LanguageTranslator.GetValue("EvaluatingLocalChanges");
         }
 
-        //public void changeUpdatesText(string newVersion)
-        //{
-        //    if (this.InvokeRequired)
-        //    {
-        //        this.Invoke((MethodInvoker)delegate
-        //        {
-        //            toolStripMenuItem3.Text = LanguageTranslator.GetValue("InstallUpdateText") + newVersion;
-        //        });
-        //    }
-        //    else
-        //    {
-        //        toolStripMenuItem3.Text = LanguageTranslator.GetValue("InstallUpdateText") + newVersion;
-        //    }
-        //}
+        public void changeUpdatesText(string newVersion)
+        {
+            if (this.InvokeRequired)
+            {
+                this.Invoke((MethodInvoker)delegate
+                {
+                    toolStripMenuItem3.Text = LanguageTranslator.GetValue("InstallUpdateText") + newVersion;
+                });
+            }
+            else
+            {
+                toolStripMenuItem3.Text = LanguageTranslator.GetValue("InstallUpdateText") + newVersion;
+            }
+        }
 
         public void changePauseText()
         {
@@ -1003,18 +992,11 @@ namespace Mezeo
 
         private void toolStripMenuItem6_Paint(object sender, PaintEventArgs e)
         {
-            //Point pt = new Point(0, 0);
             Rectangle rect = new Rectangle();
             rect.X = 0;
             rect.Y = 0;
             rect.Width = ((ToolStripMenuItem)sender).Width;
             rect.Height = ((ToolStripMenuItem)sender).Height;
-
-           // Image img = Properties.Resources.meze_menu_logo_small;
-            //e.Graphics.DrawImage(img, pt);
-          //  GraphicsUnit gu = new GraphicsUnit();
-           // e.Graphics.DrawImage(img, rect, img.GetBounds(ref gu), gu);
-            //e.Graphics.DrawImageUnscaled(img, rect);
         }
 
         private void loginToolStripMenuItem_Click(object sender, EventArgs e)
