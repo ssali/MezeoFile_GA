@@ -378,11 +378,23 @@ namespace MezeoFileSupport
                         writeStream.Write(bytes, 0, bytes.Length);
                     }
                 }
-                writeStream.Close();
+                try
+                {
+                    writeStream.Close();
+                }
+                catch (Exception ex)
+                {
+                    // If the request was cancelled, then set the webRequest reference to null.
+                    if (finalize == false)
+                    {
+                        webRequest.Abort();
+                        webRequest = null;
+                    }
+                }
             }
 
             // If the request was cancelled, then set the webRequest reference to null.
-            if (finalize == false)
+            if ((finalize == false) && (null != webRequest))
             {
                 webRequest.Abort();
                 webRequest = null;
