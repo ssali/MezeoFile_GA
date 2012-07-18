@@ -5,7 +5,7 @@ if "%~1"=="" set buildMode=Rebuild
 
 @echo.
 @echo *** %buildMode% 32-bit MezeoFileSupport
-msbuild "%rootPath%\Mezeo File API Wrapper For C#.Net\MezeoFileSupport\MezeoFileSupport.sln" /t:%buildMode% /p:Configuration=Release /v:m /nologo
+msbuild "%rootPath%\Mezeo File API Wrapper For C#.Net\MezeoFileSupport\MezeoFileSupport.sln" /t:%buildMode% "/p:Configuration=Release;Platform=Any CPU" /v:m /nologo
 if errorlevel 1 exit 1
 if /i "%buildmode%"=="clean" (
 rd /s /q "%rootPath%\Mezeo File API Wrapper For C#.Net\MezeoFileSupport\bin\Release"
@@ -51,6 +51,8 @@ if errorlevel 1 exit 1
 @echo Manually change the ProductVersion and ProductCode values in the project. TODO: find a way to automatically set this.
 devenv.exe /%buildMode% Release "%rootPath%\Mezeo File API Wrapper For C#.Net\Mezeo File Installer\MezeoFile.sln"
 if errorlevel 1 exit 1
+xcopy "%rootPath%\Mezeo File API Wrapper For C#.Net\Mezeo File Installer\Setup.exe" "%rootPath%\Mezeo File API Wrapper For C#.Net\Mezeo File Installer\Release\*.*" /cry
+if errorlevel 1 exit 1
 if /i "%buildmode%"=="clean" (
 rd /s /q "%rootPath%\Mezeo File API Wrapper For C#.Net\Mezeo File Installer\Release"
 )
@@ -91,6 +93,8 @@ if errorlevel 1 exit 1
 )
 @echo Manually change the ProductVersion and ProductCode values in the project. TODO: find a way to automatically set this.
 devenv.exe /%buildMode% Release "%rootPath%\Mezeo File API Wrapper For x64\Mezeo File Sync _ 64\MezeoFile.sln"
+if errorlevel 1 exit 1
+xcopy "%rootPath%\Mezeo File API Wrapper For C#.Net\Mezeo File Installer\Setup.exe" "%rootPath%\Mezeo File API Wrapper For x64\Mezeo File Sync _ 64\Release\*.*" /cry
 if errorlevel 1 exit 1
 if /i "%buildmode%"=="clean" (
 rd /s /q "%rootPath%\Mezeo File API Wrapper For x64\Mezeo File Sync _ 64\Release"
