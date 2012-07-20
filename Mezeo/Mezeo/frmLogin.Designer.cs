@@ -321,9 +321,9 @@
             this.AcceptButton = this.btnLogin;
             resources.ApplyResources(this, "$this");
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.Controls.Add(this.labelError);
             this.Controls.Add(this.txtServerUrl);
             this.Controls.Add(this.txtPasswrod);
+            this.Controls.Add(this.labelError);
             this.Controls.Add(this.txtUserName);
             this.Controls.Add(this.btnLogin);
             this.Controls.Add(this.pbLogo);

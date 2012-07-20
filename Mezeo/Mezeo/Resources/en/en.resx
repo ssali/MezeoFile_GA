@@ -249,6 +249,9 @@
   <data name="MezeoExitString2" xml:space="preserve">
     <value>Cancel sync and close $$PRODUCT$$ now?</value>
   </data>
+  <data name="NoRootContainerMsgTxt" xml:space="preserve">
+    <value>Your account has not been configured for sync.  Please contact support for assistance.</value>
+  </data>
   <data name="NoUpdateAvailable" xml:space="preserve">
     <value>No updates found.  You have the latest version.</value>
   </data>

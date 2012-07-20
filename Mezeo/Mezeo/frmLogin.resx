@@ -274,10 +274,10 @@
     <value>NoControl</value>
   </data>
   <data name="labelError.Location" type="System.Drawing.Point, System.Drawing">
-    <value>58, 97</value>
+    <value>58, 80</value>
   </data>
   <data name="labelError.Size" type="System.Drawing.Size, System.Drawing">
-    <value>363, 21</value>
+    <value>363, 34</value>
   </data>
   <data name="labelError.TabIndex" type="System.Int32, mscorlib">
     <value>8</value>
@@ -295,7 +295,7 @@
     <value>$this</value>
   </data>
   <data name="&gt;&gt;labelError.ZOrder" xml:space="preserve">
-    <value>2</value>
+    <value>4</value>
   </data>
   <metadata name="cmLogin.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
     <value>159, 17</value>
@@ -998,13 +998,13 @@
     <value>txtServerUrl</value>
   </data>
   <data name="&gt;&gt;txtServerUrl.Type" xml:space="preserve">
-    <value>Mezeo.CueTextBox, MezeoFile, Version=2.0.49.0, Culture=neutral, PublicKeyToken=null</value>
+    <value>Mezeo.CueTextBox, MezeoFile, Version=2.0.70.0, Culture=neutral, PublicKeyToken=null</value>
   </data>
   <data name="&gt;&gt;txtServerUrl.Parent" xml:space="preserve">
     <value>$this</value>
   </data>
   <data name="&gt;&gt;txtServerUrl.ZOrder" xml:space="preserve">
-    <value>3</value>
+    <value>2</value>
   </data>
   <data name="txtPasswrod.Font" type="System.Drawing.Font, System.Drawing">
     <value>Microsoft Sans Serif, 12pt</value>
@@ -1022,13 +1022,13 @@
     <value>txtPasswrod</value>
   </data>
   <data name="&gt;&gt;txtPasswrod.Type" xml:space="preserve">
-    <value>Mezeo.CueTextBox, MezeoFile, Version=2.0.49.0, Culture=neutral, PublicKeyToken=null</value>
+    <value>Mezeo.CueTextBox, MezeoFile, Version=2.0.70.0, Culture=neutral, PublicKeyToken=null</value>
   </data>
   <data name="&gt;&gt;txtPasswrod.Parent" xml:space="preserve">
     <value>$this</value>
   </data>
   <data name="&gt;&gt;txtPasswrod.ZOrder" xml:space="preserve">
-    <value>4</value>
+    <value>3</value>
   </data>
   <data name="txtUserName.Font" type="System.Drawing.Font, System.Drawing">
     <value>Microsoft Sans Serif, 12pt</value>
@@ -1046,7 +1046,7 @@
     <value>txtUserName</value>
   </data>
   <data name="&gt;&gt;txtUserName.Type" xml:space="preserve">
-    <value>Mezeo.CueTextBox, MezeoFile, Version=2.0.49.0, Culture=neutral, PublicKeyToken=null</value>
+    <value>Mezeo.CueTextBox, MezeoFile, Version=2.0.70.0, Culture=neutral, PublicKeyToken=null</value>
   </data>
   <data name="&gt;&gt;txtUserName.Parent" xml:space="preserve">
     <value>$this</value>

@@ -516,7 +516,7 @@ namespace Mezeo
 
         private void ShowNoRootContainerError()
         {
-            this.labelError.Text = LanguageTranslator.GetValue("LoginGuestAccMsgText");
+            this.labelError.Text = LanguageTranslator.GetValue("NoRootContainerMsgTxt");
             this.txtUserName.Enabled = true;
             this.txtPasswrod.Enabled = true;
             this.txtServerUrl.Enabled = true;

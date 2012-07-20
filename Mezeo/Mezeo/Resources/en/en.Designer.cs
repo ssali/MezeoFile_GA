@@ -457,6 +457,15 @@ namespace Mezeo.Resources.en {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Your account has not been configured for sync.  Please contact support for assistance..
+        /// </summary>
+        internal static string NoRootContainerMsgTxt {
+            get {
+                return ResourceManager.GetString("NoRootContainerMsgTxt", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to No updates found.  You have the latest version..
         /// </summary>
         internal static string NoUpdateAvailable {
