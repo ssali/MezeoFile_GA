@@ -2491,16 +2491,6 @@ namespace Mezeo
             return nStatus;
         }
 
-        //void stDownloader_startDownloaderEvent(bool bStart)
-        //{
-        //    //LogWrapper.LogMessage("frmSyncManager - stDownloader_startDownloaderEvent", "enter");
-        //    if (bStart)
-        //        downloadingThread.Start();
-        //    //else
-        //    //    fileDownloder.ForceComplete();
-        //    ////LogWrapper.LogMessage("frmSyncManager - stDownloader_startDownloaderEvent", "leave");
-        //} 
-
         private string FormatSizeString(double dblSize)
         {
 	        int n = 0;
@@ -2600,6 +2590,12 @@ namespace Mezeo
             }
             else
             {
+                if (false == File.Exists(lEvent.FullPath))
+                {
+                    LogWrapper.LogMessage("frmSyncManager - CheckForModifyEvent", "leave - physical file " + lEvent.FullPath + " no longer exists.");
+                    return 0;
+                }
+
                 DateTime DBModTime = dbHandler.GetDateTime(DbHandler.TABLE_NAME, DbHandler.MODIFIED_DATE, DbHandler.KEY, lEvent.FileName);
 
                 DateTime ActualModTime = File.GetLastWriteTime(lEvent.FullPath);
@@ -2937,6 +2933,11 @@ namespace Mezeo
                 case LocalEvents.EventsType.FILE_ACTION_RENAMED:
                     {
                         strEtag = cMezeoFileCloud.GetETag(strContentUrl, ref nStatusCode);
+
+                        // If the item doesn't exist, then it doesn't conflict.
+                        if (nStatusCode == ResponseCode.NOTFOUND)
+                            return true;
+
                         string strDBETag = GetETag(lEvent.FileName);
                         string FileName = lEvent.FileName.Substring((lEvent.FileName.LastIndexOf("\\") + 1));
 
@@ -3043,7 +3044,7 @@ namespace Mezeo
 
             if (!isFile && !isDirectory)
             {
-                if (localEvent.EventType != LocalEvents.EventsType.FILE_ACTION_REMOVED)
+                if ((localEvent.EventType != LocalEvents.EventsType.FILE_ACTION_REMOVED) && (localEvent.EventType != LocalEvents.EventsType.FILE_ACTION_RENAMED) && (localEvent.EventType != LocalEvents.EventsType.FILE_ACTION_MOVE))
                 {
                     dbHandler.DeleteEvent(localEvent.EventDbId);
                     return 1;
@@ -3204,10 +3205,7 @@ namespace Mezeo
                 caller.ReportProgress(PROGRESS_CHANGED_WITH_FILE_NAME, lEvent.FullPath);
             }
 
-            FileAttributes attr = FileAttributes.Normal;
-
-            //bool isDirectory = false;
-            //bool isFile = File.Exists(lEvent.FullPath);
+            FileAttributes attr = lEvent.Attributes;
             bool isDirectory = lEvent.IsDirectory;
             bool isFile = lEvent.IsFile;
 
@@ -3223,13 +3221,9 @@ namespace Mezeo
                 LogWrapper.LogMessage("SyncManager - ProcessLocalEvent", "Check for file lock - Leave");
             }
 
-            isFile = File.Exists(lEvent.FullPath);
-            if (!isFile)
-                isDirectory = Directory.Exists(lEvent.FullPath);
-            if (isFile || isDirectory)
-                attr = File.GetAttributes(lEvent.FullPath);
-            else
+            if (!isFile && !isDirectory)
             {
+                attr = FileAttributes.Normal;
                 if (lEvent.EventType == LocalEvents.EventsType.FILE_ACTION_RENAMED)
                 {
                     isFile = lEvent.IsFile;
@@ -3550,6 +3544,13 @@ namespace Mezeo
                 case LocalEvents.EventsType.FILE_ACTION_MODIFIED:
                     {
                         LogWrapper.LogMessage("SyncManager - ProcessLocalEvent", "FILE_ACTION_MODIFIED - Enter for file path " + lEvent.FullPath);
+
+                        // If the physical file no longer exists, then skip this event.
+                        if (false == File.Exists(lEvent.FullPath))
+                        {
+                            LogWrapper.LogMessage("SyncManager - ProcessLocalEvent", "Physical file is no longer available.");
+                            return 1;
+                        }
 
                         MarkParentsStatus(lEvent.FullPath, DB_STATUS_IN_PROGRESS);
                         string strContentURi = GetContentURI(lEvent.FileName);
@@ -4721,6 +4722,8 @@ namespace Mezeo
         private void AddInDBForRename(LocalEvents lEvent)
         {
             dbHandler.Update(DbHandler.TABLE_NAME, DbHandler.KEY , lEvent.FileName , DbHandler.KEY , lEvent.OldFileName);
+            // Now that the key has been updated, let's update the name as well.
+            dbHandler.Update(DbHandler.TABLE_NAME, DbHandler.FILE_NAME, lEvent.FileName, DbHandler.KEY, lEvent.FileName);
             UpdateDBForStatus(lEvent, DB_STATUS_IN_PROGRESS);
         }
 
@@ -4776,14 +4779,10 @@ namespace Mezeo
         {
             UpdateDBForStatus(lEvent, DB_STATUS_SUCCESS);
 
-            FileInfo fileInfo = new FileInfo(lEvent.FullPath);
-            if (fileInfo.Exists)
+            if (Directory.Exists(lEvent.FullPath))
             {
-                if ((fileInfo.Attributes & FileAttributes.Directory) == FileAttributes.Directory)
-                {
-                    DirectoryInfo rootDir = new DirectoryInfo(lEvent.FullPath);
-                    WalkDirectoryTree(rootDir, lEvent.OldFullPath);
-                }
+                DirectoryInfo rootDir = new DirectoryInfo(lEvent.FullPath);
+                WalkDirectoryTree(rootDir, lEvent.OldFullPath);
             }
         }
 

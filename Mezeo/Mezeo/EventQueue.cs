@@ -243,6 +243,7 @@ namespace Mezeo
             try
             {
                 FileInfo fileInfo = new FileInfo(theEvent.FullPath);
+
                 theEvent.Attributes = fileInfo.Attributes;
                 LogWrapper.LogMessage("EventQueue - FillInFileInfo", "File " + theEvent.FullPath + " attributes are: " + fileInfo.Attributes.ToString());
                 if (fileInfo.Exists)
@@ -451,7 +452,7 @@ namespace Mezeo
                             TimeSpan diff = newEvent.EventTimeStamp - eventListCandidates[indexRemoved].EventTimeStamp;
 
                             LogWrapper.LogMessage("EventQueue - Add", "Time diff (move seq) is : " + diff.TotalMilliseconds + "ms");
-                            if (1 >= diff.TotalMilliseconds)
+                            if (100 >= diff.TotalMilliseconds)
                             {
                                 LogWrapper.LogMessage("EventQueue - Add", "Time diff is small so Assuming " + eventListCandidates[indexRemoved].FullPath + " was MOVED to " + newEvent.FullPath);
                                 // Change the REMOVED event to a MOVE.
@@ -462,11 +463,14 @@ namespace Mezeo
                                 eventListCandidates[indexRemoved].FileName = newEvent.FileName;
                                 eventListCandidates[indexRemoved].OldFullPath = eventListCandidates[indexRemoved].FullPath;
                                 eventListCandidates[indexRemoved].FullPath = newEvent.FullPath;
+                                eventListCandidates[indexRemoved].IsDirectory = newEvent.IsDirectory;
+                                eventListCandidates[indexRemoved].IsFile = newEvent.IsFile;
+                                eventListCandidates[indexRemoved].Attributes = newEvent.Attributes;
 
                                 // Ignore this event since it's really a move.
                                 bAdd = false;
 
-                                LogWrapper.LogMessage("EventQueue - Add", "Updating existing FILE_ACTION_REMOVED for: " + eventListCandidates[indexRemoved].FullPath);
+                                LogWrapper.LogMessage("EventQueue - Add", "Updating existing FILE_ACTION_REMOVED for: " + eventListCandidates[indexRemoved].FullPath + " to be FILE_ACTION_MOVE.");
                                 LogWrapper.LogMessage("EventQueue - Add", "Ignoring new FILE_ACTION_ADDED for: " + newEvent.FullPath);
                             }
                         }

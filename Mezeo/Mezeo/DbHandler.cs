@@ -67,7 +67,6 @@ namespace Mezeo
         public const string EVENT_INITIAL_TOTAL = "ITotal";
         public const string EVENT_INITIAL_SIZE = "ISize";
 
-
         // Conflict table columns/fields.
         public const string CONFLICT_TABLE_NAME = "ConflictIssues";
         public const string CONFLICT_INDEX = "EventIndex";
@@ -653,8 +652,8 @@ namespace Mezeo
                             EscapeString(newEvent.OldFullPath) + "','" +
                             newEvent.EventType + "','" +
                             newEvent.EventTimeStamp + "','" +
-                            newEvent.IsDirectory + "','" +
-                            newEvent.IsFile + "','" +
+                            ((newEvent.IsDirectory) ? 1 : 0) + "','" +
+                            ((newEvent.IsFile) ? 1 : 0) + "','" +
                             (long)newEvent.Attributes + "');";
 
             SQLiteConnection sqlConnection = OpenConnection();
@@ -739,8 +738,8 @@ namespace Mezeo
                             EVENT_LOCAL_OLD_FULL_PATH + ", " +
                             EVENT_NQ_PARENT_URI + ") values ('I', " +
                             (Int64)iEvent.ItemDetails.dblSizeInBytes + ",'" +
-                            iEvent.ItemDetails.bPublic + "','" +
-                            iEvent.ItemDetails.bShared + "'," +
+                            ((iEvent.ItemDetails.bPublic) ? 1 : 0) + "','" +
+                            ((iEvent.ItemDetails.bShared) ? 1 : 0) + "'," +
                             iEvent.ItemDetails.nTotalItem + ",'" +
                             iEvent.ItemDetails.dtCreated.Ticks + "'," +
                             iEvent.ItemDetails.dtModified.Ticks + ",'" +
@@ -907,9 +906,6 @@ namespace Mezeo
             SQLiteConnection sqlConnection = OpenConnection();
             SQLiteCommand sqlCommand = new SQLiteCommand(query, sqlConnection);
             SQLiteDataReader sqlDataReader = null;
-            //sqlCommand = new SQLiteCommand();
-            //sqlCommand.CommandText = query;
-            //sqlCommand.Connection = sqlConnection;
             try
             {
                 sqlDataReader = sqlCommand.ExecuteReader();
@@ -941,8 +937,6 @@ namespace Mezeo
             SQLiteConnection sqlConnection = OpenConnection();
             SQLiteCommand sqlCommand = new SQLiteCommand(query, sqlConnection);
             SQLiteDataReader sqlDataReader = null;
-            //sqlCommand.CommandText = query;
-            //sqlCommand.Connection = sqlConnection;
             try
             {
                 sqlDataReader = sqlCommand.ExecuteReader();
@@ -1024,9 +1018,6 @@ namespace Mezeo
                 sqlCommand.Parameters.Add("@whereValue", System.Data.DbType.String);
                 sqlCommand.Parameters["@whereValue"].Value = whereValues;
 
-                //sqlCommand.CommandText = query;
-                //sqlCommand.Connection = sqlConnection;
-
                 result = sqlCommand.ExecuteNonQuery();
                 sqlConnection.Close();
             }
@@ -1051,9 +1042,6 @@ namespace Mezeo
             sqlCommand.Parameters.Add("@whereValue", System.Data.DbType.String);
             sqlCommand.Parameters["@whereValue"].Value = whereValues;
 
-            //sqlCommand.CommandText = query;
-            //sqlCommand.Connection = sqlConnection;
-
             result = sqlCommand.ExecuteNonQuery();
             sqlConnection.Close();
 
@@ -1067,7 +1055,6 @@ namespace Mezeo
 
             SQLiteConnection sqlConnection = OpenConnection();
             SQLiteCommand sqlCommand = new SQLiteCommand(query, sqlConnection);
-            //sqlCommand.Parameters.Add("@WhereCondition", whereCondition);
             sqlCommand.Parameters.Add("@whereValue", System.Data.DbType.String);
             sqlCommand.Parameters["@whereValue"].Value = whereValue;
 
@@ -1091,7 +1078,7 @@ namespace Mezeo
 
             sqlDataReader.Close();
             sqlConnection.Close();
-            
+
             return result;
         }
 
@@ -1099,8 +1086,6 @@ namespace Mezeo
         {
             string query = "select " + fieldName + " from " + tableName + " where " + WhereCondition;
             string result = "";
-
-            //query = HandleSpecialCharacter(query);
 
             SQLiteConnection sqlConnection = OpenConnection();
             SQLiteCommand sqlCommand = new SQLiteCommand(query, sqlConnection);
@@ -1146,9 +1131,6 @@ namespace Mezeo
                 query = "select " + fieldName + " from " + tableName + " where " + whereQuery;
             }
 
-            //query = HandleSpecialCharacter(query);
-
-            //sqlCommand = new SQLiteCommand(query, sqlConnection);
             sqlCommand.CommandText = query;
             sqlCommand.Connection = sqlConnection;
             try
@@ -1269,7 +1251,7 @@ namespace Mezeo
             List<string> result =new List<string>();
             SQLiteConnection sqlConnection = OpenConnection();
             SQLiteCommand sqlCommand = new SQLiteCommand(query, sqlConnection);
-            
+
             sqlCommand.Parameters.Add("@whereValue", System.Data.DbType.String);
             sqlCommand.Parameters["@whereValue"].Value = whereValue;
 
@@ -1385,7 +1367,7 @@ namespace Mezeo
             SQLiteConnection sqlConnection = OpenConnection();
             SQLiteCommand sqlCommand = new SQLiteCommand(query, sqlConnection);
             SQLiteDataReader sqlDataReader = sqlCommand.ExecuteReader();
-            
+
             while(sqlDataReader.Read())
             {
                 DbKeyModDate keyMod = new DbKeyModDate();
