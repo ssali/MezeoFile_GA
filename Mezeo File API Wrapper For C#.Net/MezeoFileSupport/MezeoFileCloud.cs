@@ -547,6 +547,15 @@ namespace MezeoFileSupport
                     {
                         fstPersons = new FileStream(strTempFileNew, FileMode.Create);
                     }
+                    catch (System.IO.DirectoryNotFoundException ex)
+                    {
+                        // bugzid:1845 - (win) pull file event from cloud before 'folder create' event
+                        // The directory doesn't exist so create it.
+                        String strPath = strSaveInFile.Substring(0, strSaveInFile.LastIndexOf('\\'));
+                        if (false == Directory.Exists(strPath))
+                            Directory.CreateDirectory(strPath);
+                        fstPersons = new FileStream(strTempFileNew, FileMode.Create);
+                    }
                     catch (Exception ex)
                     {
                         //LogWrapper.LogMessage("MezeoFileCloud - OnSaveResponseFile", "Caught exception: " + ex.Message);
@@ -615,10 +624,10 @@ namespace MezeoFileSupport
                     // This variable is just for debugging so that the debugger will
                     // actually step into this function so I can see what the exception is.
                     // TODO: Remove this for the release build.
-                    int x = 0;
-                    if (x > 0)
-                    {
-                    }
+                    //int x = 0;
+                    //if (x > 0)
+                    //{
+                    //}
                 }
             }
             return bStatus;
@@ -1698,7 +1707,6 @@ namespace MezeoFileSupport
             }
             return StrRet;
         }
-
 
         public String UploadingFile(String strSource, String strDestination, ref int nStatusCode, CallbackIncrementProgress IncProcess)
         {
