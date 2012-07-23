@@ -3323,6 +3323,14 @@ namespace Mezeo
                         }
                         else
                         {
+                            // Update the key for the children if this was a container.
+                            if ((attr & FileAttributes.Directory) == FileAttributes.Directory)
+                                dbHandler.UpdateRenamedOrMovedKey(lEvent.FileName, lEvent.OldFileName);
+
+                            // Since the item could have a new parent, it needs to be updated.
+                            // Change this for renames as well as moves....
+                            UpdateParent(lEvent.FileName, lEvent.FullPath);
+
                             wasSuccessful = true;
                             UpdateDBForStatus(lEvent, DB_STATUS_SUCCESS);
                             MarkParentsStatus(lEvent.FullPath, DB_STATUS_SUCCESS);
@@ -3693,6 +3701,7 @@ namespace Mezeo
                         if ((attr & FileAttributes.Directory) == FileAttributes.Directory)
                         {
                             bRet = cMezeoFileCloud.ContainerRename(strContentURi, changedName, ref nStatusCode);
+                            //dbHandler.UpdateRenamedOrMovedKey(lEvent.FileName, lEvent.OldFileName);
 
                             LogWrapper.LogMessage("SyncManager - ProcessLocalEvent", "Directory bRet " + bRet.ToString());
                             if (nStatusCode == ResponseCode.LOGINFAILED1 || nStatusCode == ResponseCode.LOGINFAILED2)
@@ -3781,6 +3790,27 @@ namespace Mezeo
             LogWrapper.LogMessage("SyncManager - ProcessLocalEvent", "Leave");
 
             return returnCode;
+        }
+
+        private int UpdateParent(String strPath, String strFullPath)
+        {
+            // Since the container could have a new parent, it needs to be updated.
+            // Remember that the previous parent could have been empty/null/root.
+            // Change this for renames as well as moves....
+            // General logic:
+            //   Grab the parent of this container (after the move).
+            //   Set the parent_dir to the name of the parent container.
+            String strParentName = "";
+            int index = -1;
+
+            // Make sure the parent is there in the path.
+            if (0 != strPath.CompareTo(strFullPath))
+                strParentName = strFullPath.Substring(0, strFullPath.LastIndexOf("\\"));
+            index = strParentName.LastIndexOf("\\");
+            if (-1 != index)
+                strParentName = strParentName.Substring(index+1);
+
+            return dbHandler.UpdateParentDir(strPath, strParentName);
         }
 
         private int checkfoOverwrite(ItemDetails item, LocalEvents lEvent)
@@ -4722,8 +4752,10 @@ namespace Mezeo
         private void AddInDBForRename(LocalEvents lEvent)
         {
             dbHandler.Update(DbHandler.TABLE_NAME, DbHandler.KEY , lEvent.FileName , DbHandler.KEY , lEvent.OldFileName);
+
             // Now that the key has been updated, let's update the name as well.
-            dbHandler.Update(DbHandler.TABLE_NAME, DbHandler.FILE_NAME, lEvent.FileName, DbHandler.KEY, lEvent.FileName);
+            string fileName = lEvent.FileName.Substring(lEvent.FileName.LastIndexOf("\\") + 1);
+            dbHandler.Update(DbHandler.TABLE_NAME, DbHandler.FILE_NAME, fileName, DbHandler.KEY, lEvent.FileName);
             UpdateDBForStatus(lEvent, DB_STATUS_IN_PROGRESS);
         }
 

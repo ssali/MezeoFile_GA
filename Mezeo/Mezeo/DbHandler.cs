@@ -990,6 +990,36 @@ namespace Mezeo
             return item;
         }
 
+        public int UpdateRenamedOrMovedKey(string newValues, string oldValue)
+        {
+            // Replace/update the key when a container has been moved or renamed.
+            // update table_name set key = replace(key, '<old_val>', '<new_val>') where key like <old_val>/%'; 
+            string query = "update " + TABLE_NAME + " set " + KEY + " = replace(" + KEY + ", '" + oldValue + "', '" + newValues + "') where " + KEY + " like '" + oldValue + "%';";
+            int result = -1;
+
+            SQLiteConnection sqlConnection = OpenConnection();
+            SQLiteCommand sqlCommand = new SQLiteCommand(query, sqlConnection);
+            result = sqlCommand.ExecuteNonQuery();
+            sqlConnection.Close();
+
+            return result;
+        }
+
+        public int UpdateParentDir(string key, string strParentName)
+        {
+            // Replace/update the parent_dir when a container has been moved or renamed.
+            // update table_name set parent_dir = strParentName where key = key; 
+            string query = "update " + TABLE_NAME + " set " + PARENT_DIR + " = '" + strParentName + "' where " + KEY + " = '" + key + "';";
+            int result = -1;
+
+            SQLiteConnection sqlConnection = OpenConnection();
+            SQLiteCommand sqlCommand = new SQLiteCommand(query, sqlConnection);
+            result = sqlCommand.ExecuteNonQuery();
+            sqlConnection.Close();
+
+            return result;
+        }
+
         public int Update(string tableName, string newValues, string whereCondition)
         {
             string query = "update " + tableName + " set " + newValues + " where " + whereCondition;
