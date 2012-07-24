@@ -2020,9 +2020,13 @@ namespace Mezeo
             {
                 //LogWrapper.LogMessage("frmSyncManager - UpdateFromNQ - ", nqDetail.StrEvent + " - " + strKey + " - Enter");
 
-                nqEventCdmiDelete(strPath, strKey);
-
-                nStatus = 1;
+                // bugzid:2352 - file is open when app gets cloud event to delete same file
+                // If the file can't be deleted (due to being in use), then just keep retrying
+                // until the file is released.
+                if (nqEventCdmiDelete(strPath, strKey))
+                    nStatus = 1;
+                else
+                    nStatus = 0;
 
                 //LogWrapper.LogMessage("frmSyncManager - UpdateFromNQ - ", nqDetail.StrEvent + " - " + strKey + " - Leave"); 
             }
@@ -2181,9 +2185,10 @@ namespace Mezeo
             return nStatus;
         }
 
-        private void nqEventCdmiDelete(string strPath, string strKey)
+        private bool nqEventCdmiDelete(string strPath, string strKey)
         {
             //LogWrapper.LogMessage("frmSyncManager - nqEventCdmiDelete", "enter");
+            bool success = true;
             bool isDirectory = false;
             bool isFile = File.Exists(strPath);
             if (!isFile)
@@ -2193,18 +2198,19 @@ namespace Mezeo
                 {
                     DirectoryInfo rootDir = new DirectoryInfo(strPath);
                     WalkDirectoryTreeForDelete(rootDir);
-                    SendToRecycleBin(strPath, false);
+                    success = SendToRecycleBin(strPath, false);
                     //Directory.Delete(strPath);
                     dbHandler.Delete(DbHandler.TABLE_NAME, DbHandler.KEY, strKey);
                 }
             }
             else
             {
-                SendToRecycleBin(strPath, true);
+                success = SendToRecycleBin(strPath, true);
                 //File.Delete(strPath);
                 dbHandler.Delete(DbHandler.TABLE_NAME, DbHandler.KEY, strKey);
             }
             //LogWrapper.LogMessage("frmSyncManager - nqEventCdmiDelete", "leave");
+            return success;
         }
 
         private int nqEventCdmiCreate(NQDetails nqDetail, NSResult nsResult, string strKey, string strPath)
@@ -3286,6 +3292,12 @@ namespace Mezeo
                         {
                             return LOGIN_FAILED;
                         }
+                        else if (nStatusCode == ResponseCode.NOTFOUND)
+                        {
+                            LogWrapper.LogMessage("SyncManager - ProcessLocalEvent", "Remote object no longer exists.  Remove local object.");
+                            nqEventCdmiDelete(lEvent.FullPath, lEvent.OldFileName);
+                            return 1;
+                        }
                         else if (nStatusCode != ResponseCode.GETCONTINERRESULT)
                         {
                             if (ResponseCode.NOTFOUND == nStatusCode)
@@ -4287,8 +4299,9 @@ namespace Mezeo
             //LogWrapper.LogMessage("frmSyncManager - InitializeLocalEventsProcess", "leave");
         }
 
-        private void SendToRecycleBin(string strPath, bool isFile)
+        private bool SendToRecycleBin(string strPath, bool isFile)
         {
+            bool deleted = true;
             try
             {
                 if (isFile)
@@ -4302,10 +4315,17 @@ namespace Mezeo
                                                                             Microsoft.VisualBasic.FileIO.RecycleOption.SendToRecycleBin);
                 }
             }
+            catch (IOException ioException)
+            {
+                LogWrapper.LogMessage("frmSyncManager - SendToRecycleBin", "Caught exception: " + ioException.Message);
+                deleted = false;
+            }
             catch (Exception ex)
             {
                 LogWrapper.LogMessage("frmSyncManager - SendToRecycleBin", "Caught exception: " + ex.Message);
             }
+
+            return deleted;
         }
 
         #endregion
