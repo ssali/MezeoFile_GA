@@ -46,8 +46,8 @@
             this.toolStripMenuItem7 = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripSeparator5 = new System.Windows.Forms.ToolStripSeparator();
             this.toolStripMenuItem5 = new System.Windows.Forms.ToolStripMenuItem();
-            this.toolStripSeparator3 = new System.Windows.Forms.ToolStripSeparator();
-            this.toolStripMenuItem3 = new System.Windows.Forms.ToolStripMenuItem();
+            //this.toolStripSeparator3 = new System.Windows.Forms.ToolStripSeparator();
+            //this.toolStripMenuItem3 = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripSeparator4 = new System.Windows.Forms.ToolStripSeparator();
             this.msSyncMgrExit = new System.Windows.Forms.ToolStripMenuItem();
             this.pbLogo = new System.Windows.Forms.PictureBox();
@@ -131,8 +131,8 @@
             this.toolStripMenuItem7,
             this.toolStripSeparator5,
             this.toolStripMenuItem5,
-            this.toolStripSeparator3,
-            this.toolStripMenuItem3,
+            //this.toolStripSeparator3,
+            //this.toolStripMenuItem3,
             this.toolStripSeparator4,
             this.msSyncMgrExit});
             this.cmSystemTraySyncMgr.Name = "cmSystemTrayLogin";
@@ -185,14 +185,14 @@
             // 
             // toolStripSeparator3
             // 
-            this.toolStripSeparator3.Name = "toolStripSeparator3";
-            resources.ApplyResources(this.toolStripSeparator3, "toolStripSeparator3");
-            // 
-            // toolStripMenuItem3
-            // 
-            this.toolStripMenuItem3.Name = "toolStripMenuItem3";
-            resources.ApplyResources(this.toolStripMenuItem3, "toolStripMenuItem3");
-            this.toolStripMenuItem3.Click += new System.EventHandler(this.toolStripMenuItem3_Click);
+            //this.toolStripSeparator3.Name = "toolStripSeparator3";
+            //resources.ApplyResources(this.toolStripSeparator3, "toolStripSeparator3");
+            //// 
+            //// toolStripMenuItem3
+            //// 
+            //this.toolStripMenuItem3.Name = "toolStripMenuItem3";
+            //resources.ApplyResources(this.toolStripMenuItem3, "toolStripMenuItem3");
+            //this.toolStripMenuItem3.Click += new System.EventHandler(this.toolStripMenuItem3_Click);
             // 
             // toolStripSeparator4
             // 
