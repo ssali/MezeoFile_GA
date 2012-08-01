@@ -360,7 +360,7 @@
         private System.Windows.Forms.ToolStripMenuItem msShowSyncMgr;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator2;
         private System.Windows.Forms.ToolStripMenuItem toolStripMenuItem5;
-        private System.Windows.Forms.ToolStripSeparator toolStripSeparator3;
+      //  private System.Windows.Forms.ToolStripSeparator toolStripSeparator3;
         private System.Windows.Forms.ToolStripMenuItem msSyncMgrExit;
         private System.Windows.Forms.Label labelError;
         private System.Windows.Forms.ContextMenu cmLogin;
@@ -378,7 +378,7 @@
         public System.Windows.Forms.ToolStripMenuItem toolStripMenuItem4;
         private System.Windows.Forms.ToolStripMenuItem toolStripMenuItem6;
         private System.ComponentModel.BackgroundWorker bwCheckServerStatus;
-        private System.Windows.Forms.ToolStripMenuItem toolStripMenuItem3;
+       // private System.Windows.Forms.ToolStripMenuItem toolStripMenuItem3;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator4;
         private System.Windows.Forms.ToolStripMenuItem toolStripMenuItem7;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator5;
