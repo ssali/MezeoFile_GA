@@ -61,6 +61,7 @@ if errorlevel 1 goto :eof
 @echo Manually change the ProductVersion and ProductCode values in the project. TODO: find a way to automatically set this.
 devenv.exe /%buildMode% Release "%rootPath%\Mezeo File API Wrapper For C#.Net\Mezeo File Installer\MezeoFile.sln"
 if errorlevel 1 goto :eof
+signtool sign /f "%rootPath%\Mezeo File API Wrapper For C#.Net\Mezeo File Installer\Certificates.p12" /p just4dale "%rootPath%\Mezeo File API Wrapper For C#.Net\Mezeo File Installer\Release\MezeoFile_32.msi"
 xcopy "%rootPath%\Mezeo File API Wrapper For C#.Net\Mezeo File Installer\Setup.exe" "%rootPath%\Mezeo File API Wrapper For C#.Net\Mezeo File Installer\Release\*.*" /cry
 if errorlevel 1 goto :eof
 if /i "%buildmode%"=="clean" (
@@ -72,6 +73,8 @@ pushd "%rootPath%\Mezeo File API Wrapper For C#.Net\Mezeo File Installer"
 if errorlevel 1 goto :eof
 popd
 )
+signtool sign /f "%rootPath%\Mezeo File API Wrapper For C#.Net\Mezeo File Installer\Certificates.p12" /p just4dale "%rootPath%\Mezeo File API Wrapper For C#.Net\Mezeo File Installer\Release\MezeoFile_32.exe"
+
 
 @echo.
 @echo *** %buildMode% 64-bit Mezeo
@@ -106,6 +109,7 @@ if errorlevel 1 goto :eof
 @echo Manually change the ProductVersion and ProductCode values in the project. TODO: find a way to automatically set this.
 devenv.exe /%buildMode% Release "%rootPath%\Mezeo File API Wrapper For x64\Mezeo File Sync _ 64\MezeoFile.sln"
 if errorlevel 1 goto :eof
+signtool sign /f "%rootPath%\Mezeo File API Wrapper For x64\Mezeo File Sync _ 64\Certificates.p12" /p just4dale "%rootPath%\Mezeo File API Wrapper For x64\Mezeo File Sync _ 64\Release\MezeoFile_64.msi"
 xcopy "%rootPath%\Mezeo File API Wrapper For x64\Mezeo File Sync _ 64\Setup.exe" "%rootPath%\Mezeo File API Wrapper For x64\Mezeo File Sync _ 64\Release\*.*" /cry
 if errorlevel 1 goto :eof
 if /i "%buildmode%"=="clean" (
@@ -117,3 +121,5 @@ pushd "%rootPath%\Mezeo File API Wrapper For x64\Mezeo File Sync _ 64"
 if errorlevel 1 goto :eof
 popd
 )
+signtool sign /f "%rootPath%\Mezeo File API Wrapper For x64\Mezeo File Sync _ 64\Certificates.p12" /p just4dale "%rootPath%\Mezeo File API Wrapper For x64\Mezeo File Sync _ 64\Release\MezeoFile_64.exe"
+

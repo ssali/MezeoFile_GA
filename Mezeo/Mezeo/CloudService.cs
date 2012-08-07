@@ -511,21 +511,19 @@ namespace Mezeo
 
             syncManager.SetMaxProgress(fileinfo.Length, strSource);
 
-            bool bRet = fileCloud.OverWriteFile(strSource, strDestination, ref nStatusCode, syncManager.myDelegate);
-
+            bool bRet = fileCloud.OverWriteFile(strSource, strDestination, ref nStatusCode, syncManager.myDelegate); 
             if ((nStatusCode != ResponseCode.OVERWRITEFILE) && (nStatusCode != ResponseCode.SERVER_INACCESSIBLE) && (nStatusCode != -4))
             {
                 for (int n = 0; n < CloudService.NUMBER_OF_RETRIES; n++)
                 {
                     syncManager.SetMaxProgress(fileinfo.Length, strSource);
                     bRet = fileCloud.OverWriteFile(strSource, strDestination, ref nStatusCode, syncManager.myDelegate);
-
                     // If the user cancelled the operation, then just return.
                     if (nStatusCode == -4)
                         return false;
 
                     if (nStatusCode == ResponseCode.OVERWRITEFILE)
-                        return bRet;
+                        return bRet;                    
                 }
             }
             return bRet;
